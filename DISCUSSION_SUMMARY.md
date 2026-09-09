@@ -1,6 +1,10 @@
 # Deterministic seed mod — summary
 
-Based on the [original discussion](thread://01a0764d-e9d4-7602-8fb5-4d9be4823c3b). Findings apply to the inspected StS2 v0.111.0 and Catfood v1.1.2; proposed fixes are not implemented.
+## Context and prerequisites
+
+- Findings apply to the inspected **StS2 v0.111.0 and Catfood v1.1.2**.
+- Compare outcomes with matching seeds, versions, rules, and eligible pools.
+- Save/load must preserve outcomes. **You confirm that Catfood already does this correctly:** SL does not double-count entry or introduce differences; no SL fix is needed.
 
 ## 1. Established
 
@@ -28,17 +32,18 @@ RNG calls advance a repeatable seeded sequence. Different call histories can the
 ### Remaining issues and corrections
 
 - **Rare cards:** offsets start at `0` rather than vanilla's `-0.05`, allowing an earlier rare. Ancient entry resets offsets while reward counts stay cumulative; different prior-act fight counts can then place rare results into different card-choice sets. Fixing initialization alone does not settle progression policy.
+- **Your inference (not a confirmed design intention):** starting at `0` compensates for slower rare-card accumulation after separating categories.
 - **Lantern Key:** the forced War Historian Repy event advances the ordinary event count; Catfood has no explicit exception.
 - **Potions:** shop generation shifts later free-potion identities. Crystal Sphere's fixed-rarity potion bypasses Catfood's sequence and uses event RNG.
-- **Fixed-rarity relics:** Wongos already takes the next eligible relic of the requested rarity without consuming a random-rarity entry.
+- **Fixed-rarity relics:** Wongos takes the next eligible relic of the requested rarity without consuming a random-rarity entry. Whether to retain this policy is undecided.
 - **Encounter correction:** private RNG controls some monster compositions and initial configurations, **not ordinary HP**, which uses `Niche` RNG. Cumulative counts can alter setup seeds across acts, but no visible setup mismatch was demonstrated. Many encounters have fixed composition.
-- **Other concerns:** ordinary boss-room shuffle initialization omits the run seed. Direct-card seed arithmetic can overlap; its static call index and room-restoration counting need investigation, not classification as reproduced gameplay bugs.
+- **Other concerns:** ordinary boss-room shuffle initialization omits the run seed. Direct-card seed arithmetic can overlap; its static call index needs investigation, not classification as a reproduced gameplay bug. The earlier SL concern is withdrawn following your confirmation above.
 
 ## 2. Your goals and proposals
 
 **Goal:** fair same-seed competition at equivalent ordinal opportunities. First shop matches first shop; skipping a shop may legitimately shift later shops.
 
-Preserve meaningful consequences of choices while removing accidental interference between unrelated systems. Starting from understanding vanilla and Catfood code; run-history comparisons are supporting evidence.
+Preserve meaningful consequences of choices while removing accidental interference between unrelated systems. Start by understanding vanilla and Catfood code; run-history comparisons are supporting evidence.
 
 Organize invariants into:
 
@@ -55,6 +60,7 @@ Your proposed changes:
 - Potions: Combine **free** potions from combat drops and events; keep separate any potion that requires something in exchange for each individual event; keep separate shop potions. Same idea for relics.
 
 **Non-goal improvements:**
+
 - Include the run seed in boss shuffle initialization
 - Minor performance improvement: Use on-demand relic-rarity rolls instead of the finite 400-entry list
 
@@ -62,15 +68,9 @@ Your proposed changes:
 
 ## 3. Agent suggestions — not yet adopted
 
-- Extend the skeleton with forced/unknown rooms.
-- Require matching versions/rules/eligible pools when comparing outcomes; make save/load preserve counters. Ownership, unlocks, or deck differences can legitimately change eligible results.
-- test whether restoring rooms double-counts entry.
+- Explicitly cover **scripted/forced events** and **unknown-room resolution** in the encounter skeleton. A forced event is selected by a specific condition rather than ordinary random selection, such as Lantern Key's War Historian Repy. Unknown-room resolution means deciding what a `?` map node becomes; choosing its room type is distinct from choosing the particular event or fight inside it. These are separate concerns, not one “forced/unknown” room category.
 - For direct card generation, consider saved/local indices or stable slots and separate meaningful card scopes. Reproduce a useful failure case before expanding this design.
 - Consider consistent seed derivation to avoid accidental overlaps. These are engineering suggestions, not adopted fairness rules.
 - Use targeted logging and repeated-run comparisons to validate changes. Histories show offerings and choices, but cannot reveal every RNG call or combat action.
 
 **Decisions needed next:** rarity policy; what advances each sequence (generation, offering, or acquisition); which in-room systems should share randomness.
-
-Earlier agent ideas for map-node-fixed shops and separate sequences for every free-potion source were superseded by your policies above.
-
-Further notes: [PLANNED_IMPROVEMENTS.md](PLANNED_IMPROVEMENTS.md).
