@@ -44,6 +44,8 @@ RNG calls advance a repeatable seeded sequence. Different call histories can the
 
 Preserve meaningful choice consequences while removing accidental interference between unrelated systems. Base findings on code, with run histories as supporting evidence.
 
+**Fairness principle:** prevent a single room from shifting subsequent gameplay too much. E.g., consuming the last item of a sequence can matter greatly if that relic is exceptionally powerful.
+
 Define what must remain equal and what may differ within:
 
 1. **Encounters:** fights, elites, events, shops, ancients, bosses.
@@ -60,7 +62,7 @@ Your proposed changes:
 
 1. **Scripted relics / special pools:** same-seed identities/sequences must be independent of how the event was reached, consuming neither generic rarity nor identity sequences. Examples: Doll Room's Act 2 sequence, fixed Forgotten Soul / Sword of Stone, and Trash Heap's shortlist of ordinary relics.
 2. **Hidden random relic rewards:** combat and event rewards share one generic sequence system regardless of cost. Unspecified rarity advances the rarity sequence and the selected rarity's identity sequence; fixed rarity advances only its identity sequence. This supersedes the earlier paid-event isolation proposal. Classify deferred random payoffs separately from their scripted granting relic.
-3. **Shown paid ordinary relics:** unresolved. Ordinary-pool means Common / Uncommon / Rare / Shop, excluding Event and Ancient gifts, as you confirmed.
+3. **Shown paid ordinary relics:** Wongos follows the adopted shop policy below; Relic Trader remains unresolved. Ordinary-pool means Common / Uncommon / Rare / Shop, excluding Event and Ancient gifts, as you confirmed.
 
 Only two events match policy 3:
 
@@ -71,12 +73,21 @@ Only two events match policy 3:
 
 Fake Merchant's Event counterfeits belong to policy 1; Ranwid's hidden replacement relics belong to policy 2. Shops remain a separate system.
 
+### Shop / Wongos / Courier policy — adopted, not yet implemented
+
+- Give shops independent card, relic-rarity, relic-identity and potion sequences. Wongos' featured offer consumes one shop Rare identity on entry, but no shop rarity entry or shop ordinal. Its hidden rewards remain under relic policy 2. Catfood does not already provide this full isolation: relic rarities and potion-generation counters are shared across sources, and shops/Wongos currently pull opposite ends of the same identity bags.
+- **Goal: each shop item has a deterministic base price**, preserved across slot/shop shifts under equivalent pricing modifiers. **Approach:** derive it from the run seed and stable item-sequence entry, independently of other shop RNG; apply current discounts afterward. No advance generation is required.
+- **Courier restocks use separate sequences**, analogous to separate card-reward rerolls. Restocked cards, relic rarities/identities and potions must not advance normal shop-stock sequences or generic reward sequences; restocking does not advance the shop ordinal. Restocked items follow the same deterministic-base-price rule, while retaining Courier's normal discount and restock behavior.
+- The Rare sequence has a one-position offset after Wongos; overlapping offers retain identities/prices, but replacements may recur across later shops. Relic Trader's handling remains unresolved.
+
+The high-level shop policy is settled. Sequence addressing and cross-pool ownership/duplicate handling still need specification during implementation; isolation does not promise identical eligible pools after different relic acquisitions.
+
 **Non-goal improvements:**
 
 - Include the currently omitted run seed in ordinary boss-room shuffle initialization
 - Minor performance improvement: Use on-demand relic-rarity rolls instead of the finite 400-entry list
 
-**Current step:** settle policy 3's sequence and consumption timing (generation, offering, or acquisition), then adapt relic handling to potions. Other open decisions: rare-card accumulation versus category/act alignment, direct-card generation, and which in-room systems share randomness.
+**Current step:** settle Relic Trader's sequence and consumption timing (generation, offering, or acquisition), then adapt relic handling to potions. Other open decisions: rare-card accumulation versus category/act alignment, direct-card generation, and which in-room systems share randomness.
 
 **Reference:** [Event spreadsheet](outputs/01a086ff-8c1c-7ff0-bda5-09f2bacf39c2/StS2_Events.xlsx) — 57 ordinary/forced events and 8 Ancients. `is_deterministic` concerns offered choices, not hidden rewards: Punch-Off is true; Wongos is false. Detailed criteria and state restrictions are in the workbook.
 
