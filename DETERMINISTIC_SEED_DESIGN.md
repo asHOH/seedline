@@ -10,133 +10,127 @@ Base findings on code; use run histories as supporting evidence.
 
 ## Goals
 
-**Goal:** fair same-seed competition at equivalent ordinal opportunities. (E.g., the first visited shop should be identical in every respect no matter how the player reaches there, and likewise for later shop ordinals. Activities inside it do not change later shops.) Preserve meaningful choice consequences while removing accidental interference between unrelated systems.
+**Goal:** fair same-seed competition at equivalent ordinal opportunities. The first visited shop should be designed to be identical in every respect regardless of how the player reaches it, and likewise for later shop ordinals (Rare intentional exceptions exist). Activities inside it do not change later shops. Preserve meaningful choice consequences while removing accidental interference between unrelated systems.
 
-**Fairness principle:** prevent one room from creating too much difference against another player without this room. (E.g., consuming the last item of a sequence can matter greatly when that relic is exceptionally powerful.)
+**Fairness principle:** limit the difference one room creates compared with a run without that room. Even consuming the last sequence entry can matter greatly if it contains an exceptionally powerful relic.
 
-**Mostly sure:** Catfood handles save/load correctly, without double-counting or outcome differences. No SL fix is needed.
+## Terms and vanilla baseline
 
-## Terms
+- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
+- **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
+- **Item identity:** which card, relic or potion an entry contains. A **sequence entry** is one occurrence, identified by its original position in its source sequence. Repeated occurrences of one identity are distinct entries; removals do not renumber remaining entries.
+- **Ordinary relics:** Common / Uncommon / Rare / Shop, excluding Event and Ancient gifts. Event-exclusive relics are obtainable only through their associated events, outside generic ordinary-relic pools; scripted acquisition alone does not imply exclusivity.
 
-- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; cumulative ordinals continue across acts (we omit "cumulative" hereafter).
-- **Card reward offer:** the cards presented together for one choice. A **card slot** is one position within that offer. Most offers are three-card offers.
-- **Item identity:** which card, relic or potion an entry contains. A **sequence entry** is one occurrence, identified by its original position in its source sequence; repeated occurrences of the same item identity are distinct entries. Removing entries does not renumber the remaining entries.
+RNG calls advance a repeatable seeded sequence. **Re-seeding** restarts a generator from a derived seed, removing dependence on its earlier calls. Outcomes can still depend on pools, rarity offsets, addressing counters and other generators.
 
-## RNG and opportunity addressing
+Vanilla provides the baseline Catfood improves on:
 
-RNG calls advance a repeatable seeded sequence; different call histories can produce different outcomes from the same starting seed. **Re-seeding** restarts a generator from a derived seed, removing dependence on that generator's earlier calls. Outcomes can still depend on pools, rarity offsets, addressing counters and other generators.
+| Mechanism | Baseline and interference |
+|---|---|
+| Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` RNG for card rarity, upgrades and relic rarity: entering a shop can change later combat rewards. Events have private RNG, but some choices also consume shared reward RNG or relic bags. Courier restocks share existing generators; prices follow call order, so restocks or shifted items can change later stock/prices. |
+| Combat and cards | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. Card-rarity offsets start at `-0.05`. |
+| Relic pools | Ordinary rarity rolls are 50% Common / 33% Uncommon / 17% Rare. Shops pull two rolled-rarity relics and one fixed Shop relic from the back of the bag; rewards and Wongos pull from the front. Five ordinary relics are shop-ineligible. Fixed-rarity pulls still remove identities; depletion/fallback can change delivered rarity. `RelicCmd.Obtain` removes non-stackable ordinary identities even for scripted/special-pool acquisitions. |
 
-### Current behavior
+## Settled design: shops, Wongos and Courier
 
-- **Counters:** Catfood saves separate, act-cumulative counts for normal fights, elites, bosses, shops, events and ancients.
-- **Room rewards:** Catfood re-seeds reward RNG by category/count, including shop-based addressing. This does not isolate every shop generator; details appear below.
-- **Events:** vanilla events have private RNG, but some choices also consume shared reward RNG or the relic grab bag.
-- **Lantern Key:** the forced War Historian Repy event advances Catfood's ordinary event count; there is no explicit exception.
-- **Encounter setup:** Catfood seeds private encounter RNG from encounter identity and cumulative category count, replacing vanilla's floor-based addressing. This controls some monster compositions and initial configurations, **not ordinary HP**, which uses `Niche` RNG. Cumulative counts can change setup seeds across acts, but no visible setup mismatch was demonstrated; many encounters have fixed composition.
-- **Shuffles:** vanilla shuffle RNG persists across combats, so extra reshuffles can change a later fight's opening shuffle. Catfood re-seeds at combat initialization; later shuffles continue within that combat's sequence.
+**Adopted, not yet implemented.** Treat this section as a fixed contract for subsequent design work. Relic Trader remains outside it; Wongos' hidden rewards belong to generic rewards below.
 
-### Your proposals
-
-- Use **act-local ordinals** for encounter setup and opening shuffles; keep reward ordinals cumulative. After different counts of Act 1 fights, the first Act 2 fight should have equivalent setup/shuffle addressing but different reward addresses, overwhelmingly likely to yield different rewards. Different decks can still produce different hands.
-- Count Lantern Key's forced Act 3 event as **ordinal 0**, leaving the ordinary event sequence untouched.
-
-## Cards
-
-### Current behavior and unresolved issues
-
-- **Combat choices:** Catfood uses explicit RNG based on category, count and reward position, with separate offsets for rerolls.
-- **Direct/event generation:** Catfood uses a room/event count plus a per-room call index. Seed arithmetic can overlap; the static call index needs investigation and is **not a reproduced gameplay bug**.
-- **Rarity:** Catfood maintains separate offsets for normal fights, elites, bosses and shops. They start at `0` instead of vanilla's `-0.05`, allowing an earlier rare. **Your inference, not confirmed design intent:** this compensates for slower accumulation after separating categories.
-- **Act alignment:** ancient entry resets rarity offsets while reward counts remain cumulative. The same act-local rare slot can therefore fall in different cumulative reward offers. **Illustration:** A's offers start at cumulative positions 1, 2, 3; B's at 2, 3, 4. If the rare lands in the act's seventh card slot, it is the first slot of each player's third offer: cumulative offer 3 for A, but 4 for B. If another powerful card shares one of those offers, one player must choose between it and the rare while the other can obtain both, creating a large deck-power discrepancy. Rare-card accumulation versus category/act alignment remains open.
-
-**Agent suggestion — not adopted:** consider saved/local indices or stable slots and separate meaningful card scopes for direct generation. Reproduce a useful failure case before expanding the design.
-
-## Relics
-
-### Current generation and pool mechanics
-
-- Catfood precomputes **400 relic rarities** in one sequence shared by shops, combat drops and events. Fixed-rarity requests bypass it; identities still come from vanilla's shared grab bags. Extra generation can shift other sources' rewards.
-- Ordinary rarity rolls are **50% Common / 33% Uncommon / 17% Rare**. Fixed-rarity pulls shift identities without consuming rarity entries; depletion/fallback can change the delivered rarity.
-- Normal shops generate two rolled-rarity relics and one fixed Shop relic, pulling identities from the **back** of the bag. Rewards and Wongos pull from the **front**. Five ordinary relics are shop-ineligible.
-- Even scripted ordinary-relic acquisitions remove identities from shared bags.
-- The inspected fully unlocked pool contains **122 ordinary relics per character**: 26 Common, 32 Uncommon, 38 Rare and 26 Shop (115 shared + 7 character-specific). Capacity must be considered per rarity and eligible source, not only in total.
-
-### Your current reward classification proposal
-
-| Class | Proposed sequence/consumption rule | Examples and boundaries |
-|---|---|---|
-| Event-exclusive relics | Relics obtainable only through their associated events, outside the generic ordinary-relic pools. Their same-seed identities/sequences are independent of how the event was reached; they neither advance nor remove entries from generic rarity/identity sequences. | Doll Room's Act 2 sequence, fixed Forgotten Soul / Sword of Stone, Trash Heap's scripted shortlist, Fake Merchant's Event counterfeits. This class is defined by event exclusivity, not merely by scripted acquisition. |
-| Hidden random relic rewards | Combat and event rewards share one generic sequence system regardless of cost. Unspecified rarity advances rarity and the selected rarity's identity sequence; fixed rarity advances only its identity sequence. | Ranwid's hidden replacements, Wongos' hidden Common and deferred Mystery Box rewards. Classify deferred random payoffs separately from their scripted granting relic. **Supersedes the earlier paid-event isolation proposal.** |
-| Shown paid ordinary relics | Wongos follows the adopted shop policy below; Relic Trader remains unresolved. | Only Welcome to Wongos and Relic Trader qualify. As you confirmed, “ordinary” means Common / Uncommon / Rare / Shop, excluding Event and Ancient gifts. Shops remain a separate system. |
-
-### Event mechanics that constrain the policy
-
-| Event | Eligibility and offers | Current consumption and other consequences |
-|---|---|---|
-| Welcome to Wongos | Act 2; every player has at least 100 gold. Featured Rare identity is shown before purchase for 200 gold; leaving and other purchases are available. Hidden Common costs 100 gold. | Featured identity is removed on option generation, even if unaffordable or declined. Hidden Common is selected only on purchase. Mystery Ticket's three random relics are generated after five combats. Leaving downgrades a random upgraded card, if one exists. |
-| Relic Trader | Acts 2–3; every player owns at least five tradable relics. Randomly selects three owned relics and shows three named exchanges; only one is exchanged. Normally no leave option, though another trade avoids a particular exchange. | Generates and removes all three replacement identities and consumes three rarity entries before selection. Replacement rarity is independent of the surrendered relic's rarity; replacements need not be tradable. |
-
-Relic Trader's tradable filter excludes Starter/Event/Ancient rarities, upon-pickup effects, used-up relics, melted relics and pet-spawning relics.
-
-### Adopted allocation direction
-
-Deterministically allocate **disjoint identities within each rarity** to normal shops, Courier restocks and generic drops/rewards, respecting source eligibility. Size allocations for expected demand; equal shares are not required. The inspected pool size supports this direction.
-
-On eligible-allocation exhaustion, allow deterministic borrowing from another source. Borrow from the **end of the donor's remaining sequence**, taking the last eligible identity and removing it to prevent duplicates. This leaves the donor's next entries and original entry positions unchanged, but reduces its remaining supply. Prefer isolation in normal play; accept limited interference on exhaustion to preserve availability.
-
-**Open:** allocation sizes, donor-source priority and sequence addressing.
-
-**Ordinary-relic ownership:** vanilla `RelicCmd.Obtain` removes non-stackable ordinary identities from grab bags even when supplied by a special pool. Such ordinary relics are outside the event-exclusive class; scripting an acquisition does not make its identity independent of generic pools.
-
-## Shops, Wongos and Courier
-
-### Current behavior
-
-- Vanilla uses `Shops` RNG for identities/prices, but shared `Rewards` RNG for card rarity, upgrades and relic rarity. Merely entering a shop can change later combat rewards.
-- Catfood's room reward re-seeding and separate card-rarity offsets provide only partial isolation. Merchant card identities still use vanilla's `Shops` RNG; relic rarities/identity bags and the potion-generation counter remain shared across sources.
-- Courier restocks have no separate sequences. They advance existing shop RNG and shared reward generators, without incrementing the shop ordinal.
-- Prices follow RNG call order rather than item identity. Extra restocks or shifted items can change later prices; matching shop ordinals alone does not guarantee matching stock/prices.
-
-### Adopted policy
+### Stock and prices
 
 - Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
-- Wongos' featured offer consumes **one shop Rare identity on entry**, but no shop rarity entry or shop ordinal. Across the same number of subsequent shop Rare draws, this replaces at most one identity in the aggregate offers compared with a non-Wongos run; individual shop positions can shift. For example, rare relics `[A, B]` becomes `[B, C]` after Wongos consumes A. This comparison assumes no exhaustion borrowing or other pool changes. Its hidden rewards use the generic hidden-reward policy above.
-- Give each **item occurrence** a deterministic base price derived from the run seed, source sequence and entry's **original sequence position**, independently of other shop RNG. Repeated occurrences of the same item identity have distinct price addresses; an existing entry keeps its base price when moved between slots/shops. Apply current pricing modifiers, including discounts, afterward. No advance generation is required.
-- Use **separate Courier restock sequences**, analogous to card-reward rerolls, for cards, relic rarities/identities and potions. Restocks advance neither normal shop-stock nor generic reward sequence cursors, and do not advance the shop ordinal. On exhaustion, borrowing removes donor entries from the end as specified above. Apply the same deterministic-base-price rule.
+- Wongos' featured offer consumes **one shop Rare identity on entry**, but no shop rarity entry or shop ordinal. Across equally many subsequent shop Rare draws, at most one identity in the aggregate offers is replaced compared with a non-Wongos run; positions can shift. For example, `[A, B]` becomes `[B, C]` after Wongos consumes A. This assumes no exhaustion borrowing or other pool changes.
+- Give each **item occurrence** a deterministic base price derived from the run seed, source sequence and entry's **original position**, independently of other shop RNG. Repeated identities have distinct price addresses; an existing entry keeps its base price across slot/shop shifts. Apply current pricing modifiers afterward. No advance generation is required.
+- Give **Courier restocks separate sequences** for cards, relic rarities/identities and potions, analogous to card-reward rerolls. They advance neither normal shop-stock nor generic reward cursors, and do not advance the shop ordinal. Use the same base-price rule and preserve Courier's mechanics in the [appendix](#appendix-existing-mechanics).
 
-Preserve Courier's normal behavior: 20% discount; card removal does not restock; character cards retain slot type; colorless cards retain designated rarity; sale status is cleared; relic restocks roll ordinary rarity even in the initially Shop-rarity slot.
+### Relic allocation and exhaustion
 
-The high-level policy is settled; implementation still needs sequence addressing, allocation sizes and donor-source priority. Relic Trader's handling remains unresolved.
+Deterministically allocate **disjoint identities within each rarity** to normal shops, Courier restocks and generic rewards, respecting source eligibility. Size allocations for expected demand rather than equal shares.
 
-## Potions
+The inspected fully unlocked pool has **122 ordinary relics per character**: 26 Common, 32 Uncommon, 38 Rare and 26 Shop (115 shared + 7 character-specific). This supports the direction, but capacity must be considered per rarity and eligible source.
 
-**Current behavior:** Catfood separates drop rolls from other reward RNG. Identities use a different, global factory-call counter shared by shops and free sources; one call can generate multiple potions. Extra generation can shift another source's rewards. Crystal Sphere's fixed-rarity potion bypasses Catfood's sequence and uses event RNG.
+On eligible-allocation exhaustion, borrow deterministically from the **end of a donor's remaining sequence**, taking and removing its last eligible identity to prevent duplicates. Upcoming donor entries and their original positions remain unchanged, but its remaining supply shrinks. This is the accepted exception to isolation, preserving availability on exhaustion.
 
-**Your tentative proposal, pending relic handling:** combine **free combat/event potions**, separate paid sources by event, and keep shop potions separate. Shop/Courier isolation is already part of the adopted policy above.
+**Implementation details still open:** allocation sizes, donor-source priority and sequence addressing. The high-level policy is settled.
 
-## Remaining work and scope
+## Remaining design: rewards and encounter
 
-**Next decision:** settle Relic Trader's sequence and consumption timing—generation, offering or acquisition—then adapt relic handling to potions.
+| Class | Determines | Primary progression |
+|---|---|---|
+| Rewards | What the player gets | Cumulative ordinals |
+| Encounter | What challenge the player faces | Act-local ordinals |
 
-Beyond the specific open issues above, define what must remain equal and what may differ across:
+Organize each class by mechanism, then distinguish normal fights, elites, bosses, events, shops, ancients and **special relic effects** where their rules differ. These are sources or modifiers, not competing top-level classes. Progression is the default direction, with explicit exceptions where needed. The settled shop contract above is not reopened here.
 
-| Area | Systems to cover |
-|---|---|
-| Encounters | Fights, elites, events, shops, ancients, bosses. |
-| Rewards | Cards (fight/elite/boss drops, various event drops, rerolls), potions, relics, gold, transformations. |
-| In-encounter randomness | Upgrades/downgrades, shop prices/sales, monster HP/AI, random targets/costs/orbs, first/later shuffles, generated cards by pool/type (own-character Attack/Skill/Power, colorless, other characters). Which systems share randomness remains open. |
+**Catfood addressing baseline:** saves separate counts across acts for normal fights, elites, bosses, shops, events and ancients; re-seeds room reward RNG by category/count, including shops. Its shop isolation is partial: merchant card identities still use `Shops`, while relic bags/rarities and the potion-generation counter remain shared across sources.
 
-### Agent suggestions — not adopted
+### Rewards
 
-- Treat **forced events** (condition-selected, such as Lantern Key's Repy) and **unknown-room resolution** (what room type a `?` becomes before selecting its event/fight) as separate encounter concerns.
-- Use consistent seed derivation to avoid accidental overlaps.
-- Validate with targeted logging and repeated-run comparisons. Histories show offerings and choices but cannot reveal every RNG call or combat action.
+#### Cards: offers, rarity and rerolls
 
-### Non-goal improvements
+- **Catfood:** combat offers use explicit RNG based on category, count and reward position; rerolls use separate offsets. Keep special relic effects such as **card reward rerolls** in this scope, distinguishing sources where needed.
+- **Rarity:** separate offsets for normal fights, elites, bosses and shops start at `0`, allowing an earlier rare than the baseline. **Your inference, not confirmed intent:** this compensates for slower accumulation after separating categories.
+- **Act alignment — open:** ancient entry resets rarity offsets while reward counts continue. The same act-local rare slot can therefore fall in different cumulative offers. Example: A starts at offers 1, 2, 3; B at 2, 3, 4. A rare in the act's seventh card slot lands in each player's third offer—cumulative offer 3 for A, 4 for B. If another powerful card shares one of those offers, one player must choose between it and the rare while the other can obtain both. Resolve rare-card accumulation versus category/act alignment.
+- **Direct/event generation:** Catfood uses a room/event count plus a per-room call index. Seed arithmetic can overlap; the static index needs investigation, **not classification as a reproduced gameplay bug**.
 
-- Include the currently omitted run seed in ordinary boss-room shuffle initialization.
-- Replace the finite 400-entry relic-rarity list with on-demand rolls for a minor performance improvement.
+**Agent suggestion — not adopted:** consider saved/local indices or stable slots and meaningful card scopes for direct generation. Reproduce a useful failure case before expanding the design.
+
+#### Relics: source classification and consumption
+
+**Catfood:** precomputes 400 rarities shared by shops, combat drops and events; fixed-rarity requests bypass this sequence. Identities still use shared bags, so extra generation can shift other sources' rewards.
+
+**Proposed design:**
+
+| Class | Sequence rule | Sources and boundaries |
+|---|---|---|
+| Event-exclusive relics | Same-seed identities/sequences are independent of how the event was reached; neither advance nor remove entries from generic rarity/identity sequences. | Doll Room's Act 2 sequence, fixed Forgotten Soul / Sword of Stone, Trash Heap's scripted shortlist, Fake Merchant's Event counterfeits. Exclusivity, not scripting, defines this class. |
+| Hidden random relic rewards | Combat and event rewards share one generic system regardless of cost. Unspecified rarity advances rarity and the selected rarity's identity sequence; fixed rarity advances only identity. | Ranwid's hidden replacements, Wongos' hidden Common and deferred Mystery Box rewards. Classify special relics' deferred random payoffs separately from the granting relic. **Supersedes paid-event isolation.** |
+| Shown paid ordinary relics | Wongos is settled above; Relic Trader's sequence and consumption timing remain open. | Only Wongos and Relic Trader qualify. Shops have their separate settled system. |
+
+#### Potions
+
+**Catfood:** separates drop rolls from other reward RNG. Identities use a global factory-call counter shared by shops and free sources; one call can generate multiple potions, shifting other sources' rewards. Crystal Sphere's fixed-rarity potion bypasses Catfood's sequence and uses event RNG.
+
+**Your tentative proposal, pending relic handling:** combine free combat/event potions and separate paid sources by event. Shop/Courier isolation is already settled.
+
+#### Other gains and changes
+
+Cover gold, transformations and permanent upgrades/downgrades, distinguishing room sources and special relic effects where necessary. Their detailed equality and sequence-sharing rules remain to be specified; shop prices/sales are covered by the settled contract.
+
+### Encounter
+
+#### Selection and setup
+
+- **Catfood:** private encounter RNG uses encounter identity and category ordinal. It controls some monster compositions and initial configurations, not ordinary HP. Counts across acts can change setup seeds, but no visible mismatch was demonstrated; many encounters have fixed composition.
+- **Your proposal:** use act-local ordinals for setup. Cover normal fights, elites, bosses, events, shops and ancients where their selection/setup rules differ, plus special relic effects that modify the challenge.
+- **Lantern Key:** Catfood counts forced War Historian Repy as an ordinary event. Your proposal assigns this forced Act 3 event **ordinal 0**, leaving the ordinary event sequence untouched.
+- **Agent suggestion — not adopted:** treat forced-event selection and unknown-room resolution (what room type a `?` becomes before selecting its event/fight) as separate concerns.
+
+#### Combat randomness
+
+- **Catfood:** re-seeds opening shuffle RNG at combat initialization; later shuffles continue within that combat's sequence.
+- **Your proposal:** use act-local ordinals for opening shuffles as well as setup. After different Act 1 fight counts, the first Act 2 fight has equivalent setup/shuffle addressing but different reward addresses, overwhelmingly likely to yield different rewards. Different decks can still produce different hands.
+- **Scope still open:** monster HP/AI, random targets/costs/orbs, first/later shuffles, temporary upgrades/downgrades and generated combat cards by pool/type (own-character Attack/Skill/Power, colorless, other characters). Include special relic effects where applicable; determine which mechanisms share randomness.
+
+## Next steps and validation
+
+**Next decision:** settle Relic Trader's sequence and consumption timing—generation, offering or acquisition—then adapt relic handling to potions. Other open decisions are recorded under their mechanisms above.
+
+**Agent suggestions — not adopted:** use consistent seed derivation to avoid overlaps; validate with targeted logging and repeated-run comparisons. Histories show offerings and choices but cannot reveal every RNG call or combat action.
+
+**Non-goal improvements:** include the currently omitted run seed in ordinary boss-room shuffle initialization; replace the finite 400-entry relic-rarity list with on-demand rolls for a minor performance improvement.
+
+**Verification pending:** catfood should already handle save/load correctly, without double-counting or outcome differences. (This needs further check to see whether SL fix is needed.)
 
 ## Reference
 
 [Event spreadsheet](outputs/01a086ff-8c1c-7ff0-bda5-09f2bacf39c2/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices, not hidden rewards: Punch-Off is true; Wongos is false. Detailed criteria and state restrictions are in the workbook.
+
+## Appendix: existing mechanics
+
+The following existing mechanics constrain the design; preserve them unless a policy explicitly changes their sequence use:
+
+| Source | Rules |
+|---|---|
+| Wongos | Act 2; every player has at least 100 gold. Featured Rare costs 200 gold and is removed on option generation, even if unaffordable or declined; leaving/other purchases are available. Hidden Common costs 100 gold and is selected only on purchase. Mystery Ticket generates three random relics after five combats (the deferred Mystery Box rewards). Leaving downgrades a random upgraded card, if one exists. |
+| Relic Trader | Acts 2–3; every player owns at least five tradable relics. Randomly selects three owned relics and shows three exchanges; generates/removes all three replacement identities and consumes three rarity entries before one trade is chosen. Normally no leave option. Replacement rarity is independent of surrendered rarity; replacements need not be tradable. Tradable excludes Starter/Event/Ancient rarities, upon-pickup effects, used-up, melted and pet-spawning relics. |
+| Courier | 20% discount; card removal does not restock; character cards retain slot type; colorless cards retain designated rarity; sale status is cleared. Relic restocks roll ordinary rarity even in the initially Shop-rarity slot. Restocks do not advance the shop ordinal. |
