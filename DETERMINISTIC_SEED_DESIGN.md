@@ -31,9 +31,9 @@ Vanilla provides the baseline Catfood improves on:
 | Combat and cards | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. Card-rarity offsets start at `-0.05`. |
 | Relic pools | Ordinary rarity rolls are 50% Common / 33% Uncommon / 17% Rare. Shops pull two rolled-rarity relics and one fixed Shop relic from the back of the bag; rewards and Wongos pull from the front. Five ordinary relics are shop-ineligible. Fixed-rarity pulls still remove identities; depletion/fallback can change delivered rarity. `RelicCmd.Obtain` removes non-stackable ordinary identities even for scripted/special-pool acquisitions. |
 
-## Settled design: shops, Wongos and Courier
+## Settled policy: shops, Wongos and Courier
 
-Treat this section as a fixed contract for subsequent design work. Relic Trader event remains outside it; Wongos' hidden rewards belong to generic rewards below.
+**Discussion boundary:** treat this section as a fixed contract for subsequent design work; exclude it when discussing unfinished designs.
 
 ### Stock and prices
 
@@ -42,21 +42,23 @@ Treat this section as a fixed contract for subsequent design work. Relic Trader 
 - The card slot marked on sale is determined only by the shop ordinal (e.g., derive it from run seed + shop ordinal), independently of item identities and other RNG calls.
 - Give each **item occurrence** a deterministic base price derived from the run seed, source sequence and entry's **original position**, independently of other shop RNG. Repeated identities have distinct price addresses; an existing entry keeps its base price across slot/shop shifts. No advance generation is required.
 - Give **Courier restocks separate sequences** for cards, relic rarities/identities and potions, analogous to Catfood card-reward rerolls. They advance neither normal shop-stock nor generic reward cursors, and do not advance the shop ordinal. Use the same base-price rule and preserve Courier's original mechanics in the [appendix](#appendix-existing-mechanics).
-- Wongos' featured offer consumes only **one shop Rare identity**, but no shop rarity entry. Subsequent shops may effectively differ by at most one rare relic offer compared with a non-Wongos run (positions can shift). For example, if the subsequent shop originally have rare relics `[A, B]`, they become `[B, C]` after Wongos consumes A. When entering Wongos with less than 200 gold, the featured offer is unavailable and thus does not consume anything.
+- Wongos' featured offer consumes only **one shop Rare identity**, but no shop rarity entry. Subsequent shops may effectively differ by at most one rare relic offer compared with a non-Wongos run (positions can shift). For example, if the subsequent shop originally have rare relics `[A, B]`, they become `[B, C]` after Wongos consumes A. When entering Wongos with less than 200 gold, the featured offer is unavailable and thus does not consume anything. Wongos' other options belong to generic rewards below.
 
-### Relic allocation and exhaustion
+## Settled strategy: Relic allocation and exhaustion
 
 Deterministically allocate **disjoint identities within each rarity** to normal shops, Courier restocks and generic rewards, respecting source eligibility. Size allocations for expected demand rather than equal shares.
 
 Fully unlocked pool has **122 ordinary relics per character**: 26 Common, 32 Uncommon, 38 Rare and 26 Shop (115 shared + 7 character-specific). This supports the direction, but capacity must be considered per rarity and eligible source.
 
-#### Borrowing: rare exception, deferred
+**potential issues:** Since there are 5 shop-ineligible relics, the odds of these relics dropping is increased. We should deal with this.
 
-Borrowing applies only to **finite relic-identity allocations**. Card and potion sequences may repeat identities and can continue indefinitely; they do not borrow. Relic-rarity rolls can likewise continue without borrowing identities.
+### Borrowing: rare exception, deferred
 
-When a source has no eligible identity left for the requested rarity, borrow deterministically from another source's allocation of that rarity. Take and remove the **last eligible identity from the donor's remaining sequence**. This is the accepted exception to isolation, preserving availability on exhaustion.
+**Discussion boundary:** treat exhaustion as rare and exclude it from design discussions.
 
-**Discussion boundary:** treat exhaustion as rare and exclude it from subsequent normal-case design discussions and comparisons unless explicitly discussing borrowing.
+When a source has no eligible identity left for the requested rarity, borrow deterministically from another source's allocation of that rarity. Take and remove the **last eligible identity from the donor's remaining sequence**. This is the only exception to isolation, aiming at preserving availability on exhaustion.
+
+Borrowing applies only to **finite relic-identity allocations**. Card/potion sequences and relic-rarity rolls may repeat identities and can continue indefinitely; they do not borrow.
 
 **Decide later:** allocation sizes, donor-source priority, behavior when no donor has an eligible identity (including rarity fallback versus a terminal fallback), and how borrowed entries retain their source/position for pricing and saved state. Sequence addressing also remains an implementation detail. The high-level isolation policy is settled.
 
@@ -67,7 +69,7 @@ When a source has no eligible identity left for the requested rarity, borrow det
 | Rewards | What the player gets | Cumulative ordinals |
 | Encounter | What challenge the player faces | Act-local ordinals |
 
-Organize each class by mechanism, then distinguish normal fights, elites, bosses, events, shops, ancients and **special relic effects** where their rules differ. These are sources or modifiers, not competing top-level classes. Progression is the default direction, with explicit exceptions where needed. The settled shop contract above is not reopened here.
+Organize each class by mechanism, then distinguish normal fights, elites, bosses, ancients, events and special relic effects where their rules differ. The settled shop contract above is not reopened here.
 
 **Catfood addressing baseline:** saves separate counts across acts for normal fights, elites, bosses, shops, events and ancients; re-seeds room reward RNG by category/count, including shops. Its shop isolation is partial: merchant card identities still use `Shops`, while relic bags/rarities and the potion-generation counter remain shared across sources.
 
@@ -76,7 +78,7 @@ Organize each class by mechanism, then distinguish normal fights, elites, bosses
 #### Cards: offers, rarity and rerolls
 
 - **Catfood:** combat offers use explicit RNG based on category, count and reward position; rerolls use separate offsets. Keep special relic effects such as **card reward rerolls** in this scope, distinguishing sources where needed.
-- **Rarity:** separate offsets for normal fights, elites, bosses and shops start at `0`, allowing an earlier rare than the baseline. **Your inference, not confirmed intent:** this compensates for slower accumulation after separating categories.
+- **Rarity:** separate offsets for normal fights, elites, bosses and shops start at `0`, allowing an earlier rare than the baseline `-0.05`. **Inference:** this compensates for slower accumulation after separating categories.
 - **Act alignment — open:** ancient entry resets rarity offsets while reward counts continue. The same act-local rare slot can therefore fall in different cumulative offers. Example: A starts at offers 1, 2, 3; B at 2, 3, 4. A rare in the act's seventh card slot lands in each player's third offer—cumulative offer 3 for A, 4 for B. If another powerful card shares one of those offers, one player must choose between it and the rare while the other can obtain both. Resolve rare-card accumulation versus category/act alignment.
 - **Direct/event generation:** Catfood uses a room/event count plus a per-room call index. Seed arithmetic can overlap; the static index needs investigation, **not classification as a reproduced gameplay bug**.
 
@@ -137,7 +139,7 @@ Cover gold, transformations and permanent upgrades/downgrades, distinguishing ro
 
 **Identity depletion inherited by Catfood:** `RelicGrabBag.GetAvailableDeque` searches from the requested rarity along Shop → Common → Uncommon → Rare, then tries the multiplayer fallback bag; factory pulls return Circlet if no eligible identity remains. Bags explicitly configured to refresh can first refill an empty requested rarity. This is vanilla fallback within shared bags, not our planned borrowing between source allocations.
 
-The following existing mechanics constrain the design; preserve them unless a policy explicitly changes their sequence use:
+The following are game rules, unrelated to our randomness-control design:
 
 | Source | Rules |
 |---|---|
