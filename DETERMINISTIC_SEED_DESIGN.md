@@ -53,28 +53,30 @@ Vanilla provides the baseline Catfood improves on:
 
 **Improvements over Catfood (design, not implementation):**
 
-- Isolate normal shop stock from other rewards and Courier consumption, including relic identities and potion generation.
+- Isolate shop stock from other rewards and Courier consumption, including relic identities and potion generation.
 - Stabilize sale slots and occurrence prices instead of letting RNG call order change them.
 - Limit Wongos to one shop Rare identity; consume nothing when its featured offer is unaffordable.
 - Replace shared relic bags with disjoint source allocations.
 
 ### Stock and prices
 
-- Normal stock depends only on shop ordinal, except for Wongos.
+- Shop stock depends only on shop ordinal, except for Wongos.
 - Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), empirically lowered from the expected offset of repeating `3 normal → 1 elite → 2 normal → 1 elite` to account for boss resets.
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
-- **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither normal-stock/generic cursors nor shop ordinal. Apply the same price rule and preserve [original mechanics](#appendix-existing-mechanics).
+- **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop/generic cursors nor shop ordinal. Apply the same price rule and preserve [original mechanics](#appendix-existing-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, consume nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#relics-source-classification-and-consumption).
 
 ## Settled strategy: Relic allocation and exhaustion
 
-Construct four disjoint relic-identity sequences: generic rewards, normal-shop Common/Uncommon/Rare, Courier, and Shop-rarity. Normal shops own both shop sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / normal shops / Courier; all Shop-rarity identities enter the dedicated shop sequence.
+Construct four disjoint relic-identity sequences: generic rewards, shop, Courier, and Shop-rarity. The first three each contain Common, Uncommon and Rare subsequences that advance independently. Shops own the shop and Shop-rarity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / shop / Courier; all Shop-rarity identities enter the dedicated sequence.
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
 
-Mix shop-ineligible relics into allocations normally. When reached in shop/Courier draws, discard them and take the next eligible identity of the same rarity without another rarity roll.
+Mix shop-ineligible relics into allocations normally. When reached in shop/Courier draws, discard them and take the next eligible identity of the same rarity without another rarity roll. Discarded shop-ineligible relics retains in its place and is borrowable from the generic rewards sequence
+
+**Implementation:** construct the shuffled identity allocations once, retain original entry positions and mark removals. Generate rarity rolls on demand with independent source RNGs; save allocation state and RNG progress.
 
 ### Borrowing (Rare)
 
@@ -84,7 +86,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 **Final fallback — settled:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#appendix-existing-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
 
-**Deferred:** borrowed-entry price/save addresses and sequence implementation.
+**Borrowed entries:** retain their original source sequence and entry position as the price/save address. Apply the receiving source's price rules; save transfers and consumption.
 
 ## Remaining design: rewards and encounter
 
@@ -117,9 +119,9 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood:** shared bags and 400 precomputed rarity rolls couple shops, combat, chests and events. Fixed-rarity requests skip rarity consumption. Roll 401 would fail (code finding, not reproduced); identity depletion uses the appendix fallback.
 
-**Proposed:** hidden random relic rewards from combat/chests/events share the generic allocation, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic. Allocation and exhaustion follow the [settled strategy](#settled-strategy-relic-allocation-and-exhaustion).
+**Settled:** hidden random relic rewards from combat/chests/events share the generic allocation, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic. Allocation and exhaustion follow the [settled strategy](#settled-strategy-relic-allocation-and-exhaustion).
 
-**Consumption order — settled:** preserve existing generation order (e.g. elite relic preceeds Wongos mystery ticket's 3 relics) and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
+**Consumption order — settled:** preserve existing generation order and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
 
 **Filtered pulls — settled:** take the first eligible identity; shop/Courier skips follow the [allocation rule](#settled-strategy-relic-allocation-and-exhaustion). The only possible filter is `IsAllowedInShops`; disjoint allocations already handle Courier's displayed-relic exclusion.
 
@@ -127,7 +129,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood:** isolated drop rolls, but shop/free identities share a factory-call counter (possibly several potions per call). Crystal Sphere's fixed-rarity potion uses event RNG.
 
-**Tentative:** combine free combat/event potions; separate paid sources by event. Pending relic policy.
+**Tentative:** combine free combat/event potions; separate paid sources by event.
 
 #### Other gains and changes
 
@@ -158,11 +160,11 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 ## Next steps and validation
 
-**Next:** resolve the remaining relic allocation questions, then address Encounter, including Relic Trader, other events/Ancients and combat setup. Potion policy can follow the relic decisions separately.
+**Next:** relic reward and allocation policy is settled. Address Encounter, including Relic Trader, other events/Ancients and combat setup; potion policy can proceed separately.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
-**Separate improvements:** add run seed to boss shuffle initialization; generate relic rarities on demand.
+**Separate improvement:** add run seed to boss shuffle initialization.
 
 **Pending:** verify save/load preserves counters and outcomes.
 
