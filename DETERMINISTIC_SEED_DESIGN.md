@@ -36,6 +36,7 @@ Vanilla provides the baseline Catfood improves on:
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
 | Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls both add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base rare chances are 3%/10% (Scarcity: 1.49%/5%); add the offset. Boss rewards are always Rare; shop rolls read the offset without updating it. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
+| Chests | Ordinary relic rarity roll + shared-bag identity; gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
 | Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Five relics are shop-ineligible. Fixed-rarity pulls and scripted non-stackable acquisitions still remove identities; depletion can change delivered rarity. |
 
 ## Settled policy: shops, Wongos and Courier
@@ -76,7 +77,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 ## Remaining design: rewards and encounter
 
-| Class | Determines | Primary progression |
+| Category | Determines | Primary progression |
 |---|---|---|
 | Rewards | What the player gets | Cumulative ordinals |
 | Encounter | What challenge the player faces | Act-local ordinals |
@@ -105,11 +106,12 @@ Distinguish fights, elites, bosses, Ancients, chests, events and special relic e
 
 **Proposed design:**
 
-| Class | Sequence rule | Sources and boundaries |
+| Source | Sequence rule | Sources and boundaries |
 |---|---|---|
-| Event-exclusive relics | Route-independent identities/sequences; no generic rarity or identity consumption. | Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant counterfeits. |
 | Hidden random relic rewards | Combat/chests/events share generic rewards regardless of cost. Random rarity advances rarity + identity; fixed rarity advances only identity. | Ranwid, Wongos' Common and Mystery Box. Classify deferred payoffs separately from their granting relic. **Supersedes paid-event isolation.** |
 | Shown paid ordinary relics | Wongos settled; Relic Trader sequence/consumption open. | Wongos and Relic Trader only; shops are separate. |
+
+**To settle:** Relic Trader's source and consumption timing; whether declined offers remain consumed; ordering of simultaneous/deferred drops; handling filtered or scripted ordinary identities. Allocation balance remains open; exhaustion stays deferred.
 
 #### Potions
 
@@ -122,6 +124,13 @@ Distinguish fights, elites, bosses, Ancients, chests, events and special relic e
 **Open:** gold, transformations and permanent upgrades/downgrades; define equality and sharing by source/effect.
 
 ### Encounter
+
+#### Shops, chests and events
+
+- **Shops:** settled above.
+- **Chest policy:** relics use generic rarity + identity; base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other encounter identities. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
+- **Catfood chests:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold still uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
+- **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
 
 #### Selection and setup
 
@@ -138,9 +147,7 @@ Distinguish fights, elites, bosses, Ancients, chests, events and special relic e
 
 ## Next steps and validation
 
-**Recommended next settlement — not adopted:** event-exclusive relic isolation. Keep each event's identities/sequence independent of route and generic rewards, preserving its choices and costs. This class has no ordinary-allocation dependency and can leave the unfinished scope on its own.
-
-**Then:** settle Relic Trader's sequence and consumption timing, followed by generic relic policy and potions.
+**Next:** finish ordinary relic reward policy, starting with Relic Trader. Then address the Encounter category: shops are settled, chest policy is above, and event/Ancient and combat setup remain. Potion policy can follow the relic decisions separately.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -163,3 +170,4 @@ The following are game rules, unrelated to our randomness-control design:
 | Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold, consumed when offered even if unaffordable/declined. Hidden Common: 100 gold, generated on purchase. Both require `IsAllowedInShops`; preserve that filter. Mystery Ticket pays three random relics after five combats. Leaving downgrades a random upgraded card, if any. |
 | Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Shows three randomly selected owned relics and three replacements; consumes all three replacement identities/rarities before selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
 | Courier | 20% discount; removal never restocks. Restocked character cards retain type, colorless cards retain rarity; sale clears. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. |
+| Silver Crucible | Neow relic; first treasure room is empty. Suppresses both base gold and relic generation. |
