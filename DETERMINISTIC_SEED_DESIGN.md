@@ -20,9 +20,13 @@ Base findings on code; use run histories as supporting evidence.
 
 ## Terms and vanilla baseline
 
+- **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
+- **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype, counted separately in this design. An event may start combat without changing the map type.
+- **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
+- **Normal fight:** `RoomType.Monster`; use **combat** for any battle, including elites, bosses and event battles. **Monster** in prose means an individual enemy.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
-- **Same-seed divergence (歪种):** huge, usually malicious difference happening early-run or mid-run for the same seed. (permit late-game difference due to players getting different total ordinals for each encounter category; that's benign) This is what we try to avoid, as stated by Fairness principle.
+- **Same-seed divergence (歪种):** huge, usually malicious difference happening early-run or mid-run for the same seed. (permit late-game difference due to players getting different total ordinals for each room type/subtype; that's benign) This is what we try to avoid, as stated by Fairness principle.
 - **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence at its original source position; repeats are distinct entries and removals never renumber survivors.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
 
@@ -80,17 +84,17 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 | Category | Determines | Primary progression |
 |---|---|---|
 | Rewards | What the player gets | Cumulative ordinals |
-| Encounter | What challenge the player faces | Act-local ordinals |
+| Encounter | Room content and combat conditions | Act-local ordinals |
 
-Distinguish fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
+Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 
-**Catfood addressing:** cumulative fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses category counts, a normal-fight fallback and event-card overrides. Shop card identities still use `Shops`; relic bags/rarities and potion counts remain shared.
+**Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides. Shop card identities still use `Shops`; relic bags/rarities and potion counts remain shared.
 
 ### Rewards
 
 #### Cards: offers, rarity and rerolls
 
-- **Catfood:** combat identities/upgrades use category, count and offer position; rerolls have separate seed offsets but still update the category's rarity state, potentially shifting later offers.
+- **Catfood:** combat identities/upgrades use room type, count and offer position; rerolls have separate seed offsets but still update that room type's rarity state, potentially shifting later offers.
 - **Rarity:** separate normal-fight, elite, boss and shop offsets follow baseline growth/reset rules. Ancient entry additionally resets all four to `-0.05`, including Neow.
 - **Compensation — proposed:** slightly raise the starting/reset offset to compensate for separation. Amount remains open; separation removes shared growth and shared resets, so assess its net effect.
 - **Act alignment — open:** Ancient resets coexist with cumulative rarity RNG addresses. Rare slots and valuable-card groupings can differ; assess whether this causes 歪种 under the fairness principle.
@@ -98,7 +102,7 @@ Distinguish fights, elites, bosses, Ancients, chests, events and special relic e
 
 **Unadopted suggestion:** stable direct-generation scopes/indices, if a reproduced issue warrants them.
 
-**Reroll example** (Scarcity): three non-rares raise offset `0` → `0.015`. Next matching fight, draw `0.025` gives Uncommon versus Rare (about 1.5% versus 3%). A rare reroll instead resets the offset. Assess the impact against the 歪种 definition.
+**Reroll example** (Scarcity): three non-rares raise offset `0` → `0.015`. Next matching normal fight, draw `0.025` gives Uncommon versus Rare (about 1.5% versus 3%). A rare reroll instead resets the offset. Assess the impact against the 歪种 definition.
 
 #### Relics: source classification and consumption
 
@@ -128,13 +132,13 @@ Distinguish fights, elites, bosses, Ancients, chests, events and special relic e
 #### Shops, chests and events
 
 - **Shops:** settled above.
-- **Chest policy:** relics use generic rarity + identity; base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other encounter identities. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
+- **Chest policy:** relics use generic rarity + identity; base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other room types. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 - **Catfood chests:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold still uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
 - **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
 
 #### Selection and setup
 
-- **Catfood:** encounter identity + cumulative category ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch reproduced.
+- **Catfood:** encounter ID + cumulative room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch reproduced.
 - **Proposed:** act-local setup ordinals, distinguishing source/effect where necessary.
 - **Lantern Key proposal:** forced Act 3 War Historian Repy gets **ordinal 0**, leaving ordinary events untouched; Catfood counts it normally.
 - **Unadopted suggestion:** separate forced-event selection from `?` room-type resolution.
@@ -142,7 +146,7 @@ Distinguish fights, elites, bosses, Ancients, chests, events and special relic e
 #### Combat randomness
 
 - **Catfood:** re-seeds shuffle RNG at combat start; later shuffles continue it.
-- **Proposed:** act-local opening-shuffle ordinals. First Act 2 fight then aligns setup/shuffle addresses despite different Act 1 fight counts; cumulative reward addresses still differ.
+- **Proposed:** act-local opening-shuffle ordinals. First Act 2 normal fight then aligns setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses still differ.
 - **Open:** HP/AI, random targets/costs/orbs, shuffles, temporary upgrades/downgrades and generated cards by pool/type; decide sharing and special-relic interactions.
 
 ## Next steps and validation
