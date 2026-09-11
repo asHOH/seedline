@@ -8,6 +8,8 @@ Compare runs with matching seeds, versions, rules and eligible pools. This conte
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
+**Exhaustion boundary:** finite relic allocations may borrow on exhaustion. This rare exception applies throughout; exclude it from ordinary isolation discussions.
+
 Base findings on code; use run histories as supporting evidence.
 
 ## Goals
@@ -45,11 +47,11 @@ Vanilla provides the baseline Catfood improves on:
 - Isolate normal shop stock from other rewards and Courier consumption, including relic identities and potion generation.
 - Stabilize sale slots and occurrence prices instead of letting RNG call order change them.
 - Limit Wongos to one shop Rare identity; consume nothing when its featured offer is unaffordable.
-- Replace shared relic bags with disjoint source allocations; borrow only on exhaustion.
+- Replace shared relic bags with disjoint source allocations.
 
 ### Stock and prices
 
-- Normal stock depends only on shop ordinal, except for Wongos and borrowing.
+- Normal stock depends only on shop ordinal, except for Wongos.
 - Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
@@ -66,9 +68,7 @@ Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 
 
 ### Borrowing: rare exception, deferred
 
-**Discussion boundary:** treat exhaustion as rare and exclude it from design discussions of relics.
-
-On exhaustion, borrow the **last eligible remaining identity** of the requested rarity from a deterministic donor source. This is the exception to source-allocation isolation.
+On exhaustion, borrow the **last eligible remaining identity** of the requested rarity from a deterministic donor source.
 
 Only finite relic-identity allocations borrow; card/potion sequences and rarity rolls continue indefinitely.
 
