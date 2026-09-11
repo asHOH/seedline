@@ -8,6 +8,8 @@ Compare runs with matching seeds, versions, rules and eligible pools. This conte
 
 Tutorial overrides, including scripted rewards and boss discovery order, are excluded.
 
+Extreme conditions such as depleting a rarity of relics are also excluded.
+
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion. This rare exception applies throughout; exclude it from ordinary isolation discussions.
@@ -68,19 +70,21 @@ Vanilla provides the baseline Catfood improves on:
 
 ## Settled strategy: Relic allocation and exhaustion
 
-Deterministically allocate **disjoint identities within each rarity** to normal shops, Courier restocks and generic rewards, respecting source eligibility. Size allocations for expected demand rather than equal shares.
+Construct four disjoint relic-identity sequences: generic rewards, normal-shop Common/Uncommon/Rare, Courier, and Shop-rarity. Normal shops own both shop sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / normal shops / Courier; all Shop-rarity identities enter the dedicated shop sequence.
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
 
-**Open:** account for increased generic-drop odds of the five shop-ineligible relics.
+Mix shop-ineligible relics into allocations normally. When reached in shop/Courier draws, discard them and take the next eligible identity of the same rarity without another rarity roll.
 
-### Borrowing: rare exception, deferred
+### Borrowing (Rare)
 
-On exhaustion, borrow the **last eligible remaining identity** of the requested rarity from a deterministic donor source.
+On exhaustion, borrow the **last eligible remaining identity** of the requested rarity. Other sequences borrow from Courier first; Courier borrows from generic first.
 
 Only finite relic-identity allocations borrow; card/potion sequences and rarity rolls continue indefinitely.
 
-**Deferred:** allocation sizes, donor priority, final fallback, borrowed-entry price/save addresses and sequence implementation.
+**Final fallback — settled:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#appendix-existing-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
+
+**Deferred:** borrowed-entry price/save addresses and sequence implementation.
 
 ## Remaining design: rewards and encounter
 
@@ -117,7 +121,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Consumption order — settled:** preserve existing generation order (e.g. elite relic preceeds Wongos mystery ticket's 3 relics) and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
 
-**Filtered pulls — settled:** take the first eligible identity, leaving skipped entries available. The only possible filter is `IsAllowedInShops`; disjoint allocations already handle Courier's displayed-relic exclusion.
+**Filtered pulls — settled:** take the first eligible identity; shop/Courier skips follow the [allocation rule](#settled-strategy-relic-allocation-and-exhaustion). The only possible filter is `IsAllowedInShops`; disjoint allocations already handle Courier's displayed-relic exclusion.
 
 #### Potions
 
