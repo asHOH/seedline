@@ -22,20 +22,29 @@ Base findings on code; use run histories as supporting evidence.
 
 **Fairness principle:** limit the difference one room creates compared with a run without that room. Even consuming the last sequence entry can matter greatly if it contains an exceptionally powerful relic.
 
-## Terms and vanilla baseline
+## Terms
+
+### Game context
 
 - **Scarcity:** the Ascension 7 modifier, active at A7 and above. It reduces base Rare card chances, rarity-offset growth and card-upgrade odds; "without/with Scarcity" means A0–6/A7+.
 - **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype, counted separately in this design. An event may start combat without changing the map type.
 - **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
 - **Normal fight:** `RoomType.Monster`; use **combat** for any battle, including elites, bosses and event battles. **Monster** in prose means an individual enemy.
-- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
+
+### Rewards
+
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
-- **Same-seed divergence (歪种):** huge, usually malicious difference happening early-run or mid-run for the same seed. (permit late-game difference due to players getting different total ordinals for each room type/subtype; that's benign) This is what we try to avoid, as stated by Fairness principle.
 - **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence at its original source position; repeats are distinct entries and removals never renumber survivors.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
 
-**Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
+### Determinism
+
+- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
+- **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
+- **Same-seed divergence (歪种):** huge, usually malicious difference happening early-run or mid-run for the same seed. (permit late-game difference due to players getting different total ordinals for each room type/subtype; that's benign) This is what we try to avoid, as stated by Fairness principle.
+
+## Vanilla baseline
 
 Vanilla provides the baseline Catfood improves on:
 
