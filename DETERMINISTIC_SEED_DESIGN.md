@@ -69,7 +69,7 @@ Borrowing applies only to **finite relic-identity allocations**. Card/potion seq
 | Rewards | What the player gets | Cumulative ordinals |
 | Encounter | What challenge the player faces | Act-local ordinals |
 
-Organize each class by mechanism, then distinguish normal fights, elites, bosses, ancients, events and special relic effects where their rules differ. The settled shop contract above is not reopened here.
+Organize each class by mechanism, then distinguish normal fights, elites, bosses, ancients, chests, events and special relic effects where their rules differ. The settled shop contract above is not reopened here.
 
 **Catfood addressing baseline:** saves separate counts across acts for normal fights, elites, bosses, shops, events and ancients; re-seeds room reward RNG by category/count, including shops. Its shop isolation is partial: merchant card identities still use `Shops`, while relic bags/rarities and the potion-generation counter remain shared across sources.
 
@@ -78,7 +78,7 @@ Organize each class by mechanism, then distinguish normal fights, elites, bosses
 #### Cards: offers, rarity and rerolls
 
 - **Catfood:** combat offers use explicit RNG based on category, count and reward position; rerolls use separate offsets. Keep special relic effects such as **card reward rerolls** in this scope, distinguishing sources where needed.
-- **Rarity:** separate offsets for normal fights, elites, bosses and shops start at `0`, allowing an earlier rare than the baseline `-0.05`. **Inference:** this compensates for slower accumulation after separating categories.
+- **Rarity:** separate offsets for normal fights, elites, bosses and shops. This could cause slower offset accumulation and thus less rare card appearance.
 - **Act alignment — open:** ancient entry resets rarity offsets while reward counts continue. The same act-local rare slot can therefore fall in different cumulative offers. Example: A starts at offers 1, 2, 3; B at 2, 3, 4. A rare in the act's seventh card slot lands in each player's third offer—cumulative offer 3 for A, 4 for B. If another powerful card shares one of those offers, one player must choose between it and the rare while the other can obtain both. Resolve rare-card accumulation versus category/act alignment.
 - **Direct/event generation:** Catfood uses a room/event count plus a per-room call index. Seed arithmetic can overlap; the static index needs investigation, **not classification as a reproduced gameplay bug**.
 
