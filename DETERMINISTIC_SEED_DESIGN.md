@@ -24,6 +24,7 @@ Base findings on code; use run histories as supporting evidence.
 
 ## Terms and vanilla baseline
 
+- **Scarcity:** the Ascension 7 modifier, active at A7 and above. It reduces base Rare card chances, rarity-offset growth and card-upgrade odds; "without/with Scarcity" means A0–6/A7+.
 - **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype, counted separately in this design. An event may start combat without changing the map type.
 - **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
@@ -45,7 +46,7 @@ Vanilla provides the baseline Catfood improves on:
 | Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset. Boss rewards guarantee Rare and reset the shared offset to `-0.05`. Shop rolls read the offset without updating it. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
 | Chests | Ordinary relic rarity roll + shared-bag identity; gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
-| Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Five relics are shop-ineligible. Depletion can change delivered rarity. |
+| Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible. Depletion can change delivered rarity. |
 
 ## Settled policy: shops, Wongos and Courier
 
@@ -88,7 +89,7 @@ Hidden random relic rewards from combat/chests/events share the generic allocati
 
 **Consumption order:** preserve existing generation order and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
 
-**Filtered pulls:** take the first eligible identity; shop/Courier skips follow the [allocation rule](#allocation). The only possible filter is `IsAllowedInShops`; disjoint allocations already handle Courier's displayed-relic exclusion.
+**Filtered pulls:** take the first eligible identity, preserving vanilla run-state eligibility (`IsAllowed`) for draws and borrowing. The only additional source-specific filter is `IsAllowedInShops`; entries skipped by it remain available at their original positions for later eligible pulls. Shop/Courier skips follow the [allocation rule](#allocation); disjoint allocations already handle Courier's displayed-relic exclusion.
 
 ### Borrowing
 
@@ -118,10 +119,10 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 #### Cards: offers, rarity and rerolls
 
 - **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
-- **Unconfirmed Catfood bug:** shared options appear to make the initial offer and reroll consume one reroll-seeded stream. Not reproduced in-game.
+- **Code-confirmed Catfood bug:** ordinary card rewards share initial and reroll options, so both consume one reroll-seeded identity/upgrade stream. Gameplay impact not reproduced in-game.
 - **Catfood rarity:** separate normal-fight, elite, boss and shop offsets use vanilla base probabilities, growth and rare-reset value. Boss rewards reset only the boss offset; Ancient entry resets all four to `-0.05`, including Neow. Shop rolls do not grow their isolated offset, leaving their Rare roll chance at 4% (0% with Scarcity).
-- **Elite initialization — proposed:** start the elite offset at `-0.005` with Scarcity, approximating three normal fights with three-card rewards. Retain vanilla non-rare growth; initialization without Scarcity remains open.
-- **Offset resets — settled:** preserve combat rarity resets to `-0.05` after Rare rolls and on Ancient entry.
+- **Elite initialization — proposed:** on Ancient entry, including Neow, set the elite offset to `0.01`/`-0.02` (without Scarcity/with Scarcity) when the other offsets reset, approximating two normal fights. Retain vanilla non-rare growth.
+- **Offset resets — settled:** preserve combat rarity resets to `-0.05` after Rare rolls and resets on Ancient entry.
 - **Act alignment — open:** find other ways to prevent divergence while preserving offset resets.
 - **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
 
@@ -181,6 +182,8 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 **Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
 
 The following are game rules, unrelated to our randomness-control design:
+
+**Ordinary relic eligibility:** the following 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited. (Off-scope note: Lasting Candy is also disallowed if any Ironclad player has `UnlockState.NumberOfRuns == 0`.)
 
 | Source | Rules |
 |---|---|
