@@ -62,7 +62,7 @@ Vanilla provides the baseline Catfood improves on:
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither normal-stock/generic cursors nor shop ordinal. Apply the same price rule and preserve [original mechanics](#appendix-existing-mechanics).
-- **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, consume nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use generic rewards below.
+- **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, consume nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#relics-source-classification-and-consumption).
 
 ## Settled strategy: Relic allocation and exhaustion
 
@@ -85,7 +85,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 | Category | Determines | Primary progression |
 |---|---|---|
 | Rewards | What the player gets | Cumulative ordinals |
-| Encounter | Room content and combat conditions | Act-local ordinals |
+| Encounter | Room content, named event choices and combat conditions | Act-local ordinals |
 
 Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 
@@ -111,14 +111,9 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood:** shared bags and 400 precomputed rarity rolls couple shops, combat, chests and events. Fixed-rarity requests skip rarity consumption. Roll 401 would fail (code finding, not reproduced); identity depletion uses the appendix fallback.
 
-**Proposed design:**
+**Proposed:** hidden random relic rewards from combat/chests/events share the generic allocation, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic. Allocation and exhaustion follow the [settled strategy](#settled-strategy-relic-allocation-and-exhaustion).
 
-| Source | Sequence rule | Sources and boundaries |
-|---|---|---|
-| Hidden random relic rewards | Combat/chests/events share generic rewards regardless of cost. Random rarity advances rarity + identity; fixed rarity advances only identity. | Ranwid, Wongos' Common and Mystery Box. Classify deferred payoffs separately from their granting relic. **Supersedes paid-event isolation.** |
-| Shown paid ordinary relics | Wongos settled; Relic Trader sequence/consumption open. | Wongos and Relic Trader only; shops are separate. |
-
-**To settle:** Relic Trader's source and consumption timing; whether declined offers remain consumed; ordering of simultaneous/deferred drops; handling filtered or scripted ordinary identities. Allocation balance remains open; exhaustion stays deferred.
+**Open:** ordering of simultaneous/deferred drops; handling filtered or scripted ordinary identities.
 
 #### Potions
 
@@ -135,7 +130,8 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 #### Shops, chests and events
 
 - **Shops:** settled above.
-- **Chest policy:** relics use generic rarity + identity; base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other room types. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
+- **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. Existing rules are in the [appendix](#appendix-existing-mechanics).
+- **Chest policy:** relics follow [generic rewards](#relics-source-classification-and-consumption); base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other room types. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 - **Catfood chests:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold still uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
 - **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
 
@@ -154,7 +150,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 ## Next steps and validation
 
-**Next:** finish ordinary relic reward policy, starting with Relic Trader. Then address the Encounter category: shops are settled, chest policy is above, and event/Ancient and combat setup remain. Potion policy can follow the relic decisions separately.
+**Next:** finish the open relic reward rules, then address Encounter, including Relic Trader, other events/Ancients and combat setup. Potion policy can follow the relic decisions separately.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
