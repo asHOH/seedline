@@ -38,7 +38,7 @@ Vanilla provides the baseline Catfood improves on:
 |---|---|
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite private RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
-| Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls both add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base rare chances are 3%/10% (Scarcity: 1.49%/5%); add the offset. Boss rewards are always Rare; shop rolls read the offset without updating it. |
+| Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset. Boss rewards guarantee Rare and reset the shared offset to `-0.05`. Shop rolls read the offset without updating it. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
 | Chests | Ordinary relic rarity roll + shared-bag identity; gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
 | Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Five relics are shop-ineligible. Fixed-rarity pulls and scripted non-stackable acquisitions still remove identities; depletion can change delivered rarity. |
@@ -58,6 +58,7 @@ Vanilla provides the baseline Catfood improves on:
 
 - Normal stock depends only on shop ordinal, except for Wongos.
 - Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
+- **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), empirically lowered from the expected offset of repeating `3 normal → 1 elite → 2 normal → 1 elite` to account for boss resets.
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither normal-stock/generic cursors nor shop ordinal. Apply the same price rule and preserve [original mechanics](#appendix-existing-mechanics).
@@ -94,11 +95,13 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Cards: offers, rarity and rerolls
 
-- **Catfood:** combat identities/upgrades use room type, count and offer position; rerolls have separate seed offsets but still update that room type's rarity state, potentially shifting later offers.
-- **Rarity:** separate normal-fight, elite, boss and shop offsets follow baseline growth/reset rules. Ancient entry additionally resets all four to `-0.05`, including Neow.
-- **Compensation — proposed:** slightly raise the starting/reset offset to compensate for separation. Amount remains open; separation removes shared growth and shared resets, so assess its net effect.
-- **Act alignment — open:** Ancient resets coexist with cumulative rarity RNG addresses. Rare slots and valuable-card groupings can differ; assess whether this causes 歪种 under the fairness principle.
-- **Direct/event generation:** room/event count + per-room call index. Seed overlap/static-index concerns remain unverified.
+- **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
+- **Unconfirmed Catfood bug:** shared options appear to make the initial offer and reroll consume one reroll-seeded stream. Not reproduced in-game.
+- **Catfood rarity:** separate normal-fight, elite, boss and shop offsets use vanilla base probabilities, growth and rare-reset value. Boss rewards reset only the boss offset; Ancient entry resets all four to `-0.05`, including Neow. Shop rolls do not grow their isolated offset, leaving their Rare roll chance at 4% (0% with Scarcity).
+- **Elite initialization — proposed:** start the elite offset at `-0.005` with Scarcity, approximating three normal fights with three-card rewards. Retain vanilla non-rare growth; initialization without Scarcity remains open.
+- **Offset resets — settled:** preserve combat rarity resets to `-0.05` after Rare rolls and on Ancient entry.
+- **Act alignment — open:** find other ways to prevent divergence while preserving offset resets.
+- **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
 
 **Unadopted suggestion:** stable direct-generation scopes/indices, if a reproduced issue warrants them.
 
