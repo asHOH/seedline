@@ -6,6 +6,8 @@ Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
 Compare runs with matching seeds, versions, rules and eligible pools. This context will not be restated hereafter.
 
+Tutorial overrides, including scripted rewards and boss discovery order, are excluded.
+
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion. This rare exception applies throughout; exclude it from ordinary isolation discussions.
@@ -41,7 +43,7 @@ Vanilla provides the baseline Catfood improves on:
 | Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset. Boss rewards guarantee Rare and reset the shared offset to `-0.05`. Shop rolls read the offset without updating it. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
 | Chests | Ordinary relic rarity roll + shared-bag identity; gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
-| Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Five relics are shop-ineligible. Fixed-rarity pulls and scripted non-stackable acquisitions still remove identities; depletion can change delivered rarity. |
+| Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Five relics are shop-ineligible. Depletion can change delivered rarity. |
 
 ## Settled policy: shops, Wongos and Courier
 
@@ -113,7 +115,9 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Proposed:** hidden random relic rewards from combat/chests/events share the generic allocation, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic. Allocation and exhaustion follow the [settled strategy](#settled-strategy-relic-allocation-and-exhaustion).
 
-**Open:** ordering of simultaneous/deferred drops; handling filtered or scripted ordinary identities.
+**Consumption order — settled:** preserve existing generation order (e.g. elite relic preceeds Wongos mystery ticket's 3 relics) and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
+
+**Filtered pulls — settled:** take the first eligible identity, leaving skipped entries available. The only possible filter is `IsAllowedInShops`; disjoint allocations already handle Courier's displayed-relic exclusion.
 
 #### Potions
 
@@ -150,7 +154,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 ## Next steps and validation
 
-**Next:** finish the open relic reward rules, then address Encounter, including Relic Trader, other events/Ancients and combat setup. Potion policy can follow the relic decisions separately.
+**Next:** resolve the remaining relic allocation questions, then address Encounter, including Relic Trader, other events/Ancients and combat setup. Potion policy can follow the relic decisions separately.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
