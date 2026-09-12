@@ -16,6 +16,8 @@ Extreme conditions such as depleting a rarity of relics are also excluded.
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion. This rare exception applies throughout; exclude it from ordinary isolation discussions.
 
+**Discussion boundary:** settled sections are fixed contracts, excluded from unfinished-design discussions.
+
 Base findings on code; use run histories as supporting evidence.
 
 ## Goals
@@ -62,8 +64,6 @@ Vanilla provides the baseline Catfood improves on:
 | Potion generation | Ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Some events select uniformly across eligible identities or guarantee a rarity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state. |
 
 ## Settled policy: shops, Wongos and Courier
-
-**Discussion boundary:** settled sections are fixed contracts, excluded from unfinished-design discussions.
 
 **Improvements over Catfood (design, not implementation):**
 
