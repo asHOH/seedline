@@ -34,7 +34,7 @@ Base findings on code; use run histories as supporting evidence.
 - **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype, counted separately in this design. An event may start combat without changing the map type.
 - **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
-- **Normal fight:** `RoomType.Monster`; use **combat** for any battle, including elites, bosses and event battles. **Monster** in prose means an individual enemy.
+- **Normal fight / combat:** **normal fight** means `RoomType.Monster`; **combat** means any battle, including normal fights, elites, bosses and event battles. Avoid bare **fight**. **Monster** in prose means an individual enemy.
 
 ### Rewards
 
@@ -59,7 +59,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Mechanism | Baseline and interference |
 |---|---|
 | Unknown room types | `?` resolution uses dedicated `UnknownMapPoint` RNG and changing odds. Odds reset between acts; RNG progress continues. Route exclusions and forced outcomes affect resolution. Catfood leaves this unchanged. |
-| Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; `?` fights share the normal encounter list with visible fights. Catfood leaves identity selection unchanged. |
+| Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; normal fights reached through `?` nodes or visible normal-fight nodes share the same encounter list. Catfood leaves identity selection unchanged. |
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite private RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
 | Combat gold | Uses shared `Rewards` RNG, uniformly over inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. |
@@ -267,7 +267,7 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 
 **Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
 
-**Event / encounter identity selection:** room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a visible fight. Forced-event replacement occurs after ordinary event eligibility scanning.
+**Event / encounter identity selection:** room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
 
 **Card rarity:** shared offset starts at `-0.05` and resets there after a Rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset; base Uncommon chances are 37%/40%/37%. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
 
