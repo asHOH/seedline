@@ -65,12 +65,13 @@ Vanilla provides the baseline Catfood improves on:
 
 ## Settled policy: shops, Wongos and Courier
 
-**Improvements over Catfood (design, not implementation):**
+**Catfood baseline:** tracks shop ordinal and isolates shop card-rarity state, while retaining `Shops` RNG for card identities and prices, shared relic bags/rarity rolls, and a shared potion-factory call index.
 
-- Isolate shop stock from other rewards and Courier consumption, including relic identities and potion generation.
-- Stabilize sale slots and occurrence prices instead of letting RNG call order change them.
+**Our improvements:**
+
+- Isolate stock by shop ordinal, using independent source sequences and disjoint relic allocations to remove Catfood's interference from other rewards and Courier.
+- Stabilize sale slots and original-entry prices instead of letting RNG call order change them.
 - Limit Wongos to one shop Rare identity; consume nothing when its featured offer is unaffordable.
-- Replace shared relic bags with disjoint source allocations.
 
 ### Stock and prices
 
@@ -84,7 +85,12 @@ Vanilla provides the baseline Catfood improves on:
 
 ## Settled policy: relics
 
-**Catfood:** shared bags and 400 precomputed rarity rolls couple shops, combat, chests and events. Fixed-rarity requests skip rarity consumption. Roll 401 would fail (code finding, not reproduced); identity depletion uses the appendix fallback.
+**Catfood baseline:** draws identities from shared relic bags and rarities from 400 precomputed rolls. Fixed-rarity requests consume identity only; identity depletion uses the appendix fallback.
+
+**Our improvements:**
+
+- Use disjoint identity allocations and independent rarity rolls to isolate shops, Courier and generic rewards, which Catfood couples through shared state.
+- Generate rarity rolls on demand, removing Catfood's 400-roll limit; roll 401 would fail (code finding, not reproduced).
 
 ### Allocation
 
@@ -118,11 +124,14 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 ## Settled policy: potions
 
-Separate **drop occurrence** and **acquisition rarity + identity**. All policies are settled.
+**Catfood baseline:** addresses drop checks by `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops also advance this index. Potion factories use a shared call index to seed each batch.
 
-**Catfood:** drop checks use `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops still advance this index.
+**Our improvements:**
 
-**Catfood acquisition limitation:** factory RNG advances once per call regardless of batch size or acquisition success. Batching therefore changes outcomes: `A | BCD | E` for requests `1–3–1` can become `AFG | B` for `3–1`, rather than `ABC | D`.
+- Separate **drop occurrence** and **acquisition rarity + identity**; isolate acquisition sources instead of sharing Catfood's factory-call index.
+- Consume per potion, subject to filtering below. Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
+- Consume displayed offers on generation and direct grants only on successful acquisition, preventing Catfood's advancement on failed direct grants.
+- Freeze occurrence state during forced drops, which advance Catfood's check index.
 
 ### Acquisition and sequences
 
