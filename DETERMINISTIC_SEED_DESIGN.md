@@ -120,14 +120,16 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 Separate **drop occurrence** and **acquisition rarity + identity**. All policies are settled.
 
-**Catfood:** drop checks use `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops still advance this index. Factory-generated potions share a call counter across sources, advancing once per call before acquisition, even if acquisition fails; one call may produce several potions. Direct event selection can bypass it.
+**Catfood:** drop checks use `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops still advance this index.
+
+**Catfood acquisition limitation:** factory RNG advances once per call regardless of batch size or acquisition success. Batching therefore changes outcomes: `A | BCD | E` for requests `1–3–1` can become `AFG | B` for `3–1`, rather than `ABC | D`.
 
 ### Acquisition and sequences
 
 - Keep independent **generic, shop, Courier-restock and combat-generation** sequences. Generic combines random combat rewards, events and other grants without paid/free or per-event separation. Combat generation includes Alchemize, Entropic Brew (also outside combat) and Delicate Frond.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences. Identities may recur; each source draws from the full eligible pool; sequences continue indefinitely, so borrowing is unnecessary.
 - Within generic sequence, use separate rarity-roll sequences for **standard weights** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
-- **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Count per potion, preserving generation order and batch boundaries. Shop/Courier prices follow the settled original-entry price rule.
+- **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
 - **Filters:** take the first eligible identity without another rarity roll. Retain entries skipped by combat-generation restrictions at their original positions for later eligible pulls. Preserve vanilla batch uniqueness; discard duplicate occurrences within shop batches permanently, while retaining skipped occurrences in other sources. Discarding an occurrence does not ban that identity from future entries.
 - **Known issue — deferred:** retained skipping is used for relic shop eligibility, chest exclusion of character-specific relics, potion combat-generation eligibility and non-shop batch uniqueness. These uses share the earlier filtered-pull bias; shop batch duplicate removal is the exception.
 
@@ -225,6 +227,7 @@ The following are game rules, unrelated to our randomness-control design:
 | Fixed potion grants | Drowning Beacon gives Glowwater Potion; Potion Courier offers three Foul Potions. Both identities are Event-rarity and outside ordinary random pools. |
 | Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. The Courier's shop restocks do not guarantee Uncommon. |
 | Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
+| Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
 | Combat potion generation | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew fills empty slots using unrestricted generation, even during combat. Delicate Frond fills empty slots before combat using unrestricted generation. |
 | Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. Alchemize attempts generation even with full slots. Entropic Brew and Delicate Frond generate only while slots are open and stop on the first failed acquisition. Phial Holster adds one slot but generates two potions, so its second grant can fail. |
 | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. Vanilla freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
