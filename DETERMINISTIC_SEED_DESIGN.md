@@ -46,6 +46,7 @@ Base findings on code; use run histories as supporting evidence.
 
 - **Allocation / sequence / RNG:** an allocation assigns relic identities to sources; a sequence orders outcomes; a random number generator (RNG) generates random choices.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
+- Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
 - **Same-seed divergence (歪种):** large early- or mid-run outcome differences that undermine fair same-seed comparison. Late-game differences from different total room-type/subtype ordinals are benign.
 
@@ -87,13 +88,14 @@ Take the first eligible entry from the selected identity sequence, without anoth
 
 ### Stock and prices
 
-- Shop stock depends only on shop ordinal, except for Wongos.
+- Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), empirically lowered from the expected offset of repeating `3 normal → 1 elite → 2 normal → 1 elite` to account for boss resets.
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, consume nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
 
@@ -109,6 +111,8 @@ Take the first eligible entry from the selected identity sequence, without anoth
 Construct four disjoint relic-identity sequences: generic rewards, shop, Courier, and Shop-rarity. The first three each contain Common, Uncommon and Rare subsequences that advance independently. Shops own the shop and Shop-rarity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / shop / Courier; all Shop-rarity identities enter the dedicated sequence.
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
+
+Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
 Mix shop-ineligible relics into allocations normally.
 
