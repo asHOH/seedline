@@ -169,8 +169,10 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 | Category | Determines | Primary progression |
 |---|---|---|
-| Rewards | What the player gets | Cumulative ordinals |
-| Encounter | Room content, named event choices and combat conditions | Act-local ordinals |
+| Rewards | Generated reward identities and amounts, including permanent transformation results | Cumulative ordinals |
+| Encounter | Random selection of affected cards/items, room content, named event options and combat randomness | Act-local ordinals |
+
+Classify random decisions, not whole effects. Player choices and fixed selections belong to neither category. Sequence scope and addressing are separate fairness decisions; the progression above is a default, not a definition.
 
 Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 
