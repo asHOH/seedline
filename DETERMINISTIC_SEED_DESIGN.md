@@ -10,11 +10,9 @@ Single-player is the intended scope. Multiplayer behavior is excluded, except fo
 
 Tutorial overrides, including scripted rewards and boss discovery order, are excluded.
 
-Extreme conditions such as depleting a rarity of relics are also excluded.
-
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
-**Exhaustion boundary:** finite relic allocations may borrow on exhaustion. This rare exception applies throughout; exclude it from ordinary isolation discussions.
+**Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. These rare cases are outside ordinary isolation discussions throughout.
 
 **Discussion boundary:** settled sections are fixed contracts, excluded from unfinished-design discussions.
 
@@ -49,7 +47,7 @@ Base findings on code; use run histories as supporting evidence.
 - **Allocation / sequence / RNG:** an allocation assigns relic identities to sources; a sequence orders outcomes; a random number generator (RNG) generates random choices.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
-- **Same-seed divergence (歪种):** huge, usually malicious difference happening early-run or mid-run for the same seed. (permit late-game difference due to players getting different total ordinals for each room type/subtype; that's benign) This is what we try to avoid, as stated by Fairness principle.
+- **Same-seed divergence (歪种):** large early- or mid-run outcome differences that undermine fair same-seed comparison. Late-game differences from different total room-type/subtype ordinals are benign.
 
 ## Vanilla baseline
 
@@ -110,7 +108,7 @@ Construct four disjoint relic-identity sequences: generic rewards, shop, Courier
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
 
-Mix shop-ineligible relics into allocations normally; draws use the [skipping strategy](#proposed-strategy-skipping-strategy).
+Mix shop-ineligible relics into allocations normally.
 
 **Implementation:** construct the shuffled identity allocations once, retain original entry positions and mark removals. Generate rarity rolls on demand with independent source RNGs; save allocation state and RNG progress.
 
@@ -139,7 +137,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 **Our improvements:**
 
 - Separate **drop occurrence** and **acquisition rarity + identity**; isolate acquisition sources instead of sharing Catfood's factory-call index.
-- Consume per potion, subject to the [skipping strategy](#proposed-strategy-skipping-strategy). Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
+- Consume per potion. Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
 - Consume displayed offers on generation and direct grants only on successful acquisition, preventing Catfood's advancement on failed direct grants.
 - Freeze occurrence state during forced drops, which advance Catfood's check index.
 
@@ -147,7 +145,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 - Keep independent **generic rewards, shop, Courier and combat-generation** sequences. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Combat-generation** names a source category, not a combat-only restriction: Alchemize, Entropic Brew (also outside combat) and Delicate Frond.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences. Identities may recur; sequences continue indefinitely, so borrowing is unnecessary.
-- Within the generic rewards source, use separate rarity-roll sequences for **standard weights** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
+- Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
 - **Filters:** use the [skipping strategy](#proposed-strategy-skipping-strategy).
 
@@ -176,7 +174,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 
-**Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides. Shop card identities still use `Shops`; relic bags/rarities and potion counts remain shared.
+**Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
 **Settled:** Rewards - relics, chests and potions; Encounter - shops.
 
