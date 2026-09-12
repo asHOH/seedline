@@ -92,7 +92,7 @@ Take the first eligible entry from the selected identity sequence, without anoth
 
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
-- **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), empirically lowered from the expected offset of repeating `3 normal → 1 elite → 2 normal → 1 elite` to account for boss resets.
+- **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
@@ -144,7 +144,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 **Our improvements:**
 
-- Separate **drop occurrence** and **acquisition rarity + identity**; isolate acquisition sources instead of sharing Catfood's factory-call index.
+- Isolate **acquisition rarity + identity** by source instead of sharing Catfood's factory-call index; retain Catfood's separation of drop occurrence from acquisition.
 - Consume per potion. Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
 - Consume displayed offers on generation and direct grants only on successful acquisition, preventing Catfood's advancement on failed direct grants.
 - Freeze occurrence state during forced drops, which advance Catfood's check index.
@@ -220,8 +220,8 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 - **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
 - **Code-confirmed Catfood bug:** ordinary card rewards share initial and reroll options, so both consume one reroll-seeded identity/upgrade stream. Gameplay impact not reproduced in-game.
 - **Catfood rarity:** separate normal-fight, elite, boss and shop offsets use vanilla base probabilities, growth and rare-reset value. Boss rewards reset only the boss offset; Ancient entry resets all four to `-0.05`, including Neow. Shop rolls do not grow their isolated offset, leaving their Rare roll chance at 4% (0% with Scarcity).
-- **Elite initialization — proposed:** on Ancient entry, including Neow, set the elite offset to `0.01`/`-0.02` (without Scarcity/with Scarcity) when the other offsets reset, approximating two normal fights. Retain vanilla non-rare growth.
-- **Offset resets — settled:** preserve combat rarity resets to `-0.05` after Rare rolls and resets on Ancient entry.
+- **Elite initialization — proposed:** change only the elite offset's Ancient-entry reset value to `0.01`/`-0.02` (without Scarcity/with Scarcity), including Neow, approximating two normal fights. Retain reset timing, the post-Rare reset value and vanilla non-rare growth.
+- **Offset resets — settled:** preserve combat rarity resets to `-0.05` after Rare rolls and reset timing on Ancient entry; the elite Ancient-entry reset value is subject to the proposal above.
 - **Act alignment — open:** find other ways to prevent divergence while preserving offset resets.
 - **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
 
@@ -239,7 +239,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 - **Shops and chests:** settled above.
 - **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](#relic-and-event-rules) and [selection mechanics](#generation-and-selection-mechanics).
-- **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
+- **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Preserve the pre-shuffled event lists and existing choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant). Actual event selection still depends on eligibility, visited events and forced replacements.
 
 #### Selection and setup
 
