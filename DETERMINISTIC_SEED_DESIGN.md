@@ -84,9 +84,9 @@ Take the first eligible entry from the selected identity sequence, without anoth
 
 **Our improvements:**
 
-- Isolate stock by shop ordinal, using independent source sequences and disjoint relic allocations to remove Catfood's interference from other rewards and Courier.
-- Stabilize sale slots and original-entry prices instead of letting RNG call order change them.
-- Limit Wongos to one shop Rare identity; consume nothing when its featured offer is unaffordable.
+- Extra rewards and Courier restocks no longer scramble later shops.
+- Corresponding shops keep the same sale slot, and an offer keeps its base price if it moves to a later slot or shop.
+- Wongos' featured relic advances only the shop's Rare relic offers—and leaves them untouched when you cannot afford it.
 
 ### Stock and prices
 
@@ -96,17 +96,17 @@ Take the first eligible entry from the selected identity sequence, without anoth
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
-- **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, consume nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
 
-**Catfood baseline:** draws identities from shared relic bags and rarities from 400 precomputed rolls. Fixed-rarity requests consume identity only; identity depletion uses the [appendix fallback](#generation-and-selection-mechanics).
+**Catfood baseline:** draws identities from shared relic bags and rarities from 400 precomputed rolls; roll 401 would fail (code finding, not reproduced). Fixed-rarity requests consume identity only; identity depletion uses the [appendix fallback](#generation-and-selection-mechanics).
 
 **Our improvements:**
 
-- Use disjoint identity allocations and independent rarity rolls to isolate shops, Courier and generic rewards, which Catfood couples through shared state.
-- Generate rarity rolls on demand, removing Catfood's 400-roll limit; roll 401 would fail (code finding, not reproduced).
+- Relics offered through shops, Courier and generic rewards no longer compete for the same stock during normal play.
+- Remove Catfood's fixed limit on random relic-rarity draws.
 
 ### Allocation
 
@@ -140,14 +140,14 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 ## Settled policy: potions
 
-**Catfood baseline:** addresses drop checks by `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops also advance this index. Potion factories use a shared call index to seed each batch.
+**Catfood baseline:** addresses drop checks by `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops also advance this index. Separately, potion factories use a shared call index to seed each batch.
 
 **Our improvements:**
 
-- Isolate **acquisition rarity + identity** by source instead of sharing Catfood's factory-call index; retain Catfood's separation of drop occurrence from acquisition.
-- Consume per potion. Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
-- Consume displayed offers on generation and direct grants only on successful acquisition, preventing Catfood's advancement on failed direct grants.
-- Freeze occurrence state during forced drops, which advance Catfood's check index.
+- Potion rewards, shop stock, Courier restocks and potion-generating effects no longer scramble one another's potion results.
+- Receiving several potions together no longer starts a different random sequence from receiving them separately.
+- A failed direct potion grant no longer changes your later potion results.
+- White Beast Statue pauses ordinary drop checks, so extra forced drops do not disturb the checks that resume after it is removed.
 
 ### Acquisition and sequences
 
@@ -156,6 +156,8 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
 - **Filters:** use the [skipping strategy](#proposed-strategy-skipping-strategy).
+
+**Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
 ### Drop occurrence
 
@@ -169,6 +171,11 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 **Our improvements:**
 
+- Chest gold no longer depends on how many normal fights you took.
+- Silver Crucible's empty chest does not advance later chest gold or relic rewards.
+
+### Rewards and consumption
+
 - Relics use the generic rewards allocation with the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Base gold uses run seed + cumulative non-empty chest ordinal to separate it from other room types.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
@@ -179,10 +186,11 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 **Our improvements:**
 
-- Share seven cumulative identity sequences across permanent random transformation sources: the five characters, colorless and curse. Isolate them from other rewards and combat transformations.
+- Permanent transformations draw from a consistent order for each replacement pool, unaffected by unrelated rewards or combat transformations.
 
 ### Selection and consumption
 
+- Share seven cumulative identity sequences across permanent random transformation sources: the five characters, colorless and curse. Isolate them from other rewards and combat transformations.
 - Use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics).
 - Generate uniform identity entries without rarity rolls. Sequences continue indefinitely; repeats are allowed, including within batches. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Consume one eligible entry per generated replacement in existing generation order. Fixed replacements, canceled selections and previews consume nothing. Save sequence progress and retained skips.
@@ -192,6 +200,12 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 **Catfood baseline:** uses the [vanilla baseline above](#vanilla-baseline); cumulative room counters do not determine `?` room type.
 
 **Our improvements:**
+
+- Earlier acts' `?` visits no longer shift the next act's random draws.
+- When the map temporarily blocks a `?` shop, its chance still builds for later visits.
+- Changes to one room type's chance are less likely to disturb other room types' results.
+
+### Addressing and room-type chances
 
 - **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes, removing dependence on previous acts' `?` visit counts.
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
