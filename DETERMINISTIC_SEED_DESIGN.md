@@ -58,6 +58,8 @@ Vanilla provides the baseline Catfood improves on:
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
 | Chests | Ordinary relic rarity roll + `SharedRelicGrabBag` identity; unlike elite rewards, chests exclude character-specific relics even in single-player. Gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
 | Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible. Depletion can change delivered rarity. |
+| Potion drops | One shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update. |
+| Potion generation | Ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Some events select uniformly across eligible identities or guarantee a rarity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state. |
 
 ## Settled policy: shops, Wongos and Courier
 
@@ -114,6 +116,27 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 **Borrowed entries:** retain their original source sequence and entry position as the price/save address. Apply the receiving source's price rules; save transfers and consumption.
 
+## Settled policy: potions
+
+Separate **drop occurrence** and **acquisition rarity + identity**. All policies are settled.
+
+**Catfood:** drop checks use `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops still advance this index. Factory-generated potions share a call counter across sources, advancing once per call before acquisition, even if acquisition fails; one call may produce several potions. Direct event selection can bypass it.
+
+### Acquisition and sequences
+
+- Keep independent **generic, shop, Courier-restock and combat-generation** sequences. Generic combines random combat rewards, events and other grants without paid/free or per-event separation. Combat generation includes Alchemize, Entropic Brew (also outside combat) and Delicate Frond.
+- Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences. Identities may recur; each source draws from the full eligible pool; sequences continue indefinitely, so borrowing is unnecessary.
+- Within generic sequence, use separate rarity-roll sequences for **standard weights** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
+- **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Count per potion, preserving generation order and batch boundaries. Shop/Courier prices follow the settled original-entry price rule.
+- **Filters:** take the first eligible identity without another rarity roll. Retain entries skipped by combat-generation restrictions at their original positions for later eligible pulls. Preserve vanilla batch uniqueness; discard duplicate occurrences within shop batches permanently, while retaining skipped occurrences in other sources. Discarding an occurrence does not ban that identity from future entries.
+- **Known issue — deferred:** retained skipping is used for relic shop eligibility, chest exclusion of character-specific relics, potion combat-generation eligibility and non-shop batch uniqueness. These uses share the earlier filtered-pull bias; shop batch duplicate removal is the exception.
+
+### Drop occurrence
+
+- Retain Catfood addressing and vanilla's shared changing probability across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
+- **White Beast Statue:** forced drops freeze both the occurrence index and stored probability; seed no new occurrence RNG and consume no occurrence random number. After removal, resume at the next unused ordinary-check index. Matching pre-Statue states therefore remain aligned despite different numbers of forced drops.
+- Acquisition without a drop check does not advance occurrence state. Save the occurrence index and probability alongside acquisition-sequence progress and retained skips.
+
 ## Remaining design: rewards and encounter
 
 | Category | Determines | Primary progression |
@@ -125,7 +148,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides. Shop card identities still use `Shops`; relic bags/rarities and potion counts remain shared.
 
-**Settled:** Rewards - relics and chests; Encounter - shops.
+**Settled:** Rewards - relics, chests and potions; Encounter - shops.
 
 ### Rewards
 
@@ -142,12 +165,6 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 **Unadopted suggestion:** stable direct-generation scopes/indices, if a reproduced issue warrants them.
 
 **Reroll example** (Scarcity): three non-rares raise offset `0` → `0.015`. Next matching normal fight, draw `0.025` gives Uncommon versus Rare (about 1.5% versus 3%). A rare reroll instead resets the offset. Assess the impact against the 歪种 definition.
-
-#### Potions
-
-**Catfood:** isolated drop rolls, but shop/free identities share a factory-call counter (possibly several potions per call). Crystal Sphere's fixed-rarity potion uses event RNG.
-
-**Tentative:** combine free combat/event potions; separate paid sources by event.
 
 #### Other gains and changes
 
@@ -178,7 +195,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 ## Next steps and validation
 
-**Next:** Address remaining Encounter design, including Relic Trader, other events/Ancients and combat setup; potion policy can proceed separately.
+**Next:** Address remaining Encounter design, including Relic Trader, other events/Ancients and combat setup.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -205,3 +222,9 @@ The following are game rules, unrelated to our randomness-control design:
 | Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Shows three randomly selected owned relics and three replacements; consumes all three replacement identities/rarities before selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
 | Courier | 20% discount; removal never restocks. Restocked character cards retain type, colorless cards retain rarity; sale clears. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. |
 | Silver Crucible | Neow relic; first treasure room is empty. Suppresses both base gold and relic generation. |
+| Fixed potion grants | Drowning Beacon gives Glowwater Potion; Potion Courier offers three Foul Potions. Both identities are Event-rarity and outside ordinary random pools. |
+| Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. The Courier's shop restocks do not guarantee Uncommon. |
+| Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
+| Combat potion generation | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew fills empty slots using unrestricted generation, even during combat. Delicate Frond fills empty slots before combat using unrestricted generation. |
+| Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. Alchemize attempts generation even with full slots. Entropic Brew and Delicate Frond generate only while slots are open and stop on the first failed acquisition. Phial Holster adds one slot but generates two potions, so its second grant can fail. |
+| White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. Vanilla freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
