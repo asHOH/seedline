@@ -63,13 +63,15 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Relic pools | Sources share finite identity bags, with different draw directions and eligibility filters. Depletion can change delivered rarity. |
 | Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
 | Potion generation | Ordinary generation rolls rarity, then identity; some events use uniform-identity or fixed-rarity selection. Batches exclude duplicates. Failed acquisition does not restore consumed RNG state. |
+| Transformations | Random replacements are uniform over eligible identities, excluding the original. Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
 
 ## Proposed strategy: skipping strategy
 
-Take the first eligible identity of the selected rarity without another rarity roll. Retain skipped entries at their original positions for later eligible pulls. Borrowing preserves its specified selection order.
+Take the first eligible entry from the selected identity sequence, without another rarity roll where applicable. Retain skipped entries at their original positions for later eligible pulls. Borrowing preserves its specified selection order.
 
 - **Relics:** preserve `IsAllowed` for draws/borrowing, `IsAllowedInShops` where required, and chest exclusion of character-specific relics. Shop/Courier skips remain available for generic rewards borrowing.
 - **Potions:** preserve combat-generation restrictions and batch uniqueness. Permanently discard duplicate occurrences in shop batches only; identities may still recur.
+- **Transformations:** exclude the original card identity.
 
 **Known bias — mitigation deferred:** retained skips bias later eligible draws toward those entries. Shop-batch duplicate removal avoids this bias.
 
@@ -165,6 +167,20 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 - Base gold uses run seed + cumulative non-empty chest ordinal to separate it from other room types.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 
+## Settled policy: permanent transformations
+
+**Catfood baseline:** retains caller-supplied transformation RNGs rather than dedicated sequences by replacement pool.
+
+**Our improvements:**
+
+- Share seven cumulative identity sequences across permanent random transformation sources: the five characters, colorless and curse. Isolate them from other rewards and combat transformations.
+
+### Selection and consumption
+
+- Use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics).
+- Generate uniform identity entries without rarity rolls. Sequences continue indefinitely; repeats are allowed, including within batches. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
+- Consume one eligible entry per generated replacement in existing generation order. Fixed replacements, canceled selections and previews consume nothing. Save sequence progress and retained skips.
+
 ## Remaining design: rewards and encounter
 
 | Category | Determines | Primary progression |
@@ -178,7 +194,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled:** Rewards - relics, chests and potions; Encounter - shops.
+**Settled:** Rewards - relics, chests, potions and permanent transformations; Encounter - shops.
 
 ### Rewards
 
@@ -198,7 +214,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Other gains and changes
 
-**Open:** gold outside chests and transformations; define equality and sharing by source/effect.
+**Open:** gold outside chests; define equality and sharing by source/effect.
 
 ### Encounter
 
@@ -223,7 +239,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 - **Catfood:** re-seeds shuffle RNG at combat start; later shuffles continue it.
 - **Proposed:** act-local opening-shuffle ordinals. First Act 2 normal fight then aligns setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses still differ.
-- **Open:** HP/AI, random targets/costs/orbs, shuffles, temporary upgrades/downgrades and generated cards by pool/type; decide sharing and special-relic interactions.
+- **Open:** HP/AI, random targets/costs/orbs, shuffles, temporary upgrades/downgrades, combat transformations and generated cards by pool/type; decide sharing and special-relic interactions.
 
 ## Next steps and validation
 
@@ -252,6 +268,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 | Fixed potion grants | Drowning Beacon gives Glowwater Potion; Potion Courier offers three Foul Potions. Both identities are Event-rarity and outside ordinary random pools. |
 | Combat-generation effects | Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat. Delicate Frond fills empty slots before combat. |
 | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
+| Permanent transformations | Inputs are player-selected or fixed by the effect. Leafy Poultice takes the first Basic Strike and Defend; Pandora's Box takes all removable Basic Strikes/Defends. Astrolabe transforms three selected cards and upgrades the results. Claws replaces selected cards with Maul. |
 
 ### Generation and selection mechanics
 
@@ -268,6 +285,8 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 **Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update.
 
 **Potion generation:** ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state.
+
+**Permanent transformation's target:** use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity used by Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. Selection is uniform over eligible identities, with no batch uniqueness. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
 
 | Source | Mechanics |
 |---|---|
