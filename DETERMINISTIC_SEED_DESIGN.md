@@ -113,7 +113,7 @@ Hidden random relic rewards from combat/chests/events share the generic rewards 
 
 **Filtered pulls:** take the first eligible identity, preserving vanilla run-state eligibility (`IsAllowed`) for draws and borrowing. Source-specific filters are `IsAllowedInShops` where required and exclusion of character-specific relics for chests. Entries skipped by these filters remain available at their original positions for later eligible pulls, without another rarity roll. Shop/Courier skips follow the [allocation rule](#allocation); disjoint allocations already handle Courier's displayed-relic exclusion.
 
-**Known issue — deferred:** filtered draws leave skipped entries near the front, doubling the chance that the next unfiltered draw of the same rarity yields a shop-ineligible relic after Wongos' Common offer, or a character-specific relic after a chest. Investigate mitigation later.
+**Known issue — deferred:** filtered draws leave skipped entries near the front, biasing the next unfiltered draw of the same rarity toward shop-ineligible relics after Wongos' Common offer, or character-specific relics after a chest. Investigate mitigation later.
 
 ### Borrowing
 
@@ -139,7 +139,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 ### Acquisition and sequences
 
 - Keep independent **generic rewards, shop, Courier and combat-generation** sequences. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Combat-generation** names a source category, not a combat-only restriction: Alchemize, Entropic Brew (also outside combat) and Delicate Frond.
-- Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences. Identities may recur; each source draws from the full eligible pool; sequences continue indefinitely, so borrowing is unnecessary.
+- Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences. Identities may recur; sequences continue indefinitely, so borrowing is unnecessary.
 - Within the generic rewards source, use separate rarity-roll sequences for **standard weights** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
 - **Filters:** take the first eligible identity without another rarity roll. Retain entries skipped by combat-generation restrictions at their original positions for later eligible pulls. Preserve vanilla batch uniqueness; discard duplicate occurrences within shop batches permanently, while retaining skipped occurrences in other sources. Discarding an occurrence does not ban that identity from future entries.
@@ -150,6 +150,16 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 - Retain Catfood addressing and vanilla's shared changing probability across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
 - **White Beast Statue:** forced drops freeze both the occurrence index and stored probability; seed no new occurrence RNG and consume no occurrence random number. After removal, resume at the next unused ordinary-check index. Matching pre-Statue states therefore remain aligned despite different numbers of forced drops.
 - Acquisition without a drop check does not advance occurrence state. Save the occurrence index and probability alongside acquisition-sequence progress and retained skips.
+
+## Settled policy: chests
+
+**Catfood baseline:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
+
+**Our improvements:**
+
+- Relics use the generic rewards allocation with the [filtered-pull rule](#source-classification-and-consumption), preserving the exclusion from character-specific relics.
+- Base gold uses run seed + cumulative non-empty chest ordinal to separate it from other room types.
+- Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 
 ## Remaining design: rewards and encounter
 
@@ -182,16 +192,14 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Other gains and changes
 
-**Open:** gold, transformations and permanent upgrades/downgrades; define equality and sharing by source/effect.
+**Open:** gold outside chests, transformations and permanent upgrades/downgrades; define equality and sharing by source/effect.
 
 ### Encounter
 
 #### Shops, chests and events
 
-- **Shops:** settled above.
+- **Shops and chests:** settled above.
 - **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. Existing rules are in the [appendix](#appendix-existing-mechanics).
-- **Chest policy — settled:** relics use the generic rewards allocation with the [filtered-pull rule](#source-classification-and-consumption), excluding character-specific relics; base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other room types. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
-- **Catfood chests:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold still uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
 - **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
 
 #### Selection and setup
@@ -225,7 +233,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
 
-The following are game rules, unrelated to our randomness-control design:
+The following are existing source-specific game rules:
 
 **Ordinary relic eligibility:** the following 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited. (Off-scope note: Lasting Candy is also disallowed if any Ironclad player has `UnlockState.NumberOfRuns == 0`.)
 
