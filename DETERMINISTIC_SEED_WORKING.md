@@ -1,0 +1,76 @@
+# Deterministic seed mod — working document
+
+Develop the remaining design against the [goals and fairness principle](DETERMINISTIC_SEED_DESIGN.md#goals). The design document's [scope](DETERMINISTIC_SEED_DESIGN.md#scope), [terms](DETERMINISTIC_SEED_DESIGN.md#terms) and settled contracts apply here. Existing mechanics remain in its [baseline](DETERMINISTIC_SEED_DESIGN.md#vanilla-baseline) and [appendix](DETERMINISTIC_SEED_DESIGN.md#appendix-existing-mechanics).
+
+## Remaining design: rewards and encounter
+
+| Category | Determines | Primary progression |
+|---|---|---|
+| Rewards | Generated reward identities and amounts, including permanent transformation results | Cumulative ordinals |
+| Encounter | Random selection of affected cards/items, room content, named event options and combat randomness | Act-local ordinals |
+
+Classify random decisions, not whole effects. Player choices and fixed selections belong to neither category. Sequence scope and addressing are separate fairness decisions; the progression above is a default, not a definition.
+
+Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
+
+**Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
+
+**Settled in the [design document](DETERMINISTIC_SEED_DESIGN.md):** Rewards - relics, chests, potions and permanent transformations; Encounter - shops and unknown-room resolution.
+
+### Rewards
+
+#### Cards: offers, rarity and rerolls
+
+- **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
+- **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
+- **Code-confirmed Catfood bug:** ordinary card rewards share initial and reroll options, so both consume one reroll-seeded identity/upgrade stream. Gameplay impact not reproduced in-game.
+- **Catfood rarity:** separate normal-fight, elite, boss and shop offsets use vanilla base probabilities, growth and rare-reset value. Boss rewards reset only the boss offset; Ancient entry resets all four to `-0.05`, including Neow. Shop rolls do not grow their isolated offset, leaving their Rare roll chance at 4% (0% with Scarcity).
+- **Elite initialization — proposed:** change only the elite offset's Ancient-entry reset value to `0.01`/`-0.02` (without Scarcity/with Scarcity), including Neow, approximating two normal fights. Retain reset timing, the post-Rare reset value and vanilla non-rare growth.
+- **Offset resets — settled:** see the [combat card rarity reset contract](DETERMINISTIC_SEED_DESIGN.md#settled-policy-combat-card-rarity-resets).
+- **Act alignment — open:** find other ways to prevent divergence while preserving offset resets.
+- **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
+
+**Unadopted suggestion:** stable direct-generation scopes/indices, if a reproduced issue warrants them.
+
+**Reroll example** (Scarcity): three non-rares raise offset `0` → `0.015`. Next matching normal fight, draw `0.025` gives Uncommon versus Rare (about 1.5% versus 3%). A rare reroll instead resets the offset. Assess the impact against the 歪种 definition.
+
+#### Other gains and changes
+
+**Open:** gold outside chests; define equality and sharing by source/effect.
+
+### Encounter
+
+#### Shops, chests and events
+
+- **Shops and chests:** see the settled [shop](DETERMINISTIC_SEED_DESIGN.md#settled-policy-shops-wongos-and-courier) and [chest](DETERMINISTIC_SEED_DESIGN.md#settled-policy-chests) policies.
+- **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](DETERMINISTIC_SEED_DESIGN.md#relic-and-event-rules) and [selection mechanics](DETERMINISTIC_SEED_DESIGN.md#generation-and-selection-mechanics).
+- **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Preserve the pre-shuffled event lists and existing choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant). Actual event selection still depends on eligibility, visited events and forced replacements.
+
+#### Selection and setup
+
+- **Catfood identity baseline:** inherits [vanilla event/encounter selection](DETERMINISTIC_SEED_DESIGN.md#generation-and-selection-mechanics); its cumulative room counters do not select the event/encounter identity.
+- **Catfood:** encounter ID + cumulative room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch reproduced.
+- **Proposed:** act-local setup ordinals, distinguishing source/effect where necessary.
+- **Lantern Key proposal:** forced Act 3 War Historian Repy gets **ordinal 0**, leaving ordinary events untouched; Catfood counts it normally.
+- **Unadopted suggestion:** separate forced-event selection from `?` room-type resolution.
+
+#### Permanent card changes
+
+**Open:** random card selection for permanent upgrades/downgrades; define sharing by source/effect.
+
+#### Combat randomness
+
+- **Catfood:** re-seeds shuffle RNG at combat start; later shuffles continue it.
+- **Proposed:** act-local opening-shuffle ordinals. First Act 2 normal fight then aligns setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses still differ.
+- **Open:** HP/AI, random targets/costs/orbs, shuffles, temporary upgrades/downgrades, combat transformations and generated cards by pool/type; decide sharing and special-relic interactions.
+
+## Next steps and validation
+
+**Next:** Address remaining Encounter design, including Relic Trader, other events/Ancients and combat setup.
+
+**Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
+
+**Separate improvement:** add run seed to boss shuffle initialization.
+
+**Pending:** verify save/load preserves counters and outcomes.
+
