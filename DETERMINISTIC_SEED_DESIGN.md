@@ -53,18 +53,18 @@ Base findings on code; use run histories as supporting evidence.
 
 ## Vanilla baseline
 
-Vanilla provides the baseline Catfood improves on:
+Vanilla provides the baseline Catfood improves on; exact probabilities and draw rules are in [generation and selection mechanics](#generation-and-selection-mechanics).
 
 | Mechanism | Baseline and interference |
 |---|---|
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite private RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
-| Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset. Boss rewards guarantee Rare and reset the shared offset to `-0.05`. Shop rolls read the offset without updating it. |
+| Card rarity | Combat rewards update a shared rarity offset; shops read it without updating it. Rare rewards, including guaranteed boss Rares, reset it; Ancient entry does not. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
-| Chests | Ordinary relic rarity roll + `SharedRelicGrabBag` identity; unlike elite rewards, chests exclude character-specific relics even in single-player. Gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
-| Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible. Depletion can change delivered rarity. |
-| Potion drops | One shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update. |
-| Potion generation | Ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Some events select uniformly across eligible identities or guarantee a rarity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state. |
+| Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Unlike elite rewards, chests exclude character-specific relics. Silver Crucible suppresses the first chest's rewards before generation. |
+| Relic pools | Sources share finite identity bags, with different draw directions and eligibility filters. Depletion can change delivered rarity. |
+| Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
+| Potion generation | Ordinary generation rolls rarity, then identity; some events use uniform-identity or fixed-rarity selection. Batches exclude duplicates. Failed acquisition does not restore consumed RNG state. |
 
 ## Settled policy: shops, Wongos and Courier
 
@@ -83,12 +83,12 @@ Vanilla provides the baseline Catfood improves on:
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), empirically lowered from the expected offset of repeating `3 normal → 1 elite → 2 normal → 1 elite` to account for boss resets.
 - Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
 - Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
-- **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop nor generic rewards cursors, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#appendix-existing-mechanics).
+- **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, consume nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 
 ## Settled policy: relics
 
-**Catfood baseline:** draws identities from shared relic bags and rarities from 400 precomputed rolls. Fixed-rarity requests consume identity only; identity depletion uses the appendix fallback.
+**Catfood baseline:** draws identities from shared relic bags and rarities from 400 precomputed rolls. Fixed-rarity requests consume identity only; identity depletion uses the [appendix fallback](#generation-and-selection-mechanics).
 
 **Our improvements:**
 
@@ -121,7 +121,7 @@ On exhaustion, borrow the **last eligible remaining identity** of the requested 
 
 Only finite relic-identity allocations borrow; card/potion sequences and rarity rolls continue indefinitely.
 
-**Final fallback — settled:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#appendix-existing-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
+**Final fallback — settled:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
 
 **Borrowed entries:** retain their original source sequence and entry position as the price/save address. Apply the receiving source's price rules; save transfers and consumption.
 
@@ -199,7 +199,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 #### Shops, chests and events
 
 - **Shops and chests:** settled above.
-- **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. Existing rules are in the [appendix](#appendix-existing-mechanics).
+- **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](#relic-and-event-rules) and [selection mechanics](#generation-and-selection-mechanics).
 - **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
 
 #### Selection and setup
@@ -231,23 +231,43 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 ## Appendix: existing mechanics
 
-**Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
-
-The following are existing source-specific game rules:
-
-**Ordinary relic eligibility:** the following 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited. (Off-scope note: Lasting Candy is also disallowed if any Ironclad player has `UnlockState.NumberOfRuns == 0`.)
+### Relic and event rules
 
 | Source | Rules |
 |---|---|
-| Chests | Draw from `SharedRelicGrabBag`, populated from `SharedRelicPool`; character-specific relics are excluded even in single-player. Relics are generated on room entry; base gold is generated on opening. |
-| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold, consumed when offered even if unaffordable/declined. Hidden Common: 100 gold, generated on purchase. Both require `IsAllowedInShops`; preserve that filter. Mystery Ticket pays three random relics after five combats. Leaving downgrades a random upgraded card, if any. |
-| Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Shows three randomly selected owned relics and three replacements; consumes all three replacement identities/rarities before selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
-| Courier | 20% discount; removal never restocks. Restocked character cards retain type, colorless cards retain rarity; sale clears. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. |
+| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Mystery Ticket pays three random relics after five combats. Leaving downgrades a random upgraded card, if any. |
+| Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Offers a choice among three owned relics and three replacements. Normally no leave. |
+| Courier | 20% discount; removal never restocks; sale clears on restock. |
 | Silver Crucible | Neow relic; first treasure room is empty. Suppresses both base gold and relic generation. |
 | Fixed potion grants | Drowning Beacon gives Glowwater Potion; Potion Courier offers three Foul Potions. Both identities are Event-rarity and outside ordinary random pools. |
+| Combat-generation effects | Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat. Delicate Frond fills empty slots before combat. |
+| White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
+
+### Generation and selection mechanics
+
+Vanilla mechanics unless explicitly attributed to Catfood.
+
+**Card rarity:** shared offset starts at `-0.05` and resets there after a Rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
+
+**Relic draws:** rarity is 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity relics and one Shop relic from the back of the bags; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible.
+
+**Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
+
+**Ordinary relic eligibility:** the following 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited. (Off-scope note: Lasting Candy is also disallowed if any Ironclad player has `UnlockState.NumberOfRuns == 0`.)
+
+**Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update.
+
+**Potion generation:** ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state.
+
+| Source | Mechanics |
+|---|---|
+| Chests | Draw from `SharedRelicGrabBag`, populated from `SharedRelicPool`; character-specific relics are excluded even in single-player. Relics are generated on room entry; base gold is generated on opening. |
+| Wongos | Featured Rare is consumed when offered even if unaffordable/declined; hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
+| Relic Trader | Randomly selects three owned relics and three replacements; consumes all three replacement identities/rarities before selection. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
+| Courier | Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. |
 | Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. The Courier's shop restocks do not guarantee Uncommon. |
 | Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
 | Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
-| Combat potion generation | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew fills empty slots using unrestricted generation, even during combat. Delicate Frond fills empty slots before combat using unrestricted generation. |
+| Combat-generation filters | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew and Delicate Frond use unrestricted generation. |
 | Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. Alchemize attempts generation even with full slots. Entropic Brew and Delicate Frond generate only while slots are open and stop on the first failed acquisition. Phial Holster adds one slot but generates two potions, so its second grant can fail. |
-| White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. Vanilla freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
+| White Beast Statue | Freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
