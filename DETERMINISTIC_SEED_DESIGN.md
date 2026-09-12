@@ -56,6 +56,8 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 | Mechanism | Baseline and interference |
 |---|---|
+| Unknown room types | `?` resolution uses dedicated `UnknownMapPoint` RNG and changing odds. Odds reset between acts; RNG progress continues. Route exclusions and forced outcomes affect resolution. Catfood leaves this unchanged. |
+| Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; `?` fights share the normal encounter list with visible fights. Catfood leaves identity selection unchanged. |
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite private RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
 | Card rarity | Combat rewards update a shared rarity offset; shops read it without updating it. Rare rewards, including guaranteed boss Rares, reset it; Ancient entry does not. |
@@ -185,6 +187,16 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 - Generate uniform identity entries without rarity rolls. Sequences continue indefinitely; repeats are allowed, including within batches. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Consume one eligible entry per generated replacement in existing generation order. Fixed replacements, canceled selections and previews consume nothing. Save sequence progress and retained skips.
 
+## Settled policy: unknown-room resolution
+
+**Catfood baseline:** uses the [vanilla baseline above](#vanilla-baseline); cumulative room counters do not determine `?` room type.
+
+**Our improvements:**
+
+- **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes, removing dependence on previous acts' `?` visit counts.
+- **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
+- **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap. When the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1, reducing effective interval widths without capping stored chances. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is also truncated and shop gets no space. Unassigned space resolves to Event.
+
 ## Remaining design: rewards and encounter
 
 | Category | Determines | Primary progression |
@@ -198,7 +210,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled:** Rewards - relics, chests, potions and permanent transformations; Encounter - shops.
+**Settled:** Rewards - relics, chests, potions and permanent transformations; Encounter - shops and unknown-room resolution.
 
 ### Rewards
 
@@ -231,6 +243,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Selection and setup
 
+- **Catfood identity baseline:** inherits [vanilla event/encounter selection](#generation-and-selection-mechanics); its cumulative room counters do not select the event/encounter identity.
 - **Catfood:** encounter ID + cumulative room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch reproduced.
 - **Proposed:** act-local setup ordinals, distinguishing source/effect where necessary.
 - **Lantern Key proposal:** forced Act 3 War Historian Repy gets **ordinal 0**, leaving ordinary events untouched; Catfood counts it normally.
@@ -279,6 +292,12 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Vanilla mechanics unless explicitly attributed to Catfood.
 
+**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities.
+
+**Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
+
+**Event / encounter identity selection:** room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a visible fight. Forced-event replacement occurs after ordinary event eligibility scanning.
+
 **Card rarity:** shared offset starts at `-0.05` and resets there after a Rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset; base Uncommon chances are 37%/40%/37%. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
 
 **Normal versus elite card rewards:** both offer three cards from the same character pool, exclude duplicates within the offer and use the same upgrade rules; elites have no inherent upgrade-chance bonus. Catfood preserves these rules.
@@ -297,6 +316,9 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 
 | Source | Mechanics |
 |---|---|
+| `?` shop exclusion | Shop is excluded when the previous visited map point contained a shop, or every outgoing map node is a shop. |
+| Juzu Bracelet / Golden Compass | Juzu excludes normal fights from `?` resolution. Golden Compass forces Event during its affected act. |
+| Lantern Key | In Act 3, forces `?` to Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. Like Golden Compass, forced resolution still consumes one `UnknownMapPoint` draw while non-event odds freeze. |
 | Chests | Draw from `SharedRelicGrabBag`, populated from `SharedRelicPool`; character-specific relics are excluded even in single-player. Relics are generated on room entry; base gold is generated on opening. |
 | Wongos | Featured Rare is consumed when offered even if unaffordable/declined; hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
 | Relic Trader | Randomly selects three owned relics and three replacements; consumes all three replacement identities/rarities before selection. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
