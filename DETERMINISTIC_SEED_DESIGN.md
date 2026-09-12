@@ -6,6 +6,8 @@ Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
 Compare runs with matching seeds, versions, rules and eligible pools. This context will not be restated hereafter.
 
+Single-player is the intended scope. Multiplayer behavior is excluded, except for easy changes that materially improve fairness.
+
 Tutorial overrides, including scripted rewards and boss discovery order, are excluded.
 
 Extreme conditions such as depleting a rarity of relics are also excluded.
@@ -54,7 +56,7 @@ Vanilla provides the baseline Catfood improves on:
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
 | Card rarity | Shared offset starts at `-0.05` and resets there after a rare, but not on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset. Boss rewards guarantee Rare and reset the shared offset to `-0.05`. Shop rolls read the offset without updating it. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
-| Chests | Ordinary relic rarity roll + shared-bag identity; gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
+| Chests | Ordinary relic rarity roll + `SharedRelicGrabBag` identity; unlike elite rewards, chests exclude character-specific relics even in single-player. Gold uses `Rewards`. Silver Crucible suppresses the first chest's relic and gold before either is generated. |
 | Relic pools | Rarity: 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity and one Shop relic from the back; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible. Depletion can change delivered rarity. |
 
 ## Settled policy: shops, Wongos and Courier
@@ -94,11 +96,13 @@ Mix shop-ineligible relics into allocations normally. When shop-ineligible entri
 
 ### Source classification and consumption
 
-Hidden random relic rewards from combat/chests/events share the generic allocation, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic.
+Hidden random relic rewards from combat/chests/events share the generic allocation, with source-specific eligibility, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic.
 
 **Consumption order:** preserve existing generation order and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
 
-**Filtered pulls:** take the first eligible identity, preserving vanilla run-state eligibility (`IsAllowed`) for draws and borrowing. The only additional source-specific filter is `IsAllowedInShops`; entries skipped by it remain available at their original positions for later eligible pulls. Shop/Courier skips follow the [allocation rule](#allocation); disjoint allocations already handle Courier's displayed-relic exclusion.
+**Filtered pulls:** take the first eligible identity, preserving vanilla run-state eligibility (`IsAllowed`) for draws and borrowing. Source-specific filters are `IsAllowedInShops` where required and exclusion of character-specific relics for chests. Entries skipped by these filters remain available at their original positions for later eligible pulls, without another rarity roll. Shop/Courier skips follow the [allocation rule](#allocation); disjoint allocations already handle Courier's displayed-relic exclusion.
+
+**Known issue — deferred:** filtered draws leave skipped entries near the front, doubling the chance that the next unfiltered draw of the same rarity yields a shop-ineligible relic after Wongos' Common offer, or a character-specific relic after a chest. Investigate mitigation later.
 
 ### Borrowing
 
@@ -121,7 +125,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides. Shop card identities still use `Shops`; relic bags/rarities and potion counts remain shared.
 
-**Settled: ** Rewards - relic; Encounter - shops.
+**Settled:** Rewards - relics and chests; Encounter - shops.
 
 ### Rewards
 
@@ -155,7 +159,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 - **Shops:** settled above.
 - **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. Existing rules are in the [appendix](#appendix-existing-mechanics).
-- **Chest policy:** relics follow [generic rewards](#source-classification-and-consumption); base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other room types. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
+- **Chest policy — settled:** relics use the generic allocation with the [filtered-pull rule](#source-classification-and-consumption), excluding character-specific relics; base gold uses run seed + cumulative non-empty chest ordinal to achieve separation from other room types. Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 - **Catfood chests:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold still uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
 - **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Keep event identities/sequences route-independent and preserve choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant).
 
@@ -174,7 +178,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 ## Next steps and validation
 
-**Next:** relic reward and allocation policy is settled. Address Encounter, including Relic Trader, other events/Ancients and combat setup; potion policy can proceed separately.
+**Next:** Address remaining Encounter design, including Relic Trader, other events/Ancients and combat setup; potion policy can proceed separately.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -196,6 +200,7 @@ The following are game rules, unrelated to our randomness-control design:
 
 | Source | Rules |
 |---|---|
+| Chests | Draw from `SharedRelicGrabBag`, populated from `SharedRelicPool`; character-specific relics are excluded even in single-player. Relics are generated on room entry; base gold is generated on opening. |
 | Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold, consumed when offered even if unaffordable/declined. Hidden Common: 100 gold, generated on purchase. Both require `IsAllowedInShops`; preserve that filter. Mystery Ticket pays three random relics after five combats. Leaving downgrades a random upgraded card, if any. |
 | Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Shows three randomly selected owned relics and three replacements; consumes all three replacement identities/rarities before selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
 | Courier | 20% discount; removal never restocks. Restocked character cards retain type, colorless cards retain rarity; sale clears. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. |
