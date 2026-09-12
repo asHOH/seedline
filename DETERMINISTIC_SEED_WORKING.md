@@ -15,7 +15,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled in the [design document](DETERMINISTIC_SEED_DESIGN.md):** Rewards - relics, chests, potions and permanent transformations; Encounter - shops and unknown-room resolution.
+**Settled in the [design document](DETERMINISTIC_SEED_DESIGN.md):** Rewards - relics, chests, combat gold, potions and permanent transformations; Encounter - shops and unknown-room resolution.
 
 ### Rewards
 
@@ -26,17 +26,13 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 - **Code-confirmed Catfood bug:** ordinary card rewards share initial and reroll options, so both consume one reroll-seeded identity/upgrade stream. Gameplay impact not reproduced in-game.
 - **Catfood rarity:** separate normal-fight, elite, boss and shop offsets use vanilla base probabilities, growth and rare-reset value. Boss rewards reset only the boss offset; Ancient entry resets all four to `-0.05`, including Neow. Shop rolls do not grow their isolated offset, leaving their Rare roll chance at 4% (0% with Scarcity).
 - **Elite initialization — proposed:** change only the elite offset's Ancient-entry reset value to `0.01`/`-0.02` (without Scarcity/with Scarcity), including Neow, approximating two normal fights. Retain reset timing, the post-Rare reset value and vanilla non-rare growth.
-- **Offset resets — settled:** see the [combat card rarity reset contract](DETERMINISTIC_SEED_DESIGN.md#settled-policy-combat-card-rarity-resets).
+- **Offset resets — settled:** see the [combat card rarity reset contract](DETERMINISTIC_SEED_DESIGN.md#settled-strategy-combat-card-rarity-resets).
 - **Act alignment — open:** find other ways to prevent divergence while preserving offset resets.
 - **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
 
 **Unadopted suggestion:** stable direct-generation scopes/indices, if a reproduced issue warrants them.
 
 **Reroll example** (Scarcity): three non-rares raise offset `0` → `0.015`. Next matching normal fight, draw `0.025` gives Uncommon versus Rare (about 1.5% versus 3%). A rare reroll instead resets the offset. Assess the impact against the 歪种 definition.
-
-#### Other gains and changes
-
-**Open:** gold outside chests; define equality and sharing by source/effect.
 
 ### Encounter
 
@@ -63,6 +59,14 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 - **Catfood:** re-seeds shuffle RNG at combat start; later shuffles continue it.
 - **Proposed:** act-local opening-shuffle ordinals. First Act 2 normal fight then aligns setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses still differ.
 - **Open:** HP/AI, random targets/costs/orbs, shuffles, temporary upgrades/downgrades, combat transformations and generated cards by pool/type; decide sharing and special-relic interactions.
+
+## Unadopted combat-gold strategies
+
+Superseded by the [settled shared sequence with normal-fight compensation](DETERMINISTIC_SEED_DESIGN.md#settled-policy-combat-gold). Drawbacks below concern A3+.
+
+- **Shared range-relative rolls:** preserves vanilla distributions, but swapping normal → elite to elite → normal can change total gold by 1.
+- **Shared identical offsets without compensation:** using `X = 0–7`, normal `7 + X` and elite `26 + X` removes order differences but lowers expected normal-fight gold by 0.5.
+- **Separate normal-fight and elite sequences:** preserves vanilla distributions, but replacing a normal fight with an elite can shift the premium roughly 8 gold above or below its expectation.
 
 ## Next steps and validation
 

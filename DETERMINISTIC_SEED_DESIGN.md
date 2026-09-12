@@ -62,6 +62,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; `?` fights share the normal encounter list with visible fights. Catfood leaves identity selection unchanged. |
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite private RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
+| Combat gold | Uses shared `Rewards` RNG, uniformly over inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. |
 | Card rarity | Combat rewards update a shared rarity offset; shops read it without updating it. Rare rewards, including guaranteed boss Rares, reset it; Ancient entry does not. |
 | Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
 | Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Unlike elite rewards, chests exclude character-specific relics. Silver Crucible suppresses the first chest's rewards before generation. |
@@ -181,6 +182,28 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 - Relics use the generic rewards allocation with the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Base gold uses run seed + cumulative non-empty chest ordinal to separate it from other room types.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
+
+## Settled policy: combat gold
+
+**Catfood baseline:** preserves vanilla gold ranges and rounding. On room entry, re-seeds shared `Rewards` RNG by run seed and cumulative combat-category count, with different seed multipliers for normal fights and elites. Gold has no dedicated RNG.
+
+**Our improvements:**
+
+- Taking the same number of normal fights and elites in a different order gives the same total base gold.
+- Preserve vanilla expected gold while isolating combat gold from other rewards.
+
+### Shared sequence and compensation
+
+Address a dedicated gold sequence by run seed + cumulative combined normal-fight/elite ordinal. Event gold belongs to Encounter and does not advance reward sequences.
+
+| Difficulty | Shared uniform integer `X` | Normal-fight gold | Elite gold |
+|---|---|---|---|
+| A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
+| A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
+
+At A3+, choose a fair starting bit from the run seed, independently of the gold sequence. Alternate compensation `b` between 0 and 1, advancing **once per normal fight**, using its cumulative ordinal; elites never advance it. Both sequences continue across acts. Preserve their progress and the starting bit across save/load.
+
+**Accepted tradeoff:** at A3+, normal gold keeps its mean of 11 but is no longer uniform, with 7 and 15 each having a lower probability of 1/16; 8 to 14 remain uniform. Despite this, vanilla expected total gold is preserved at every fixed normal-fight count.
 
 ## Settled policy: permanent transformations
 
