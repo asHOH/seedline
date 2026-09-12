@@ -21,6 +21,8 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Cards: offers, rarity and rerolls
 
+**Open:** source sharing and addressing for normal-fight, elite, boss and event/Ancient card rewards, including identities, random upgrades and rerolls; determine reroll effects on later offers within the settled rarity-reset rules.
+
 - **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
 - **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
 - **Code-confirmed Catfood bug:** ordinary card rewards share initial and reroll options, so both consume one reroll-seeded identity/upgrade stream. Gameplay impact not reproduced in-game.
@@ -58,7 +60,9 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 - **Catfood:** re-seeds shuffle RNG at combat start; later shuffles continue it.
 - **Proposed:** act-local opening-shuffle ordinals. First Act 2 normal fight then aligns setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses still differ.
-- **Open:** HP/AI, random targets/costs/orbs, shuffles, temporary upgrades/downgrades, combat transformations and generated cards by pool/type; decide sharing and special-relic interactions.
+- **Open:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations; decide sharing by source/effect and special-relic interactions.
+- **Shuffles — open:** settle opening-shuffle addressing and how later shuffles share or advance randomness.
+- **Generated cards — open:** decide sharing and addressing by pool/type: own-character Attack/Skill/Power, colorless and other characters; include special-relic interactions.
 
 ## Unadopted combat-gold strategies
 
