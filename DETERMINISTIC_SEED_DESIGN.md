@@ -66,6 +66,15 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
 | Potion generation | Ordinary generation rolls rarity, then identity; some events use uniform-identity or fixed-rarity selection. Batches exclude duplicates. Failed acquisition does not restore consumed RNG state. |
 
+## Proposed strategy: skipping strategy
+
+Take the first eligible identity of the selected rarity without another rarity roll. Retain skipped entries at their original positions for later eligible pulls. Borrowing preserves its specified selection order.
+
+- **Relics:** preserve `IsAllowed` for draws/borrowing, `IsAllowedInShops` where required, and chest exclusion of character-specific relics. Shop/Courier skips remain available for generic rewards borrowing.
+- **Potions:** preserve combat-generation restrictions and batch uniqueness. Permanently discard duplicate occurrences in shop batches only; identities may still recur.
+
+**Known bias — mitigation deferred:** retained skips bias later eligible draws toward those entries. Shop-batch duplicate removal avoids this bias.
+
 ## Settled policy: shops, Wongos and Courier
 
 **Catfood baseline:** tracks shop ordinal and isolates shop card-rarity state, while retaining `Shops` RNG for card identities and prices, shared relic bags/rarity rolls, and a shared potion-factory call index.
@@ -101,7 +110,7 @@ Construct four disjoint relic-identity sequences: generic rewards, shop, Courier
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
 
-Mix shop-ineligible relics into allocations normally. When shop-ineligible entries are reached in shop/Courier draws, skip them without another rarity roll, but retain them at their original positions for borrowing by generic rewards.
+Mix shop-ineligible relics into allocations normally; draws use the [skipping strategy](#proposed-strategy-skipping-strategy).
 
 **Implementation:** construct the shuffled identity allocations once, retain original entry positions and mark removals. Generate rarity rolls on demand with independent source RNGs; save allocation state and RNG progress.
 
@@ -111,9 +120,7 @@ Hidden random relic rewards from combat/chests/events share the generic rewards 
 
 **Consumption order:** preserve existing generation order and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
 
-**Filtered pulls:** take the first eligible identity, preserving vanilla run-state eligibility (`IsAllowed`) for draws and borrowing. Source-specific filters are `IsAllowedInShops` where required and exclusion of character-specific relics for chests. Entries skipped by these filters remain available at their original positions for later eligible pulls, without another rarity roll. Shop/Courier skips follow the [allocation rule](#allocation); disjoint allocations already handle Courier's displayed-relic exclusion.
-
-**Known issue — deferred:** filtered draws leave skipped entries near the front, biasing the next unfiltered draw of the same rarity toward shop-ineligible relics after Wongos' Common offer, or character-specific relics after a chest. Investigate mitigation later.
+**Filtered pulls:** use the [skipping strategy](#proposed-strategy-skipping-strategy).
 
 ### Borrowing
 
@@ -132,7 +139,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 **Our improvements:**
 
 - Separate **drop occurrence** and **acquisition rarity + identity**; isolate acquisition sources instead of sharing Catfood's factory-call index.
-- Consume per potion, subject to filtering below. Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
+- Consume per potion, subject to the [skipping strategy](#proposed-strategy-skipping-strategy). Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`, rather than `ABC | D`.
 - Consume displayed offers on generation and direct grants only on successful acquisition, preventing Catfood's advancement on failed direct grants.
 - Freeze occurrence state during forced drops, which advance Catfood's check index.
 
@@ -142,8 +149,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences. Identities may recur; sequences continue indefinitely, so borrowing is unnecessary.
 - Within the generic rewards source, use separate rarity-roll sequences for **standard weights** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
-- **Filters:** take the first eligible identity without another rarity roll. Retain entries skipped by combat-generation restrictions at their original positions for later eligible pulls. Preserve vanilla batch uniqueness; discard duplicate occurrences within shop batches permanently, while retaining skipped occurrences in other sources. Discarding an occurrence does not ban that identity from future entries.
-- **Known issue — deferred:** retained skipping is used for relic shop eligibility, chest exclusion of character-specific relics, potion combat-generation eligibility and non-shop batch uniqueness. These uses share the earlier filtered-pull bias; shop batch duplicate removal is the exception.
+- **Filters:** use the [skipping strategy](#proposed-strategy-skipping-strategy).
 
 ### Drop occurrence
 
@@ -157,7 +163,7 @@ Only finite relic-identity allocations borrow; card/potion sequences and rarity 
 
 **Our improvements:**
 
-- Relics use the generic rewards allocation with the [filtered-pull rule](#source-classification-and-consumption), preserving the exclusion from character-specific relics.
+- Relics use the generic rewards allocation with the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Base gold uses run seed + cumulative non-empty chest ordinal to separate it from other room types.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 
