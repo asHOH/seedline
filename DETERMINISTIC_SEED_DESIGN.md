@@ -196,7 +196,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Other gains and changes
 
-**Open:** gold outside chests, transformations and permanent upgrades/downgrades; define equality and sharing by source/effect.
+**Open:** gold outside chests and transformations; define equality and sharing by source/effect.
 
 ### Encounter
 
@@ -212,6 +212,10 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 - **Proposed:** act-local setup ordinals, distinguishing source/effect where necessary.
 - **Lantern Key proposal:** forced Act 3 War Historian Repy gets **ordinal 0**, leaving ordinary events untouched; Catfood counts it normally.
 - **Unadopted suggestion:** separate forced-event selection from `?` room-type resolution.
+
+#### Permanent card changes
+
+**Open:** random card selection for permanent upgrades/downgrades; define sharing by source/effect.
 
 #### Combat randomness
 
