@@ -1,6 +1,6 @@
 # Deterministic seed mod — working document
 
-Develop the remaining design against the [goals and fairness principle](DETERMINISTIC_SEED_DESIGN.md#goals). The design document's [scope](DETERMINISTIC_SEED_DESIGN.md#scope), [terms](DETERMINISTIC_SEED_DESIGN.md#terms) and settled contracts apply here. Existing mechanics remain in its [baseline](DETERMINISTIC_SEED_DESIGN.md#vanilla-baseline) and [appendix](DETERMINISTIC_SEED_DESIGN.md#appendix-existing-mechanics).
+Develop the remaining design against the [goals and fairness principle](DETERMINISTIC_SEED_DESIGN.md#goals).
 
 ## Remaining design: rewards and encounter
 
@@ -15,26 +15,25 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled in the [design document](DETERMINISTIC_SEED_DESIGN.md):** Rewards - relics, chests, combat gold, potions and permanent transformations; Encounter - shops and unknown-room resolution.
+**Settled:** Rewards - relics, chests, combat gold, potions and permanent transformations; Encounter - shops and unknown-room resolution.
 
 ### Rewards
 
 #### Cards: offers, rarity and rerolls
 
-**Open:** source sharing and addressing for normal-fight, elite, boss and event/Ancient card rewards, including identities, random upgrades and rerolls; determine reroll effects on later offers within the settled rarity-reset rules.
+**Open:** source sharing and addressing for normal-fight, elite, boss and event/Ancient card rewards, including identities, random upgrades and rerolls; determine rarity-reset rules and reroll effects on later offers.
 
 - **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
 - **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
-- **Code-confirmed Catfood bug:** ordinary card rewards share initial and reroll options, so both consume one reroll-seeded identity/upgrade stream. Gameplay impact not reproduced in-game.
-- **Catfood rarity:** separate normal-fight, elite, boss and shop offsets use vanilla base probabilities, growth and rare-reset value. Boss rewards reset only the boss offset; Ancient entry resets all four to `-0.05`, including Neow. Shop rolls do not grow their isolated offset, leaving their Rare roll chance at 4% (0% with Scarcity).
-- **Elite initialization — proposed:** change only the elite offset's Ancient-entry reset value to `0.01`/`-0.02` (without Scarcity/with Scarcity), including Neow, approximating two normal fights. Retain reset timing, the post-Rare reset value and vanilla non-rare growth.
-- **Offset resets — settled:** see the [combat card rarity reset contract](DETERMINISTIC_SEED_DESIGN.md#settled-strategy-combat-card-rarity-resets).
-- **Act alignment — open:** find other ways to prevent divergence while preserving offset resets.
+- **Code-confirmed Catfood bug:** the initial offer uses the RNG intended for rerolls. The bug selects the wrong stream, not the wrong ordinal. Gameplay impact not reproduced in-game yet.
+- **Catfood rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 4% (0% with Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`.
+- **Catfood boss rewards:** the separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets; they are instead reset on entering Ancient. So there's no perceivable changes against vanilla.
+- **Elite initialization — proposed:** on Ancient entry, including Neow, set the elite offset to `0.01`/`-0.02` (without Scarcity/with Scarcity), approximating two normal fights. Retain vanilla non-rare growth.
+- **Offset resets — open:** whether to preserve combat rarity resets on Ancient entry. The elite Ancient-entry reset value has the separate proposal above.
+- **Act alignment — open:** prevent divergence across acts; assess alongside the offset-reset decision.
 - **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
 
-**Unadopted suggestion:** stable direct-generation scopes/indices, if a reproduced issue warrants them.
-
-**Reroll example** (Scarcity): three non-rares raise offset `0` → `0.015`. Next matching normal fight, draw `0.025` gives Uncommon versus Rare (about 1.5% versus 3%). A rare reroll instead resets the offset. Assess the impact against the 歪种 definition.
+**Reroll effect:** non-Rare reroll results raise the rarity offset for later normal-fight rewards (catfood and vanilla).
 
 ### Encounter
 
@@ -81,4 +80,3 @@ Superseded by the [settled shared sequence with normal-fight compensation](DETER
 **Separate improvement:** add run seed to boss shuffle initialization.
 
 **Pending:** verify save/load preserves counters and outcomes.
-

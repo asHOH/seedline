@@ -236,10 +236,6 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
 - **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap. When the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1, reducing effective interval widths without capping stored chances. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is also truncated and shop gets no space. Unassigned space resolves to Event.
 
-## Settled strategy: combat card rarity resets
-
-Preserve combat rarity resets to `-0.05` after Rare rolls and reset timing on Ancient entry. The elite Ancient-entry reset value remains under [discussion](DETERMINISTIC_SEED_WORKING.md#cards-offers-rarity-and-rerolls).
-
 ## Reference
 
 [Event spreadsheet](references/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices, not hidden rewards: Punch-Off is true; Wongos is false. Detailed criteria and state restrictions are in the workbook.
