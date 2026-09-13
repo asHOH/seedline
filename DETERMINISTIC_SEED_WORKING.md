@@ -15,13 +15,13 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled:** Rewards - relics, chests, combat gold, potions, permanent transformations and single direct card additions from their pools; Encounter - shops and unknown-room resolution.
+**Settled:** Rewards - relics, chests, combat gold, potions, permanent transformations and covered direct card additions; Encounter - shops and unknown-room resolution.
 
 ### Rewards
 
 #### Direct card additions: remaining special sources
 
-Direct additions use the [settled transformation-sequence policy](DETERMINISTIC_SEED_DESIGN.md#settled-policy-direct-card-additions). Remaining cases:
+See the [settled transformation and direct-addition policy](DETERMINISTIC_SEED_DESIGN.md#settled-policy-permanent-transformations-and-direct-card-additions). Remaining cases:
 
 - **Pael's Tooth — deferred:** randomly returns a previously removed card, upgraded; this selects a stored card rather than generating a new identity.
 

@@ -14,6 +14,8 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
+**Deterministic identities:** predetermined card, relic and potion grants or replacements are excluded: their identities require no random selection and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
+
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. These rare cases are outside ordinary isolation discussions throughout.
 
 **Discussion boundary:** settled sections are fixed contracts, excluded from unfinished-design discussions.
@@ -207,30 +209,21 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 **Accepted tradeoff:** at A3+, normal gold keeps its mean of 11 but is no longer uniform, with 7 and 15 each having a lower probability of 1/16; 8 to 14 remain uniform. Despite this, vanilla expected total gold is preserved at every fixed normal-fight count.
 
-## Settled policy: permanent transformations
+## Settled policy: permanent transformations and direct card additions
 
-**Catfood baseline:** retains caller-supplied transformation RNGs rather than dedicated sequences by replacement pool.
+**Catfood baseline:** retains caller-supplied transformation RNGs; card-factory additions use room/event and options-call addressing. Neither uses dedicated shared identity sequences by pool.
 
-**Our improvements:**
-
-- Permanent transformations and covered direct additions draw from a consistent order for each pool, unaffected by card reward offers or combat transformations.
+**Our improvements:** permanent transformations and covered direct additions share a consistent identity order for each pool while retaining their different rarity chances, unaffected by card reward offers or combat transformations.
 
 ### Selection and consumption
 
 - Keep seven cumulative pool sequences: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
-- Use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics).
-- For split pools, transformation rarity weights equal the counts of eligible identities in each rarity, excluding the original card. Interpret each rarity roll using those current counts, then pull from that rarity's identity sequence. Unsplit pools draw identities directly. Identity entries are uniform; sequences continue indefinitely, with repeats allowed. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
-- Consume one eligible entry per generated replacement in existing generation order. Fixed replacements, canceled selections and previews consume nothing. Save sequence progress and retained skips.
+- **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For split pools, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
+- **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback. Fixed-rarity requests consume identity only.
+- Pull one eligible identity from the resulting rarity's sequence, or directly from an unsplit pool. Identity entries are uniform; sequences continue indefinitely, with repeats allowed. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
+- Consume per generated card in existing generation order. Canceled selections and previews consume nothing. Save all sequence progress and retained skips.
 
-## Settled policy: direct card additions
-
-**Catfood baseline:** retains source selection rules; card-factory additions use room/event and options-call addressing rather than the transformation sequences.
-
-**Our improvements:** direct additions and transformations share identity sequences while retaining their different rarity chances. Card reward offers remain separate.
-
-Use the granting source's pool and restrictions, with the [skipping strategy](#proposed-strategy-skipping-strategy). Random-rarity additions consume the pool's addition rarity roll using vanilla base odds and unavailable-rarity fallback, then one eligible identity of the resulting rarity. Fixed-rarity additions consume identity only; curses use their unsplit sequence. Fixed card additions consume nothing. Preserve sequence progress and retained skips across save/load.
-
-Covered sources: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
+Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
@@ -269,21 +262,17 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 | Relic Trader | — | Acts 2–3; all players own ≥5 tradable relics. Offers a choice among three owned relics and three replacements. Normally no leave. |
 | — | Courier | 20% discount; removal never restocks; sale clears on restock. |
 | Neow | Silver Crucible | First treasure room is empty, with neither gold nor relics. |
-| Drowning Beacon | — | Gives Glowwater Potion, an Event-rarity potion outside ordinary random pools. |
-| Potion Courier | — | Offers three Foul Potions, an Event-rarity potion outside ordinary random pools. |
 | — | Delicate Frond | Fills empty potion slots before combat. |
 | — | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
 | Neow | Leafy Poultice | Transforms the first Basic Strike and Defend. |
 | — | Pandora's Box | Transforms all removable Basic Strikes/Defends. |
 | Darv | Astrolabe | Transforms three selected cards and upgrades the results. |
-| Tanx | Claws | Replaces selected cards with Maul. |
 | Infested Automaton — Study / Touch Core | — | Directly adds one random own-character Power / zero-cost non-X card. |
 | Endless Conveyor — Fried Eel | — | Directly adds one random colorless card. |
 | Neow | Arcane Scroll | Directly adds one random own-character Rare card. |
 | Neow | Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
 | Trash Heap | — | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
-| Darv | Dusty Tome | Gives the character-specific Ancient card, upgraded. |
-| Vakuu | Distinguished Cape | Directly adds two distinct random eligible curses and three Apparitions. |
+| Vakuu | Distinguished Cape | Directly adds two distinct random eligible curses. |
 
 **Other potion-generation effects:** Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat.
 
