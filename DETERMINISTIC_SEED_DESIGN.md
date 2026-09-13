@@ -10,7 +10,7 @@ Compare runs with matching seeds, versions, rules and eligible pools. This conte
 
 Single-player is the intended scope. Multiplayer behavior is excluded, except for easy changes that materially improve fairness.
 
-Tutorial overrides, including scripted rewards and boss discovery order, are excluded.
+Tutorial overrides, including scripted rewards and boss discovery order, and custom-run modifiers are excluded.
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
@@ -39,6 +39,7 @@ Base findings on code; use run histories as supporting evidence.
 ### Rewards
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
+- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it; choosing the granting event option beforehand does not make it a card reward offer.
 - **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence at its original source position; repeats are distinct entries and removals never renumber survivors.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
 - **Generation / acquisition:** generation selects an item; acquisition means actually receiving it. The potion acquisition policy also governs displayed offers, which consume on generation.
@@ -70,6 +71,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
 | Potion generation | Ordinary generation rolls rarity, then identity; some events use uniform-identity or fixed-rarity selection. Batches exclude duplicates. Failed acquisition does not restore consumed RNG state. |
 | Transformations | Random replacements are uniform over eligible identities, excluding the original. Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
+| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity; Arcane Scroll and random curse grants select uniformly from their eligible pools. |
 
 ## Proposed strategy: skipping strategy
 
@@ -77,7 +79,7 @@ Take the first eligible entry from the selected identity sequence, without anoth
 
 - **Relics:** preserve `IsAllowed` for draws/borrowing, `IsAllowedInShops` where required, and chest exclusion of character-specific relics. Shop/Courier skips remain available for generic rewards borrowing.
 - **Potions:** preserve combat-generation restrictions and batch uniqueness. Permanently discard duplicate occurrences in shop batches only; identities may still recur.
-- **Transformations:** exclude the original card identity.
+- **Transformations / direct card additions:** preserve source restrictions; transformations also exclude the original card identity.
 
 **Known bias — mitigation deferred:** retained skips bias later eligible draws toward those entries. Shop-batch duplicate removal avoids this bias.
 
@@ -211,14 +213,32 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 **Our improvements:**
 
-- Permanent transformations draw from a consistent order for each replacement pool, unaffected by unrelated rewards or combat transformations.
+- Permanent transformations and covered direct additions draw from a consistent order for each pool, unaffected by card reward offers or combat transformations.
 
 ### Selection and consumption
 
-- Share seven cumulative identity sequences across permanent random transformation sources: the five characters, colorless and curse. Isolate them from other rewards and combat transformations.
+- Share seven cumulative identity sequences across permanent random transformation sources and covered direct additions: the five characters, colorless and curse. Isolate them from card reward offers and combat transformations.
 - Use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics).
 - Generate uniform identity entries without rarity rolls. Sequences continue indefinitely; repeats are allowed, including within batches. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Consume one eligible entry per generated replacement in existing generation order. Fixed replacements, canceled selections and previews consume nothing. Save sequence progress and retained skips.
+
+## Settled policy: direct card additions
+
+**Catfood baseline:** retains source selection rules; card-factory additions use room/event and options-call addressing rather than the transformation sequences.
+
+**Our improvements:** random direct card additions share the corresponding permanent transformation sequence, so the same pool follows one consistent order. Card reward offers remain separate.
+
+Use the granting source's pool and restrictions, with the [skipping strategy](#proposed-strategy-skipping-strategy). Consume one eligible identity when the addition is generated, without a rarity roll. Fixed card additions consume nothing.
+
+**Accepted change:** sources that previously rolled rarity now select uniformly over eligible identities, subject to retained skips.
+
+Covered sources: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
+
+**Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
+
+## Settled policy: event-specific rewards
+
+Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event's private RNG, independently of shared reward sequences and unrelated game randomness. Corresponding events preserve the same rewards, or the same generation procedure where choices affect the result. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: unknown-room resolution
 
@@ -254,6 +274,13 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 | Combat-generation effects | Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat. Delicate Frond fills empty slots before combat. |
 | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
 | Permanent transformations | Inputs are player-selected or fixed by the effect. Leafy Poultice takes the first Basic Strike and Defend; Pandora's Box takes all removable Basic Strikes/Defends. Astrolabe transforms three selected cards and upgrades the results. Claws replaces selected cards with Maul. |
+| Infested Automaton — Study / Touch Core | Directly adds one random own-character Power / zero-cost non-X card. |
+| Endless Conveyor — Fried Eel | Directly adds one random colorless card. |
+| Neow — Arcane Scroll | Directly adds one random own-character Rare card. |
+| Neow — Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
+| Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
+| Darv — Dusty Tome | Gives the character-specific Ancient card, upgraded. |
+| Distinguished Cape | Directly adds two distinct random eligible curses and three Apparitions. |
 
 ### Generation and selection mechanics
 

@@ -15,9 +15,15 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled:** Rewards - relics, chests, combat gold, potions and permanent transformations; Encounter - shops and unknown-room resolution.
+**Settled:** Rewards - relics, chests, combat gold, potions, permanent transformations and single direct card additions from their pools; Encounter - shops and unknown-room resolution.
 
 ### Rewards
+
+#### Direct card additions: remaining special sources
+
+Direct additions use the [settled transformation-sequence policy](DETERMINISTIC_SEED_DESIGN.md#settled-policy-direct-card-additions). Remaining cases:
+
+- **Pael's Tooth — deferred:** randomly returns a previously removed card, upgraded; this selects a stored card rather than generating a new identity.
 
 #### Cards: offers, rarity and rerolls
 
@@ -41,7 +47,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 - **Shops and chests:** see the settled [shop](DETERMINISTIC_SEED_DESIGN.md#settled-policy-shops-wongos-and-courier) and [chest](DETERMINISTIC_SEED_DESIGN.md#settled-policy-chests) policies.
 - **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](DETERMINISTIC_SEED_DESIGN.md#relic-and-event-rules) and [selection mechanics](DETERMINISTIC_SEED_DESIGN.md#generation-and-selection-mechanics).
-- **Event-exclusive relics:** part of event encounters, already outside ordinary pools; no manual separation needed. Preserve the pre-shuffled event lists and existing choices/costs (Doll Room, Forgotten Soul / Sword of Stone, Trash Heap, Fake Merchant). Actual event selection still depends on eligibility, visited events and forced replacements.
+- **Event-specific rewards — settled:** use [private event RNG](DETERMINISTIC_SEED_DESIGN.md#settled-policy-event-specific-rewards), including Trash Heap and event-exclusive relic choices such as Doll Room. Event selection itself follows the existing event-list rules.
 
 #### Selection and setup
 
