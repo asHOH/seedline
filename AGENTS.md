@@ -5,3 +5,4 @@
 - Note edge cases briefly. Do not expand them into defensive caveats, repeated qualifications or implementation detail unless they materially change the design.
 - State document-wide boundaries once. Do not repeat predictable gameplay modifiers under each reward source.
 - Retain established terms unless a replacement resolves a concrete ambiguity.
+- Never mention or link to the working document in the design document except in the beginning line.
