@@ -264,23 +264,30 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ### Relic and event rules
 
-| Source | Rules |
-|---|---|
-| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Mystery Ticket pays three random relics after five combats. Leaving downgrades a random upgraded card, if any. |
-| Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Offers a choice among three owned relics and three replacements. Normally no leave. |
-| Courier | 20% discount; removal never restocks; sale clears on restock. |
-| Silver Crucible | Neow relic; first treasure room is empty. Suppresses both base gold and relic generation. |
-| Fixed potion grants | Drowning Beacon gives Glowwater Potion; Potion Courier offers three Foul Potions. Both identities are Event-rarity and outside ordinary random pools. |
-| Combat-generation effects | Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat. Delicate Frond fills empty slots before combat. |
-| White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
-| Permanent transformations | Inputs are player-selected or fixed by the effect. Leafy Poultice takes the first Basic Strike and Defend; Pandora's Box takes all removable Basic Strikes/Defends. Astrolabe transforms three selected cards and upgrades the results. Claws replaces selected cards with Maul. |
-| Infested Automaton — Study / Touch Core | Directly adds one random own-character Power / zero-cost non-X card. |
-| Endless Conveyor — Fried Eel | Directly adds one random colorless card. |
-| Neow — Arcane Scroll | Directly adds one random own-character Rare card. |
-| Neow — Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
-| Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
-| Darv — Dusty Tome | Gives the character-specific Ancient card, upgraded. |
-| Distinguished Cape | Directly adds two distinct random eligible curses and three Apparitions. |
+| Event / option | Relic | Effect |
+|---|---|---|
+| Wongos | — | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. |
+| Wongos | Mystery Ticket | Pays three random relics after five combats. |
+| Relic Trader | — | Acts 2–3; all players own ≥5 tradable relics. Offers a choice among three owned relics and three replacements. Normally no leave. |
+| — | Courier | 20% discount; removal never restocks; sale clears on restock. |
+| Neow | Silver Crucible | First treasure room is empty, with neither gold nor relics. |
+| Drowning Beacon | — | Gives Glowwater Potion, an Event-rarity potion outside ordinary random pools. |
+| Potion Courier | — | Offers three Foul Potions, an Event-rarity potion outside ordinary random pools. |
+| — | Delicate Frond | Fills empty potion slots before combat. |
+| — | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
+| Neow | Leafy Poultice | Transforms the first Basic Strike and Defend. |
+| — | Pandora's Box | Transforms all removable Basic Strikes/Defends. |
+| Darv | Astrolabe | Transforms three selected cards and upgrades the results. |
+| Tanx | Claws | Replaces selected cards with Maul. |
+| Infested Automaton — Study / Touch Core | — | Directly adds one random own-character Power / zero-cost non-X card. |
+| Endless Conveyor — Fried Eel | — | Directly adds one random colorless card. |
+| Neow | Arcane Scroll | Directly adds one random own-character Rare card. |
+| Neow | Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
+| Trash Heap | — | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
+| Darv | Dusty Tome | Gives the character-specific Ancient card, upgraded. |
+| Vakuu | Distinguished Cape | Directly adds two distinct random eligible curses and three Apparitions. |
+
+**Other potion-generation effects:** Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat.
 
 ### Generation and selection mechanics
 
