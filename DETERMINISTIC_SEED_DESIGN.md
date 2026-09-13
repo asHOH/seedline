@@ -71,7 +71,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
 | Potion generation | Ordinary generation rolls rarity, then identity; some events use uniform-identity or fixed-rarity selection. Batches exclude duplicates. Failed acquisition does not restore consumed RNG state. |
 | Transformations | Random replacements are uniform over eligible identities, excluding the original. Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
-| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity; Arcane Scroll and random curse grants select uniformly from their eligible pools. |
+| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity: Common/Uncommon/Rare 60%/37%/3%, or 61.51%/37%/1.49% with Scarcity，independent of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools. |
 
 ## Proposed strategy: skipping strategy
 
@@ -217,20 +217,18 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 ### Selection and consumption
 
-- Share seven cumulative identity sequences across permanent random transformation sources and covered direct additions: the five characters, colorless and curse. Isolate them from card reward offers and combat transformations.
+- Keep seven cumulative pool sequences: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - Use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics).
-- Generate uniform identity entries without rarity rolls. Sequences continue indefinitely; repeats are allowed, including within batches. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
+- For split pools, transformation rarity weights equal the counts of eligible identities in each rarity, excluding the original card. Interpret each rarity roll using those current counts, then pull from that rarity's identity sequence. Unsplit pools draw identities directly. Identity entries are uniform; sequences continue indefinitely, with repeats allowed. Apply the [skipping strategy](#proposed-strategy-skipping-strategy).
 - Consume one eligible entry per generated replacement in existing generation order. Fixed replacements, canceled selections and previews consume nothing. Save sequence progress and retained skips.
 
 ## Settled policy: direct card additions
 
 **Catfood baseline:** retains source selection rules; card-factory additions use room/event and options-call addressing rather than the transformation sequences.
 
-**Our improvements:** random direct card additions share the corresponding permanent transformation sequence, so the same pool follows one consistent order. Card reward offers remain separate.
+**Our improvements:** direct additions and transformations share identity sequences while retaining their different rarity chances. Card reward offers remain separate.
 
-Use the granting source's pool and restrictions, with the [skipping strategy](#proposed-strategy-skipping-strategy). Consume one eligible identity when the addition is generated, without a rarity roll. Fixed card additions consume nothing.
-
-**Accepted change:** sources that previously rolled rarity now select uniformly over eligible identities, subject to retained skips.
+Use the granting source's pool and restrictions, with the [skipping strategy](#proposed-strategy-skipping-strategy). Random-rarity additions consume the pool's addition rarity roll using vanilla base odds and unavailable-rarity fallback, then one eligible identity of the resulting rarity. Fixed-rarity additions consume identity only; curses use their unsplit sequence. Fixed card additions consume nothing. Preserve sequence progress and retained skips across save/load.
 
 Covered sources: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
