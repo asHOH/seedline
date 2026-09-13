@@ -47,7 +47,7 @@ See the [settled transformation and direct-addition policy](DETERMINISTIC_SEED_D
 
 - **Shops and chests:** see the settled [shop](DETERMINISTIC_SEED_DESIGN.md#settled-policy-shops-wongos-and-courier) and [chest](DETERMINISTIC_SEED_DESIGN.md#settled-policy-chests) policies.
 - **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](DETERMINISTIC_SEED_DESIGN.md#relic-and-event-rules) and [selection mechanics](DETERMINISTIC_SEED_DESIGN.md#generation-and-selection-mechanics).
-- **Event-specific rewards — settled:** use [private event RNG](DETERMINISTIC_SEED_DESIGN.md#settled-policy-event-specific-rewards), including Trash Heap and event-exclusive relic choices such as Doll Room. Event selection itself follows the existing event-list rules.
+- **Event-specific rewards — settled:** use [event RNG](DETERMINISTIC_SEED_DESIGN.md#settled-policy-event-specific-rewards), including Trash Heap and event-exclusive relic choices such as Doll Room. Event selection itself follows the existing event-list rules.
 
 #### Selection and setup
 

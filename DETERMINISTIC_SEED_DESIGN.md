@@ -53,6 +53,7 @@ Base findings on code; use run histories as supporting evidence.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
+- **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
 - **Same-seed divergence (歪种):** large early- or mid-run outcome differences that undermine fair same-seed comparison. Late-game differences from different total room-type/subtype ordinals are benign.
 
 ## Vanilla baseline
@@ -63,11 +64,11 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 |---|---|
 | Unknown room types | `?` resolution uses dedicated `UnknownMapPoint` RNG and changing odds. Odds reset between acts; RNG progress continues. Route exclusions and forced outcomes affect resolution. Catfood leaves this unchanged. |
 | Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; normal fights reached through `?` nodes or visible normal-fight nodes share the same encounter list. Catfood leaves identity selection unchanged. |
-| Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite private RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
+| Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite having an event RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
 | Combat gold | Uses shared `Rewards` RNG, uniformly over inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. |
 | Card rarity | Combat rewards update a shared rarity offset; shops read it without updating it. Rare rewards, including guaranteed boss Rares, reset it; Ancient entry does not. |
-| Ancient options | Private event RNG uses run seed + event identity hash + player-slot contribution, independently of event counts. Ancient options use this RNG. |
+| Ancient options | Use the event RNG. Vanilla seeds it with run seed + event identity hash + player-slot contribution, independently of event counts. |
 | Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Unlike elite rewards, chests exclude character-specific relics. Silver Crucible suppresses the first chest's rewards before generation. |
 | Relic pools | Sources share finite identity bags, with different draw directions and eligibility filters. Depletion can change delivered rarity. |
 | Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
@@ -225,11 +226,13 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
+**Infested Automaton:** Study and Touch Core use its event RNG for rarity, preserving vanilla base odds and fallback without advancing the addition rarity sequence. Identities still use the shared character sequences and skipping strategy.
+
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
 ## Settled policy: event-specific rewards
 
-Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event's private RNG, independently of shared reward sequences and unrelated game randomness. Corresponding events preserve the same rewards, or the same generation procedure where choices affect the result. Preserve existing choices, costs and eligibility.
+Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences and unrelated game randomness. Corresponding events preserve the same rewards, or the same generation procedure where choices affect the result. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: unknown-room resolution
 
