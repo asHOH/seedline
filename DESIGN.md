@@ -120,11 +120,11 @@ Apply the filtered draw strategy to all covered relic, potion, transformation an
 ### Stock and prices
 
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
-- Give shops independent **card, relic-rarity, relic-identity and potion sequences**.
+- **Initial cards:** generate rarity and identity from run seed + shop ordinal, independently of other systems. Preserve slot order, duplicate exclusion and unavailable-rarity fallback. Relic-rarity, relic-identity and potion sequences remain independent.
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
-- Sale slot depends only on shop ordinal, independently of identities and other RNG calls.
-- Base price is addressed by run seed + source sequence + **original entry position**. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
-- **Courier:** separate card, relic-rarity/identity and potion sequences; advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
+- Sale slot uses run seed + shop ordinal, independently of card generation and other RNG calls.
+- Base price is addressed by run seed + source sequence + **original entry position**. Initial shop cards use shop ordinal + slot as their entry address. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
+- **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
