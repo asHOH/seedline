@@ -2,6 +2,12 @@
 
 Unfinished design questions and investigation notes are in the [working document](WORKING.md).
 
+## Goals
+
+**Goal:** fair same-seed competition at equivalent ordinal opportunities. Corresponding shops should match regardless of route, with explicit exceptions below; purchases/restocks should not change later shops. Preserve meaningful choices while removing interference between unrelated systems.
+
+**Fairness principle:** limit the difference one room creates compared with a run without that room. Even consuming the last sequence entry can matter greatly if it contains an exceptionally powerful relic.
+
 ## Scope
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
@@ -18,15 +24,9 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. Rare tail effects and interactions between sequences through borrowing are outside ordinary isolation discussions throughout.
 
-**Discussion boundary:** settled sections are fixed contracts, excluded from unfinished-design discussions.
+**Design status:** settled sections are fixed contracts, excluded from unfinished-design discussions.
 
 Base findings on code; use run histories as supporting evidence.
-
-## Goals
-
-**Goal:** fair same-seed competition at equivalent ordinal opportunities. Corresponding shops should match regardless of route, with explicit exceptions below; purchases/restocks should not change later shops. Preserve meaningful choices while removing interference between unrelated systems.
-
-**Fairness principle:** limit the difference one room creates compared with a run without that room. Even consuming the last sequence entry can matter greatly if it contains an exceptionally powerful relic.
 
 ## Terms
 
@@ -50,7 +50,8 @@ Base findings on code; use run histories as supporting evidence.
 
 ### Determinism
 
-- **Allocation / sequence / RNG:** an allocation assigns relic identities to sources; a sequence orders outcomes; a random number generator (RNG) generates random choices.
+- **Rewards / Encounter:** Rewards covers generated reward identities and amounts, including permanent transformation results. Encounter covers random selection of affected cards/items, room content, named event options and combat randomness. These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
+- **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence defines draw order; a random number generator (RNG) generates random choices.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
@@ -92,7 +93,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
 
-Markers retain the original draw's eligibility conditions, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
+Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
 Apply the filtered draw strategy to all covered relic, potion, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing. The main cost is understanding and implementing marker resolution.
 
@@ -130,7 +131,7 @@ Apply the filtered draw strategy to all covered relic, potion, transformation an
 
 ### Allocation
 
-Construct four disjoint, shuffled relic-identity sequences once: generic rewards, shop, Courier, and Shop-rarity. The first three each contain Common, Uncommon and Rare subsequences that advance independently. Shops own the shop and Shop-rarity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / shop / Courier; all Shop-rarity identities enter the dedicated sequence.
+Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each contains independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / shop / Courier. Shops own the shop allocation and a separate shuffled Shop-rarity sequence containing all Shop-rarity identities.
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
 
@@ -228,7 +229,7 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 ### Selection and consumption
 
-- Keep seven cumulative pool sequences: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
+- Keep seven pool groups with cumulative sequences: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For split pools, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback. Fixed-rarity requests consume identity only.
 - Draw one eligible entry from the resulting rarity's sequence, or directly from an unsplit pool. Identity entries are uniform. Apply the [filtered draw strategy](#settled-policy-filtered-draw-strategy).
