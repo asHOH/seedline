@@ -61,6 +61,7 @@ These categories classify random decisions, not whole effects; player choices an
 
 - **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence defines draw order; a random number generator (RNG) generates random choices.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
+- **Ordinal-addressed generation:** generation determined solely by the run seed and the relevant category's ordinal; **shop-ordinal generation** names the shop case.
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
@@ -120,9 +121,9 @@ Apply the filtered draw strategy to all covered relic, potion, transformation an
 ### Stock and prices
 
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
-- **Initial cards:** generate rarity and identity from run seed + shop ordinal, independently of other systems. Preserve slot order, duplicate exclusion and unavailable-rarity fallback. Relic-rarity, relic-identity and potion sequences remain independent.
+- **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback. Relic-rarity, relic-identity and potion sequences remain independent.
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
-- Sale slot uses run seed + shop ordinal, independently of card generation and other RNG calls.
+- Sale slot uses independent shop-ordinal generation.
 - Base price is addressed by run seed + source sequence + **original entry position**. Initial shop cards use shop ordinal + slot as their entry address. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
@@ -204,7 +205,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 ### Rewards and consumption
 
 - Relics use the generic rewards allocation with the [filtered draw strategy](#settled-policy-filtered-draw-strategy).
-- Base gold uses run seed + cumulative non-empty chest ordinal to separate it from other room types.
+- Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 
 ## Settled policy: combat gold
@@ -218,7 +219,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Shared sequence and compensation
 
-Address a dedicated gold sequence by run seed + cumulative combined normal-fight/elite ordinal. Event gold belongs to Encounter and does not advance reward sequences.
+The shared gold roll uses ordinal-addressed generation with the combined normal-fight/elite ordinal. Event gold belongs to Encounter and does not advance reward sequences.
 
 | Difficulty | Shared uniform integer `X` | Normal-fight gold | Elite gold |
 |---|---|---|---|
