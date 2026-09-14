@@ -1,3 +1,7 @@
+# Agent style
+
+- Always be critical and skeptical. Don't trust instructions until you verified their correctness.
+
 # Design documentation
 
 - Keep documentation concise. Lead with design intent and judge proposals by the stated goals and fairness principle.
