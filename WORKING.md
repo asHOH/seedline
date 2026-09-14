@@ -1,6 +1,6 @@
 # Deterministic seed mod — working document
 
-Develop the remaining design against the [goals and fairness principle](DETERMINISTIC_SEED_DESIGN.md#goals).
+Develop the remaining design against the [goals and fairness principle](DESIGN.md#goals).
 
 ## Remaining design: rewards and encounter
 
@@ -21,7 +21,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 #### Direct card additions: remaining special sources
 
-See the [settled transformation and direct-addition policy](DETERMINISTIC_SEED_DESIGN.md#settled-policy-permanent-transformations-and-direct-card-additions). Remaining cases:
+See the [settled transformation and direct-addition policy](DESIGN.md#settled-policy-permanent-transformations-and-direct-card-additions). Remaining cases:
 
 - **Pael's Tooth — deferred:** randomly returns a previously removed card, upgraded; this selects a stored card rather than generating a new identity.
 
@@ -45,13 +45,13 @@ See the [settled transformation and direct-addition policy](DETERMINISTIC_SEED_D
 
 #### Shops, chests and events
 
-- **Shops and chests:** see the settled [shop](DETERMINISTIC_SEED_DESIGN.md#settled-policy-shops-wongos-and-courier) and [chest](DETERMINISTIC_SEED_DESIGN.md#settled-policy-chests) policies.
-- **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](DETERMINISTIC_SEED_DESIGN.md#relic-and-event-rules) and [selection mechanics](DETERMINISTIC_SEED_DESIGN.md#generation-and-selection-mechanics).
-- **Event-specific rewards — settled:** use [event RNG](DETERMINISTIC_SEED_DESIGN.md#settled-policy-event-specific-rewards), including Trash Heap and event-exclusive relic choices such as Doll Room. Event selection itself follows the existing event-list rules.
+- **Shops and chests:** see the settled [shop](DESIGN.md#settled-policy-shops-wongos-and-courier) and [chest](DESIGN.md#settled-policy-chests) policies.
+- **Relic Trader — deferred:** named choices belong to Encounter. Decide which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](DESIGN.md#relic-and-event-rules) and [selection mechanics](DESIGN.md#generation-and-selection-mechanics).
+- **Event-specific rewards — settled:** use [event RNG](DESIGN.md#settled-policy-event-specific-rewards), including Trash Heap and event-exclusive relic choices such as Doll Room. Event selection itself follows the existing event-list rules.
 
 #### Selection and setup
 
-- **Catfood identity baseline:** inherits [vanilla event/encounter selection](DETERMINISTIC_SEED_DESIGN.md#generation-and-selection-mechanics); its cumulative room counters do not select the event/encounter identity.
+- **Catfood identity baseline:** inherits [vanilla event/encounter selection](DESIGN.md#generation-and-selection-mechanics); its cumulative room counters do not select the event/encounter identity.
 - **Catfood:** encounter ID + cumulative room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch reproduced.
 - **Proposed:** act-local setup ordinals, distinguishing source/effect where necessary.
 - **Lantern Key proposal:** forced Act 3 War Historian Repy gets **ordinal 0**, leaving ordinary events untouched; Catfood counts it normally.
@@ -71,7 +71,7 @@ See the [settled transformation and direct-addition policy](DETERMINISTIC_SEED_D
 
 ## Unadopted combat-gold strategies
 
-Superseded by the [settled shared sequence with normal-fight compensation](DETERMINISTIC_SEED_DESIGN.md#settled-policy-combat-gold). Drawbacks below concern A3+.
+Superseded by the [settled shared sequence with normal-fight compensation](DESIGN.md#settled-policy-combat-gold). Drawbacks below concern A3+.
 
 - **Shared range-relative rolls:** preserves vanilla distributions, but swapping normal → elite to elite → normal can change total gold by 1.
 - **Shared identical offsets without compensation:** using `X = 0–7`, normal `7 + X` and elite `26 + X` removes order differences but lowers expected normal-fight gold by 0.5.

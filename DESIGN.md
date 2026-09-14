@@ -1,6 +1,6 @@
 # Deterministic seed mod — design
 
-Unfinished design questions and investigation notes are in the [working document](DETERMINISTIC_SEED_WORKING.md).
+Unfinished design questions and investigation notes are in the [working document](WORKING.md).
 
 ## Scope
 
