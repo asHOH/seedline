@@ -4,9 +4,9 @@ Unfinished design questions and investigation notes are in the [working document
 
 ## Goals
 
-**Goal:** fair same-seed competition at equivalent ordinal opportunities. Corresponding shops should match regardless of route, with explicit exceptions below; purchases/restocks should not change later shops. Preserve meaningful choices while removing interference between unrelated systems.
+**Goal:** make same-seed runs offer comparable choices and combat challenges, even when players take different routes or make different decisions. Preserve meaningful consequences while keeping later opportunities fair. Compare equivalent ordinal opportunities—e.g., each run's first shop or third normal-fight reward, even if reached on different floors.
 
-**Fairness principle:** limit the difference one room creates compared with a run without that room. Even consuming the last sequence entry can matter greatly if it contains an exceptionally powerful relic.
+**Fairness principle:** keep the effects of a decision focused on what that decision concerns. Visiting an extra room or choosing a reward should change as little unrelated future gameplay as possible. Later opportunities may give players a chance to recover from earlier disadvantages.
 
 ## Scope
 
