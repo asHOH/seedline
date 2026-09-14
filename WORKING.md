@@ -4,12 +4,7 @@ Develop the remaining design against the [goals and fairness principle](DESIGN.m
 
 ## Remaining design: rewards and encounter
 
-| Category | Determines | Primary progression |
-|---|---|---|
-| Rewards | Generated reward identities and amounts, including permanent transformation results | Cumulative ordinals |
-| Encounter | Random selection of affected cards/items, room content, named event options and combat randomness | Act-local ordinals |
-
-Classify random decisions, not whole effects. Player choices and fixed selections belong to neither category. Sequence scope and addressing are separate fairness decisions; the progression above is a default, not a definition.
+Use the [Rewards / Encounter design categories](DESIGN.md#design-categories). Rewards defaults to cumulative ordinals; Encounter defaults to act-local ordinals. Sequence scope and addressing remain separate fairness decisions.
 
 Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 

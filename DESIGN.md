@@ -28,6 +28,15 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 
 Base findings on code; use run histories as supporting evidence.
 
+## Design categories
+
+The design has two top-level categories:
+
+- **Rewards:** generated reward identities and amounts, including permanent transformation results.
+- **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
+
+These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
+
 ## Terms
 
 ### Game context
@@ -50,7 +59,6 @@ Base findings on code; use run histories as supporting evidence.
 
 ### Determinism
 
-- **Rewards / Encounter:** Rewards covers generated reward identities and amounts, including permanent transformation results. Encounter covers random selection of affected cards/items, room content, named event options and combat randomness. These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
 - **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence defines draw order; a random number generator (RNG) generates random choices.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
