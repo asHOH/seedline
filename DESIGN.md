@@ -158,8 +158,8 @@ Save sequence contents and progress, including original entry addresses, consump
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot uses independent shop-ordinal generation.
-- **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address. No advance generation is needed.
-- **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. As in vanilla, roll rarity once, apply unavailable-rarity fallback, then select an identity excluding cards still displayed. Filtered draws advance identities only. Preserve [original mechanics](#shops-chests-and-relic-events).
+- **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
+- **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
@@ -210,15 +210,15 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 - Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
-- **Consumption:** follow the [shared timing rules](#consumption-timing); preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
+- Preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
 
 **Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
 ### Drop occurrence
 
 - Retain Catfood addressing and vanilla's shared changing probability across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
-- **White Beast Statue:** forced drops freeze the occurrence index and stored probability. After removal, resume at the next unused ordinary-check index.
-- Acquisition without a drop check does not advance occurrence state. Save the occurrence index and probability.
+- **White Beast Statue:** forced drops freeze the occurrence index and stored probability.
+- Save the occurrence index and probability.
 
 ## Settled policy: chests
 
@@ -232,7 +232,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 ### Rewards and consumption
 
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
-- Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
+- Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 
 ## Settled policy: combat gold
 
@@ -272,13 +272,13 @@ Covered direct additions: Infested Automaton's Study and Touch Core, Endless Con
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Transformations and direct additions consume on generation; canceled selections and previews consume nothing.
 
-**Infested Automaton:** Study and Touch Core use its event RNG for rarity, preserving vanilla base odds and fallback without advancing the addition rarity sequence. Identities still use the shared character sequences.
+**Infested Automaton:** Study and Touch Core use its event RNG for rarity without advancing the addition rarity sequence. Identities still use the shared character sequences.
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
 ## Settled policy: event-specific rewards
 
-Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences and unrelated game randomness. Corresponding events preserve the same rewards, or the same generation procedure where choices affect the result. Preserve existing choices, costs and eligibility.
+Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Corresponding events preserve the same rewards, or the same generation procedure where choices affect the result. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: unknown-room resolution
 
@@ -288,7 +288,7 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ### Addressing and room-type chances
 
-- **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes, removing dependence on previous acts' `?` visit counts.
+- **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes.
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
 - **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` (midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio) unless shifted just enough to avoid overlap. Unassigned space resolves to Event.
 - **Overflow:** when the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is truncated and shop gets no space.
