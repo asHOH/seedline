@@ -89,15 +89,19 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Transformations | Random replacements are uniform over eligible identities, excluding the original. Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
 | Direct card additions | Sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity: Common/Uncommon/Rare 60%/37%/3%, or 61.51%/37%/1.49% with Scarcity，independent of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools. |
 
-## Shared strategy: rarity and identity sequences
+## Shared strategies
+
+### Rarity and identity sequences
 
 **Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and progress.
 
 **Scope:** relics, potions, permanent transformations and covered direct additions.
 
-With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#shared-strategy-filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
+With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
 
-## Shared strategy: consumption timing
+**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Potion/card identities may recur; only finite relic allocations borrow.
+
+### Consumption timing
 
 **Main idea:** advance a sequence when its corresponding opportunity occurs.
 
@@ -106,13 +110,13 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 - **Deferred rewards:** consume when the payoff is generated, not when its granting relic is acquired; e.g., the elite relic precedes Mystery Ticket's three relics.
 - **Bypassed operations:** leave their ordinary sequence paused. White Beast Statue bypasses the drop check, but its potion still consumes a reward identity; Silver Crucible suppresses chest rewards before generation. Source policies specify the affected counters.
 
-## Shared strategy: stable entry addresses
+### Stable entry addresses
 
 **Main idea:** an entry keeps its original address when it moves.
 
 An entry's address is its original source sequence + original entry position. Filtered advancement and borrowing preserve this address; removals never renumber it. Prices and saved state refer to this stable address, so repeated item identities remain distinct occurrences.
 
-## Shared strategy: filtered draws
+### Filtered draws
 
 **Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
@@ -131,7 +135,9 @@ Markers freeze eligibility conditions at the original draw, including batch excl
 
 Apply the filtered draw strategy to all covered relic, potion, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing. The main cost is understanding and implementing marker resolution.
 
-**Sequence implementation:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Potion/card identities may recur; only finite relic allocations borrow. Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, borrowing transfers, and RNG progress.
+### Saved state
+
+Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress.
 
 ## Settled policy: shops, Wongos and Courier
 
@@ -149,7 +155,7 @@ Apply the filtered draw strategy to all covered relic, potion, transformation an
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback. Relic-rarity, relic-identity and potion sequences remain independent.
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot uses independent shop-ordinal generation.
-- **Base prices:** use run seed + [stable entry address](#shared-strategy-stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address. No advance generation is needed.
+- **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address. No advance generation is needed.
 - **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Preserve [original mechanics](#generation-and-selection-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
@@ -201,7 +207,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 - Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
-- **Consumption:** follow the [shared timing rules](#shared-strategy-consumption-timing); preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
+- **Consumption:** follow the [shared timing rules](#consumption-timing); preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
 
 **Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
