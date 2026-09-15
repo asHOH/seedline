@@ -57,7 +57,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Filter / filter marker:** a filter defines eligibility for a draw. A **filter marker** occupies a sequence position and records one deferred advancement under that filter; shortened to **marker** below.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
 - **Generation / acquisition:** generation selects an item; acquisition means actually receiving it.
-- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** groups combat rewards, events and other grants as specified per item type; relics and potions use separate sequences.
+- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is defined per item type below; relics and potions use separate sequences.
 
 ### Determinism
 
@@ -154,11 +154,12 @@ Save sequence contents and progress, including original entry addresses, consump
 ### Stock and prices
 
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
-- **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback. Relic-rarity, relic-identity and potion sequences remain independent.
+- **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
+- **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address. No advance generation is needed.
-- **Courier:** Attack, Skill and Power each have an independent rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. As in vanilla, roll rarity once, apply unavailable-rarity fallback, then select an identity excluding cards still displayed. Filtered draws advance identities only. Relic-rarity/identity and potion sequences are separate. Advance neither shop nor generic rewards sequences, nor shop ordinal. Preserve [original mechanics](#shops-chests-and-relic-events).
+- **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. As in vanilla, roll rarity once, apply unavailable-rarity fallback, then select an identity excluding cards still displayed. Filtered draws advance identities only. Preserve [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
@@ -173,7 +174,7 @@ Save sequence contents and progress, including original entry addresses, consump
 
 ### Allocation
 
-Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each contains independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards / shop / Courier. Shops own the shop allocation and a separate shuffled Shop-rarity sequence containing all Shop-rarity identities.
+Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
 
 Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
 
@@ -183,7 +184,7 @@ Mix shop-ineligible relics into allocations normally.
 
 ### Source classification and consumption
 
-Hidden random relic rewards from combat/chests/events share the generic rewards rarity-roll sequence and allocation, with source-specific eligibility, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Classify deferred payoffs separately from their granting relic.
+Hidden random relic rewards from combat/chests/events use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box). Classify deferred payoffs separately from their granting relic.
 
 ### Borrowing
 
@@ -230,7 +231,6 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Rewards and consumption
 
-- Relics use the generic rewards allocation.
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 
