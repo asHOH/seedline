@@ -114,9 +114,9 @@ An entry's address is its original source sequence + original entry position. Fi
 
 ## Shared strategy: filtered draws
 
-**Intent:** return an eligible entry while mostly preserving the sequence's distribution. Advance the eligible subsequence within its existing positions, so skipped entries do not accumulate at the front of later draws.
+**Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
-**Principle:** generalize fixed-rarity draws. Viewed as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
+**Advancement:** generalize fixed-rarity draws. Viewing per-identity sequences and rarity rolls together as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
 
 **Method — deferred advancement:** a filtered draw returns the first eligible entry and replaces it with a marker for its filter. To resolve a marker, move the next eligible entry from the following sequence into the marker's position, leaving a marker for the same filter at the supplying position. An ordinary draw resolves any marker at the front, then returns the entry and removes the drawn position. This performs the same advancement on demand, for infinite sequences as well as finite relic allocations.
 
@@ -228,18 +228,15 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ## Settled policy: combat gold
 
+**Main idea:** share random variation between normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
+
 **Catfood baseline:** preserves vanilla gold ranges and rounding. On room entry, re-seeds shared `Rewards` RNG by run seed and cumulative combat-category count, with different seed multipliers for normal fights and elites. Gold has no dedicated RNG.
-
-**Our improvements:**
-
-- Conbine normal-fight and elite gold draw sequence while preserving vanilla expected gold.
-- Isolate combat gold from other rewards.
 
 ### Shared sequence and compensation
 
 The shared gold roll uses ordinal-addressed generation with the combined ordinal of normal-fight/elite gold rewards. Event battles use the same rules and consume normally.
 
-These situations are unrelated to this gold sequence: combats with fixed  (fake Merchant, boss) or no gold reward, fixed extra payouts, and gold specified by an event choice. See the appendix for source-specific exceptions.
+These situations are unrelated to this gold sequence: combats with fixed gold (Fake Merchant, bosses) or no gold reward, fixed extra payouts, and gold specified by an event choice. See the appendix for source-specific exceptions.
 
 | Difficulty | Shared uniform integer `X` | Normal-fight gold | Elite gold |
 |---|---|---|---|
@@ -276,13 +273,9 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ## Settled policy: unknown-room resolution
 
+**Main idea:** align random draws within each act and keep each room type's probability interval as stationary as possible, limiting interference from earlier acts and other room types' changing chances.
+
 **Catfood baseline:** uses the [vanilla baseline above](#vanilla-baseline); cumulative room counters do not determine `?` room type.
-
-**Our improvements:**
-
-- Earlier acts' `?` visits no longer shift the next act's random draws.
-- When the map temporarily blocks a `?` shop, its chance still builds for later visits.
-- Changes to one room type's chance are less likely to disturb other room types' results.
 
 ### Addressing and room-type chances
 
