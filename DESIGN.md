@@ -1,6 +1,6 @@
 # Deterministic seed mod — design
 
-Unfinished design questions and investigation notes are in the [working document](WORKING.md).
+Coverage is partial: the [working document](WORKING.md) tracks unfinished systems, whose existing behavior remains a baseline pending design decisions.
 
 ## Goals
 
