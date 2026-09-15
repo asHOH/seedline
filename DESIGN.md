@@ -56,7 +56,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence identified by its original source position; repeats are distinct entries. Advancement changes its logical position, not its original source address; removals never renumber these addresses.
 - **Filter / filter marker:** a filter defines eligibility for a draw. A **filter marker** occupies a sequence position and records one deferred advancement under that filter; shortened to **marker** below.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
-- **Generation / acquisition:** generation selects an item; acquisition means actually receiving it. The potion acquisition policy also governs displayed offers, which consume on generation.
+- **Generation / acquisition:** generation selects an item; acquisition means actually receiving it.
 - **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** groups combat rewards, events and other grants as specified per item type; relics and potions use separate sequences.
 
 ### Determinism
@@ -96,6 +96,15 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 **Scope:** relics, potions, permanent transformations and covered direct additions.
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#shared-strategy-filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
+
+## Shared strategy: consumption timing
+
+**Main idea:** advance a sequence when its corresponding opportunity occurs.
+
+- **Displayed offers:** consume on generation, even if declined.
+- **Direct potion grants:** consume only on successful acquisition. Failed grants leave rarity/identity RNG and sequence state unchanged.
+- **Deferred rewards:** consume when the payoff is generated, not when its granting relic is acquired; e.g., the elite relic precedes Mystery Ticket's three relics.
+- **Bypassed operations:** leave their ordinary sequence paused. White Beast Statue bypasses the drop check, but its potion still consumes a reward identity; Silver Crucible suppresses chest rewards before generation. Source policies specify the affected counters.
 
 ## Shared strategy: filtered draws
 
@@ -162,8 +171,6 @@ Mix shop-ineligible relics into allocations normally.
 
 Hidden random relic rewards from combat/chests/events share the generic rewards rarity-roll sequence and allocation, with source-specific eligibility, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Classify deferred payoffs separately from their granting relic.
 
-**Consumption order:** preserve existing generation order and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
-
 ### Borrowing
 
 On exhaustion, borrow the **last eligible remaining identity** of the requested rarity. Other sequences borrow from Courier first; Courier borrows from generic rewards first.
@@ -190,7 +197,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 - Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
-- **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
+- **Consumption:** follow the [shared timing rules](#shared-strategy-consumption-timing); preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
 
 **Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
@@ -251,7 +258,7 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 - **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Identity entries are uniform.
-- Consume per generated card in existing generation order. Canceled selections and previews consume nothing.
+- Transformations and direct additions consume on generation; canceled selections and previews consume nothing.
 
 Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
