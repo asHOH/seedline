@@ -32,10 +32,12 @@ Base findings on code; use run histories as supporting evidence.
 
 The design has two top-level categories:
 
-- **Rewards:** generated reward identities and amounts, including permanent transformation results.
+- **Rewards:** generated reward identities and amounts, including permanent transformation results and unspecified random non-event-exclusive rewards.
 - **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
 
 These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
+
+Category and RNG ownership are separate: a reward can use event RNG.
 
 ## Terms
 
@@ -77,7 +79,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; normal fights reached through `?` nodes or visible normal-fight nodes share the same encounter list. Catfood leaves identity selection unchanged. |
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite having an event RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
-| Combat gold | Uses shared `Rewards` RNG, uniformly over inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. |
+| Combat gold | Uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. Source-specific exceptions are in the appendix. |
 | Card rarity | Combat rewards update a shared rarity offset; shops read it without updating it. Rare combat reward rolls, including guaranteed boss Rares, reset it; direct additions and Ancient entry do not. Catfood resets on Ancient entry instead of boss rewards, which is effectively the same timing. |
 | Ancient options | Use the event RNG. Vanilla seeds it with run seed + event identity hash + player-slot contribution, independently of event counts. |
 | Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Unlike elite rewards, chests exclude character-specific relics. Silver Crucible suppresses the first chest's rewards before generation. |
@@ -214,21 +216,23 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 **Our improvements:**
 
-- Taking the same number of normal fights and elites in a different order gives the same total base gold.
-- Preserve vanilla expected gold while isolating combat gold from other rewards.
+- Conbine normal-fight and elite gold draw sequence while preserving vanilla expected gold.
+- Isolate combat gold from other rewards.
 
 ### Shared sequence and compensation
 
-The shared gold roll uses ordinal-addressed generation with the combined normal-fight/elite ordinal. Event gold belongs to Encounter and does not advance reward sequences.
+The shared gold roll uses ordinal-addressed generation with the combined ordinal of normal-fight/elite gold rewards. Event battles use the same rules and consume normally.
+
+These situations are unrelated to this gold sequence: combats with fixed  (fake Merchant, boss) or no gold reward, fixed extra payouts, and gold specified by an event choice. See the appendix for source-specific exceptions.
 
 | Difficulty | Shared uniform integer `X` | Normal-fight gold | Elite gold |
 |---|---|---|---|
 | A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
 | A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
 
-At A3+, choose a fair starting bit from the run seed, independently of the gold sequence. Alternate compensation `b` between 0 and 1, advancing **once per normal fight**, using its cumulative ordinal; elites never advance it. Both sequences continue across acts. Preserve their progress and the starting bit across save/load.
+At A3+, choose a fair starting bit from the run seed, independently of the gold sequence. Alternate compensation `b` between 0 and 1, advancing **once per consuming normal-fight gold reward**, using its cumulative ordinal; elites never advance it. Both sequences continue across acts. Preserve their progress and the starting bit across save/load.
 
-**Accepted tradeoff:** at A3+, normal gold keeps its mean of 11 but is no longer uniform, with 7 and 15 each having a lower probability of 1/16; 8 to 14 remain uniform. Despite this, vanilla expected total gold is preserved at every fixed normal-fight count.
+**Accepted tradeoff:** at A3+, normal gold keeps its mean of 11 but is no longer uniform, with 7 and 15 each having a lower probability of 1/16; 8 to 14 remain uniform. Despite this, vanilla expected total base gold is preserved at every fixed count of consuming normal-fight gold rewards.
 
 ## Settled policy: permanent transformations and direct card additions
 
@@ -312,6 +316,8 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 **Card rarity:** shared offset starts at `-0.05` and resets there after a Rare combat reward roll, but not after direct additions or on Ancient entry. Normal/elite non-rare rolls add `0.01` (`0.005` with Scarcity), capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 3%/10%/9% (Scarcity: 1.49%/5%/4.5%), plus the offset; base Uncommon chances are 37%/40%/37%. A negative Rare threshold also reduces the Uncommon chance: initial normal rewards with Scarcity have 0% Rare and 33.49% Uncommon. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
 
 **Normal versus elite card rewards:** both offer three cards from the same character pool, exclude duplicates within the offer and use the same upgrade rules; elites have no inherent upgrade-chance bonus. Catfood preserves these rules.
+
+**Combat-gold exceptions:** Fake Merchant grants a fixed 300 gold, unaffected by Poverty. Battleworn Dummy's three event combats grant no normal combat rewards. Gremlin Merc grants normal gold unless Fat Gremlin escapes: the gold proportion becomes one-half if no gold was stolen, or zero otherwise; vanilla rounds the reduced range endpoints before rolling and generates no gold reward at zero. Non-final bosses grant fixed 100 gold (75 with Poverty); the final boss grants no ordinary reward set. Fixed extra payouts, including recovered stolen gold, Royalties and Amethyst Aubergine, are separate from the normal combat-gold roll.
 
 **Relic draws:** rarity is 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity relics and one Shop relic from the back of the bags; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible.
 
