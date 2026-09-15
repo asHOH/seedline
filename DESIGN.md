@@ -75,19 +75,19 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 | Mechanism | Baseline and interference |
 |---|---|
-| Unknown room types | `?` resolution uses dedicated `UnknownMapPoint` RNG and changing odds. Odds reset between acts; RNG progress continues. Route exclusions and forced outcomes affect resolution. Catfood leaves this unchanged. |
-| Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG. Events advance past ineligible or previously visited identities; normal fights reached through `?` nodes or visible normal-fight nodes share the same encounter list. Catfood leaves identity selection unchanged. |
+| Unknown room types | Dedicated `UnknownMapPoint` RNG and changing odds make `?` resolution route-dependent. Odds reset between acts; RNG progress continues. Catfood leaves this unchanged. |
+| Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG; event eligibility and room visits affect progression. Catfood leaves identity selection unchanged. |
 | Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite having an event RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
 | Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
 | Combat gold | Uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. Source-specific exceptions are in the appendix. |
-| Card rarity | Combat rewards update a shared rarity offset; shops read it without updating it. Rare combat reward rolls, including guaranteed boss Rares, reset it; direct additions and Ancient entry do not. Catfood resets on Ancient entry instead of boss rewards, which is effectively the same timing. |
+| Card rarity | Combat rewards change a shared rarity offset also read by shops. Vanilla resets it on Rare combat rolls; Catfood replaces boss resets with Ancient-entry resets. |
 | Ancient options | Use the event RNG. Vanilla seeds it with run seed + event identity hash + player-slot contribution, independently of event counts. |
-| Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Unlike elite rewards, chests exclude character-specific relics. Silver Crucible suppresses the first chest's rewards before generation. |
+| Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Other rewards can shift chest contents. |
 | Relic pools | Sources share finite identity bags, with different draw directions and eligibility filters. Depletion can change delivered rarity. |
-| Potion drops | Checks use shared `Rewards` RNG and a shared changing probability, with no act/Ancient reset. Forced drops skip both the random draw and probability update. |
-| Potion generation | Ordinary generation rolls rarity, then identity; some events use uniform-identity or fixed-rarity selection. Batches exclude duplicates. Failed acquisition does not restore consumed RNG state. |
-| Transformations | Random replacements are uniform over eligible identities, excluding the original. Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
-| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity: Common/Uncommon/Rare 60%/37%/3%, or 61.51%/37%/1.49% with Scarcity，independent of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools. |
+| Potion drops | Checks share `Rewards` RNG and a changing probability across combats. |
+| Potion generation | Selection rules vary by source. Generation precedes acquisition, so failed grants can still shift later results. |
+| Transformations | Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
+| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG, with source-specific selection rules independent of combat rarity offsets. |
 
 ## Shared strategies
 
@@ -165,7 +165,7 @@ Save sequence contents and progress, including original entry addresses, consump
 
 ## Settled policy: relics
 
-**Catfood baseline:** draws identities from shared relic bags and rarities from 400 precomputed rolls; roll 401 would fail (code finding, not reproduced). Fixed-rarity requests consume identity only; identity depletion uses the [appendix fallback](#generation-and-selection-mechanics).
+**Catfood baseline:** retains shared relic bags but precomputes 400 rarity rolls; roll 401 would fail (code finding, not reproduced).
 
 **Our improvements:**
 
@@ -222,7 +222,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ## Settled policy: chests
 
-**Catfood baseline:** inherits Silver Crucible's suppression, but has no chest ordinal. Gold uses `Rewards`, re-seeded with the normal-fight count on chest entry. Relics use shared rarity rolls/bags.
+**Catfood baseline:** has no chest ordinal; chest entry re-seeds `Rewards` with the normal-fight count for gold. Silver Crucible's suppression is unchanged.
 
 **Our improvements:**
 
@@ -238,7 +238,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 **Main idea:** share random variation between unreduced normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
 
-**Catfood baseline:** preserves vanilla gold ranges and rounding. On room entry, re-seeds shared `Rewards` RNG by run seed and cumulative combat-category count, with different seed multipliers for normal fights and elites. Gold has no dedicated RNG.
+**Catfood baseline:** re-seeds shared `Rewards` on room entry using run seed and cumulative combat-category count, with different multipliers for normal fights and elites. Vanilla gold ranges and rounding are unchanged.
 
 ### Shared sequence and compensation
 
@@ -364,7 +364,7 @@ This appendix records existing mechanics for comparison: vanilla by default, wit
 
 **Combat-gold exceptions:** Fake Merchant grants a fixed 300 gold, unaffected by Poverty. Battleworn Dummy's three event combats grant no normal combat rewards. Gremlin Merc grants normal gold unless Fat Gremlin escapes: the gold proportion becomes one-half if no gold was stolen, or zero otherwise; vanilla rounds the reduced range endpoints before rolling and generates no gold reward at zero. Non-final bosses grant fixed 100 gold (75 with Poverty); the final boss grants no ordinary reward set. Fixed extra payouts, including recovered stolen gold, Royalties and Amethyst Aubergine, are separate from the normal combat-gold roll.
 
-**Relic draws:** rarity is 50% Common / 33% Uncommon / 17% Rare. Shops pull two random-rarity relics and one Shop relic from the back of the bags; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible.
+**Relic draws:** rarity is 50% Common / 33% Uncommon / 17% Rare; fixed-rarity requests consume identity only, including in Catfood. Shops pull two random-rarity relics and one Shop relic from the back of the bags; rewards/Wongos pull from the front. Run-state eligibility (`IsAllowed`) removes disallowed relics before draws; five relics are additionally shop-ineligible.
 
 **Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
 
@@ -373,5 +373,7 @@ This appendix records existing mechanics for comparison: vanilla by default, wit
 **Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update.
 
 **Potion generation:** ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state.
+
+**Direct card additions:** Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity: Common/Uncommon/Rare 60%/37%/3%, or 61.51%/37%/1.49% with Scarcity, independent of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools.
 
 **Permanent transformation's target:** use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity used by Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. Selection is uniform over eligible identities, with no batch uniqueness. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
