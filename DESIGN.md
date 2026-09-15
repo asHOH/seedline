@@ -95,11 +95,13 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 **Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and progress.
 
+**Sharing rationale:** generic rewards represent successive opportunities to receive the same kind of item, regardless of route. Shops are isolated to preserve corresponding inventories; Courier and potion-generating effects are isolated so repeated use cannot displace ordinary rewards. Transformations and direct additions both generate permanent cards from a pool, so they share identity order while separate rarity rolls preserve their different odds.
+
 **Scope:** relics, potions, cards, permanent transformations and covered direct additions.
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
 
-**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Potion/card identities may recur; only finite relic allocations borrow.
+**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Each new potion/card identity entry is an independent uniform draw with replacement from its sequence's pool; draw-specific eligibility and duplicate restrictions are handled by filtering. Only finite relic allocations borrow.
 
 ### Consumption timing
 
@@ -266,7 +268,6 @@ Covered direct additions: Infested Automaton's Study and Touch Core, Endless Con
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
-- Identity entries are uniform.
 - Transformations and direct additions consume on generation; canceled selections and previews consume nothing.
 
 **Infested Automaton:** Study and Touch Core use its event RNG for rarity, preserving vanilla base odds and fallback without advancing the addition rarity sequence. Identities still use the shared character sequences.
