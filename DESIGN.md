@@ -12,7 +12,7 @@ Unfinished design questions and investigation notes are in the [working document
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
-Compare runs with matching seeds, versions, rules and fully unlocked relic and card pools. This context will not be restated hereafter.
+Compare runs with matching seeds, versions, rules and fully unlocked relic and card pools.
 
 Single-player is the intended scope. Multiplayer behavior is excluded, except for easy changes that materially improve fairness.
 
@@ -133,7 +133,7 @@ Apply the same rule recursively to further collisions, including identical filte
 
 Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
-Apply the filtered draw strategy to all covered relic, potion, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing. The main cost is understanding and implementing marker resolution.
+Apply the filtered draw strategy to all covered relic, potion, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
 ### Saved state
 
@@ -189,7 +189,7 @@ On exhaustion, borrow the **last eligible remaining identity** of the requested 
 
 Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
 
-**Final fallback:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
+**Final fallback:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running.
 
 ## Settled policy: potions
 
@@ -214,7 +214,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 ### Drop occurrence
 
 - Retain Catfood addressing and vanilla's shared changing probability across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
-- **White Beast Statue:** forced drops freeze both the occurrence index and stored probability; seed no new occurrence RNG and consume no occurrence random number. After removal, resume at the next unused ordinary-check index. Matching pre-Statue states therefore remain aligned despite different numbers of forced drops.
+- **White Beast Statue:** forced drops freeze the occurrence index and stored probability. After removal, resume at the next unused ordinary-check index.
 - Acquisition without a drop check does not advance occurrence state. Save the occurrence index and probability.
 
 ## Settled policy: chests
@@ -365,7 +365,7 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 
 **Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
 
-**Ordinary relic eligibility:** the following 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited. (Off-scope note: Lasting Candy is also disallowed if any Ironclad player has `UnlockState.NumberOfRuns == 0`.)
+**Ordinary relic eligibility:** the following 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited.
 
 **Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update.
 
