@@ -240,18 +240,18 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Shared sequence and compensation
 
-The shared gold roll uses ordinal-addressed generation with the combined ordinal of normal-fight/elite gold rewards. Event battles use the same rules and consume normally.
+**Shared roll:** generate `X` from run seed + combined normal-fight/elite gold-reward ordinal, including event battles.
 
-These situations are unrelated to this gold sequence: combats with fixed gold (Fake Merchant, bosses) or no gold reward, fixed extra payouts, and gold specified by an event choice. See the appendix for source-specific exceptions.
+Fixed or absent combat gold, fixed extra payouts and event-choice gold do not consume this sequence; see the appendix for exceptions.
 
 | Difficulty | Shared uniform integer `X` | Normal-fight gold | Elite gold |
 |---|---|---|---|
 | A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
 | A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
 
-At A3+, choose a fair starting bit from the run seed, independently of the gold sequence. Alternate compensation `b` between 0 and 1, advancing **once per consuming normal-fight gold reward**, using its cumulative ordinal; elites never advance it. Both sequences continue across acts. Preserve their progress and the starting bit across save/load.
+**Compensation:** use the [Thue–Morse sequence](https://oeis.org/A010060): `b(n) = s XOR (popcount(n) mod 2)`, where `n` is the zero-based normal-fight gold-reward index, `popcount` counts binary 1-bits, and `s` is a fair seed-derived bit independent of `X`. Each pair adds exactly 1 gold, restoring the missing 0.5 per reward without permanently favoring odd or even positions. Elites do not advance `n`. Both sequences continue across acts; save their progress and `s`.
 
-**Accepted tradeoff:** at A3+, normal gold keeps its mean of 11 but is no longer uniform, with 7 and 15 each having a lower probability of 1/16; 8 to 14 remain uniform. Despite this, vanilla expected total base gold is preserved at every fixed count of consuming normal-fight gold rewards.
+**Tradeoff:** expected gold is unchanged, but A3+ normal gold is nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
 
 ## Settled policy: permanent transformations and direct card additions
 
