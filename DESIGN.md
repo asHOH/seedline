@@ -156,7 +156,7 @@ Save sequence contents and progress, including original entry addresses, consump
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address. No advance generation is needed.
-- **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Preserve [original mechanics](#generation-and-selection-mechanics).
+- **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Preserve [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
@@ -259,6 +259,8 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 **Our improvements:** permanent transformations and covered direct additions share a consistent identity order for each pool while retaining their different rarity chances, unaffected by card reward offers or combat transformations.
 
+Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
+
 ### Selection and consumption
 
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
@@ -266,8 +268,6 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Identity entries are uniform.
 - Transformations and direct additions consume on generation; canceled selections and previews consume nothing.
-
-Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
 **Infested Automaton:** Study and Touch Core use its event RNG for rarity, preserving vanilla base odds and fallback without advancing the addition rarity sequence. Identities still use the shared character sequences.
 
@@ -296,32 +296,58 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ## Appendix: existing mechanics
 
+Vanilla mechanics unless explicitly attributed to Catfood.
+
 ### Relic and event rules
 
-| Event / option | Relic | Effect |
-|---|---|---|
-| Wongos | — | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. |
-| Wongos | Mystery Ticket | Pays three random relics after five combats. |
-| Relic Trader | — | Acts 2–3; all players own ≥5 tradable relics. Offers a choice among three owned relics and three replacements. Normally no leave. |
-| — | Courier | 20% discount; removal never restocks; sale clears on restock. |
-| Neow | Silver Crucible | First treasure room is empty, with neither gold nor relics. |
-| — | Delicate Frond | Fills empty potion slots before combat. |
-| — | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. |
-| Neow | Leafy Poultice | Transforms the first Basic Strike and Defend. |
-| — | Pandora's Box | Transforms all removable Basic Strikes/Defends. |
-| Darv | Astrolabe | Transforms three selected cards and upgrades the results. |
-| Infested Automaton — Study / Touch Core | — | Directly adds one random own-character Power / zero-cost non-X card. |
-| Endless Conveyor — Fried Eel | — | Directly adds one random colorless card. |
-| Neow | Arcane Scroll | Directly adds one random own-character Rare card. |
-| Neow | Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
-| Trash Heap | — | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
-| Vakuu | Distinguished Cape | Directly adds two distinct random eligible curses. |
+#### Room resolution
 
-**Other potion-generation effects:** Alchemize generates one potion. Entropic Brew fills empty slots, including outside combat.
+| Source | Mechanics |
+|---|---|
+| `?` shop exclusion | Shop is excluded when the previous visited map point contained a shop, or every outgoing map node is a shop. |
+| Juzu Bracelet / Golden Compass | Juzu excludes normal fights from `?` resolution. Golden Compass forces Event during its affected act. |
+| Lantern Key | In Act 3, forces `?` to Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. Like Golden Compass, forced resolution still consumes one `UnknownMapPoint` draw while non-event odds freeze. |
+
+#### Shops, chests and relic events
+
+| Source | Mechanics |
+|---|---|
+| Chests | Draw from `SharedRelicGrabBag`, populated from `SharedRelicPool`; character-specific relics are excluded even in single-player. Relics are generated on room entry; base gold is generated on opening. |
+| Neow — Silver Crucible | First treasure room is empty, with neither gold nor relics. |
+| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. Featured Rare is consumed when offered even if unaffordable/declined; hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
+| Wongos — Mystery Ticket | Pays three random relics after five combats. |
+| Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Randomly selects three owned relics and three replacements to offer; consumes all three replacement identities/rarities before the player's selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
+| Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
+| Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
+
+#### Permanent transformations and direct additions
+
+| Source | Mechanics |
+|---|---|
+| Neow — Leafy Poultice | Transforms the first Basic Strike and Defend. |
+| Pandora's Box | Transforms all removable Basic Strikes/Defends. |
+| Darv — Astrolabe | Transforms three selected cards and upgrades the results. |
+| Infested Automaton — Study / Touch Core | Directly adds one random own-character Power / zero-cost non-X card. |
+| Endless Conveyor — Fried Eel | Directly adds one random colorless card. |
+| Neow — Arcane Scroll | Directly adds one random own-character Rare card. |
+| Neow — Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
+| Vakuu — Distinguished Cape | Directly adds two distinct random eligible curses. |
+
+#### Potions
+
+| Source | Mechanics |
+|---|---|
+| White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. Freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
+| Alchemize | Generates one potion, excluding Fairy in a Bottle, Fruit Juice and Regen Potion. Attempts generation even with full slots. |
+| Entropic Brew | Fills empty slots with unrestricted potion generation, including outside combat. Generates only while slots are open and stops on the first failed acquisition. |
+| Delicate Frond | Fills empty potion slots before combat. Uses unrestricted potion generation, generates only while slots are open and stops on the first failed acquisition. |
+| Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. |
+| Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
+| Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
+| Phial Holster | Adds one slot but generates two potions, so its second grant can fail. |
+| Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. |
 
 ### Generation and selection mechanics
-
-Vanilla mechanics unless explicitly attributed to Catfood.
 
 **Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities.
 
@@ -346,19 +372,3 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 **Potion generation:** ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state.
 
 **Permanent transformation's target:** use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity used by Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. Selection is uniform over eligible identities, with no batch uniqueness. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
-
-| Source | Mechanics |
-|---|---|
-| `?` shop exclusion | Shop is excluded when the previous visited map point contained a shop, or every outgoing map node is a shop. |
-| Juzu Bracelet / Golden Compass | Juzu excludes normal fights from `?` resolution. Golden Compass forces Event during its affected act. |
-| Lantern Key | In Act 3, forces `?` to Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. Like Golden Compass, forced resolution still consumes one `UnknownMapPoint` draw while non-event odds freeze. |
-| Chests | Draw from `SharedRelicGrabBag`, populated from `SharedRelicPool`; character-specific relics are excluded even in single-player. Relics are generated on room entry; base gold is generated on opening. |
-| Wongos | Featured Rare is consumed when offered even if unaffordable/declined; hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
-| Relic Trader | Randomly selects three owned relics and three replacements; consumes all three replacement identities/rarities before selection. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
-| Courier | Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. |
-| Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. The Courier's shop restocks do not guarantee Uncommon. |
-| Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
-| Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
-| Potion-generating effect filters | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew and Delicate Frond use unrestricted generation. |
-| Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. Alchemize attempts generation even with full slots. Entropic Brew and Delicate Frond generate only while slots are open and stop on the first failed acquisition. Phial Holster adds one slot but generates two potions, so its second grant can fail. |
-| White Beast Statue | Freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
