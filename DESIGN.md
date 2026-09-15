@@ -148,8 +148,8 @@ Save sequence contents and progress, including original entry addresses, consump
 **Our improvements:**
 
 - Extra rewards and Courier restocks no longer scramble later shops.
-- Corresponding shops keep the same sale slot, and an offer keeps its base price if it moves to a later slot or shop.
-- Wongos' featured relic advances only the shop's Rare relic offers—and leaves them untouched when you cannot afford it.
+- Corresponding shops keep the same sale slot; relocated offers keep their base prices.
+- Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
 
 ### Stock and prices
 
@@ -168,8 +168,8 @@ Save sequence contents and progress, including original entry addresses, consump
 
 **Our improvements:**
 
-- Relics offered through shops, Courier and generic rewards no longer compete for the same stock during normal play.
-- Remove Catfood's fixed limit on random relic-rarity draws.
+- Shops, Courier and generic rewards no longer compete for relics during normal play.
+- Random relic rewards no longer risk Catfood's fixed rarity-roll limit.
 
 ### Allocation
 
@@ -199,10 +199,10 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 **Our improvements:**
 
-- Potion rewards, shop stock, Courier restocks and potion-generating effects no longer scramble one another's potion results.
-- Receiving several potions together no longer starts a different random sequence from receiving them separately.
-- A failed direct potion grant no longer changes your later potion results.
-- White Beast Statue pauses ordinary drop checks, so extra forced drops do not disturb the checks that resume after it is removed.
+- Rewards, shops, Courier and potion-generating effects no longer scramble one another's potions.
+- Receiving potions together or separately preserves comparable results.
+- Failed direct grants no longer change later potions.
+- White Beast Statue no longer shifts ordinary potion drops after its removal.
 
 ### Acquisition and sequences
 
@@ -226,7 +226,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 **Our improvements:**
 
 - Chest gold no longer depends on how many normal fights you took.
-- Silver Crucible's empty chest does not advance later chest gold or relic rewards.
+- Silver Crucible's empty chest no longer shifts later chest rewards.
 
 ### Rewards and consumption
 
@@ -261,7 +261,7 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Catfood baseline:** retains caller-supplied transformation RNGs; card-factory additions use room/event and options-call addressing. Neither uses dedicated shared identity sequences by pool.
 
-**Our improvements:** permanent transformations and covered direct additions share a consistent identity order for each pool while retaining their different rarity chances, unaffected by card reward offers or combat transformations.
+**Our improvements:** transformations and covered direct additions give comparable same-pool results, preserving source rarity odds and avoiding interference from card reward offers or combat transformations.
 
 Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
