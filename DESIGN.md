@@ -53,7 +53,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it; choosing the granting event option beforehand does not make it a card reward offer.
-- **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence identified by its original source position; repeats are distinct entries. Advancement changes its logical position, not its original source address; removals never renumber these addresses.
+- **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence; repeated identities are distinct entries.
 - **Filter / filter marker:** a filter defines eligibility for a draw. A **filter marker** occupies a sequence position and records one deferred advancement under that filter; shortened to **marker** below.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
 - **Generation / acquisition:** generation selects an item; acquisition means actually receiving it.
@@ -106,6 +106,12 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 - **Deferred rewards:** consume when the payoff is generated, not when its granting relic is acquired; e.g., the elite relic precedes Mystery Ticket's three relics.
 - **Bypassed operations:** leave their ordinary sequence paused. White Beast Statue bypasses the drop check, but its potion still consumes a reward identity; Silver Crucible suppresses chest rewards before generation. Source policies specify the affected counters.
 
+## Shared strategy: stable entry addresses
+
+**Main idea:** an entry keeps its original address when it moves.
+
+An entry's address is its original source sequence + original entry position. Filtered advancement and borrowing preserve this address; removals never renumber it. Prices and saved state refer to this stable address, so repeated item identities remain distinct occurrences.
+
 ## Shared strategy: filtered draws
 
 **Intent:** return an eligible entry while mostly preserving the sequence's distribution. Advance the eligible subsequence within its existing positions, so skipped entries do not accumulate at the front of later draws.
@@ -143,8 +149,8 @@ Apply the filtered draw strategy to all covered relic, potion, transformation an
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback. Relic-rarity, relic-identity and potion sequences remain independent.
 - **Card rarity:** vanilla shop base chances plus invariant offsets `+0.008` / `0` (without/with Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot uses independent shop-ordinal generation.
-- Base price is addressed by run seed + source sequence + **original entry position**. Initial shop cards use shop ordinal + slot as their entry address. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
-- **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
+- **Base prices:** use run seed + [stable entry address](#shared-strategy-stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address. No advance generation is needed.
+- **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Preserve [original mechanics](#generation-and-selection-mechanics).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
@@ -177,9 +183,7 @@ On exhaustion, borrow the **last eligible remaining identity** of the requested 
 
 Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
 
-**Final fallback — settled:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
-
-**Borrowed entries:** retain their original source sequence and entry position as the price/save address. Apply the receiving source's price rules.
+**Final fallback:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running. This is outside the randomness-control discussion.
 
 ## Settled policy: potions
 
@@ -197,7 +201,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 - Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
-- **Consumption:** follow the [shared timing rules](#shared-strategy-consumption-timing); preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
+- **Consumption:** follow the [shared timing rules](#shared-strategy-consumption-timing); preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
 
 **Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
