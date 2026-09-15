@@ -91,7 +91,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 ## Settled policy: filtered draw strategy
 
-**Intent:** return an eligible entry while preserving the sequence's distribution. Advance the eligible subsequence within its existing positions, so skipped entries do not accumulate at the front of later draws.
+**Intent:** return an eligible entry while mostly preserving the sequence's distribution. Advance the eligible subsequence within its existing positions, so skipped entries do not accumulate at the front of later draws.
 
 **Principle:** generalize fixed-rarity draws, which consume an identity while preserving the rarity rolls. Viewed as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
 
@@ -181,7 +181,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Acquisition and sequences
 
-- Keep independent **generic rewards, shop, Courier and combat-generation** sequences. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Combat-generation** names a source category, not a combat-only restriction: Alchemize, Entropic Brew (also outside combat) and Delicate Frond.
+- Keep independent **generic rewards, shop, Courier and potion-generating effects** sequences. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
@@ -272,7 +272,8 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 - **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes, removing dependence on previous acts' `?` visit counts.
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
-- **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap. When the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1, reducing effective interval widths without capping stored chances. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is also truncated and shop gets no space. Unassigned space resolves to Event.
+- **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` (midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio) unless shifted just enough to avoid overlap. Unassigned space resolves to Event.
+- **Overflow:** when the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is truncated and shop gets no space.
 
 ## Reference
 
@@ -343,6 +344,6 @@ Vanilla mechanics unless explicitly attributed to Catfood.
 | Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. The Courier's shop restocks do not guarantee Uncommon. |
 | Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
 | Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
-| Combat-generation filters | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew and Delicate Frond use unrestricted generation. |
+| Potion-generating effect filters | Alchemize excludes Fairy in a Bottle, Fruit Juice and Regen Potion. Entropic Brew and Delicate Frond use unrestricted generation. |
 | Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. Alchemize attempts generation even with full slots. Entropic Brew and Delicate Frond generate only while slots are open and stop on the first failed acquisition. Phial Holster adds one slot but generates two potions, so its second grant can fail. |
 | White Beast Statue | Freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
