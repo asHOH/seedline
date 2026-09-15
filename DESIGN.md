@@ -236,13 +236,13 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ## Settled policy: combat gold
 
-**Main idea:** share random variation between normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
+**Main idea:** share random variation between unreduced normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
 
 **Catfood baseline:** preserves vanilla gold ranges and rounding. On room entry, re-seeds shared `Rewards` RNG by run seed and cumulative combat-category count, with different seed multipliers for normal fights and elites. Gold has no dedicated RNG.
 
 ### Shared sequence and compensation
 
-**Shared roll:** generate `X` from run seed + combined normal-fight/elite gold-reward ordinal, including event battles.
+**Shared roll:** generate uniform `u ∈ [0,1)` from run seed + combined normal-fight/elite gold-reward ordinal, including event battles. Set `X = floor(11u)` at A0–2 or `floor(8u)` at A3+.
 
 Fixed or absent combat gold, fixed extra payouts and event-choice gold do not consume this sequence; see the appendix for exceptions.
 
@@ -251,9 +251,11 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 | A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
 | A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
 
-**Compensation:** use the [Thue–Morse sequence](https://oeis.org/A010060): `b(n) = s XOR (popcount(n) mod 2)`, where `n` is the zero-based normal-fight gold-reward index, `popcount` counts binary 1-bits, and `s` is a fair seed-derived bit independent of `X`. Each pair adds exactly 1 gold, restoring the missing 0.5 per reward without permanently favoring odd or even positions. Elites do not advance `n`. Both sequences continue across acts; save their progress and `s`.
+**Compensation:** use the [Thue–Morse sequence](https://oeis.org/A010060): `b(n) = s XOR (popcount(n) mod 2)`, where `n` is the zero-based unreduced normal-fight gold-reward index, `popcount` counts binary 1-bits, and `s` is a fair seed-derived bit independent of `u`. Elites do not advance `n`. Both sequences continue across acts; save their progress and `s`.
 
 **Tradeoff:** expected gold is unchanged, but A3+ normal gold is nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
+
+**Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
 ## Settled policy: permanent transformations and direct card additions
 
@@ -297,7 +299,7 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ## Appendix: existing mechanics
 
-Vanilla mechanics unless explicitly attributed to Catfood.
+This appendix records existing mechanics for comparison: vanilla by default, with Catfood behavior explicitly labeled. Proposed policies belong in the main design sections.
 
 ### Relic and event rules
 
