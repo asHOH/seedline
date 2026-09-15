@@ -12,7 +12,7 @@ Unfinished design questions and investigation notes are in the [working document
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
-Compare runs with matching seeds, versions, rules and eligible pools. This context will not be restated hereafter.
+Compare runs with matching seeds, versions, rules and fully unlocked relic and card pools. This context will not be restated hereafter.
 
 Single-player is the intended scope. Multiplayer behavior is excluded, except for easy changes that materially improve fairness.
 
@@ -67,7 +67,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
-- **Same-seed divergence (歪种):** large early- or mid-run outcome differences that undermine fair same-seed comparison. Late-game differences from different total room-type/subtype ordinals are benign.
+- **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison (often happens early- or mid-game). Differences caused by consuming different numbers of opportunities within shared sequences (often happens late-game) are benign.
 
 ## Vanilla baseline
 
