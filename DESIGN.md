@@ -24,7 +24,7 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. Rare tail effects and interactions between sequences through borrowing are outside ordinary isolation discussions throughout.
 
-**Design status:** settled sections are fixed contracts, excluded from unfinished-design discussions.
+**Design status:** shared strategies and settled policies are fixed contracts, excluded from unfinished-design discussions.
 
 Base findings on code; use run histories as supporting evidence.
 
@@ -89,11 +89,19 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 | Transformations | Random replacements are uniform over eligible identities, excluding the original. Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
 | Direct card additions | Sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll base rarity odds before identity: Common/Uncommon/Rare 60%/37%/3%, or 61.51%/37%/1.49% with Scarcity，independent of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools. |
 
-## Settled policy: filtered draw strategy
+## Shared strategy: rarity and identity sequences
+
+**Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and progress.
+
+**Scope:** relics, potions and split transformation/direct-addition pools.
+
+A random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#shared-strategy-filtered-draws). Fixed-rarity requests consume identity only; unsplit card pools draw identities directly. Source policies specify sharing and RNG exceptions.
+
+## Shared strategy: filtered draws
 
 **Intent:** return an eligible entry while mostly preserving the sequence's distribution. Advance the eligible subsequence within its existing positions, so skipped entries do not accumulate at the front of later draws.
 
-**Principle:** generalize fixed-rarity draws, which consume an identity while preserving the rarity rolls. Viewed as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
+**Principle:** generalize fixed-rarity draws. Viewed as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
 
 **Method — deferred advancement:** a filtered draw returns the first eligible entry and replaces it with a marker for its filter. To resolve a marker, move the next eligible entry from the following sequence into the marker's position, leaving a marker for the same filter at the supplying position. An ordinary draw resolves any marker at the front, then returns the entry and removes the drawn position. This performs the same advancement on demand, for infinite sequences as well as finite relic allocations.
 
@@ -128,7 +136,7 @@ Apply the filtered draw strategy to all covered relic, potion, transformation an
 - Sale slot uses independent shop-ordinal generation.
 - Base price is addressed by run seed + source sequence + **original entry position**. Initial shop cards use shop ordinal + slot as their entry address. It survives slot/shop shifts; repeated identities have distinct addresses. No advance generation is needed.
 - **Courier:** five independent card sequences—Attack, Skill, Power, Uncommon colorless and Rare colorless—plus separate relic-rarity/identity and potion sequences. Character cards use the shop rarity odds above; colorless cards retain their fixed rarity. Apply filtered draws to exclude cards still displayed. Advance neither shop nor generic rewards sequences, nor shop ordinal. Apply the same price rule and preserve [original mechanics](#generation-and-selection-mechanics).
-- **Wongos:** featured offer consumes **one shop Rare identity**, no rarity entry; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
@@ -152,11 +160,9 @@ Mix shop-ineligible relics into allocations normally.
 
 ### Source classification and consumption
 
-Hidden random relic rewards from combat/chests/events share the generic rewards allocation, with source-specific eligibility, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Random rarity advances rarity + identity; fixed rarity advances only identity. Classify deferred payoffs separately from their granting relic.
+Hidden random relic rewards from combat/chests/events share the generic rewards rarity-roll sequence and allocation, with source-specific eligibility, regardless of cost (including Ranwid, Wongos' Common and Mystery Box). Classify deferred payoffs separately from their granting relic.
 
 **Consumption order:** preserve existing generation order and pull sequentially; deferred rewards consume entries when their payout is generated (e.g. elite relic before Mystery Ticket's three relics).
-
-**Filtered draws:** use the [filtered draw strategy](#settled-policy-filtered-draw-strategy).
 
 ### Borrowing
 
@@ -183,9 +189,8 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 - Keep independent **generic rewards, shop, Courier and potion-generating effects** sequences. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
-- Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Fixed-rarity requests consume identity only. Other sequences only need standard weights rarity roll.
+- Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sequences only need standard weights rarity roll.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
-- **Filters:** use the [filtered draw strategy](#settled-policy-filtered-draw-strategy).
 
 **Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
@@ -206,7 +211,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Rewards and consumption
 
-- Relics use the generic rewards allocation with the [filtered draw strategy](#settled-policy-filtered-draw-strategy).
+- Relics use the generic rewards allocation.
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
 - Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1. Declining a generated relic does not undo consumption or the chest ordinal.
 
@@ -244,13 +249,13 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 - Keep seven pool groups with cumulative sequences: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For split pools, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
-- **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback. Fixed-rarity requests consume identity only.
-- Draw one eligible entry from the resulting rarity's sequence, or directly from an unsplit pool. Identity entries are uniform. Apply the [filtered draw strategy](#settled-policy-filtered-draw-strategy).
+- **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
+- Identity entries are uniform.
 - Consume per generated card in existing generation order. Canceled selections and previews consume nothing.
 
 Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
-**Infested Automaton:** Study and Touch Core use its event RNG for rarity, preserving vanilla base odds and fallback without advancing the addition rarity sequence. Identities still use the shared character sequences and filtered draw strategy.
+**Infested Automaton:** Study and Touch Core use its event RNG for rarity, preserving vanilla base odds and fallback without advancing the addition rarity sequence. Identities still use the shared character sequences.
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
