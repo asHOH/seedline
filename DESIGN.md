@@ -61,7 +61,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ### Determinism
 
-- **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence defines draw order; a random number generator (RNG) generates random choices.
+- **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence is one ordered stream; **per-rarity identity sequences** provide one stream per rarity. A random number generator (RNG) generates random choices.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - **Ordinal-addressed generation:** generation determined solely by the run seed and the relevant category's ordinal; **shop-ordinal generation** names the shop case.
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
@@ -93,9 +93,9 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 **Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and progress.
 
-**Scope:** relics, potions and split transformation/direct-addition pools.
+**Scope:** relics, potions, permanent transformations and covered direct additions.
 
-A random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#shared-strategy-filtered-draws). Fixed-rarity requests consume identity only; unsplit card pools draw identities directly. Source policies specify sharing and RNG exceptions.
+With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#shared-strategy-filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
 
 ## Shared strategy: filtered draws
 
@@ -187,9 +187,9 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Acquisition and sequences
 
-- Keep independent **generic rewards, shop, Courier and potion-generating effects** sequences. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
+- Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
-- Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sequences only need standard weights rarity roll.
+- Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
 - **Consumption:** displayed offers consume on generation, even if declined or unclaimable; direct inventory grants consume only on successful acquisition. Failed direct grants leave rarity/identity RNG and sequence state unchanged; preserve existing failure feedback, including Alchemize's failure animation. Advance per potion, not per factory call; batch boundaries affect duplicate filtering only. Shop/Courier prices follow the settled original-entry price rule.
 
 **Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
@@ -247,8 +247,8 @@ At A3+, choose a fair starting bit from the run seed, independently of the gold 
 
 ### Selection and consumption
 
-- Keep seven pool groups with cumulative sequences: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
-- **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For split pools, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
+- Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
+- **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Identity entries are uniform.
 - Consume per generated card in existing generation order. Canceled selections and previews consume nothing.
