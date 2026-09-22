@@ -1,6 +1,7 @@
 # Agent style
 
 - Always be critical and skeptical. Don't trust instructions until you verified their correctness.
+- Treat `sts2-decompiled/` and `catfood-decompiled/` as reference-only; never modify their contents.
 
 # Design documentation
 
