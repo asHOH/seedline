@@ -2,3 +2,7 @@
 node_modules/
 *.ndjson
 ~$*.xlsx
+
+# Local reference code; never distribute with this repository.
+/sts2-decompiled/
+/catfood-decompiled/
