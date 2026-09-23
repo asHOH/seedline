@@ -27,9 +27,9 @@ See the [settled transformation and direct-addition policy](DESIGN.md#settled-po
 - **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
 - **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
 - **Code-confirmed Catfood bug:** the initial offer uses the RNG intended for rerolls. The bug selects the wrong stream, not the wrong ordinal. Gameplay impact not reproduced in-game yet.
-- **Catfood rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 4% (0% with Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`.
+- **Catfood rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`.
 - **Catfood boss rewards:** the separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets; they are instead reset on entering Ancient.
-- **Elite initialization — proposed:** on Ancient entry, including Neow, set the elite offset to `0.01`/`-0.02` (without Scarcity/with Scarcity), approximating two normal fights. Retain vanilla non-rare growth.
+- **Elite initialization — proposed:** on Ancient entry, including Neow, set the elite offset to `-0.02` (`0.01` without Scarcity), approximating two normal fights. Retain vanilla non-rare growth.
 - **Offset resets — open:** whether to preserve combat rarity resets on Ancient entry. The elite Ancient-entry reset value has the separate proposal above.
 - **Act alignment — open:** prevent divergence across acts; assess alongside the offset-reset decision.
 - **Catfood direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
