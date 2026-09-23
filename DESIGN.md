@@ -6,7 +6,7 @@ This file is the current specification and existing-mechanics reference; the [wo
 
 **Goal:** make same-seed runs offer comparable choices and combat challenges, even when players take different routes or make different decisions. Preserve meaningful consequences while keeping later opportunities fair. Compare equivalent ordinal opportunities—e.g., each run's first shop or third normal-fight reward, even if reached on different floors.
 
-**Fairness principle:** keep the effects of a decision focused on what that decision concerns. Visiting an extra room or choosing a reward should change as little unrelated future gameplay as possible. Later opportunities may give players a chance to recover from earlier disadvantages.
+**Fairness principle — opportunity isolation:** keep the effects of a decision focused on what that decision concerns. Visiting an extra room or choosing a reward should change as little unrelated future gameplay as possible. Later opportunities may give players a chance to recover from earlier disadvantages.
 
 ## Scope
 
@@ -68,12 +68,13 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Triple sequence:** a card identity sequence consumed only as complete, consecutive groups of three entries. Each group is a **triple**.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - **Ordinal-addressed generation:** generation determined solely by the run seed and the relevant category's ordinal; **shop-ordinal generation** names the shop case.
-- Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
 - **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison (often happens early- or mid-game). Differences caused by consuming different numbers of opportunities within shared sequences (often happens late-game) are benign.
 
 ## Shared strategies
+
+These are shared contracts for covered policies. The [fairness principle](#goals), [opportunity consumption](#consumption-timing), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
 
 ### Rarity and identity sequences
 
@@ -89,28 +90,32 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 ### Consumption timing
 
-**Main idea:** advance a sequence when its corresponding opportunity occurs.
+**Invariant — opportunity consumption:** advance a sequence when its corresponding opportunity occurs, with the timing below.
 
 - **Displayed offers:** consume on generation, even if declined.
 - **Direct potion grants:** consume only on successful acquisition. Failed grants leave rarity/identity RNG and sequence state unchanged.
 - **Deferred rewards:** consume when the payoff is generated, not when its granting relic is acquired; e.g., the elite relic precedes Mystery Ticket's three relics.
-- **Bypassed operations:** leave their ordinary sequence paused. White Beast Statue bypasses the drop check, but its potion still consumes a reward identity; Silver Crucible suppresses chest rewards before generation. Source policies specify the affected counters.
+- **Bypassed operations:** leave their ordinary sequence paused. Source policies specify the affected counters.
 
 ### Stable entry addresses
 
-**Main idea:** an entry keeps its original address when it moves.
+**Invariant — stable addresses:** filtered advancement, borrowing and removals never change an entry's original address.
 
-An entry's address is its original source sequence + original entry position. Filtered advancement and borrowing preserve this address; removals never renumber it. Prices and saved state refer to this stable address, so repeated item identities remain distinct occurrences.
+An entry's address is its original source sequence + original entry position. Prices and saved state refer to this stable address, so repeated item identities remain distinct occurrences.
+
+### Act-local resets
+
+**Invariant — act-local reset safety:** act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 
 ### Inherent card rolls
 
 **Main idea:** bind random attributes to each generated card occurrence so evaluating them cannot shift later identities or attributes.
 
-Each card entry carries an **inherent upgrade roll** `u` uniformly distributed in `[0, 1)`, derived independently from the run seed, its stable entry address and the upgrade purpose. Repeated card identities have separate rolls; moving an entry preserves its roll.
+Each card entry carries an **inherent upgrade roll** `u` uniformly distributed in `[0, 1)`, derived independently from the run seed, its [stable entry address](#stable-entry-addresses) and the upgrade purpose.
 
 When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's randomness. This does not upgrade cards already in the deck when the act changes.
 
-Ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance. Thus Act 1 rewards, including Neow's, receive no random upgrades. Explicit upgrades, such as The Future of Potions, remain exceptions. Egg effects stay outside this discussion.
+Ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
 
 ### Filtered draws
 
@@ -156,7 +161,7 @@ Save sequence contents and progress, including original entry addresses, consump
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Later Rare entries shift, e.g. `[A, B]` → `[B, C]`, limiting the change to one removed offer plus its replacement. Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
 - **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
@@ -213,7 +218,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 ### Drop occurrence
 
 - Retain Catfood addressing and vanilla's shared changing probability across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
-- **White Beast Statue:** forced drops freeze the occurrence index and stored probability.
+- **White Beast Statue:** forced drops freeze the occurrence index and stored probability; the potion still consumes a reward identity.
 - Save the occurrence index and probability.
 
 ## Settled policy: chests
@@ -228,7 +233,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 ### Rewards and consumption
 
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
-- Silver Crucible's empty first chest advances neither chest ordinal nor relic sequences; the next chest is ordinal 1.
+- Silver Crucible suppresses the first chest's rewards before generation, advancing neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 
 ## Settled policy: combat gold
 
@@ -293,19 +298,19 @@ Use separate Common, Uncommon and Rare triple sequences.
 
 Lasting Candy and The Future of Potions' Power choices share separate Uncommon and Rare Power identity sequences, independent of the triple sequences above.
 
-Lasting Candy uses two independent rarity-roll sequences, one for normal fights and one for elites. Advance the relevant sequence once per triggered additional card, preserving the source's base rarity odds and unavailable-rarity fallback. Matching trigger ordinals therefore retain their rarity. Boss triggers request Rare directly. The Future of Potions requests its specified rarity without consuming Candy's rarity rolls.
+Lasting Candy uses two independent rarity-roll sequences, one for normal fights and one for elites. Advance the relevant sequence once per triggered additional card, preserving the source's base rarity odds and unavailable-rarity fallback. Boss triggers request Rare directly. The Future of Potions requests its specified rarity.
 
 ### Other The Future of Potions choices
 
-Attack and Skill offers use event RNG addressed by rarity and type. The same rarity/type choice produces the same initial offer in corresponding same-seed events, independently of the other potion options. Preserve the event's explicit upgrades.
+Attack and Skill offers use event RNG addressed by rarity and type, independently of the other potion options.
 
 ### Colorless offers
 
-Lead Paperweight and Brain Leech's Rip share one reward sequence with the existing Uncommon/Rare odds: **98.51% / 1.49%**, with uniform identity selection within each rarity.
+Lead Paperweight and Brain Leech's Rip share one reward sequence with the existing Uncommon/Rare odds: **98.51% / 1.49%**.
 
 ### Other-character offers
 
-Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Keep each character's pool distinct. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
+Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
 
 Colorless and other-character rewards explicitly share across different batch sizes because their sources are few and their offer sizes vary.
 
@@ -330,7 +335,7 @@ Covered direct additions: Infested Automaton's Study and Touch Core, Endless Con
 
 ## Settled policy: event-specific rewards
 
-Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Corresponding events preserve the same rewards, or the same generation procedure where choices affect the result. Preserve existing choices, costs and eligibility.
+Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: unknown-room resolution
 
