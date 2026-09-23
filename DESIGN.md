@@ -1,6 +1,6 @@
 # Deterministic seed mod — design
 
-Coverage is partial: the [working document](WORKING.md) tracks unfinished systems, whose existing behavior remains a baseline pending design decisions.
+This file is the current specification and existing-mechanics reference; the [working document](WORKING.md) contains unresolved work and evidence needed to resolve it. Coverage is partial: unfinished systems retain existing behavior pending design decisions.
 
 ## Goals
 
@@ -131,8 +131,6 @@ Each card entry carries an **inherent upgrade roll** `u` uniformly distributed i
 When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's randomness. This does not upgrade cards already in the deck when the act changes.
 
 Ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance. Thus Act 1 rewards, including Neow's, receive no random upgrades. Explicit upgrades, such as The Future of Potions, remain exceptions. Egg effects stay outside this discussion.
-
-**Planned extension:** give cards other purpose-specific inherent rolls for Encounter decisions, such as priority for random upgrade selection. Selection scope and reuse rules remain unfinished.
 
 ### Filtered draws
 
@@ -275,6 +273,14 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
+### Rejected alternatives
+
+Drawbacks below concern A3+:
+
+- **Shared range-relative rolls:** preserves vanilla distributions, but swapping normal → elite to elite → normal can change total gold by 1.
+- **Shared identical offsets without compensation:** using `X = 0–7`, normal `7 + X` and elite `26 + X` removes order differences but lowers expected normal-fight gold by 0.5.
+- **Separate normal-fight and elite sequences:** preserves vanilla distributions, but replacing a normal fight with an elite can shift the premium roughly 8 gold above or below its expectation.
+
 ## Settled policy: card reward offers
 
 **Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
@@ -286,6 +292,8 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 - Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
 **Scope:** initial generation for the groups below. Normal-fight rarity, elite rarity and own-character base-odds offers are deferred; reroll addressing and consumption remain open. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
+
+**Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
 ### Own-character fixed-rarity offers
 
@@ -363,7 +371,21 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ## Appendix: existing mechanics
 
-This appendix records existing mechanics for comparison: vanilla by default, with Catfood behavior explicitly labeled. Proposed policies belong in the main design sections.
+This appendix records existing mechanics for comparison: vanilla by default, with Catfood behavior explicitly labeled. Settled policies belong in the main design sections.
+
+### Catfood addressing and combat rewards
+
+**Room addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
+
+**Combat card generation:** identities/upgrades use room type, count and offer position. Rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-stream bug, not a wrong ordinal; gameplay impact has not been reproduced.
+
+**Card rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`. The separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets. Combat rerolls update their room type's rarity state, potentially shifting later offers; non-Rare rerolls raise the offset, as in vanilla.
+
+**Direct/event generation:** seeds add room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified.
+
+**Encounter setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + cumulative room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
+
+**Shuffles:** re-seeds shuffle RNG at combat start; later shuffles continue it.
 
 ### Relic and event rules
 
