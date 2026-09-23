@@ -73,26 +73,6 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
 - **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison (often happens early- or mid-game). Differences caused by consuming different numbers of opportunities within shared sequences (often happens late-game) are benign.
 
-## Vanilla baseline
-
-Vanilla provides the baseline Catfood improves on; exact probabilities and draw rules are in [generation and selection mechanics](#generation-and-selection-mechanics).
-
-| Mechanism | Baseline and interference |
-|---|---|
-| Unknown room types | Dedicated `UnknownMapPoint` RNG and changing odds make `?` resolution route-dependent. Odds reset between acts; RNG progress continues. Catfood leaves this unchanged. |
-| Event / encounter identities | Per-act lists are generated upfront with `UpFront` RNG; event eligibility and room visits affect progression. Catfood leaves identity selection unchanged. |
-| Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite having an event RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
-| Combat | Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats, so extra reshuffles can change a later opening hand. |
-| Combat gold | Uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33. Source-specific exceptions are in the appendix. |
-| Card rarity | Combat rewards change a shared rarity offset also read by shops. Vanilla resets it on Rare combat rolls; Catfood replaces boss resets with Ancient-entry resets. |
-| Ancient options | Use the event RNG. Vanilla seeds it with run seed + event identity hash + player-slot contribution, independently of event counts. |
-| Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Other rewards can shift chest contents. |
-| Relic pools | Sources share finite identity bags, with different draw directions and eligibility filters. Depletion can change delivered rarity. |
-| Potion drops | Checks share `Rewards` RNG and a changing probability across combats. |
-| Potion generation | Selection rules vary by source. Generation precedes acquisition, so failed grants can still shift later results. |
-| Transformations | Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
-| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG, with source-specific selection rules independent of combat rarity offsets. |
-
 ## Shared strategies
 
 ### Rarity and identity sequences
@@ -356,7 +336,7 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 **Main idea:** align random draws within each act and keep each room type's probability interval as stationary as possible, limiting interference from earlier acts and other room types' changing chances.
 
-**Catfood baseline:** uses the [vanilla baseline above](#vanilla-baseline); cumulative room counters do not determine `?` room type.
+**Catfood baseline:** uses the [vanilla baseline](#vanilla-baseline); cumulative room counters do not determine `?` room type.
 
 ### Addressing and room-type chances
 
@@ -372,6 +352,26 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 ## Appendix: existing mechanics
 
 This appendix records existing mechanics for comparison: vanilla by default, with Catfood behavior explicitly labeled. Settled policies belong in the main design sections.
+
+### Vanilla baseline
+
+This overview summarizes interference and Catfood differences. Source-specific rules are in [relic and event rules](#relic-and-event-rules); exact RNG, probability and selection rules are in [generation and selection mechanics](#generation-and-selection-mechanics) and [Catfood addressing and combat rewards](#catfood-addressing-and-combat-rewards).
+
+| Mechanism | Baseline and interference |
+|---|---|
+| Unknown room types | Changing odds and persistent RNG progress make `?` resolution route-dependent. Catfood leaves this unchanged. |
+| Event / encounter identities | Event eligibility and room visits affect list progression. Catfood leaves identity selection unchanged. |
+| Shops and events | Shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite having an event RNG. Courier shares these generators; visits/restocks can shift later outcomes and prices. |
+| Combat | Route length and earlier reshuffles can change later setup and opening hands. Catfood addresses setup by room count and re-seeds shuffles at combat start. |
+| Combat gold | Shared `Rewards` RNG lets other reward draws shift gold. Catfood re-seeds it on room entry but retains vanilla gold ranges and rounding. |
+| Card rarity | Combat rewards change a shared rarity offset also read by shops. Catfood separates these offsets and changes when they reset. |
+| Ancient options | Event-local RNG keeps options independent of event counts. |
+| Chests | Relics use shared rarity RNG and identity bags; gold uses `Rewards`. Other rewards can shift chest contents. |
+| Relic pools | Sources share finite identity bags, with different draw directions and eligibility filters. Depletion can change delivered rarity. |
+| Potion drops | Checks share `Rewards` RNG and a changing probability across combats. |
+| Potion generation | Failed grants can still shift later results. |
+| Transformations | Callers use event RNG, `Niche` or player `Transformations` RNG, so results depend on the source and its other consumption. |
+| Direct card additions | Sources use shared reward RNG, `Niche` or event RNG, with source-specific selection rules independent of combat rarity offsets. |
 
 ### Catfood addressing and combat rewards
 
@@ -456,17 +456,23 @@ This appendix records existing mechanics for comparison: vanilla by default, wit
 
 **Card pools:** there are no Common Power cards in the game.
 
-**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities.
+**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG progress continues.
 
 **Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
 
-**Event / encounter identity selection:** room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
+**Event / encounter identity selection:** per-act lists are generated upfront with `UpFront` RNG. Room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
+
+**Ancient options:** use event RNG seeded with run seed + event identity hash + player-slot contribution, independently of event counts.
+
+**Combat setup and shuffles:** encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats; extra reshuffles advance the same generator used for later opening hands.
 
 **Card rarity:** shared offset starts at `-0.05` and resets there after a Rare combat reward roll, but not after direct additions or on Ancient entry. Normal/elite non-rare rolls add `0.005`, capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 1.49%/5%/4.5%, plus the offset; base Uncommon chances are 37%/40%/37%. A negative Rare threshold also reduces the Uncommon chance: initial normal rewards have 0% Rare and 33.49% Uncommon. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
 
 **Without Scarcity (A0–6):** normal/elite/shop base Rare chances are 3%/10%/9%, non-Rare offset growth is `0.01`, and ordinary Common/Uncommon upgrade chances in Acts 1/2/3 are 0%/25%/50%. Base normal/direct-addition Common/Uncommon/Rare odds are 60%/37%/3%.
 
 **Normal versus elite card rewards:** both offer three cards from the same character pool, exclude duplicates within the offer and use the same upgrade rules; elites have no inherent upgrade-chance bonus. Catfood preserves these rules.
+
+**Combat gold:** uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33.
 
 **Combat-gold exceptions:** Fake Merchant grants a fixed 300 gold, unaffected by Poverty. Battleworn Dummy's three event combats grant no normal combat rewards. Gremlin Merc grants normal gold unless Fat Gremlin escapes: the gold proportion becomes one-half if no gold was stolen, or zero otherwise; vanilla rounds the reduced range endpoints before rolling and generates no gold reward at zero. Non-final bosses grant fixed 100 gold (75 with Poverty); the final boss grants no ordinary reward set. Fixed extra payouts, including recovered stolen gold, Royalties and Amethyst Aubergine, are separate from the normal combat-gold roll.
 
