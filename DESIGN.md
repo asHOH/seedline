@@ -2,6 +2,8 @@
 
 This file is the current specification and existing-mechanics reference; the [working document](WORKING.md) contains unresolved work and evidence needed to resolve it. Coverage is partial: unfinished systems retain existing behavior pending design decisions.
 
+**Reading convention:** the main body is normative by default: goals, constraints, definitions and adopted behavior. Labeled baselines and references describe existing mechanics; rationale, tradeoffs, examples and rejected alternatives explain the design. The Reference and Appendix sections are descriptive, not mod specification.
+
 ## Goals
 
 **Goal:** make same-seed runs offer comparable choices and combat challenges, even when players take different routes or make different decisions. Preserve meaningful consequences while keeping later opportunities fair. Compare equivalent ordinal opportunities—e.g., each run's first shop or third normal-fight reward, even if reached on different floors.
@@ -115,7 +117,7 @@ Each card entry carries an **inherent upgrade roll** `u` uniformly distributed i
 
 When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's randomness. This does not upgrade cards already in the deck when the act changes.
 
-Ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
+**Vanilla baseline:** ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
 
 ### Filtered draws
 
@@ -157,12 +159,15 @@ Save sequence contents and progress, including original entry addresses, consump
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity), chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
+- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity).
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
-- **Relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
+
+**Rationale — card rarity:** the constant offsets are chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
+
+**Tradeoff — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
 
@@ -177,9 +182,9 @@ Save sequence contents and progress, including original entry addresses, consump
 
 Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
 
-Fully unlocked: **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). Capacity is per rarity/source.
+**Reference — fully unlocked pools:** **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific).
 
-Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
+Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
 Mix shop-ineligible relics into allocations normally.
 
@@ -312,7 +317,9 @@ Lead Paperweight and Brain Leech's Rip share one reward sequence with the existi
 
 Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
 
-Colorless and other-character rewards explicitly share across different batch sizes because their sources are few and their offer sizes vary.
+Colorless and other-character rewards explicitly share across different batch sizes.
+
+**Rationale:** these sources are few and their offer sizes vary.
 
 ## Settled policy: permanent transformations and direct card additions
 
