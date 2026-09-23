@@ -65,6 +65,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 ### Determinism
 
 - **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence is one ordered stream; **per-rarity identity sequences** provide one stream per rarity. A random number generator (RNG) generates random choices.
+- **Triple sequence:** a card identity sequence consumed only as complete, consecutive groups of three entries. Each group is a **triple**.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - **Ordinal-addressed generation:** generation determined solely by the run seed and the relevant category's ordinal; **shop-ordinal generation** names the shop case.
 - Act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
@@ -104,7 +105,7 @@ Vanilla provides the baseline Catfood improves on; exact probabilities and draw 
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
 
-**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Each new potion/card identity entry is an independent uniform draw with replacement from its sequence's pool; draw-specific eligibility and duplicate restrictions are handled by filtering. Only finite relic allocations borrow.
+**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Unless a source specifies weighted generation or a triple sequence, each new potion/card identity entry is an independent uniform draw with replacement from its sequence's pool. Only finite relic allocations borrow.
 
 ### Consumption timing
 
@@ -151,6 +152,8 @@ Apply the same rule recursively to further collisions, including identical filte
 Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
 Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
+
+Triple sequences reject duplicate candidates while generating each triple. Other card sequences use filtered draws to exclude duplicates.
 
 ### Saved state
 
@@ -272,17 +275,51 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
-## Settled policy: own-character fixed-Rare card offers
+## Settled policy: card reward offers
 
 **Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
 
-**Our improvements:** equivalent Rare offers follow the same identity order across granting sources; random upgrade evaluation cannot scramble later card choices.
+**Our improvements:**
 
-Share one own-character Rare identity sequence among non-final boss rewards, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. Use the shared identity and consumption strategies; preserve offer sizes and selection rules.
+- Equivalent rewards share identity order across granting sources.
+- Larger own-character drafts preserve later three-card offer boundaries.
+- Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Crystal Sphere:** does not reset the combat rarity offset.
+**Scope:** initial generation for the groups below. Normal-fight rarity, elite rarity and own-character base-odds offers are deferred; reroll addressing and consumption remain open. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
 
-Normal-fight and elite reward policies, including their associated extra offers, are deferred. This settlement covers fixed-Rare offers; membership of random-rarity sources remains unfinished.
+### Own-character fixed-rarity offers
+
+Use separate Common, Uncommon and Rare triple sequences.
+
+| Sequence | Sources and consumption |
+|---|---|
+| Rare | One triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. |
+| Common | Glass Eye consumes two triples; Crystal Sphere's Common offer consumes one. Scroll Boxes and Room Full of Cheese each consume one triple as specified below. |
+| Uncommon | Glass Eye consumes two triples; Crystal Sphere's Uncommon offer consumes one. |
+
+- **Scroll Boxes:** the Common triple supplies both Common cards in bundle one and the first Common card in bundle two. Generate the remaining Common and both Uncommons with event RNG.
+- **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
+- **Crystal Sphere:** does not reset the combat rarity offset.
+
+### Own-character Power offers
+
+Lasting Candy and The Future of Potions' Power choices share separate Uncommon and Rare Power identity sequences, independent of the triple sequences above.
+
+Lasting Candy uses two independent rarity-roll sequences, one for normal fights and one for elites. Advance the relevant sequence once per triggered additional card, preserving the source's base rarity odds and unavailable-rarity fallback. Matching trigger ordinals therefore retain their rarity. Boss triggers request Rare directly. The Future of Potions requests its specified rarity without consuming Candy's rarity rolls.
+
+### Other The Future of Potions choices
+
+Attack and Skill offers use event RNG addressed by rarity and type. The same rarity/type choice produces the same initial offer in corresponding same-seed events, independently of the other potion options. Preserve the event's explicit upgrades.
+
+### Colorless offers
+
+Lead Paperweight and Brain Leech's Rip share one reward sequence with the existing Uncommon/Rare odds: **98.51% / 1.49%**, with uniform identity selection within each rarity.
+
+### Other-character offers
+
+Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Keep each character's pool distinct. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
+
+Colorless and other-character rewards explicitly share across different batch sizes because their sources are few and their offer sizes vary.
 
 ## Settled policy: permanent transformations and direct card additions
 
@@ -349,6 +386,22 @@ This appendix records existing mechanics for comparison: vanilla by default, wit
 | Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Randomly selects three owned relics and three replacements to offer; consumes all three replacement identities/rarities before the player's selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
 | Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
 | Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
+
+#### Card reward offers
+
+| Source | Mechanics |
+|---|---|
+| Hefty Tablet | Choose one of three own-character Rares; Injury is added even if the Rare is skipped. |
+| Glass Eye | Five three-card offers: two Common, two Uncommon and one Rare, from the character pool. No random upgrades. |
+| Scroll Boxes | Choose one of two bundles, each normally two Commons and one Uncommon; all six identities are distinct. Defect has an independent 1% triple-Claw substitution chance per bundle. |
+| Room Full of Cheese — Gorge | Choose two of eight distinct Common character cards; no random upgrades. |
+| Crystal Sphere | The board has one card-reward item per ordinary rarity. Each recovered item gives a three-card offer of that rarity; vanilla identities and upgrade rolls use event RNG. |
+| The Future of Potions | Trade a potion for three explicitly upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
+| Lead Paperweight / Brain Leech — Rip | Choose one of two / three colorless cards respectively. Rip costs 5 HP and suppresses random upgrades. |
+| Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
+| Colorful Philosophers | Choose another character's color, then receive one three-card offer per ordinary rarity from that pool. Ordinary upgrade rolls apply. |
+| Sea Glass | Five cards per ordinary rarity from one featured other character; take any number of the 15. No random upgrades. |
+| Lasting Candy | Adds a Power on alternating qualifying combat rewards, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
 
 #### Permanent transformations and direct additions
 

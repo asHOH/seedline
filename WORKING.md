@@ -10,7 +10,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled:** Rewards - relics, chests, combat gold, potions, inherent card upgrade rolls, own-character fixed-Rare offers, permanent transformations and covered direct card additions; Encounter - shops and unknown-room resolution.
+**Settled:** Rewards - relics, chests, combat gold, potions, inherent card upgrade rolls, initial generation for non-deferred card reward groups, permanent transformations and covered direct card additions; Encounter - shops and unknown-room resolution.
 
 ### Rewards
 
@@ -22,7 +22,23 @@ See the [settled transformation and direct-addition policy](DESIGN.md#settled-po
 
 #### Cards: offers, rarity and rerolls
 
-**Open:** source sharing and addressing for normal-fight, elite, boss and event/Ancient card rewards, including identities, random upgrades and rerolls; determine rarity-reset rules and reroll effects on later offers.
+**Settled:** [inherent card rolls](DESIGN.md#inherent-card-rolls) decouple upgrades; [card reward offers](DESIGN.md#settled-policy-card-reward-offers) covers initial generation for own-character fixed rarities and Power offers, The Future of Potions, colorless and other-character rewards.
+
+**Grouping:** organize card rewards first by pool, then by rarity request, eligibility filter and draw grouping. Preserve [triple-sequence](DESIGN.md#determinism) boundaries: a five-card draw would shift later triples. Colorless and other-character rewards explicitly allow mixed batch sizes because their sources are few and their offer sizes vary. Upgrade rules and how many offered cards the player takes do not split identity groups.
+
+**Deferred own-character groups:**
+
+| Rarity rule | Sources / offer structure |
+|---|---|
+| Normal-fight rarity | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights; three-card offers. |
+| Elite rarity | Elites and The Hunt in elite combats; three-card offers. |
+| Base Common/Uncommon/Rare odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
+
+The base-odds group feels like normal-fight rewards: use a similar strategy while handling it separately. Its vanilla odds are 61.51%/37%/1.49%, without combat rarity offsets; Share Knowledge and Trial suppress random upgrades.
+
+**Open:** sharing/addressing for these deferred groups, rarity offsets and resets, act alignment, and reroll addressing/consumption across card offers. Initial source assignments for the non-deferred groups are settled.
+
+**Deferred combat baseline and proposals:**
 
 - **Catfood:** combat identities/upgrades use room type, count and offer position. Combat rerolls still update that room type's rarity state, potentially shifting later offers.
 - **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
@@ -74,7 +90,7 @@ Superseded by the [settled shared sequence with normal-fight compensation](DESIG
 
 ## Next steps and validation
 
-**Next:** address remaining non-deferred card reward groups, then Encounter design including Relic Trader, other events/Ancients and combat setup.
+**Next:** address card rerolls and the deferred reward groups, then Encounter design including Relic Trader, other events/Ancients and combat setup.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
