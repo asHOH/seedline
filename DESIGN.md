@@ -52,6 +52,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 ### Rewards
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
+- **Card pool:** can be own character, colorless or a specified other character.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it; choosing the granting event option beforehand does not make it a card reward offer.
 - **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence; repeated identities are distinct entries.
 - **Filter / filter marker:** a filter defines eligibility for a draw. A **filter marker** occupies a sequence position and records one deferred advancement under that filter; shortened to **marker** below.
@@ -117,6 +118,18 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 **Main idea:** an entry keeps its original address when it moves.
 
 An entry's address is its original source sequence + original entry position. Filtered advancement and borrowing preserve this address; removals never renumber it. Prices and saved state refer to this stable address, so repeated item identities remain distinct occurrences.
+
+### Inherent card rolls
+
+**Main idea:** bind random attributes to each generated card occurrence so evaluating them cannot shift later identities or attributes.
+
+Each card entry carries an **inherent upgrade roll** `u` uniformly distributed in `[0, 1)`, derived independently from the run seed, its stable entry address and the upgrade purpose. Repeated card identities have separate rolls; moving an entry preserves its roll.
+
+When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's randomness. This does not upgrade cards already in the deck when the act changes.
+
+Ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 25% / 50%**, or **0% / 12.5% / 25% with Scarcity**; Rare cards have no ordinary act-based upgrade chance. Thus Act 1 rewards, including Neow's, receive no random upgrades. Explicit upgrades, such as The Future of Potions, remain exceptions. Egg effects stay outside this discussion.
+
+**Planned extension:** give cards other purpose-specific inherent rolls for Encounter decisions, such as priority for random upgrade selection. Selection scope and reuse rules remain unfinished.
 
 ### Filtered draws
 
@@ -257,6 +270,18 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
+## Settled policy: own-character fixed-Rare card offers
+
+**Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
+
+**Our improvements:** equivalent Rare offers follow the same identity order across granting sources; random upgrade evaluation cannot scramble later card choices.
+
+Share one own-character Rare identity sequence among non-final boss rewards, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. Use the shared identity and consumption strategies; preserve offer sizes and selection rules.
+
+**Crystal Sphere:** does not reset the combat rarity offset.
+
+Normal-fight and elite reward policies, including their associated extra offers, are deferred. This settlement covers fixed-Rare offers; membership of random-rarity sources remains unfinished.
+
 ## Settled policy: permanent transformations and direct card additions
 
 **Catfood baseline:** retains caller-supplied transformation RNGs; card-factory additions use room/event and options-call addressing. Neither uses dedicated shared identity sequences by pool.
@@ -351,6 +376,8 @@ This appendix records existing mechanics for comparison: vanilla by default, wit
 | Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. |
 
 ### Generation and selection mechanics
+
+**Card pools:** there are no Common Power cards in the game.
 
 **Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities.
 

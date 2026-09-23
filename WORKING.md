@@ -10,7 +10,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 **Catfood addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides.
 
-**Settled:** Rewards - relics, chests, combat gold, potions, permanent transformations and covered direct card additions; Encounter - shops and unknown-room resolution.
+**Settled:** Rewards - relics, chests, combat gold, potions, inherent card upgrade rolls, own-character fixed-Rare offers, permanent transformations and covered direct card additions; Encounter - shops and unknown-room resolution.
 
 ### Rewards
 
@@ -28,7 +28,7 @@ See the [settled transformation and direct-addition policy](DESIGN.md#settled-po
 - **Catfood identity consumption:** rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion.
 - **Code-confirmed Catfood bug:** the initial offer uses the RNG intended for rerolls. The bug selects the wrong stream, not the wrong ordinal. Gameplay impact not reproduced in-game yet.
 - **Catfood rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 4% (0% with Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`.
-- **Catfood boss rewards:** the separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets; they are instead reset on entering Ancient. So there's no perceivable changes against vanilla.
+- **Catfood boss rewards:** the separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets; they are instead reset on entering Ancient.
 - **Elite initialization — proposed:** on Ancient entry, including Neow, set the elite offset to `0.01`/`-0.02` (without Scarcity/with Scarcity), approximating two normal fights. Retain vanilla non-rare growth.
 - **Offset resets — open:** whether to preserve combat rarity resets on Ancient entry. The elite Ancient-entry reset value has the separate proposal above.
 - **Act alignment — open:** prevent divergence across acts; assess alongside the offset-reset decision.
@@ -54,7 +54,7 @@ See the [settled transformation and direct-addition policy](DESIGN.md#settled-po
 
 #### Permanent card changes
 
-**Open:** random card selection for permanent upgrades/downgrades; define sharing by source/effect.
+**Planned:** extend inherent card rolls to selection priorities, such as random upgrades. **Open:** selection scope, priority reuse and source/effect sharing for permanent upgrades/downgrades.
 
 #### Combat randomness
 
@@ -74,7 +74,7 @@ Superseded by the [settled shared sequence with normal-fight compensation](DESIG
 
 ## Next steps and validation
 
-**Next:** Address remaining Encounter design, including Relic Trader, other events/Ancients and combat setup.
+**Next:** address remaining non-deferred card reward groups, then Encounter design including Relic Trader, other events/Ancients and combat setup.
 
 **Validation suggestion:** targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
