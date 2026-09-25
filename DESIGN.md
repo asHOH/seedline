@@ -74,6 +74,29 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
 - **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison (often happens early- or mid-game). Differences caused by consuming different numbers of opportunities within shared sequences (often happens late-game) are benign.
 
+## Architecture overview
+
+Read each random decision by six dimensions: **outcome** (what varies), **sharing scope** (which requests share randomness), **address/progress** (opportunity or entry position and reset boundary), **form** (addressed RNG, stream or finite allocation), **consumption** (what commits advancement), and **state** (what must survive save/load). Sharing scope and addressing remain separate fairness decisions. Occurrence, rarity, identity and attributes can have different scopes and progress within one source.
+
+This is a navigation map, not a second specification. The linked policies own local rules; [consumption timing](#consumption-timing) and [saved state](#saved-state) are shared contracts, so their defaults are not repeated in the table. [Stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) apply across systems.
+
+| Random outcome / policy | Sharing and address/progress | RNG / sequence form |
+|---|---|---|
+| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards/sale: shop ordinal; restocks: source-specific progress; prices: stable entry address. | Ordinal generation, item sequences and entry-derived prices. |
+| [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier; rarity and per-rarity identity progress are separate. | Rarity-roll streams and finite shuffled allocations. |
+| [Potion rarity and identity](#acquisition-and-sequences) | Four source groups; generic rarity modes share per-rarity identity progress. | On-demand rarity-roll and identity streams. |
+| [Potion drop occurrence](#drop-occurrence) | Shared ordinary-check index and changing probability across combat categories. | Indexed random checks. |
+| [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed generation. |
+| [Combat gold](#shared-sequence-and-compensation) | Shared normal-fight/elite gold ordinal; separate normal-fight compensation index. | Uniform rolls and seed-derived Thue–Morse compensation. |
+| [Own-character random-rarity: Rare occurrence](#luck-and-rarity-offset) | Shared luck/threshold progress; combat offset applies only to its source groups. | Independent exponential-threshold stream with pending delivery. |
+| [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Pool/request/offer groups; offer or entry progress, separate from shared luck. | Triple sequences, other identity/rarity streams and local event-RNG rules. |
+| [Card upgrades](#inherent-card-rolls) | Generated card occurrence and upgrade purpose. | Independent entry-derived roll. |
+| [Permanent transformation / direct-addition results](#selection-and-consumption) | Shared pool identity progress; separate transformation/addition rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
+| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event identity and event-local draws. | Event RNG, outside shared reward sequences. |
+| [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal and stored room-type chances. | Act-local ordinal draws interpreted through changing intervals. |
+
+Policy sections put intent/coverage before operative rules, with baseline context at the end and local rationale beside the rule it explains. Use the dimensions where informative, not as mandatory fields; source lists, probabilities and exceptions remain in their canonical sections.
+
 ## Shared strategies
 
 These are shared contracts for covered policies. The [fairness principle](#goals), [opportunity consumption](#consumption-timing), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
@@ -144,15 +167,11 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress.
 
+**Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
+
 ## Settled policy: shops, Wongos and Courier
 
-**Catfood baseline:** tracks shop ordinal and isolates shop card-rarity state, while retaining `Shops` RNG for card identities and prices, shared relic bags/rarity rolls, and a shared potion-factory call index.
-
-**Our improvements:**
-
-- Extra rewards and Courier restocks no longer scramble later shops.
-- Corresponding shops keep the same sale slot; relocated offers keep their base prices.
-- Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
+**Intent:** Extra rewards and Courier restocks no longer scramble later shops. Corresponding shops keep the same sale slot; relocated offers keep their base prices. Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
 
 ### Stock and prices
 
@@ -165,24 +184,21 @@ Save sequence contents and progress, including original entry addresses, consump
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
 
+### Context
+
+**Catfood baseline:** tracks shop ordinal and isolates shop card-rarity state, while retaining `Shops` RNG for card identities and prices, shared relic bags/rarity rolls, and a shared potion-factory call index.
+
 **Rationale — card rarity:** the constant offsets are chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 
 **Tradeoff — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
 
-**Catfood baseline:** retains shared relic bags but precomputes 400 rarity rolls; roll 401 would fail (code finding, not reproduced).
-
-**Our improvements:**
-
-- Shops, Courier and generic rewards no longer compete for relics during normal play.
-- Random relic rewards no longer risk Catfood's fixed rarity-roll limit.
+**Intent:** Shops, Courier and generic rewards no longer compete for relics during normal play. Random relic rewards no longer risk Catfood's fixed rarity-roll limit.
 
 ### Allocation
 
 Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
-
-**Reference — fully unlocked pools:** **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific).
 
 Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
@@ -200,16 +216,15 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 **Final fallback:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running.
 
+### Context
+
+**Catfood baseline:** retains shared relic bags but precomputes 400 rarity rolls; roll 401 would fail (code finding, not reproduced).
+
+**Reference — fully unlocked pools:** **122 ordinary relics per character**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific).
+
 ## Settled policy: potions
 
-**Catfood baseline:** addresses drop checks by `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops also advance this index. Separately, potion factories use a shared call index to seed each batch.
-
-**Our improvements:**
-
-- Rewards, shops, Courier and potion-generating effects no longer scramble one another's potions.
-- Receiving potions together or separately preserves comparable results.
-- Failed direct grants no longer change later potions.
-- White Beast Statue no longer shifts ordinary potion drops after its removal.
+**Intent:** Rewards, shops, Courier and potion-generating effects no longer scramble one another's potions. Receiving potions together or separately preserves comparable results. Failed direct grants no longer change later potions. White Beast Statue no longer shifts ordinary potion drops after its removal.
 
 ### Acquisition and sequences
 
@@ -218,33 +233,34 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 - Within the generic rewards source, use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
 - Preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
 
-**Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
-
 ### Drop occurrence
 
 - Retain Catfood addressing and vanilla's shared changing probability across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
 - **White Beast Statue:** forced drops freeze the occurrence index and stored probability; the potion still consumes a reward identity.
 - Save the occurrence index and probability.
 
+### Context
+
+**Catfood baseline:** addresses drop checks by `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops also advance this index. Separately, potion factories use a shared call index to seed each batch.
+
+**Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
+
 ## Settled policy: chests
 
-**Catfood baseline:** has no chest ordinal; chest entry re-seeds `Rewards` with the normal-fight count for gold. Silver Crucible's suppression is unchanged.
-
-**Our improvements:**
-
-- Chest gold no longer depends on how many normal fights you took.
-- Silver Crucible's empty chest no longer shifts later chest rewards.
+**Intent:** Chest gold no longer depends on how many normal fights you took. Silver Crucible's empty chest no longer shifts later chest rewards.
 
 ### Rewards and consumption
 
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
 - Silver Crucible suppresses the first chest's rewards before generation, advancing neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 
+### Context
+
+**Catfood baseline:** has no chest ordinal; chest entry re-seeds `Rewards` with the normal-fight count for gold. Silver Crucible's suppression is unchanged.
+
 ## Settled policy: combat gold
 
-**Main idea:** share random variation between unreduced normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
-
-**Catfood baseline:** re-seeds shared `Rewards` on room entry using run seed and cumulative combat-category count, with different multipliers for normal fights and elites. Vanilla gold ranges and rounding are unchanged.
+**Intent:** share random variation between unreduced normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
 
 ### Shared sequence and compensation
 
@@ -259,11 +275,15 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Compensation:** use the [Thue–Morse sequence](https://oeis.org/A010060): `b(n) = s XOR (popcount(n) mod 2)`, where `n` is the zero-based unreduced normal-fight gold-reward index, `popcount` counts binary 1-bits, and `s` is a fair seed-derived bit independent of `u`. Elites do not advance `n`. Both sequences continue across acts; save their progress and `s`.
 
-**Tradeoff:** expected gold is unchanged, but A3+ normal gold is nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
-
 **Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
-### Rejected alternatives
+### Context
+
+**Catfood baseline:** re-seeds shared `Rewards` on room entry using run seed and cumulative combat-category count, with different multipliers for normal fights and elites. Vanilla gold ranges and rounding are unchanged.
+
+**Tradeoff:** expected gold is unchanged, but A3+ normal gold is nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
+
+#### Rejected alternatives
 
 Drawbacks below concern A3+:
 
@@ -273,16 +293,9 @@ Drawbacks below concern A3+:
 
 ## Settled policy: card reward offers
 
-**Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
+**Intent:** Equivalent rewards share identity order across granting sources. Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Our improvements:**
-
-- Equivalent rewards share identity order across granting sources.
-- Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites.
-- Larger own-character drafts preserve later three-card offer boundaries.
-- Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
-
-**Scope:** initial generation for the groups below, plus rerolls within the own-character random-rarity group. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's final non-Rare sequence split, probability calibration and behavior without Scarcity remain deferred; other groups' reroll policies remain open.
+**Scope:** initial generation for the groups below, plus rerolls within the own-character random-rarity group. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [sequence choices, calibration and behavior without Scarcity](WORKING.md#random-rarity-offer-sequences) and [other groups' rerolls](WORKING.md#other-card-offer-rerolls) remain unresolved.
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
@@ -296,7 +309,7 @@ Drawbacks below concern A3+:
 | Elite rule | Elites and The Hunt in elite combats; three-card offers. |
 | Fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
 
-All three source groups share luck, thresholds, offer sequences and pending-Rare delivery. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
+All three source groups share luck, thresholds, the rare-bearing sequence and pending-Rare delivery. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
 
 #### Luck and rarity offset
 
@@ -324,11 +337,11 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 #### Offer sequences and rerolls
 
-Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. Whether normal-fight-rule and elite non-Rare offers share one sequence remains deferred.
+Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. The non-Rare sequence split, fixed-odds routing and opening-entry placement remain [unresolved](WORKING.md#random-rarity-offer-sequences).
 
 A generated offer consumes the next triple from its applicable non-Rare sequence or, if a Rare is delivered, from the shared rare-bearing sequence. A suppressed occurrence reserves no additional triple. Follow the [shared consumption and identity rules](#shared-strategies).
 
-Opening non-Rare entries use vanilla first-two-normal-offer probabilities through their own deterministic generation. Their placement under the final non-Rare sharing scheme remains deferred; do not recalculate entries using the live offset or vanilla's shared RNG.
+Opening non-Rare entries use vanilla first-two-normal-offer probabilities through their own deterministic generation. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
 Store the Rare first in each rare-bearing triple. After simulating the offer, swap it with the card at the simulated Rare position if needed. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
 
@@ -370,15 +383,17 @@ Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences:
 
 Colorless and other-character rewards explicitly share across different batch sizes.
 
-**Rationale:** these sources are few and their offer sizes vary.
+### Context
+
+**Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
+
+**Rationale — colorless/other-character batch sharing:** these sources are few and their offer sizes vary.
 
 ## Settled policy: permanent transformations and direct card additions
 
-**Catfood baseline:** retains caller-supplied transformation RNGs; card-factory additions use room/event and options-call addressing. Neither uses dedicated shared identity sequences by pool.
+**Intent:** transformations and covered direct additions give comparable same-pool results, preserving source rarity odds and avoiding interference from card reward offers or combat transformations.
 
-**Our improvements:** transformations and covered direct additions give comparable same-pool results, preserving source rarity odds and avoiding interference from card reward offers or combat transformations.
-
-Covered direct additions: Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
+**Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
 ### Selection and consumption
 
@@ -391,15 +406,17 @@ Covered direct additions: Infested Automaton's Study and Touch Core, Endless Con
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
+### Context
+
+**Catfood baseline:** retains caller-supplied transformation RNGs; card-factory additions use room/event and options-call addressing. Neither uses dedicated shared identity sequences by pool.
+
 ## Settled policy: event-specific rewards
 
 Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: unknown-room resolution
 
-**Main idea:** align random draws within each act and keep each room type's probability interval as stationary as possible, limiting interference from earlier acts and other room types' changing chances.
-
-**Catfood baseline:** uses the [vanilla baseline](#vanilla-baseline); cumulative room counters do not determine `?` room type.
+**Intent:** align random draws within each act and keep each room type's probability interval as stationary as possible, limiting interference from earlier acts and other room types' changing chances.
 
 ### Addressing and room-type chances
 
@@ -407,6 +424,10 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
 - **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` (midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio) unless shifted just enough to avoid overlap. Unassigned space resolves to Event.
 - **Overflow:** when the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is truncated and shop gets no space.
+
+### Context
+
+**Catfood baseline:** uses the [vanilla baseline](#vanilla-baseline); cumulative room counters do not determine `?` room type.
 
 ## Reference
 

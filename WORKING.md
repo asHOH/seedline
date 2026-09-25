@@ -8,7 +8,7 @@ When a decision settles, update its canonical section in DESIGN.md and delete th
 
 ## Remaining design: rewards and encounter
 
-Use the [Rewards / Encounter design categories](DESIGN.md#design-categories). Sequence scope and addressing remain separate fairness decisions.
+Use the [Rewards / Encounter categories](DESIGN.md#design-categories) and [architecture dimensions](DESIGN.md#architecture-overview) to frame each remaining decision.
 
 Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 
