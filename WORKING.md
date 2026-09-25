@@ -28,30 +28,26 @@ See the [settled transformation and direct-addition policy](DESIGN.md#settled-po
 
 #### Cards: offers, rarity and rerolls
 
-Existing contracts: [inherent card rolls](DESIGN.md#inherent-card-rolls) and [card reward offers, including grouping](DESIGN.md#settled-policy-card-reward-offers).
-
-**Known — deferred own-character groups:**
-
-| Rarity rule | Sources / offer structure |
-|---|---|
-| Normal-fight rarity | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights; three-card offers. |
-| Elite rarity | Elites and The Hunt in elite combats; three-card offers. |
-| Base Common/Uncommon/Rare odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
-
-The base-odds group's vanilla odds are 61.51%/37%/1.49%, without combat rarity offsets; Share Knowledge and Trial suppress random upgrades.
+Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
 
 **Decisions needed:**
 
-- Sharing/addressing for these deferred groups, rarity offsets, and reroll addressing/consumption across card offers.
-- Whether to retain Catfood's combat rarity resets on Ancient entry, and which reset values to use.
-- Act alignment to prevent divergence across acts; assess alongside the offset-reset decision.
+- Choose two or three offer sequences below, including non-Rare routing for fixed-base-odds sources other than Brain Leech. Balance the elite Uncommon advantage against matching choices when different sources reach the Rare threshold.
+- Place the special opening entries under the chosen sharing scheme. Fixed-odds rewards can consume normal non-Rare entries before the first two normal-rule rewards; a fully shared non-Rare sequence can also be advanced by elites. Decide how the opening exception should be addressed without making stored entries depend on the live offset.
+- Calibrate Common/Uncommon distributions for each non-Rare sequence, the shared rare-bearing companions and Brain Leech's two event-generated cards. Exact modeling and probabilities are deferred; include varied routes, events, extra rewards and shops, especially Orrery. Do not adopt the illustrative `3 normal → 1 elite → 2 normal → 1 elite` route as the full model or transfer the shop's `0.008` offset adjustment.
+- Behavior without Scarcity, including multiple Rares and deferral, remains deferred.
+- Reroll addressing and consumption for card-offer groups outside the shared luck system remain unresolved.
 
-**Candidates:**
+**Candidates — both remain strong:**
 
-- **Base-odds group:** handle it separately using a strategy similar to normal-fight rewards.
-- **Elite initialization:** on Ancient entry, including Neow, set the elite offset to `-0.02` (`0.01` without Scarcity), approximating two normal fights. Retain vanilla non-rare growth.
+| Offer sequences | Tradeoff |
+|---|---|
+| Three: normal non-Rare, elite non-Rare, shared rare-bearing | Retains a richer elite non-Rare distribution, but which source produces a Rare changes both non-Rare consumption and the resulting Uncommon advantage. |
+| Two: shared non-Rare, shared rare-bearing | Aligns non-Rare choices across sources, at the cost of the distinct elite non-Rare Uncommon advantage. |
 
-**Validation:** determine gameplay impact of Catfood's initial-offer stream bug and direct/event seed collisions; see the baseline above.
+**Known — tradeoff:** with one normal and one elite reward, a Rare in the normal reward consumes a shared Rare offer plus an elite non-Rare offer; a Rare in the elite consumes a normal non-Rare offer plus the same shared Rare offer. Changing the shared Rare companions alone cannot remove this difference.
+
+**Validation:** use automated comparison with vanilla across normal-heavy, elite-heavy and mixed routes, including fixed-odds and extra offers. Compare Rare-bearing offer counts, waiting distributions and conditional Uncommon rates; paired same-seed checks should verify offer alignment, rerolls, pending delivery across acts and Brain Leech crossings in slots four/five. Force rare multi-crossing cases rather than relying on manual runs to encounter them. Determine gameplay impact of Catfood's initial-offer stream bug and direct/event seed collisions; see the baseline above.
 
 ### Encounter
 
@@ -92,7 +88,7 @@ The base-odds group's vanilla odds are 61.51%/37%/1.49%, without combat rarity o
 
 ## Next steps and validation
 
-**Next:** address card rerolls and the deferred reward groups, then Encounter design including Relic Trader, other events/Ancients and combat setup.
+**Next:** choose and calibrate the non-Rare offer sequences, resolve remaining card-offer exceptions and rerolls, then Encounter design including Relic Trader, other events/Ancients and combat setup.
 
 **Candidate — separate improvement:** add run seed to boss shuffle initialization.
 

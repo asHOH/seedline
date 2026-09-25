@@ -20,7 +20,7 @@ Single-player is the intended scope. Multiplayer behavior is excluded, except fo
 
 Tutorial overrides, including scripted rewards and boss discovery order, and custom-run modifiers are excluded.
 
-**Default context:** assume Scarcity (A7+) unless stated otherwise. The same policies apply without Scarcity, using the appropriate probabilities.
+**Default context:** assume Scarcity (A7+) unless stated otherwise. The same policies apply without Scarcity, using the appropriate probabilities, except where explicitly deferred.
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
@@ -278,12 +278,63 @@ Drawbacks below concern A3+:
 **Our improvements:**
 
 - Equivalent rewards share identity order across granting sources.
+- Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites.
 - Larger own-character drafts preserve later three-card offer boundaries.
 - Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation for the groups below. Normal-fight rarity, elite rarity and own-character base-odds offers are deferred; reroll addressing and consumption remain open. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
+**Scope:** initial generation for the groups below, plus rerolls within the own-character random-rarity group. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's final non-Rare sequence split, probability calibration and behavior without Scarcity remain deferred; other groups' reroll policies remain open.
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
+
+### Own-character random-rarity offers
+
+**Intent:** separate when a Rare appears from the complete choice offered. Align corresponding rare-bearing and non-Rare opportunities while preserving source-dependent Rare chances; matching combat-room ordinals need not consume matching offer entries.
+
+| Rarity rule | Sources / offer structure |
+|---|---|
+| Normal-fight rule | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights; three-card offers. |
+| Elite rule | Elites and The Hunt in elite combats; three-card offers. |
+| Fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
+
+All three source groups share luck, thresholds, offer sequences and pending-Rare delivery. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
+
+#### Luck and rarity offset
+
+Maintain luck `L`, initially zero, and a threshold `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by run seed, purpose and threshold ordinal. Advance it only when a Rare is delivered into a generated offer.
+
+Process card slots in order. Each slot adds `-ln(1 - p)` to luck, where `p` is its Rare probability. Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with one shared combat offset `o`; fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
+
+The combat offset starts at `-0.05`. Normal-fight-rule and elite non-Rare slots add `0.005`, capped at `0.40`; a delivered Rare in either group resets it to `-0.05`. Zero-probability slots add no luck but still grow the offset. Retain boss-reward offset resets, without advancing luck or these offer sequences.
+
+When a slot reaches the threshold and its offer has no Rare yet, resolve that slot as Rare, reset luck to zero and advance to the next threshold. Discard the overshoot. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
+
+Luck, the current threshold and sequence progress carry across acts; the combat offset resets to `-0.05` between acts. Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
+
+**Rationale:** before deferral, `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`. Exponential thresholds preserve the supplied waiting probabilities without fitting a route-dependent luck distribution. This does not make the capped, deferred reward system identical to vanilla.
+
+#### One Rare per offer and deferral
+
+Cap each covered offer at one Rare. If a later slot reaches the next threshold, suppress its Rare and keep the reached threshold pending: do not reset luck or advance the threshold. Treat suppressed slots as non-Rare for applicable offset updates. Continue accumulating luck, but create no further pending occurrences until delivery.
+
+A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery. At the next such offer, deliver the pending Rare in its first simulated slot instead of performing that slot's ordinary check; reset luck and advance the threshold once, applying the delivery source's offset rule. Process its remaining slots normally. Ineligible offers leave the pending threshold intact and apply normal non-Rare offset growth.
+
+This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
+
+**Accepted tradeoff:** separating the rare Scarcity double-Rare elite result changes acquisition opportunities. Fixed-odds offers can also produce multiple Rares in vanilla; additional occurrences beyond the single pending threshold are deliberately omitted rather than queued.
+
+#### Offer sequences and rerolls
+
+Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. Whether normal-fight-rule and elite non-Rare offers share one sequence remains deferred.
+
+A generated offer consumes the next triple from its applicable non-Rare sequence or, if a Rare is delivered, from the shared rare-bearing sequence. A suppressed occurrence reserves no additional triple. Follow the [shared consumption and identity rules](#shared-strategies).
+
+Opening non-Rare entries use vanilla first-two-normal-offer probabilities through their own deterministic generation. Their placement under the final non-Rare sharing scheme remains deferred; do not recalculate entries using the live offset or vanilla's shared RNG.
+
+Store the Rare first in each rare-bearing triple. After simulating the offer, swap it with the card at the simulated Rare position if needed. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
+
+**Rerolls:** process all replacement slots through the same luck, offset and deferral rules. Consume a fresh applicable non-Rare triple or the next triple from the same shared rare-bearing sequence. Never reuse the original offer's entry.
+
+**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five. The extra generated identities cannot themselves be Rare; the complete five-card offer contains at most one Rare and consumes only one shared triple.
 
 ### Own-character fixed-rarity offers
 
@@ -480,9 +531,11 @@ This overview summarizes interference and Catfood differences. Source-specific r
 
 **Card rarity:** shared offset starts at `-0.05` and resets there after a Rare combat reward roll, but not after direct additions or on Ancient entry. Normal/elite non-rare rolls add `0.005`, capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 1.49%/5%/4.5%, plus the offset; base Uncommon chances are 37%/40%/37%. A negative Rare threshold also reduces the Uncommon chance: initial normal rewards have 0% Rare and 33.49% Uncommon. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
 
+**Base-odds card offers:** Orrery, Lost Coffer, Brain Leech's Share Knowledge and Trial's Nondescript Guilty use Common/Uncommon/Rare odds of 61.51%/37%/1.49% per slot without reading or updating the combat offset. Share Knowledge and Trial suppress random upgrades. Each slot rolls base odds independently, so these offers can contain multiple Rares, including three in a three-card offer.
+
 **Without Scarcity (A0–6):** normal/elite/shop base Rare chances are 3%/10%/9%, non-Rare offset growth is `0.01`, and ordinary Common/Uncommon upgrade chances in Acts 1/2/3 are 0%/25%/50%. Base normal/direct-addition Common/Uncommon/Rare odds are 60%/37%/3%.
 
-**Normal versus elite card rewards:** both offer three cards from the same character pool, exclude duplicates within the offer and use the same upgrade rules; elites have no inherent upgrade-chance bonus. Catfood preserves these rules.
+**Normal versus elite card rewards:** both offer three cards from the same character pool, exclude duplicates within the offer and use the same upgrade rules; elites have no inherent upgrade-chance bonus. Under Scarcity, ordinary normal offers cannot contain two Rares because the rare chance after offset is negative; elites can produce Rare → non-Rare → Rare because the last slot has a 0.5% Rare chance after the intervening non-Rare. Catfood preserves these rules.
 
 **Combat gold:** uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33.
 
