@@ -500,6 +500,7 @@ This overview summarizes interference and Catfood differences. Source-specific r
 | Neow — Arcane Scroll | Directly adds one random own-character Rare card. |
 | Neow — Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
 | Vakuu — Distinguished Cape | Directly adds two distinct random eligible curses. |
+| Pael's Tooth | Randomly returns a previously removed card, upgraded; this selects a stored card rather than generating a new identity. |
 
 #### Potions
 
