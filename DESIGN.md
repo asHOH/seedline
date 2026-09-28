@@ -10,6 +10,8 @@ This file is the current specification and existing-mechanics reference; the [wo
 
 **Fairness principle — opportunity isolation:** keep the effects of a decision focused on what that decision concerns. Visiting an extra room or choosing a reward should change as little unrelated future gameplay as possible. Later opportunities may give players a chance to recover from earlier disadvantages.
 
+**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change identity/status-level outcomes or subsequent RNG state, unless order dependence is explicitly intended by the effect. This does not change presentation order or erase meaningful sequential gameplay effects.
+
 ## Scope
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
@@ -24,7 +26,7 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
-**Deterministic identities:** predetermined card, relic and potion grants or replacements require no random identity selection and, by default, consume no controlled reward sequences. A mixed offer may specify whole-triple consumption that also accounts for a matching fixed identity. Fixed-rarity requests remain in scope when the identity is random.
+**Deterministic identities:** predetermined card, relic and potion grants or replacements are excluded: their identities require no random selection and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. Rare tail effects and interactions between sequences through borrowing are outside ordinary isolation discussions throughout.
 
@@ -91,9 +93,10 @@ This is a navigation map, not a second specification. The linked policies own lo
 | [Own-character random-rarity: Rare occurrence](#luck-and-rarity-offset) | Shared luck/threshold progress; combat offset applies only to its source groups. | Independent exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Pool/request/offer groups; offer or entry progress, separate from shared luck. | Triple sequences, other identity/rarity streams and local event-RNG rules. |
 | [Card upgrades](#inherent-card-rolls) | Generated card occurrence and upgrade purpose. | Independent entry-derived roll. |
+| [Persistent card selection](#corrected-persistent-card-selection-priorities) | Logical card occurrence, selection scope and occurrence-local renewal index. | Residual exponential clocks. |
 | [Permanent transformation / direct-addition results](#selection-and-consumption) | Shared pool identity progress; separate transformation/addition rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
 | [Event-specific rewards](#settled-policy-event-specific-rewards) | Event identity and event-local draws. | Event RNG, outside shared reward sequences. |
-| [Pael's Tooth return selection](#settled-policy-paels-tooth) | Stored-card occurrence and return purpose; lifecycle details remain open. | Inherent return priorities. |
+| [Pael's Tooth return selection](#settled-policy-paels-tooth) | Fixed five-card cohort; occurrence/one-card-choice return provenance. | Persistent return ranking, consumed once per combat. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity and owned relic identity. | Fresh candidate priorities. |
 | [Encounter setup](#settled-policy-encounter-setup) | Act-local combat-category ordinal and encounter identity; event-local battle scope for event-created combats. | Purpose-separated addressed RNG. |
 | [Forced events](#settled-policy-forced-events) | Forced identity bypasses ordinary event-list progress. | Existing event RNG; no ordinary event draw. |
@@ -146,13 +149,35 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 **Vanilla baseline:** ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
 
+### Corrected persistent card-selection priorities
+
+**Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source/effect sharing is specified separately; remaining scope decisions are in [WORKING](WORKING.md#permanent-upgrades-and-downgrades).
+
+**Address and state:** each logical card occurrence has a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose + occurrence-local renewal index. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position. Different selection purposes and inherent upgrade rolls remain independent.
+
+**Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; an occurrence selected by this random mechanism consumes its clock and receives a fresh occurrence-local renewal before it can participate again. Mere eligibility loss/re-entry does not consume an unused clock.
+
+**Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
+
+Use independently addressed deterministic tie-breaks, never collection order. Previews and canceled choices consume no clocks. A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. An unrelated purpose's selection does not advance these clocks.
+
+**Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
+
+### Equivalent-card selections
+
+**Invariant — equivalent copies:** choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences, regardless of which copy was clicked. Hidden selection state must remain equivalent up to the association with physical copies. This applies to all card identities, not only Basic Strikes and Defends. Equivalence requires the same identity and all gameplay-relevant status; hidden RNG provenance and presentation position do not distinguish the class.
+
+Retain one logical occurrence per copy, with its own inherent randomness: multiplicity must not collapse into one roll per identity. Representative-selection progress is separate for different card identities. Exact count coupling, operation-purpose scopes and logical-to-physical association are [unresolved](WORKING.md#equivalent-copy-routing).
+
+**Presentation boundary:** operate visibly on the card the player selected. If the first displayed Strike is upgraded, that first Strike must visibly be upgraded; never substitute another displayed copy or reorder cards to implement equivalence. Preserve acquisition-order-based display and original reward entry addresses. Hidden selection provenance may be routed independently of the physical UI object, without rewriting past generated attributes.
+
 ### Opportunity-specific selection priorities
 
 **Main idea:** for a source that adopts uniform selection without replacement, give each eligible candidate an independent priority and take the lowest `k` priorities. Removing an unselected candidate cannot change the selected set.
 
 Derive priorities from run seed + the source's selection-opportunity address + candidate's stable key + selection purpose. Neither the current candidate collection nor its list positions enter the address. Use independent deterministic tie-break draws rather than collection order. A fresh opportunity uses fresh priorities; the source defines its sharing scope and progress. For unique owned relics, the candidate key is relic identity.
 
-This is an opt-in mechanism, not a default priority-lifetime decision for cards. Card priority lifetimes and equivalent Basic-card addressing remain in [WORKING](WORKING.md#card-selection-priorities).
+This opt-in mechanism remains available for effects such as Relic Trader. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
 
 ### Filtered draws
 
@@ -177,7 +202,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 ### Saved state
 
-Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress.
+Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, renewal indices, source-specific priority aliases, logical-to-physical card associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -383,12 +408,9 @@ Use separate Common, Uncommon and Rare triple sequences.
 Resolve Defect's two independent 1% triple-Claw substitution checks with event RNG before requesting Common sequence entries. Non-Defect offers follow the no-substitution branch.
 
 - **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
-- **Exactly one triple-Claw bundle:** inspect the next Common triple without advancing it. If it contains Claw, consume the whole triple: its Claw is accounted for by the fixed bundle, and its other two cards become the Common cards of the remaining ordinary bundle. Generate that bundle's Uncommon with event RNG. If the next triple lacks Claw, leave it untouched and generate the ordinary bundle entirely with event RNG. Do not scan to a later triple.
-- **Two triple-Claw bundles:** both bundles are predetermined; consume no Common triple and generate no unused ordinary-bundle cards.
+- **Scroll Boxes — triple-Claw exception:** if either bundle is replaced, bypass the shared Common sequence entirely, without inspecting its head. Each substituted bundle contains three fixed Claws; generate any remaining ordinary bundle entirely with event RNG. If both bundles are substituted, generate no unused ordinary-bundle cards.
 
-Preserve the source's applicable eligibility, duplicate and upgrade rules. Inspecting or caching an unconsumed head triple does not advance its opportunity; triples are never split.
-
-**Tradeoff:** in the single-substitution branch, consumption depends on whether the head contains Claw. This improves alignment when the triple fits the displayed bundles, but conditions the retained head and therefore changes later Common-offer probabilities.
+Preserve the source's applicable eligibility, duplicate and upgrade rules. The Claw branch is an explicit exception to Scroll Boxes' normal one-Common-triple routing; it consumes no shared card identity/rarity entries. Ordinary generation is not performed and discarded before checking for substitution.
 
 ### Own-character Power offers
 
@@ -451,13 +473,21 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 ## Settled policy: Pael's Tooth
 
-**Intent:** align the return order of stored cards shared by compared runs despite differences in other removed cards, rather than rerandomizing all survivors at each return.
+**Intent:** align the return sequence of shared stored cards and avoid making a different choice within one single-card reward offer change its return priority.
 
-### Return priorities and equivalent copies
+### Stored cohort and returns
 
-Use a purpose-specific inherent return priority associated with the stored card's original occurrence, not its removal order, current storage-list position or the return-opportunity ordinal. Select the eligible record with the lowest current priority. Reuse priority information across returns rather than redrawing every candidate, and retain occurrence keys on stored records across save/load. Preserve the existing stored-card eligibility and guaranteed upgrade.
+On activation, the player selects five unupgraded cards and removes them from the deck. These five form Tooth's fixed stored cohort. At each subsequent combat trigger, return one of the remaining stored cards to the deck, upgraded, and remove that record from the cohort. After five such combats all five have returned upgraded. This is selection without replacement, not selection from a general history of removed cards; later removals do not add or recycle records into this cohort. Preserve the existing trigger timing and other source eligibility.
 
-Basic Strikes and Defends with identical gameplay status must be exchangeable: choosing one such copy rather than another must not change identity/status-level return outcomes. Their exact virtual-occurrence addressing, and the priority-lifecycle treatment of newly stored or returning/re-entering records, remain [unresolved](WORKING.md#paels-tooth-return-priority-lifecycle). The adopted direction does not prescribe uncorrected permanent minima for a changing candidate pool.
+Use Tooth-specific inherent return clocks under [corrected persistent selection](#corrected-persistent-card-selection-priorities). Store the logical occurrences independently of selection click order. Because the entire cohort is present before any return and each record returns once, sorting the five clocks once and consuming the resulting order is equivalent to subtracting the elapsed minima after every return; no return-priority renewal is needed. Retain the original occurrence and return-priority provenance on each stored record across save/load.
+
+### Single-card reward-choice alignment
+
+For a reward choice that permits taking at most one card, use the first card's Tooth return-priority key for whichever card is acquired. Choosing any later card inherits that same return priority; it does not inherit the first card's identity, upgrade roll or unrelated inherent RNGs. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
+
+Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. Multi-card-capable selections, including bundles, do not apply this alignment, even when the player actually takes only one card. Each acquired occurrence there keeps its own return key. Selecting five cards for Tooth's storage is not a reward-choice alignment operation.
+
+Apply the shared [equivalent-copy requirement](#equivalent-card-selections) when routing physically interchangeable cards into the cohort; its exact routing mechanism remains in WORKING.
 
 ## Settled policy: Relic Trader
 
@@ -471,7 +501,7 @@ Preserve event access and tradability restrictions. Select three eligible owned 
 
 Replacement rarity is independent of the outgoing relic's rarity; replacements need not themselves be tradable. Consume all three replacement identities and rarity outcomes when the offer is generated, before the player chooses a trade. The selected trade controls acquisition, not whether the other two offers were consumed.
 
-The replacement source and collision/eligibility handling remain [unresolved](WORKING.md#relic-trader). The mapping must be anchored to outgoing relic identity so that common inputs can keep their counterparts when feasible. Do not assign these replacements to the generic rewards allocation: preserve its [opportunity coverage](#allocation).
+The replacement source and collision/eligibility handling remain [unresolved](WORKING.md#relic-trader). The mapping must be anchored to outgoing relic identity so that common inputs can keep their counterparts when feasible. Do not assign these replacements to the generic rewards allocation: preserve its [opportunity coverage](#allocation). Do not create a separate disjoint Trader allocation. The unresolved source policy must define how consuming Trader offers affects finite stock; it must not silently retire unchosen generic entries.
 
 ## Settled policy: encounter setup
 
@@ -578,7 +608,7 @@ This overview summarizes interference and Catfood differences. Source-specific r
 |---|---|
 | Hefty Tablet | Choose one of three own-character Rares; Injury is added even if the Rare is skipped. |
 | Glass Eye | Five three-card offers: two Common, two Uncommon and one Rare, from the character pool. No random upgrades. |
-| Scroll Boxes | Choose one of two bundles, each normally two Commons and one Uncommon; all six identities are distinct. Defect has an independent 1% triple-Claw substitution chance per bundle. |
+| Scroll Boxes | Choose one of two bundles, normally two Commons and one Uncommon each with six distinct identities across the ordinary bundles. Defect has an independent 1% triple-Claw substitution chance per bundle; substituted bundles instead contain three copies of Claw. |
 | Room Full of Cheese — Gorge | Choose two of eight distinct Common character cards; no random upgrades. |
 | Crystal Sphere | The board has one card-reward item per ordinary rarity. Each recovered item gives a three-card offer of that rarity; vanilla identities and upgrade rolls use event RNG. |
 | The Future of Potions | Trade a potion for three explicitly upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
@@ -600,7 +630,7 @@ This overview summarizes interference and Catfood differences. Source-specific r
 | Neow — Arcane Scroll | Directly adds one random own-character Rare card. |
 | Neow — Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
 | Vakuu — Distinguished Cape | Directly adds two distinct random eligible curses. |
-| Pael's Tooth | Randomly returns a previously removed card, upgraded; this selects a stored card rather than generating a new identity. |
+| Pael's Tooth | The player selects five unupgraded cards and removes them. Each subsequent combat returns one random card from the remaining stored cohort, upgraded; after five combats all five have returned. Returned records leave the cohort. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner. |
 
 #### Potions
 

@@ -16,7 +16,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** refine persistent card-selection priorities and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve equivalent-copy routing and persistent-selection sharing scopes, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
 
 ### Rewards
 
@@ -54,15 +54,19 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 
 Owned-relic selection, replacement constraints and offer consumption: [settled policy](DESIGN.md#settled-policy-relic-trader).
 
-**Decisions needed:** choose a non-generic replacement source and resolve input-linked identity assignment, collisions and changing eligibility without consuming unchosen generic opportunities. Determine which existing allocation/isolation guarantees must change if replacement stock is reserved or taken from shop/Courier.
+**Decisions needed:** choose replacement stock and input-linked assignment without retiring unchosen generic opportunities; define collision resolution, ownership/eligibility handling and any unavoidable changes to source isolation. A fourth disjoint Trader allocation is rejected, not a pending candidate.
 
-**Constraint:** for selected inputs `A,B,C` versus `B,C,D`, preserve `B → B'` and `C → C'` whenever compatible with replacement eligibility and distinctness; do not relabel one sequential three-relic offer by display position.
+**Constraints:** for inputs `A,B,C` versus `B,C,D`, preserve `B → B'` and `C → C'` whenever compatible with replacement eligibility and distinctness. Only one trade is executed: resolving a proposed target for another outgoing relic does not remove that relic from the player's inventory. All three displayed replacements must be legal alternatives against the actual inventory, not a hypothetical simultaneous three-relic exchange.
 
-**Candidates:** key an independent rarity roll and per-rarity candidate order to each outgoing relic identity; resolve collisions deterministically without rerolling rarity merely because an identity collides. An isolated Trader allocation protects ordinary source progress but reopens the three-allocation design. Using another existing allocation avoids a fourth stock but couples Trader to that source.
+**Candidates — graph and assignment:**
 
-A separate, overlapping Trader offer stock could instead consume its own offer entries while leaving unchosen identities available in ordinary allocations. It would require explicit acquisition-time reconciliation and permit later ordinary reoffers of declined replacements, changing the disjoint-stock model. No replacement source is adopted.
+- **Successor ring:** construct a stable seeded ring of relic identities and trade each outgoing relic to a successor. If the successor is another selected outgoing relic, resolve that relic's target first; if already owned otherwise, continue around the ring. This is a sketch, not a complete algorithm: specify occupied-target skipping, cycle handling, termination and deterministic resolution independent of offer order. An unweighted identity ring does not implement the standard replacement-rarity weights by itself, and a ring does not solve stock ownership/isolation.
+- **Rarity-first input-linked preferences:** key an independent rarity roll and per-rarity replacement preference order to each outgoing identity. Resolve distinct targets in a stable, independently addressed outgoing priority order, skipping claimed or unavailable targets without rerolling rarity merely because of a collision. Keep eligibility separate from preference addresses. Where each input can use every available target of its rolled rarity, feasibility reduces to available count per rarity, not a general graph-matching problem; genuinely input-specific restrictions may require matching.
+- **Graph-aware outgoing selection:** jointly choose three outgoing relics and feasible replacement edges. This reopens the settled uniform opportunity-priority selection; it is not adopted. Feasibility or degree-based filtering can bias the outgoing choices, so compare its sampling law as well as counterpart alignment.
 
-**Validation:** compare overlapping selected sets with identical replacement availability, then force same-target collisions, already-owned/ineligible counterparts and source depletion. Check rarity independence, batch uniqueness and unchanged generic coverage.
+**Candidates — stock:** an overlapping Trader-local offer ledger could consume all three local offers while leaving unchosen ordinary entries available, reconciling only the acquired identity with ordinary stock. This changes global retirement semantics and cannot preserve a future ordinary offer of an identity already acquired from Trader. Another possibility is using eligible, unowned identities whose closed ordinary opportunities are already consumed, avoiding future-stock depletion where sufficient; its per-rarity availability and route-dependent replacement support prevent treating it as a complete source solution. No stock model is adopted.
+
+**Validation:** compare overlapping selected sets with identical replacement availability, then force competing targets, adjacent outgoing ring nodes, owned-but-unselected successors, cycles, cutoff-ineligible counterparts and per-rarity shortages. Check outgoing selection probabilities, independent replacement rarity, batch uniqueness/order neutrality, generic coverage and which ordinary source changes after an actual trade versus an unchosen offer.
 
 ##### Remaining events and Ancients
 
@@ -72,26 +76,28 @@ Remaining Encounter decisions have not yet been decomposed. Evaluate them agains
 
 ##### Permanent upgrades and downgrades
 
-**Decisions needed:** selection scope, priority normalization/reuse, source/effect sharing, new entrants and re-entry after eligibility changes. Establish priority lifetimes before extending them to other Encounter systems.
+The [corrected persistent exponential-clock strategy](DESIGN.md#corrected-persistent-card-selection-priorities) is settled.
 
-**Candidates:**
+**Decisions needed:** assign remaining permanent-selection effects to sharing scopes, including whether upgrades and downgrades use separate scopes and which different granting sources share one scope. Weighted or intentionally sequential effects need source-specific treatment rather than an automatic uniform batch rule.
 
-- **Corrected persistent priorities:** retain inherent purpose-specific randomness. After selecting the minimum eligible priority `m`, map each unselected eligible survivor from `u` to `(u - m) / (1 - m)`. Equivalently, subtract the elapsed minimum from eligible exponential clocks. New candidates receive fresh inherent draws; a selected candidate needs a renewed draw before participating again. Decide inactive-candidate treatment and shared scopes explicitly.
-- **Fresh opportunity-specific priorities:** the [adopted opt-in mechanism](DESIGN.md#opportunity-specific-selection-priorities) remains a strong alternative for effects where persistent ordering provides little benefit. Its use by Relic Trader does not settle card selection.
+**Validation:** test shared-card order and conditional selection odds across additions, inactive subsets, eligibility re-entry, selected-occurrence renewal, batch selection and save/load. Confirm player-directed choices and previews do not advance random-selection clocks.
 
-**Known:** uncorrected priorities bias fresh entrants: after selecting the lower of two independent uniform priorities, a new candidate beats the survivor with probability `2/3`, not `1/2`. Conditional survivor normalization corrects this and preserves order within a jointly participating survivor cohort. Normalizing one eligibility subset can change its order relative to inactive cards, so it does not guarantee a fixed global order across arbitrary histories.
+##### Equivalent-copy routing
 
-**Validation:** compare conditional selection odds and shared-card order across nested candidate sets, new additions, differing eligibility subsets, upgrades followed by downgrades, repeated selection and save/load. Treat exact uniform selection and cross-run sequence similarity as separate checks.
+Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). Tooth's fixed cohort and reward-choice alignment are settled; its former return-lifecycle question is closed.
 
-##### Pael's Tooth: return-priority lifecycle
+**Decisions needed:**
 
-Direction and equivalent-copy requirement: [settled policy](DESIGN.md#settled-policy-paels-tooth).
+- Define the gameplay-equivalence status key for each relevant card/effect, and the hidden representative chosen when interchangeable physical copies carry different inherent RNG provenance. Keep progress separate by card identity without deriving identity from UI/acquisition order.
+- Choose count coupling: compare equivalent-copy cohorts of two versus three, not only equal-sized decks. Decide how logical tokens enter, leave, split into different status classes and merge again without renumbering surviving tokens or pooling their multiplicity.
+- Choose operation-purpose sharing and opportunity progress. Separate upgrade/removal/etc. representative streams are the leading direction; which sources of the same operation share progress remains open. For opportunity-indexed variants, decide advancement for singleton or whole-class selections so count differences do not inadvertently shift later addresses.
+- Specify hidden-token association after routing an operation to the clicked physical card, preserving the selected UI object and acquisition-order display. For unordered batches, resolve the selected multiplicity of each class against a snapshot, not click order; effects producing different results also need a deterministic hidden assignment to inputs.
 
-**Decisions needed:** address indistinguishable Basic Strikes/Defends without making the player's choice of physical copy observable in later returns; specify priority treatment when new removed cards join an already-used stored pool or a record becomes eligible again.
+**Candidate — representative selection over logical tokens:** use one stable logical RNG token per copy, distinct from the physical UI object; keep its relevant future selection keys, aliases, residual clocks and renewal counters together. Give tokens independent representative priorities within each card-identity/operation scope; choose the lowest priority, or the lowest `k` for `k` equivalent selected copies. Reusing corrected persistent clocks in this separate routing scope would preserve surviving-token order; fresh opportunity-specific priorities remain an alternative with less persistent state. Candidate count and the full candidate list affect eligibility, not the randomness address. Route the chosen hidden token(s) to the selected physical card(s), preserving the remaining token multiset. An already randomly selected logical winner needs no second representative draw. Do not choose representatives by the Tooth-return clock or another downstream outcome being aligned.
 
-**Candidates:** use canonical virtual occurrence tokens within a gameplay-equivalent Basic-card class, retaining one independent priority per occurrence rather than one per card identity. Corrected persistent priorities above are a candidate for late entrants, not an adopted Tooth lifecycle.
+**Known — count coupling:** for nested logical-token cohorts with shared independent representative priorities, selections agree whenever the larger cohort selects a common token; two-versus-three agreement is `2/3`, the maximal uniform coupling. This is a matched-state result, not a guarantee across different eligibility histories; first establish meaningful common token keys across runs.
 
-**Validation:** establish the stored-record lifecycle from code, including what happens after return and re-removal; the existing reference does not establish selection without replacement. Check equal-status copy substitution, multiplicity-weighted selection and common-card return-order alignment.
+**Validation:** swap clicked copies of any identity while holding gameplay status fixed; compare subsequent identity/status outcomes and retained hidden-token multisets without changing which UI card visibly changed. Test multiplicity, two/three-copy cohorts, multi-selection click permutations, class splits/merges, reward-choice priority aliases and save/load.
 
 #### Combat randomness
 
