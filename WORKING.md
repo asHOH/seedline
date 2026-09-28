@@ -16,17 +16,11 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** choose and calibrate the non-Rare offer sequences, resolve other card-offer rerolls, then proceed through Encounter decision units beginning with Relic Trader, remaining events/Ancients and encounter setup.
+**Next decisions:** refine persistent card-selection priorities and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
 
 ### Rewards
 
-#### Direct card additions: remaining special sources
-
-See the [settled transformation and direct-addition policy](DESIGN.md#settled-policy-permanent-transformations-and-direct-card-additions).
-
-**Decision needed:** how to control Pael's Tooth's stored-card selection; see its [existing mechanics](DESIGN.md#permanent-transformations-and-direct-additions).
-
-#### Cards: offers, rarity and rerolls
+#### Cards: offers and rarity
 
 Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
 
@@ -52,46 +46,52 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 
 **Pending baseline validation:** determine gameplay impact of Catfood's initial-offer stream bug and direct/event seed collisions; see the baseline above.
 
-##### Other card-offer rerolls
-
-**Decision needed:** reroll addressing and consumption for card-offer groups outside the shared luck system.
-
 ### Encounter
 
 #### Events and Ancients
 
 ##### Relic Trader
 
-**Decisions needed:** which owned relics and replacements are offered, their source, and when offered/chosen/unchosen replacements are consumed. See [event rules](DESIGN.md#relic-and-event-rules) and [selection mechanics](DESIGN.md#generation-and-selection-mechanics).
+Owned-relic selection, replacement constraints and offer consumption: [settled policy](DESIGN.md#settled-policy-relic-trader).
+
+**Decisions needed:** choose a non-generic replacement source and resolve input-linked identity assignment, collisions and changing eligibility without consuming unchosen generic opportunities. Determine which existing allocation/isolation guarantees must change if replacement stock is reserved or taken from shop/Courier.
+
+**Constraint:** for selected inputs `A,B,C` versus `B,C,D`, preserve `B → B'` and `C → C'` whenever compatible with replacement eligibility and distinctness; do not relabel one sequential three-relic offer by display position.
+
+**Candidates:** key an independent rarity roll and per-rarity candidate order to each outgoing relic identity; resolve collisions deterministically without rerolling rarity merely because an identity collides. An isolated Trader allocation protects ordinary source progress but reopens the three-allocation design. Using another existing allocation avoids a fourth stock but couples Trader to that source.
+
+A separate, overlapping Trader offer stock could instead consume its own offer entries while leaving unchosen identities available in ordinary allocations. It would require explicit acquisition-time reconciliation and permit later ordinary reoffers of declined replacements, changing the disjoint-stock model. No replacement source is adopted.
+
+**Validation:** compare overlapping selected sets with identical replacement availability, then force same-target collisions, already-owned/ineligible counterparts and source depletion. Check rarity independence, batch uniqueness and unchanged generic coverage.
 
 ##### Remaining events and Ancients
 
 Remaining Encounter decisions have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
 
-#### Selection and setup
+#### Card-selection priorities
 
-##### Encounter setup
+##### Permanent upgrades and downgrades
 
-**Decision needed:** setup addressing.
-
-**Candidate:** act-local setup ordinals, distinguishing source/effect where necessary.
-
-**Validation:** check for visible Catfood setup mismatches; see the baseline above and [vanilla identity selection](DESIGN.md#generation-and-selection-mechanics).
-
-##### Forced events
-
-**Decision needed:** forced-event handling.
+**Decisions needed:** selection scope, priority normalization/reuse, source/effect sharing, new entrants and re-entry after eligibility changes. Establish priority lifetimes before extending them to other Encounter systems.
 
 **Candidates:**
 
-- **Lantern Key:** forced Act 3 War Historian Repy gets **ordinal 0**, leaving ordinary events untouched.
-- Separate forced-event selection from `?` room-type resolution.
+- **Corrected persistent priorities:** retain inherent purpose-specific randomness. After selecting the minimum eligible priority `m`, map each unselected eligible survivor from `u` to `(u - m) / (1 - m)`. Equivalently, subtract the elapsed minimum from eligible exponential clocks. New candidates receive fresh inherent draws; a selected candidate needs a renewed draw before participating again. Decide inactive-candidate treatment and shared scopes explicitly.
+- **Fresh opportunity-specific priorities:** the [adopted opt-in mechanism](DESIGN.md#opportunity-specific-selection-priorities) remains a strong alternative for effects where persistent ordering provides little benefit. Its use by Relic Trader does not settle card selection.
 
-#### Permanent card changes
+**Known:** uncorrected priorities bias fresh entrants: after selecting the lower of two independent uniform priorities, a new candidate beats the survivor with probability `2/3`, not `1/2`. Conditional survivor normalization corrects this and preserves order within a jointly participating survivor cohort. Normalizing one eligibility subset can change its order relative to inactive cards, so it does not guarantee a fixed global order across arbitrary histories.
 
-**Decisions needed:** selection scope, priority reuse and source/effect sharing for permanent upgrades/downgrades.
+**Validation:** compare conditional selection odds and shared-card order across nested candidate sets, new additions, differing eligibility subsets, upgrades followed by downgrades, repeated selection and save/load. Treat exact uniform selection and cross-run sequence similarity as separate checks.
 
-**Candidate:** extend [inherent card rolls](DESIGN.md#inherent-card-rolls) with other purpose-specific rolls for Encounter selection priorities, such as random upgrades.
+##### Pael's Tooth: return-priority lifecycle
+
+Direction and equivalent-copy requirement: [settled policy](DESIGN.md#settled-policy-paels-tooth).
+
+**Decisions needed:** address indistinguishable Basic Strikes/Defends without making the player's choice of physical copy observable in later returns; specify priority treatment when new removed cards join an already-used stored pool or a record becomes eligible again.
+
+**Candidates:** use canonical virtual occurrence tokens within a gameplay-equivalent Basic-card class, retaining one independent priority per occurrence rather than one per card identity. Corrected persistent priorities above are a candidate for late entrants, not an adopted Tooth lifecycle.
+
+**Validation:** establish the stored-record lifecycle from code, including what happens after return and re-removal; the existing reference does not establish selection without replacement. Check equal-status copy substitution, multiplicity-weighted selection and common-card return-order alignment.
 
 #### Combat randomness
 

@@ -24,7 +24,7 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
 
-**Deterministic identities:** predetermined card, relic and potion grants or replacements are excluded: their identities require no random selection and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
+**Deterministic identities:** predetermined card, relic and potion grants or replacements require no random identity selection and, by default, consume no controlled reward sequences. A mixed offer may specify whole-triple consumption that also accounts for a matching fixed identity. Fixed-rarity requests remain in scope when the identity is random.
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. Rare tail effects and interactions between sequences through borrowing are outside ordinary isolation discussions throughout.
 
@@ -87,12 +87,16 @@ This is a navigation map, not a second specification. The linked policies own lo
 | [Potion rarity and identity](#acquisition-and-sequences) | Four source groups; generic rarity modes share per-rarity identity progress. | On-demand rarity-roll and identity streams. |
 | [Potion drop occurrence](#drop-occurrence) | Shared ordinary-check index and changing probability across combat categories. | Indexed random checks. |
 | [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed generation. |
-| [Combat gold](#shared-sequence-and-compensation) | Shared normal-fight/elite gold ordinal; separate normal-fight compensation index. | Uniform rolls and seed-derived Thue–Morse compensation. |
+| [Combat gold](#shared-sequence-and-compensation) | Shared normal-fight/elite gold ordinal; separate normal-fight compensation index. | Uniform rolls and independently randomized complementary compensation pairs. |
 | [Own-character random-rarity: Rare occurrence](#luck-and-rarity-offset) | Shared luck/threshold progress; combat offset applies only to its source groups. | Independent exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Pool/request/offer groups; offer or entry progress, separate from shared luck. | Triple sequences, other identity/rarity streams and local event-RNG rules. |
 | [Card upgrades](#inherent-card-rolls) | Generated card occurrence and upgrade purpose. | Independent entry-derived roll. |
 | [Permanent transformation / direct-addition results](#selection-and-consumption) | Shared pool identity progress; separate transformation/addition rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
 | [Event-specific rewards](#settled-policy-event-specific-rewards) | Event identity and event-local draws. | Event RNG, outside shared reward sequences. |
+| [Pael's Tooth return selection](#settled-policy-paels-tooth) | Stored-card occurrence and return purpose; lifecycle details remain open. | Inherent return priorities. |
+| [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity and owned relic identity. | Fresh candidate priorities. |
+| [Encounter setup](#settled-policy-encounter-setup) | Act-local combat-category ordinal and encounter identity; event-local battle scope for event-created combats. | Purpose-separated addressed RNG. |
+| [Forced events](#settled-policy-forced-events) | Forced identity bypasses ordinary event-list progress. | Existing event RNG; no ordinary event draw. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal and stored room-type chances. | Act-local ordinal draws interpreted through changing intervals. |
 
 Policy sections put intent/coverage before operative rules, with baseline context at the end and local rationale beside the rule it explains. Use the dimensions where informative, not as mandatory fields; source lists, probabilities and exceptions remain in their canonical sections.
@@ -141,6 +145,14 @@ Each card entry carries an **inherent upgrade roll** `u` uniformly distributed i
 When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's randomness. This does not upgrade cards already in the deck when the act changes.
 
 **Vanilla baseline:** ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
+
+### Opportunity-specific selection priorities
+
+**Main idea:** for a source that adopts uniform selection without replacement, give each eligible candidate an independent priority and take the lowest `k` priorities. Removing an unselected candidate cannot change the selected set.
+
+Derive priorities from run seed + the source's selection-opportunity address + candidate's stable key + selection purpose. Neither the current candidate collection nor its list positions enter the address. Use independent deterministic tie-break draws rather than collection order. A fresh opportunity uses fresh priorities; the source defines its sharing scope and progress. For unique owned relics, the candidate key is relic identity.
+
+This is an opt-in mechanism, not a default priority-lifetime decision for cards. Card priority lifetimes and equivalent Basic-card addressing remain in [WORKING](WORKING.md#card-selection-priorities).
 
 ### Filtered draws
 
@@ -203,6 +215,8 @@ Construct three disjoint relic allocations once: generic rewards, shop and Couri
 Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
 Mix shop-ineligible relics into allocations normally.
+
+**Generic opportunity coverage:** advancing ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the stated exhaustion/borrowing boundary. An outside multi-choice offer must not retire unchosen generic entries before those opportunities. Declining an ordinary generic reward still consumes that displayed opportunity.
 
 ### Source classification and consumption
 
@@ -273,7 +287,9 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 | A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
 | A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
 
-**Compensation:** use the [Thue–Morse sequence](https://oeis.org/A010060): `b(n) = s XOR (popcount(n) mod 2)`, where `n` is the zero-based unreduced normal-fight gold-reward index, `popcount` counts binary 1-bits, and `s` is a fair seed-derived bit independent of `u`. Elites do not advance `n`. Both sequences continue across acts; save their progress and `s`.
+**Compensation:** for each pair `j`, derive an independent fair bit `h(j)` from run seed + compensation purpose + pair index, independently of `u`. Use `b(2j) = h(j)` and `b(2j + 1) = 1 - h(j)`, equivalently `b(n) = h(floor(n / 2)) XOR (n mod 2)`. Here `n` is the zero-based unreduced normal-fight gold-reward index; elites do not advance it. Both the shared gold ordinal and compensation index continue across acts; save their progress. Pair bits are reproducible from their addresses and require no saved phase bit.
+
+Each pair contributes exactly one compensation gold; odd-length prefixes differ from their expected compensation by only 0.5 gold. Independent pair orientations preserve this balance without imposing correlations between different pairs.
 
 **Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
@@ -295,7 +311,7 @@ Drawbacks below concern A3+:
 
 **Intent:** Equivalent rewards share identity order across granting sources. Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation for the groups below, plus rerolls within the own-character random-rarity group. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [sequence choices, calibration and behavior without Scarcity](WORKING.md#random-rarity-offer-sequences) and [other groups' rerolls](WORKING.md#other-card-offer-rerolls) remain unresolved.
+**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [sequence choices, calibration and behavior without Scarcity](WORKING.md#random-rarity-offer-sequences) remain unresolved.
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
@@ -356,12 +372,23 @@ Use separate Common, Uncommon and Rare triple sequences.
 | Sequence | Sources and consumption |
 |---|---|
 | Rare | One triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. |
-| Common | Glass Eye consumes two triples; Crystal Sphere's Common offer consumes one. Scroll Boxes and Room Full of Cheese each consume one triple as specified below. |
+| Common | Glass Eye consumes two triples; Crystal Sphere's Common offer consumes one. Room Full of Cheese consumes one; Scroll Boxes follows its branch rules below. |
 | Uncommon | Glass Eye consumes two triples; Crystal Sphere's Uncommon offer consumes one. |
 
-- **Scroll Boxes:** the Common triple supplies both Common cards in bundle one and the first Common card in bundle two. Generate the remaining Common and both Uncommons with event RNG.
 - **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
 - **Crystal Sphere:** does not reset the combat rarity offset.
+
+#### Scroll Boxes
+
+Resolve Defect's two independent 1% triple-Claw substitution checks with event RNG before requesting Common sequence entries. Non-Defect offers follow the no-substitution branch.
+
+- **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
+- **Exactly one triple-Claw bundle:** inspect the next Common triple without advancing it. If it contains Claw, consume the whole triple: its Claw is accounted for by the fixed bundle, and its other two cards become the Common cards of the remaining ordinary bundle. Generate that bundle's Uncommon with event RNG. If the next triple lacks Claw, leave it untouched and generate the ordinary bundle entirely with event RNG. Do not scan to a later triple.
+- **Two triple-Claw bundles:** both bundles are predetermined; consume no Common triple and generate no unused ordinary-bundle cards.
+
+Preserve the source's applicable eligibility, duplicate and upgrade rules. Inspecting or caching an unconsumed head triple does not advance its opportunity; triples are never split.
+
+**Tradeoff:** in the single-substitution branch, consumption depends on whether the head contains Claw. This improves alignment when the triple fits the displayed bundles, but conditions the retained head and therefore changes later Common-offer probabilities.
 
 ### Own-character Power offers
 
@@ -382,6 +409,14 @@ Lead Paperweight and Brain Leech's Rip share one reward sequence with the existi
 Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
 
 Colorless and other-character rewards explicitly share across different batch sizes.
+
+### Rerolls outside the shared luck system
+
+A reachable reroll consumes a fresh replacement offer from the same applicable pool/request/filter group, using its ordinary offer structure and duplicate rules. Fixed-rarity offers consume fresh triples of that fixed rarity, not the random-rarity group's rare-bearing sequence. Other groups consume fresh entries under their existing grouping rules.
+
+New entries carry their own inherent upgrade rolls. Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address. Preserve source-specific upgrade behavior and any separately specified offset effects; rerolling does not enroll these sources in the shared luck system.
+
+Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the intended normal-run scope. No Kaleidoscope reroll decision is required.
 
 ### Context
 
@@ -413,6 +448,50 @@ Colorless and other-character rewards explicitly share across different batch si
 ## Settled policy: event-specific rewards
 
 Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
+
+## Settled policy: Pael's Tooth
+
+**Intent:** align the return order of stored cards shared by compared runs despite differences in other removed cards, rather than rerandomizing all survivors at each return.
+
+### Return priorities and equivalent copies
+
+Use a purpose-specific inherent return priority associated with the stored card's original occurrence, not its removal order, current storage-list position or the return-opportunity ordinal. Select the eligible record with the lowest current priority. Reuse priority information across returns rather than redrawing every candidate, and retain occurrence keys on stored records across save/load. Preserve the existing stored-card eligibility and guaranteed upgrade.
+
+Basic Strikes and Defends with identical gameplay status must be exchangeable: choosing one such copy rather than another must not change identity/status-level return outcomes. Their exact virtual-occurrence addressing, and the priority-lifecycle treatment of newly stored or returning/re-entering records, remain [unresolved](WORKING.md#paels-tooth-return-priority-lifecycle). The adopted direction does not prescribe uncorrected permanent minima for a changing candidate pool.
+
+## Settled policy: Relic Trader
+
+**Intent:** make offered owned relics insensitive to collection order and associate replacements with the outgoing relic, not its display slot.
+
+### Owned-relic selection
+
+Preserve event access and tradability restrictions. Select three eligible owned relics with [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event identity + event-local selection-opportunity index as the selection address and relic identity as the candidate key.
+
+### Replacement constraints and consumption
+
+Replacement rarity is independent of the outgoing relic's rarity; replacements need not themselves be tradable. Consume all three replacement identities and rarity outcomes when the offer is generated, before the player chooses a trade. The selected trade controls acquisition, not whether the other two offers were consumed.
+
+The replacement source and collision/eligibility handling remain [unresolved](WORKING.md#relic-trader). The mapping must be anchored to outgoing relic identity so that common inputs can keep their counterparts when feasible. Do not assign these replacements to the generic rewards allocation: preserve its [opportunity coverage](#allocation).
+
+## Settled policy: encounter setup
+
+**Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
+
+### Combat addresses
+
+For ordinary normal fights, elites and bosses, address setup by run seed + act + combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate ordinal progress for these combat categories; preserve encounter identity's existing role in setup generation.
+
+Event-created battles that do not consume an ordinary encounter list use event identity + event-local battle ordinal instead of an ordinary combat-category ordinal, together with run seed, encounter identity and setup purpose. They do not advance ordinary encounter setup progress.
+
+Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI. Save local counters under the shared saved-state contract.
+
+## Settled policy: forced events
+
+**Intent:** inserting a forced event must not consume or skip an ordinary event opportunity and thereby alter later ordinary-event availability.
+
+Resolve room type under the [unknown-room policy](#settled-policy-unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its existing event RNG; it needs no special ordinary-event ordinal.
+
+Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its visited-node ordinal; preserve the existing forced room type and frozen non-event chances. Ordinary event-list advancement is deliberately removed from forced insertion, not from ordinary event visits.
 
 ## Settled policy: unknown-room resolution
 
