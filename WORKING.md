@@ -18,6 +18,8 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Next decisions:** resolve equivalent-copy routing and persistent-selection sharing scopes, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
 
+**Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
+
 ### Rewards
 
 #### Cards: offers and rarity
@@ -52,7 +54,7 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 
 ##### Relic Trader
 
-Owned-relic selection, replacement constraints and offer consumption: [settled policy](DESIGN.md#settled-policy-relic-trader).
+Owned-relic selection, replacement constraints and offer consumption: [Relic Trader policy](DESIGN.md#settled-policy-relic-trader).
 
 **Decisions needed:** choose replacement stock and input-linked assignment without retiring unchosen generic opportunities; define collision resolution, ownership/eligibility handling and any unavoidable changes to source isolation. A fourth disjoint Trader allocation is rejected, not a pending candidate.
 

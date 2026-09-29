@@ -1,6 +1,6 @@
 # Deterministic seed mod — design
 
-This file contains the current specification and reusable existing-mechanics references. Unresolved work is maintained in [WORKING.md](WORKING.md); systems not yet specified retain existing behavior.
+This file records settled design decisions, their rationale and reusable existing-mechanics references. These decisions form the specification as the design is completed. Unresolved choices and supporting evidence are maintained in [WORKING.md](WORKING.md); systems not yet specified retain existing behavior.
 
 **Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
 
@@ -22,9 +22,9 @@ Compare single-player runs with matching seeds, versions, rules and fully unlock
 
 **Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
-**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies also apply without Scarcity using the corresponding probabilities, except where explicitly deferred.
+**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies also apply without Scarcity using the corresponding probabilities. The difficulty-specific exception is [own-character random-rarity offers](#own-character-random-rarity-offers), whose behavior without Scarcity remains unresolved; this does not defer shops, relics, potions or other settled policies.
 
-**Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve those modifiers, but ignore them in randomness-control design unless they become relevant.
+**Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve ordinary probability and amount adjustments without repeating them unless their treatment changes. Specify interactions when they affect candidate eligibility, which random decisions occur, addressing, opportunity consumption or persistent RNG state.
 
 **Fixed identities:** predetermined card, relic and potion grants or replacements are outside randomness-control scope: they require no identity draw and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
 
@@ -99,6 +99,12 @@ The tables below are a navigation map, not a second specification. They show set
 
 These are shared contracts for covered policies. The [fairness principle](#goals-and-principles), [opportunity consumption](#opportunity-consumption), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
 
+### RNG derivation and addressing
+
+**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable sharing-scope and purpose identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and progress. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
+
+In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
+
 ### Rarity and identity sequences
 
 **Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and progress.
@@ -141,7 +147,7 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 **Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source/effect sharing is specified separately; remaining scope decisions are in [WORKING](WORKING.md#permanent-upgrades-and-downgrades).
 
-**Address and state:** each logical card occurrence has a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose + occurrence-local renewal index. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position. Different selection purposes and inherent upgrade rolls remain independent.
+**Address and state:** each logical card occurrence has a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose + occurrence-local renewal index. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position.
 
 **Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; an occurrence selected by this random mechanism consumes its clock and receives a fresh occurrence-local renewal before it can participate again. Mere eligibility loss/re-entry does not consume an unused clock.
 
@@ -205,19 +211,17 @@ Save sequence contents and progress, including original entry addresses, consump
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity).
+- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity). These approximations are informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
 
+**Tradeoff — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
+
 ### Context
 
 **Catfood baseline:** tracks shop ordinal and isolates shop card-rarity state, while retaining `Shops` RNG for card identities and prices, shared relic bags/rarity rolls, and a shared potion-factory call index.
-
-**Rationale — card rarity:** the constant offsets are chosen approximations informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
-
-**Tradeoff — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 ## Settled policy: relics
 
@@ -227,7 +231,7 @@ Here, **ordinary relics** are Common / Uncommon / Rare / Shop; Event-exclusive r
 
 ### Allocation
 
-An **allocation** is the finite relic stock assigned to one source, ordered into one or more identity sequences. Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
+An **allocation** is the finite relic stock assigned to one source, ordered into one or more identity sequences. Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Apply the same **45% / 35% / 20%** split within each of the Common, Uncommon and Rare pools, between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
 
 Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
@@ -276,7 +280,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 **Catfood baseline:** addresses drop checks by `player seed` and `cumulative check index`, starting at index 0, while preserving vanilla's changing probability. Forced drops also advance this index. Separately, potion factories use a shared call index to seed each batch.
 
-**Batch example:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
+**Example — batch boundaries:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
 ## Settled policy: chests
 
@@ -308,23 +312,23 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Compensation:** for each pair `j`, derive an independent fair bit `h(j)` from run seed + compensation purpose + pair index, independently of `u`. Use `b(2j) = h(j)` and `b(2j + 1) = 1 - h(j)`, equivalently `b(n) = h(floor(n / 2)) XOR (n mod 2)`. Here `n` is the zero-based unreduced normal-fight gold-reward index; elites do not advance it. Both the shared gold ordinal and compensation index continue across acts; save their progress. Pair bits are reproducible from their addresses and require no saved phase bit.
 
-Each pair contributes exactly one compensation gold; odd-length prefixes differ from their expected compensation by only 0.5 gold. Independent pair orientations preserve this balance without imposing correlations between different pairs.
-
-**Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
-
-### Context
-
-**Catfood baseline:** re-seeds shared `Rewards` on room entry using run seed and cumulative combat-category count, with different multipliers for normal fights and elites. Vanilla gold ranges and rounding are unchanged.
+**Rationale:** each pair contributes exactly one compensation gold; odd-length prefixes differ from their expected compensation by only 0.5 gold. Independent pair orientations preserve this balance without imposing correlations between different pairs.
 
 **Tradeoff:** expected gold is unchanged, but A3+ normal gold is nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
 
-#### Rejected alternatives
+**Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
+
+### Rejected alternatives
 
 Drawbacks below concern A3+:
 
 - **Shared range-relative rolls:** preserves vanilla distributions, but swapping normal → elite to elite → normal can change total gold by 1.
 - **Shared identical offsets without compensation:** using `X = 0–7`, normal `7 + X` and elite `26 + X` removes order differences but lowers expected normal-fight gold by 0.5.
 - **Separate normal-fight and elite sequences:** preserves vanilla distributions, but replacing a normal fight with an elite can shift the premium roughly 8 gold above or below its expectation.
+
+### Context
+
+**Catfood baseline:** re-seeds shared `Rewards` on room entry using run seed and cumulative combat-category count, with different multipliers for normal fights and elites. Vanilla gold ranges and rounding are unchanged.
 
 ## Settled policy: card reward offers
 
@@ -364,7 +368,7 @@ Luck, the current threshold and sequence progress carry across acts; the combat 
 
 Cap each covered offer at one Rare. If a later slot reaches the next threshold, suppress its Rare and keep the reached threshold pending: do not reset luck or advance the threshold. Treat suppressed slots as non-Rare for applicable offset updates. Continue accumulating luck, but create no further pending occurrences until delivery.
 
-A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery. At the next such offer, deliver the pending Rare in its first simulated slot instead of performing that slot's ordinary check; reset luck and advance the threshold once, applying the delivery source's offset rule. Process its remaining slots normally. Ineligible offers leave the pending threshold intact and apply normal non-Rare offset growth.
+A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery. At the next such offer, deliver the pending Rare in its first simulated slot instead of performing that slot's ordinary check; reset luck, clear pending and advance the threshold once, applying the delivery source's offset rule. Process its remaining slots normally. Ineligible offers leave the pending threshold intact and apply normal non-Rare offset growth.
 
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
@@ -384,7 +388,9 @@ Store the Rare first in each rare-bearing triple. After simulating the offer, sw
 
 **Rerolls:** process all replacement slots through the same luck, offset and deferral rules. Consume a fresh applicable non-Rare triple or the next triple from the same shared rare-bearing sequence. Never reuse the original offer's entry.
 
-**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five. The extra generated identities cannot themselves be Rare; the complete five-card offer contains at most one Rare and consumes only one shared triple.
+**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five.
+
+The event-generated identities cannot themselves be Rare; the complete five-card offer contains at most one Rare and consumes only one shared triple.
 
 ### Own-character fixed-rarity offers
 
@@ -426,7 +432,7 @@ Lead Paperweight and Brain Leech's Rip share one reward sequence with the existi
 
 Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
 
-Colorless and other-character rewards explicitly share across different batch sizes.
+Colorless and other-character rewards explicitly share across different batch sizes because these sources are few and their offer sizes vary.
 
 ### Rerolls outside the shared luck system
 
@@ -439,8 +445,6 @@ Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the in
 ### Context
 
 **Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
-
-**Rationale — colorless/other-character batch sharing:** these sources are few and their offer sizes vary.
 
 ## Settled policy: permanent transformations and direct card additions
 
@@ -465,7 +469,9 @@ Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the in
 
 ## Settled policy: event-specific rewards
 
-Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
+**Intent:** keep event-exclusive rewards independent of shared reward sequences.
+
+Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: Pael's Tooth
 
@@ -527,7 +533,7 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 - **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes.
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance still increases by 3 percentage points. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
-- **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` (midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio) unless shifted just enough to avoid overlap. Unassigned space resolves to Event.
+- **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
 - **Overflow:** when the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1. The shop interval shrinks first; in the extremely rare case that chest + normal-fight chances alone exceed 100%, the normal-fight interval is truncated and shop gets no space.
 
 ### Context
