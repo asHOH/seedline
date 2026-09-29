@@ -62,35 +62,42 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ## Architecture overview
 
-Read each random decision by six dimensions: **outcome** (what varies), **sharing scope** (which requests share randomness), **address/progress** (opportunity or entry position and reset boundary), **form** (addressed RNG, stream or finite allocation), **consumption** (what commits advancement), and **state** (what must survive save/load). Sharing scope and addressing remain separate fairness decisions. Occurrence, rarity, identity and attributes can have different scopes and progress within one source.
+Each controlled random decision can be described along five dimensions: **outcome** (what is randomized), **sharing scope** (which requests share randomness), **address/progress** (how corresponding opportunities are identified, advanced and reset), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what must survive save/load).
 
-This is a navigation map, not a second specification. The linked policies own local rules; [consumption timing](#consumption-timing) and [saved state](#saved-state) are shared contracts, so their defaults are not repeated in the table. [Stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) apply across systems.
+Sharing scope and address/progress are separate design choices. Different stages of one source—such as occurrence, rarity, identity and attributes—may use different scopes and progress.
 
-| Random outcome / policy | Sharing and address/progress | RNG / sequence form |
+Randomness follows the shared [opportunity-consumption](#opportunity-consumption) invariant: progress commits when the corresponding random opportunity becomes available to the player. Consumption is therefore a shared rule, not a separate architectural dimension.
+
+The tables below are a navigation map, not a second specification. They show settled mechanisms with distinct randomness architecture, not every policy or exception; linked policy sections own the details. Shared contracts for [opportunity consumption](#opportunity-consumption), [stable entry addresses](#stable-entry-addresses), [act-local resets](#act-local-resets) and [saved state](#saved-state) apply where relevant and are omitted unless a mechanism differs.
+
+### Rewards
+
+| System / randomized outcome | Sharing and address/progress | Form |
 |---|---|---|
-| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards/sale: shop ordinal; restocks: source-specific progress; prices: stable entry address. | Ordinal generation, item sequences and entry-derived prices. |
-| [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier; rarity and per-rarity identity progress are separate. | Rarity-roll streams and finite shuffled allocations. |
-| [Potion rarity and identity](#acquisition-and-sequences) | Four source groups; generic rarity modes share per-rarity identity progress. | On-demand rarity-roll and identity streams. |
-| [Potion drop occurrence](#drop-occurrence) | Shared ordinary-check index and changing probability across combat categories. | Indexed random checks. |
-| [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed generation. |
-| [Combat gold](#shared-sequence-and-compensation) | Shared normal-fight/elite gold ordinal; separate normal-fight compensation index. | Uniform rolls and independently randomized complementary compensation pairs. |
-| [Own-character random-rarity: Rare occurrence](#luck-and-rarity-offset) | Shared luck/threshold progress; combat offset applies only to its source groups. | Independent exponential-threshold stream with pending delivery. |
-| [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Pool/request/offer groups; offer or entry progress, separate from shared luck. | Triple sequences, other identity/rarity streams and local event-RNG rules. |
-| [Card upgrades](#inherent-card-rolls) | Generated card occurrence and upgrade purpose. | Independent entry-derived roll. |
-| [Persistent card selection](#corrected-persistent-card-selection-priorities) | Logical card occurrence, selection scope and occurrence-local renewal index. | Residual exponential clocks. |
-| [Permanent transformation / direct-addition results](#selection-and-consumption) | Shared pool identity progress; separate transformation/addition rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
-| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event identity and event-local draws. | Event RNG, outside shared reward sequences. |
-| [Pael's Tooth return selection](#settled-policy-paels-tooth) | Fixed five-card cohort; occurrence/one-card-choice return provenance. | Persistent return ranking, consumed once per combat. |
-| [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity and owned relic identity. | Fresh candidate priorities. |
-| [Encounter setup](#settled-policy-encounter-setup) | Act-local combat-category ordinal and encounter identity; event-local battle scope for event-created combats. | Purpose-separated addressed RNG. |
-| [Forced events](#settled-policy-forced-events) | Forced identity bypasses ordinary event-list progress. | Existing event RNG; no ordinary event draw. |
-| [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal and stored room-type chances. | Act-local ordinal draws interpreted through changing intervals. |
+| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards and sale use shop ordinal; restocks have source-specific progress; prices use stable entry addresses. | Ordinal-addressed draws, item sequences and entry-derived price rolls. |
+| [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity progress is separate from per-rarity identity progress. | Rarity-roll streams and finite shuffled allocations. |
+| [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity progress. Ordinary drop checks share combat-wide progress and changing probability. | Rarity/identity streams and indexed drop checks. |
+| [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
+| [Combat gold](#shared-sequence-and-compensation) | Normal fights and elites share a gold ordinal; normal fights also advance a separate compensation index. | Shared uniform rolls and paired compensation bits. |
+| [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and threshold progress are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
+| [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Progress is separated by pool/request/offer group and is independent of shared Rare-occurrence progress. | Triple sequences, other identity/rarity streams and event-RNG draws. |
+| [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has independently addressed upgrade randomness. | Entry-derived roll. |
+| [Permanent transformation / direct-addition results](#selection-and-consumption) | Identity progress is shared by pool; transformations and additions use separate rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
+| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event-local draws. | Event RNG outside shared reward sequences. |
 
-Policy sections put intent/coverage before operative rules, with baseline context at the end and local rationale beside the rule it explains. Use the dimensions where informative, not as mandatory fields; source lists, probabilities and exceptions remain in their canonical sections.
+### Encounter
+
+| System / randomized outcome | Sharing and address/progress | Form |
+|---|---|---|
+| [Persistent card selection](#corrected-persistent-card-selection-priorities) | Each logical card occurrence carries progress within its selection scope, with occurrence-local renewal after selection. | Residual exponential clocks. |
+| [Pael's Tooth return selection](#settled-policy-paels-tooth) | Fixed five-card cohort with return provenance attached to logical occurrences; qualifying one-card reward choices share an anchor. | Tooth-specific persistent return clocks. |
+| [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
+| [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
+| [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 
 ## Shared strategies
 
-These are shared contracts for covered policies. The [fairness principle](#goals-and-principles), [opportunity consumption](#consumption-timing), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
+These are shared contracts for covered policies. The [fairness principle](#goals-and-principles), [opportunity consumption](#opportunity-consumption), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
 
 ### Rarity and identity sequences
 
@@ -104,14 +111,11 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 **Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Each new potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
-### Consumption timing
+### Opportunity consumption
 
-**Invariant — opportunity consumption:** advance a sequence when its corresponding opportunity occurs, with the timing below.
+**Invariant — opportunity consumption:** randomness advances when the player is granted the corresponding random opportunity—that is, when its result becomes available to reveal or receive. Actual viewing, acceptance or selection is not required.
 
-- **Displayed offers:** consume on generation, even if declined.
-- **Direct potion grants:** consume only on successful acquisition. Failed grants leave rarity/identity RNG and sequence state unchanged.
-- **Deferred rewards:** consume when the payoff is generated, not when its granting relic is acquired; e.g., the elite relic precedes Mystery Ticket's three relics.
-- **Bypassed operations:** leave their ordinary sequence paused. Source policies specify the affected counters.
+If an operation is prevented or bypassed before any random result becomes available, its randomness does not advance. Deferred rewards consume when their payoff opportunity occurs, not when the effect creating that future opportunity is acquired.
 
 ### Stable entry addresses
 
