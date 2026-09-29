@@ -1,16 +1,18 @@
 # Deterministic seed mod — design
 
-This file is the current specification and existing-mechanics reference; the [working document](WORKING.md) contains unresolved work and evidence needed to resolve it. Coverage is partial: unfinished systems retain existing behavior pending design decisions.
+This file contains the current specification and reusable existing-mechanics references. Unresolved work is maintained in [WORKING.md](WORKING.md); systems not yet specified retain existing behavior.
 
-**Reading convention:** the main body is normative by default: goals, constraints, definitions and adopted behavior. Labeled baselines and references describe existing mechanics; rationale, tradeoffs, examples and rejected alternatives explain the design. The Reference and Appendix sections are descriptive, not mod specification.
+**Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
 
-## Goals
+## Goals and principles
 
-**Goal:** make same-seed runs offer comparable choices and combat challenges, even when players take different routes or make different decisions. Preserve meaningful consequences while keeping later opportunities fair. Compare equivalent ordinal opportunities—e.g., each run's first shop or third normal-fight reward, even if reached on different floors.
+**Goal:** make same-seed runs offer comparable choices and combat challenges even when players take different routes or make different decisions. Compare corresponding ordinal opportunities—for example, each run's first shop or third normal-fight reward—even when reached on different floors.
 
-**Fairness principle — opportunity isolation:** keep the effects of a decision focused on what that decision concerns. Visiting an extra room or choosing a reward should change as little unrelated future gameplay as possible. Later opportunities may give players a chance to recover from earlier disadvantages.
+**Fairness principle — opportunity isolation:** preserve meaningful consequences while changing as little unrelated future gameplay as possible. For example, visiting an extra room or choosing a reward should not shift unrelated later randomness.
 
-**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change identity/status-level outcomes or subsequent RNG state, unless order dependence is explicitly intended by the effect. This does not change presentation order or erase meaningful sequential gameplay effects.
+**Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
+
+**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent RNG state, unless order dependence is explicitly intended by the effect. This does not change presentation order or erase meaningful sequential gameplay effects.
 
 ## Scope
 
@@ -20,57 +22,43 @@ Compare single-player runs with matching seeds, versions, rules and fully unlock
 
 **Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
-**Default context:** assume Scarcity (A7+) unless stated otherwise. The same policies apply without Scarcity, using the appropriate probabilities, except where explicitly deferred.
+**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies also apply without Scarcity using the corresponding probabilities, except where explicitly deferred.
 
-**Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve these effects and exclude them from all later randomness-control discussions; effects on random selection or sequence consumption remain in scope.
+**Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve those modifiers, but ignore them in randomness-control design unless they become relevant.
 
-**Deterministic identities:** predetermined card, relic and potion grants or replacements are excluded: their identities require no random selection and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
+**Fixed identities:** predetermined card, relic and potion grants or replacements are outside randomness-control scope: they require no identity draw and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
 
-**Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. Rare tail effects and interactions between sequences through borrowing are outside ordinary isolation discussions throughout.
-
-Base findings on code; use run histories as supporting evidence.
-
-## Design categories
+## Concepts and terms
 
 The design has two top-level categories:
 
-- **Rewards:** generated reward identities and amounts, including permanent transformation results and unspecified random non-event-exclusive rewards.
+- **Rewards:** generated reward identities and amounts, including permanent transformation results and otherwise-unspecified random rewards that are not event-exclusive.
 - **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
 
 These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
 
 Category and RNG ownership are separate: a reward can use event RNG.
 
-## Terms
-
 ### Game context
 
-- **Scarcity:** the Ascension 7 modifier, active at A7 and above. It reduces base Rare card chances, rarity-offset growth and card-upgrade odds.
-- **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
-- **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype, counted separately in this design. An event may start combat without changing the map type.
+- **Map type / room type:** map type (`MapPointType`) is the map marker; `Unknown` (`?`) may resolve into different room types. Room type (`RoomType`) is the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype counted separately in this design. An event may start combat without changing the map type.
 - **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
 - **Normal fight / combat:** **normal fight** means `RoomType.Monster`; **combat** means any battle, including normal fights, elites, bosses and event battles. Avoid bare **fight**. **Monster** in prose means an individual enemy.
 
-### Rewards
+### Reward terminology
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
 - **Card pool:** can be own character, colorless or a specified other character.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
-- **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence; repeated identities are distinct entries.
-- **Filter / filter marker:** a filter defines eligibility for a draw. A **filter marker** occupies a sequence position and records one deferred advancement under that filter; shortened to **marker** below.
-- **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools.
-- **Generation / acquisition:** generation selects an item; acquisition means actually receiving it.
-- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is defined per item type below.
+- **Generation / acquisition:** generation determines an item; acquisition means actually receiving it.
+- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is an item-specific source class defined by each relevant policy.
 
-### Determinism
+### Randomness and addressing
 
-- **Pool / allocation / sequence / RNG:** a pool defines candidate identities; an allocation is the finite relic stock assigned to a source, ordered into one or more identity sequences. A sequence is one ordered stream; **per-rarity identity sequences** provide one stream per rarity. A random number generator (RNG) generates random choices.
-- **Triple sequence:** a card identity sequence consumed only as complete, consecutive groups of three entries. Each group is a **triple**.
-- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
-- **Ordinal-addressed generation:** generation determined solely by the run seed and the relevant category's ordinal; **shop-ordinal generation** names the shop case.
-- **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
+- **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries even when they have the same identity. **Per-rarity identity sequences** provide one stream per rarity.
+- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; otherwise ordinals continue across acts.
+- **Ordinal-addressed generation:** generation derived from the run seed and an opportunity's ordinal within its stated scope, including components such as act or category where applicable. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
-- **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison (often happens early- or mid-game). Differences caused by consuming different numbers of opportunities within shared sequences (often happens late-game) are benign.
 
 ## Architecture overview
 
@@ -102,7 +90,7 @@ Policy sections put intent/coverage before operative rules, with baseline contex
 
 ## Shared strategies
 
-These are shared contracts for covered policies. The [fairness principle](#goals), [opportunity consumption](#consumption-timing), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
+These are shared contracts for covered policies. The [fairness principle](#goals-and-principles), [opportunity consumption](#consumption-timing), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
 
 ### Rarity and identity sequences
 
@@ -114,7 +102,7 @@ These are shared contracts for covered policies. The [fairness principle](#goals
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
 
-**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Unless a source specifies weighted generation or a triple sequence, each new potion/card identity entry is an independent uniform draw with replacement from its sequence's pool. Only finite relic allocations borrow.
+**Generation and lifetime:** covered potion/card identity sequences and rarity-roll sequences are generated on demand and continue indefinitely, using independent RNGs for the source and pool divisions specified below. Each new potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
 ### Consumption timing
 
@@ -179,6 +167,8 @@ This opt-in mechanism remains available for effects such as Relic Trader. It doe
 
 **Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
+A **filter** defines eligibility for a draw. A **marker** occupies a sequence position and records one deferred advancement under the filter active when it was created.
+
 **Advancement:** generalize fixed-rarity draws. Viewing per-identity sequences and rarity rolls together as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
 
 **Method — deferred advancement:** a filtered draw returns the first eligible entry and replaces it with a marker for its filter. To resolve a marker, move the next eligible entry from the following sequence into the marker's position, leaving a marker for the same filter at the supplying position. An ordinary draw resolves any marker at the front, then returns the entry and removes the drawn position. This performs the same advancement on demand, for infinite sequences as well as finite relic allocations.
@@ -194,7 +184,7 @@ Markers freeze eligibility conditions at the original draw, including batch excl
 
 Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
-Triple sequences reject duplicate candidates while generating each triple. Other card sequences use filtered draws to exclude duplicates.
+Card sequences generated as complete three-card groups reject duplicate candidates during group generation; other card sequences use filtered draws to exclude duplicates.
 
 ### Saved state
 
@@ -229,9 +219,11 @@ Save sequence contents and progress, including original entry addresses, consump
 
 **Intent:** Shops, Courier and generic rewards no longer compete for relics during normal play. Random relic rewards no longer risk Catfood's fixed rarity-roll limit.
 
+Here, **ordinary relics** are Common / Uncommon / Rare / Shop; Event-exclusive relics sit outside these pools.
+
 ### Allocation
 
-Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
+An **allocation** is the finite relic stock assigned to one source, ordered into one or more identity sequences. Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
 
 Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
@@ -244,6 +236,8 @@ Mix shop-ineligible relics into allocations normally.
 Hidden random relic rewards from combat/chests/events use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box). Classify deferred payoffs separately from their granting relic.
 
 ### Borrowing
+
+**Scope boundary:** borrowing covers source exhaustion; depletion of an entire rarity is excluded. Rare tail effects and cross-sequence interactions caused by borrowing are outside ordinary isolation analysis.
 
 On exhaustion, borrow the **last eligible remaining identity** of the requested rarity. Other sequences borrow from Courier first; Courier borrows from generic rewards first.
 
@@ -373,6 +367,8 @@ This naturally excludes the first two three-card normal-rule offers after an off
 **Accepted tradeoff:** separating the rare Scarcity double-Rare elite result changes acquisition opportunities. Fixed-odds offers can also produce multiple Rares in vanilla; additional occurrences beyond the single pending threshold are deliberately omitted rather than queued.
 
 #### Offer sequences and rerolls
+
+A **triple sequence** is a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
 
 Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. The non-Rare sequence split, fixed-odds routing and opening-entry placement remain [unresolved](WORKING.md#random-rarity-offer-sequences).
 

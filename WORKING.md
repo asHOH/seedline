@@ -1,6 +1,6 @@
 # Deterministic seed mod — working document
 
-Settled systems and reusable existing-mechanics references are maintained exclusively in [DESIGN.md](DESIGN.md). This file contains only unresolved work and evidence needed to resolve it, evaluated against the [goals and fairness principle](DESIGN.md#goals).
+Settled systems and reusable existing-mechanics references are maintained exclusively in [DESIGN.md](DESIGN.md). This file contains only unresolved work and evidence needed to resolve it, evaluated against the [goals and fairness principle](DESIGN.md#goals-and-principles).
 
 When a decision settles, update its canonical section in DESIGN.md and delete the resolved discussion here; retain at most a one-line pointer where needed by remaining work.
 
@@ -8,7 +8,7 @@ When a decision settles, update its canonical section in DESIGN.md and delete th
 
 ## Remaining design: rewards and encounter
 
-Use the [Rewards / Encounter categories](DESIGN.md#design-categories) and [architecture dimensions](DESIGN.md#architecture-overview) to frame each remaining decision.
+Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview) to frame each remaining decision.
 
 Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
 
