@@ -16,11 +16,9 @@ This file is the current specification and existing-mechanics reference; the [wo
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
-Compare runs with matching seeds, versions, rules and fully unlocked relic and card pools.
+Compare single-player runs with matching seeds, versions, rules and fully unlocked relic and card pools.
 
-Single-player is the intended scope. Multiplayer behavior is excluded, except for easy changes that materially improve fairness.
-
-Tutorial overrides, including scripted rewards and boss discovery order, and custom-run modifiers are excluded.
+**Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
 **Default context:** assume Scarcity (A7+) unless stated otherwise. The same policies apply without Scarcity, using the appropriate probabilities, except where explicitly deferred.
 
@@ -29,8 +27,6 @@ Tutorial overrides, including scripted rewards and boss discovery order, and cus
 **Deterministic identities:** predetermined card, relic and potion grants or replacements are excluded: their identities require no random selection and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
 
 **Exhaustion boundary:** finite relic allocations may borrow on exhaustion; depletion of an entire rarity is excluded. Rare tail effects and interactions between sequences through borrowing are outside ordinary isolation discussions throughout.
-
-**Design status:** shared strategies and settled policies are fixed contracts, excluded from unfinished-design discussions.
 
 Base findings on code; use run histories as supporting evidence.
 
@@ -59,12 +55,12 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
 - **Card pool:** can be own character, colorless or a specified other character.
-- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it; choosing the granting event option beforehand does not make it a card reward offer.
+- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
 - **Item identity:** the card, relic or potion. A **sequence entry** is one occurrence; repeated identities are distinct entries.
 - **Filter / filter marker:** a filter defines eligibility for a draw. A **filter marker** occupies a sequence position and records one deferred advancement under that filter; shortened to **marker** below.
-- **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools; scripting alone does not imply exclusivity.
+- **Ordinary relics:** Common / Uncommon / Rare / Shop. Event-exclusive relics sit outside these pools.
 - **Generation / acquisition:** generation selects an item; acquisition means actually receiving it.
-- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is defined per item type below; relics and potions use separate sequences.
+- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is defined per item type below.
 
 ### Determinism
 
@@ -73,7 +69,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; other ordinals continue across acts ("cumulative" is omitted unless needed for clarity).
 - **Ordinal-addressed generation:** generation determined solely by the run seed and the relevant category's ordinal; **shop-ordinal generation** names the shop case.
 - **Re-seeding** restarts a repeatable RNG sequence. Outcomes still depend on pools, rarity offsets, counters and other generators.
-- **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals. Decisions using it may share draws within that event; unrelated systems do not advance it. This does not imply that every random decision in the event uses it.
+- **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
 - **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison (often happens early- or mid-game). Differences caused by consuming different numbers of opportunities within shared sequences (often happens late-game) are benign.
 
 ## Architecture overview
