@@ -20,7 +20,7 @@ This file records settled design decisions, their rationale and reusable existin
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
-Compare single-player runs with matching seeds, versions, rules and fully unlocked relic and card pools.
+Compare single-player runs with matching seeds, versions and rules, with all content unlocked (including relic, card and event pools).
 
 **Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
@@ -661,6 +661,8 @@ This overview summarizes interference and Catfood differences. Source-specific r
 **Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
 
 **Event / encounter identity selection:** per-act lists are generated upfront with `UpFront` RNG. Room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
+
+**Event-list wrapping (vanilla):** the event cursor indexes `events[cursor % events.Count]`; reaching the end resumes at the beginning without reshuffling, deleting skipped entries or clearing visits. Eligibility scanning advances the cursor for each rejected entry, so wrapping need not mean every event was encountered. A previously skipped event can be selected after wrapping if it is now allowed and still unvisited. Each scan checks at most one full list; if none qualifies, vanilla logs exhaustion and returns the cursor's event anyway, potentially repeated or ineligible. This fallback's reachability in ordinary fully unlocked play is not established here. See [RoomSet.NextEvent / EnsureNextEventIsValid](sts2-decompiled/MegaCrit.Sts2.Core.Rooms/RoomSet.cs).
 
 **Ancient options:** use event RNG seeded with run seed + event identity hash + player-slot contribution, independently of event counts.
 
