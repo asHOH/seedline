@@ -247,13 +247,15 @@ Hidden random relic rewards from combat/chests/events use the generic rewards so
 
 ### Borrowing
 
-**Scope boundary:** borrowing covers source exhaustion; depletion of an entire rarity is excluded. Rare tail effects and cross-sequence interactions caused by borrowing are outside ordinary isolation analysis.
+**Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion is outside discussion scope; fallback and chest refilling are implementation details. Rare tail effects and cross-sequence interactions caused by borrowing are outside ordinary isolation analysis.
 
 On exhaustion, borrow the **last eligible remaining identity** of the requested rarity. Other sequences borrow from Courier first; Courier borrows from generic rewards first.
 
 Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
 
-**Final fallback:** once same-rarity borrowing is exhausted, follow [vanilla fallback](#generation-and-selection-mechanics), or a simpler implementation that keeps the game running.
+**Implementation details — chest refilling:** when same-rarity borrowing fails, retain the normal generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, using one additional draw from the generic relic rarity RNG. This introduces no new RNG but advances later generic rarity rolls, accepted only in this out-of-scope case. If no refill candidate exists, use the final fallback.
+
+**Implementation details — final fallback:** starting at the requested rarity, try local entries and same-rarity borrowing before advancing through Shop → Common → Uncommon → Rare, without wrapping or another rarity roll; otherwise return Circlet.
 
 ### Context
 
@@ -535,8 +537,8 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 - **Addressing:** room-type RNG uses run seed + act + act-local ordinal of visited `?` nodes.
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
-- **Thresholds:** allowed room types' stored chances determine interval widths. The chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
-- **Overflow:** when the total exceeds 100%, pack chest → normal fight → shop from 0 and truncate at 1. The shop interval shrinks first.
+- **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
+- **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
 
 ### Context
 
