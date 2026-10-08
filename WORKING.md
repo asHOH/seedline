@@ -6,7 +6,7 @@ When a decision settles, update its canonical section in DESIGN.md and delete th
 
 **Reading convention:** use **Known** for findings, **Constraints** for local requirements beyond DESIGN, **Decisions needed** for unresolved choices, **Candidates** for unadopted approaches, and **Validation** for checks still needed. Omit unused roles and obvious exhaustive candidate lists; weaker alternatives may remain when they are not the only other candidate. Candidates become specification only when adopted in DESIGN.
 
-## Remaining design: rewards and encounter
+---
 
 Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview) to frame each remaining decision.
 
@@ -20,13 +20,13 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
-### Rewards
+## Rewards
 
-#### Cards: offers and rarity
+### Cards: offers and rarity
 
 Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
 
-##### Random-rarity offer sequences
+#### Random-rarity offer sequences
 
 **Decisions needed:**
 
@@ -48,11 +48,11 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 
 **Pending baseline validation:** determine gameplay impact of Catfood's initial-offer stream bug and direct/event seed collisions; see the baseline above.
 
-### Encounter
+## Encounter
 
-#### Events and Ancients
+### Events and Ancients
 
-##### Ordinary event identity
+#### Ordinary event identity
 
 **Intent and constraints:** retain the same seeded identity order for events with equivalent complete eligibility conditions within the chosen scope. Unavailability must not consume that condition's next identity. Preserve the act-specific plus shared pool, live eligibility, run-wide visits, [forced-event bypass](DESIGN.md#settled-policy-forced-events) and event-internal RNG. Different actual visits remain meaningful exclusions; state dependence alone does not rule out the shared filtered-draw strategy, but that strategy does not automatically settle event scheduling.
 
@@ -73,7 +73,7 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 
 **Implementation and validation:** use the shared addressing, consumption and saved-state contracts; preserve residual clocks or class offsets, identity progress and scheduling progress as applicable. A common offset replaces equal subtraction; pausing needs separate active-time offsets per class. Leaving raw clocks unchanged across different eligibility histories is not equivalent: with A,C active and B inactive, after A wins, B beats corrected `C-A` with probability `1/2`, but uncorrected C with `2/3`. Check same-condition order, overlapping thresholds, eligibility re-entry, the inactive-K probability example, different visit histories, forced insertion, act changes and save/load.
 
-##### Relic Trader
+#### Relic Trader
 
 Owned-relic selection, replacement constraints and offer consumption: [Relic Trader policy](DESIGN.md#settled-policy-relic-trader).
 
@@ -93,13 +93,13 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 
 **Validation:** compare overlapping selected sets with identical replacement availability, then force competing targets, adjacent outgoing ring nodes, owned-but-unselected successors, cycles, cutoff-ineligible counterparts and per-rarity shortages. Check outgoing selection probabilities, independent replacement rarity, batch uniqueness/order neutrality, generic coverage and which ordinary source changes after an actual trade versus an unchosen offer.
 
-##### Remaining events and Ancients
+#### Remaining events and Ancients
 
 Remaining Encounter decisions have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
 
-#### Card-selection priorities
+### Card-selection priorities
 
-##### Permanent upgrades and downgrades
+#### Permanent upgrades and downgrades
 
 The [corrected persistent exponential-clock strategy](DESIGN.md#corrected-persistent-card-selection-priorities) is settled.
 
@@ -107,7 +107,7 @@ The [corrected persistent exponential-clock strategy](DESIGN.md#corrected-persis
 
 **Validation:** test shared-card order and conditional selection odds across additions, inactive subsets, eligibility re-entry, selected-occurrence renewal, batch selection and save/load. Confirm player-directed choices and previews do not advance random-selection clocks.
 
-##### Equivalent-copy routing
+#### Equivalent-copy routing
 
 Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). Tooth's fixed cohort and reward-choice alignment are settled; its former return-lifecycle question is closed.
 
@@ -124,9 +124,9 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 
 **Validation:** swap clicked copies of any identity while holding gameplay status fixed; compare subsequent identity/status outcomes and retained hidden-token multisets without changing which UI card visibly changed. Test multiplicity, two/three-copy cohorts, multi-selection click permutations, class splits/merges, reward-choice priority aliases and save/load.
 
-#### Combat randomness
+### Combat randomness
 
-##### Shuffles
+#### Shuffles
 
 **Decision needed:** opening-shuffle addressing and how later shuffles share or advance randomness.
 
@@ -135,10 +135,10 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 - Act-local opening-shuffle ordinals. Together with act-local setup, this would align the first Act 2 normal fight's setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses would still differ.
 - Add run seed to boss shuffle initialization.
 
-##### Generated cards
+#### Generated cards
 
 **Decision needed:** sharing and addressing by pool/type: own-character Attack/Skill/Power, colorless and other characters; include special-relic interactions.
 
-##### Other combat randomness
+#### Other combat randomness
 
 **Backlog:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations. As each area is investigated, decide sharing by source/effect and special-relic interactions, and split it into its own decision unit only where useful.
