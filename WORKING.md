@@ -16,7 +16,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve equivalent-copy routing and persistent-selection sharing scopes, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing and persistent-selection sharing scopes, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
@@ -51,6 +51,27 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 ### Encounter
 
 #### Events and Ancients
+
+##### Ordinary event identity
+
+**Intent and constraints:** retain the same seeded identity order for events with equivalent complete eligibility conditions within the chosen scope. Unavailability must not consume that condition's next identity. Preserve the act-specific plus shared pool, live eligibility, run-wide visits, [forced-event bypass](DESIGN.md#settled-policy-forced-events) and event-internal RNG. Different actual visits remain meaningful exclusions; state dependence alone does not rule out the shared filtered-draw strategy, but that strategy does not automatically settle event scheduling.
+
+**Boundary:** use the sufficient-pool assumption and vanilla skipping probability property in [existing mechanics](DESIGN.md#generation-and-selection-mechanics). Small examples isolate selection behavior, not ordinary pool capacity.
+
+**Candidate class model:** partition identities by equivalent complete predicates, including act availability within the chosen scope. Predicate domains may overlap while identity classes remain disjoint: `gold >= 100` and `gold >= 125` can both be active, but each identity is counted once. Use stable event/class keys, not the current candidate set or enumeration order. Whether to preserve additional ordering across distinct nested/intersecting conditions remains open.
+
+**Candidates — both remain under consideration:**
+
+- **Paused clocks:** reuse [corrected persistent clocks](DESIGN.md#corrected-persistent-card-selection-priorities) per event. Eligible survivors lose the selected minimum; ineligible clocks freeze. Equivalent conditions give survivors identical updates, preserving their relative order without a separate group draw. Visited events leave selection; no within-act renewal is needed. This retains eligibility-history effects and lets previously ineligible events compete immediately on re-entry, unlike vanilla passing. Matching current sets and ordinals need not reconverge.
+- **Condition-level passing:** separate each condition's fixed identity order from its scheduling entries. Pass an inactive condition's scheduling entry without consuming its identity head. Define entry retirement/deferral and later scheduling weights; a finite schedule can lose all of a condition's entries while its identities remain. Simple identity-level passing fails the condition-order requirement. Nested/intersecting conditions must not duplicate identity weight.
+
+**Known — probability tradeoff:** corrected paused clocks remain uniform over current eligible, unvisited identities, assuming eligibility does not inspect hidden clocks; memorylessness makes active survivors' residuals and frozen inactive clocks independent equal-rate exponentials. A class with `n` of `N` eligible survivors has chance `n/N`; an aggregated class clock needs rate `n`. This is not vanilla's invariance to encounters while K is false: in the appendix's two-K/three-other example, retaining all K identities gives `2/4` after one such encounter and `2/3` after two, versus vanilla's `2/5`. Neither is a clock-calculation bias; adopting paused clocks deliberately changes this baseline probability behavior.
+
+**Reference alternative — fresh per-event priorities:** seed + act + ordinary-event ordinal + event ID + purpose gives uniform selection and reconvergence for matching ordinals and current sets, without failed-check history. It does not retain a condition's identity order, so it is not a leading candidate. For candidate sets `S,T`, agreement is `|S ∩ T| / |S ∪ T|`, optimal for nested sets but not every pair; `{A,B}` versus `{A,C}` gives `1/3`, while a pair-specific coupling can reach `1/2`. This does not establish a universally better independent-run coupling.
+
+**Decisions needed:** choose paused clocks or fully specified condition-level passing, with a stated rationale for any change to vanilla's inactive-condition probability property. Define class equivalence and overlap guarantees, scheduling weights/progress, and separate lifetimes for act-specific and cross-act identities/timing. Act-local clock initialization uses run seed + act + event ID + purpose; resetting removes prior-act timing history, not visited exclusions. Keeping a cross-act class's identity order while resetting its timing is a separate candidate. Ordinary-event ordinals, if used, count encounters rather than rejected candidates; even a singleton would consume one opportunity. Ancients remain separate.
+
+**Implementation and validation:** use the shared addressing, consumption and saved-state contracts; preserve residual clocks or class offsets, identity progress and scheduling progress as applicable. A common offset replaces equal subtraction; pausing needs separate active-time offsets per class. Leaving raw clocks unchanged across different eligibility histories is not equivalent: with A,C active and B inactive, after A wins, B beats corrected `C-A` with probability `1/2`, but uncorrected C with `2/3`. Check same-condition order, overlapping thresholds, eligibility re-entry, the inactive-K probability example, different visit histories, forced insertion, act changes and save/load.
 
 ##### Relic Trader
 
