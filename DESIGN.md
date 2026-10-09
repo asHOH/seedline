@@ -96,7 +96,7 @@ The tables below are a navigation map, not a second specification. They show set
 
 | System / randomized outcome | Sharing and address/progress | Form |
 |---|---|---|
-| [Persistent card selection](#corrected-persistent-card-selection-priorities) | Each logical card occurrence carries progress within its selection scope, with occurrence-local renewal after selection. | Residual exponential clocks. |
+| [Persistent card selection](#corrected-persistent-card-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
 | [Pael's Tooth return selection](#settled-policy-paels-tooth) | Fixed five-card cohort with return provenance attached to logical occurrences; qualifying one-card reward choices share an anchor. | Tooth-specific persistent return clocks. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
@@ -154,9 +154,9 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 **Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades) and [Tooth returns](#settled-policy-paels-tooth).
 
-**Address and state:** each logical card occurrence has a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose + occurrence-local renewal index. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position.
+**Address and state:** each logical card occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position.
 
-**Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; an occurrence selected by this random mechanism consumes its clock and receives a fresh occurrence-local renewal before it can participate again. Mere eligibility loss/re-entry does not consume an unused clock.
+**Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; a selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution. Mere eligibility loss/re-entry does not consume an unused clock.
 
 **Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
@@ -205,7 +205,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 ### Saved state
 
-Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, renewal indices, source-specific priority aliases, logical-to-physical card associations and pending fixed-cohort selections wherever used.
+Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical card associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -476,7 +476,12 @@ Use the [shared clock strategy](#corrected-persistent-card-selection-priorities)
 **Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, and Reflections.
 **Downgrade sources:** Wongos and Reflections.
 
-Preserve triggers, counts, eligibility and effect order. Reflections determines upgrade candidates after downgrading; downgraded cards may qualify.
+Consumed clocks are marked zero.
+
+- **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise take the next value from one dedicated run-wide refill sequence, shared only by Wongos and Reflections. This sequence is consumed at most three times per run.
+- **Downgrade-clock refill:** Wongos refreshes the downgraded card's downgrade clock using event RNG. Reflections leaves consumed downgrade clocks at zero; no later permanent downgrade source can use them.
+
+Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
 Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
 
 ## Settled policy: Pael's Tooth
