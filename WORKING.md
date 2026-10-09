@@ -97,7 +97,7 @@ Remaining Encounter decisions have not yet been decomposed. Evaluate them agains
 
 #### Equivalent-copy routing
 
-Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). [Tooth's fixed cohort and reward-choice alignment](DESIGN.md#settled-policy-paels-tooth) are settled.
+Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). [Fixed-priority selection and reward-choice alignment](DESIGN.md#settled-policy-fixed-priority-card-selection) are settled.
 
 **Decisions needed:**
 

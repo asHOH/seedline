@@ -97,7 +97,7 @@ The tables below are a navigation map, not a second specification. They show set
 | System / randomized outcome | Sharing and address/progress | Form |
 |---|---|---|
 | [Persistent card selection](#corrected-persistent-card-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
-| [Pael's Tooth return selection](#settled-policy-paels-tooth) | Fixed five-card cohort with return provenance attached to logical occurrences; qualifying one-card reward choices share an anchor. | Tooth-specific persistent return clocks. |
+| [Tooth, Bracelet and Bridge selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific priorities; qualifying one-card reward choices share an anchor. | Fixed priority order; event RNG after Bridge exhaustion. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
@@ -152,7 +152,7 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 ### Corrected persistent card-selection priorities
 
-**Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades) and [Tooth returns](#settled-policy-paels-tooth).
+**Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades) and [fixed-priority selection](#settled-policy-fixed-priority-card-selection).
 
 **Address and state:** each logical card occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position.
 
@@ -484,21 +484,21 @@ Consumed clocks are marked zero.
 Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
 Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
 
-## Settled policy: Pael's Tooth
+## Settled policy: fixed-priority card selection
 
-**Intent:** align the return sequence of shared stored cards and avoid making a different choice within one single-card reward offer change its return priority.
+**Intent:** align affected cards across decks and single-card reward choices.
 
-### Stored cohort and returns
+Use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-card-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
 
-Store five player-selected unupgraded cards outside the deck as a fixed cohort. At each subsequent combat trigger, return one remaining card upgraded and remove its record. Later removals never add or recycle cohort records. Preserve existing trigger timing and eligibility.
-
-Use Tooth-specific return clocks and the fixed-cohort shortcut under [shared persistent selection](#corrected-persistent-card-selection-priorities).
+- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck. At each subsequent combat trigger, return the next card upgraded and remove its record. Later removals never add or recycle cohort records.
+- **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
+- **Slippery Bridge:** offer each removable deck card once, then use event RNG over all removable cards for subsequent draws. This replaces vanilla's Basic and previous-identity exclusions to preserve one fixed order.
 
 ### Single-card reward-choice alignment
 
-For a reward choice that permits taking at most one card, use the first card's Tooth return-priority key for whichever card is acquired. Choosing any later card inherits that same return priority; it does not inherit the first card's identity, upgrade roll or unrelated inherent RNGs. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
+For each purpose above, a reward choice that permits taking at most one card uses the first card's priority key for whichever card is acquired. Choosing a later card inherits that priority, not the first card's identity, upgrade roll or unrelated inherent RNGs. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
 
-Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. Multi-card-capable selections, including bundles, do not apply this alignment, even when the player actually takes only one card. Each acquired occurrence there keeps its own return key. Selecting five cards for Tooth's storage is not a reward-choice alignment operation.
+Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. Multi-card-capable selections, including bundles, do not apply this alignment, even when the player actually takes only one card. Each acquired occurrence there keeps its own priority keys. Selecting existing deck cards is not a reward-choice alignment operation.
 
 ## Settled policy: Relic Trader
 
