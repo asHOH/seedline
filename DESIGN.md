@@ -96,7 +96,8 @@ The tables below are a navigation map, not a second specification. They show set
 
 | System / randomized outcome | Sharing and address/progress | Form |
 |---|---|---|
-| [Persistent card selection](#corrected-persistent-card-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
+| [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
+| [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence progress. | Residual exponential clocks. |
 | [Tooth, Bracelet and Bridge selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific priorities; qualifying one-card reward choices share an anchor. | Fixed priority order; event RNG after Bridge exhaustion. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
@@ -150,11 +151,11 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 **Vanilla baseline:** ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
 
-### Corrected persistent card-selection priorities
+### Corrected persistent selection priorities
 
-**Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades) and [fixed-priority selection](#settled-policy-fixed-priority-card-selection).
+**Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades), [fixed-priority card selection](#settled-policy-fixed-priority-card-selection) and [owned-potion selection](#settled-policy-owned-potion-selection).
 
-**Address and state:** each logical card occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position.
+**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and, for cards, [equivalent-copy routing](#equivalent-card-selections); never use current list position.
 
 **Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; a selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution. Mere eligibility loss/re-entry does not consume an unused clock.
 
@@ -162,7 +163,7 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 **Fixed-cohort shortcut:** if all members remain eligible until selected and each leaves permanently, sort their initial clocks once. Consume that order without subtraction or renewal.
 
-Use independently addressed deterministic tie-breaks, never collection order. Previews and canceled choices consume no clocks. A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks. An unrelated purpose's selection does not advance these clocks.
+Use independently addressed deterministic tie-breaks, never collection order. Previews or cancellations before an opportunity becomes available consume no clocks. A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks. An unrelated purpose's selection does not advance these clocks.
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
 
@@ -205,7 +206,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 ### Saved state
 
-Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical card associations and pending fixed-cohort selections wherever used.
+Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -472,7 +473,7 @@ Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards 
 
 **Intent:** align random permanent upgrade and downgrade targets across sources.
 
-Use the [shared clock strategy](#corrected-persistent-card-selection-priorities). All random upgrades of existing deck cards share one scope; random downgrades share another. Source filters do not create separate clocks.
+Use the [shared clock strategy](#corrected-persistent-selection-priorities). All random upgrades of existing deck cards share one scope; random downgrades share another. Source filters do not create separate clocks.
 **Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, and Reflections.
 **Downgrade sources:** Wongos and Reflections.
 
@@ -488,7 +489,7 @@ Shared progress aligns successive opportunities while preserving uniform selecti
 
 **Intent:** align affected cards across decks and single-card reward choices.
 
-Use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-card-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
+Use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck. At each subsequent combat trigger, return the next card upgraded and remove its record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
@@ -499,6 +500,20 @@ Use separate purpose-specific priorities and the [fixed-cohort shortcut](#correc
 For each purpose above, a reward choice that permits taking at most one card uses the first card's priority key for whichever card is acquired. Choosing a later card inherits that priority, not the first card's identity, upgrade roll or unrelated inherent RNGs. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
 
 Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. Multi-card-capable selections, including bundles, do not apply this alignment, even when the player actually takes only one card. Each acquired occurrence there keeps its own priority keys. Selecting existing deck cards is not a reward-choice alignment operation.
+
+## Settled policy: owned-potion selection
+
+**Intent:** align potions offered for sacrifice across events, independently of inventory order.
+
+Ranwid the Elder and Stone of All Time share one run-wide scope using the [shared clock strategy](#corrected-persistent-selection-priorities), offering the lowest-clock owned potion. Each acquired copy remains a distinct logical occurrence.
+
+With only one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once at commitment, using its key and a per-occurrence renewal count, so a declined sacrifice remains selectable later. Save the offer target and clock state; restoring the offer does not advance clocks again. Preserve event access, costs and rewards.
+
+Equivalent player-chosen potion use/discard/trades remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks. Preserve slot-dependent offers and distinct trade payoffs; an already random-selected target needs no representative reselection. The representative-selection mechanism remains part of [equivalent-copy routing](WORKING.md#equivalent-copy-routing).
+
+**The Future of Potions:** retain vanilla potion selection without consuming this selection scope; generated rewards follow their existing policies. Card-type assignment remains [unresolved](WORKING.md#the-future-of-potions-card-type-assignment).
+
+**Vanilla baseline:** Ranwid and Stone select one owned potion uniformly with event RNG. The Future of Potions offers the first three owned potions in slot order and independently assigns a random allowed card type to each owned potion using event RNG.
 
 ## Settled policy: Relic Trader
 

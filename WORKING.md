@@ -58,7 +58,7 @@ Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-c
 
 **Candidates — both remain under consideration:**
 
-- **Paused clocks:** reuse [corrected persistent clocks](DESIGN.md#corrected-persistent-card-selection-priorities) per event. Eligible survivors lose the selected minimum; ineligible clocks freeze. Equivalent conditions give survivors identical updates, preserving their relative order without a separate group draw. Visited events leave selection; no within-act renewal is needed. This retains eligibility-history effects and lets previously ineligible events compete immediately on re-entry, unlike vanilla passing. Matching current sets and ordinals need not reconverge.
+- **Paused clocks:** reuse [corrected persistent clocks](DESIGN.md#corrected-persistent-selection-priorities) per event. Eligible survivors lose the selected minimum; ineligible clocks freeze. Equivalent conditions give survivors identical updates, preserving their relative order without a separate group draw. Visited events leave selection; no within-act renewal is needed. This retains eligibility-history effects and lets previously ineligible events compete immediately on re-entry, unlike vanilla passing. Matching current sets and ordinals need not reconverge.
 - **Condition-level passing:** separate each condition's fixed identity order from its scheduling entries. Pass an inactive condition's scheduling entry without consuming its identity head. Define entry retirement/deferral and later scheduling weights; a finite schedule can lose all of a condition's entries while its identities remain. Simple identity-level passing fails the condition-order requirement. Nested/intersecting conditions must not duplicate identity weight.
 
 **Known — probability tradeoff:** corrected paused clocks remain uniform over current eligible, unvisited identities, assuming eligibility does not inspect hidden clocks; memorylessness makes active survivors' residuals and frozen inactive clocks independent equal-rate exponentials. A class with `n` of `N` eligible survivors has chance `n/N`; an aggregated class clock needs rate `n`. This is not vanilla's invariance to encounters while K is false: in the appendix's two-K/three-other example, retaining all K identities gives `2/4` after one such encounter and `2/3` after two, versus vanilla's `2/5`. Neither is a clock-calculation bias; adopting paused clocks deliberately changes this baseline probability behavior.
@@ -89,11 +89,15 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 
 **Validation:** compare overlapping selected sets with identical replacement availability, then force competing targets, adjacent outgoing ring nodes, owned-but-unselected successors, cycles, cutoff-ineligible counterparts and per-rarity shortages. Check outgoing selection probabilities, independent replacement rarity, batch uniqueness/order neutrality, generic coverage and which ordinary source changes after an actual trade versus an unchosen offer.
 
+#### The Future of Potions: card-type assignment
+
+**Decision needed:** choose how potions are assigned reward-card types, including randomness addressing and sharing. Potion selection and the vanilla assignment baseline are recorded in [owned-potion selection](DESIGN.md#settled-policy-owned-potion-selection); reward generation for a given rarity/type is already settled.
+
 #### Remaining events and Ancients
 
 Remaining Encounter decisions have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
 
-### Card-selection priorities
+### Item-selection priorities
 
 #### Equivalent-copy routing
 
@@ -111,6 +115,8 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 **Known — count coupling:** for nested logical-token cohorts with shared independent representative priorities, selections agree whenever the larger cohort selects a common token; two-versus-three agreement is `2/3`, the maximal uniform coupling. This is a matched-state result, not a guarantee across different eligibility histories; first establish meaningful common token keys across runs.
 
 **Validation:** swap clicked copies of any identity while holding gameplay status fixed; compare subsequent identity/status outcomes and retained hidden-token multisets without changing which UI card visibly changed. Test multiplicity, two/three-copy cohorts, multi-selection click permutations, class splits/merges, reward-choice priority aliases and save/load.
+
+**Potion routing:** [equivalent potion actions](DESIGN.md#settled-policy-owned-potion-selection) must remove the same logical occurrence regardless of slot; choose their representative-selection mechanism alongside the card mechanism above.
 
 ### Combat randomness
 
