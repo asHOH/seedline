@@ -14,7 +14,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing and persistent-selection sharing scopes, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
@@ -94,14 +94,6 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 Remaining Encounter decisions have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
 
 ### Card-selection priorities
-
-#### Permanent upgrades and downgrades
-
-The [corrected persistent exponential-clock strategy](DESIGN.md#corrected-persistent-card-selection-priorities) is settled.
-
-**Decisions needed:** assign remaining permanent-selection effects to sharing scopes, including whether upgrades and downgrades use separate scopes and which different granting sources share one scope. Weighted or intentionally sequential effects need source-specific treatment rather than an automatic uniform batch rule.
-
-**Validation:** test shared-card order and conditional selection odds across additions, inactive subsets, eligibility re-entry, selected-occurrence renewal, batch selection and save/load. Confirm player-directed choices and previews do not advance random-selection clocks.
 
 #### Equivalent-copy routing
 

@@ -152,7 +152,7 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 ### Corrected persistent card-selection priorities
 
-**Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source/effect sharing is specified separately; remaining scope decisions are in [WORKING](WORKING.md#permanent-upgrades-and-downgrades).
+**Main idea:** for uniform permanent-card selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades) and [Tooth returns](#settled-policy-paels-tooth).
 
 **Address and state:** each logical card occurrence has a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from run seed + its inherent selection key + selection scope/purpose + occurrence-local renewal index. Initial keys use stable occurrence provenance, subject to explicit source alignment and [equivalent-copy routing](#equivalent-card-selections); never use current list position.
 
@@ -160,7 +160,9 @@ When generating an offer, upgrade an eligible card exactly when `u < p`, using t
 
 **Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
-Use independently addressed deterministic tie-breaks, never collection order. Previews and canceled choices consume no clocks. A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. An unrelated purpose's selection does not advance these clocks.
+**Fixed-cohort shortcut:** if all members remain eligible until selected and each leaves permanently, sort their initial clocks once. Consume that order without subtraction or renewal.
+
+Use independently addressed deterministic tie-breaks, never collection order. Previews and canceled choices consume no clocks. A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks. An unrelated purpose's selection does not advance these clocks.
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
 
@@ -472,23 +474,32 @@ Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the in
 
 Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
+## Settled policy: permanent upgrades and downgrades
+
+**Intent:** align random permanent upgrade and downgrade targets across sources.
+
+Use the [shared clock strategy](#corrected-persistent-card-selection-priorities). All random upgrades of existing deck cards share one scope; random downgrades share another. Source filters do not create separate clocks.
+**Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, and Reflections.
+**Downgrade sources:** Wongos and Reflections.
+
+Preserve triggers, counts, eligibility and effect order. Reflections determines upgrade candidates after downgrading; downgraded cards may qualify.
+Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
+
 ## Settled policy: Pael's Tooth
 
 **Intent:** align the return sequence of shared stored cards and avoid making a different choice within one single-card reward offer change its return priority.
 
 ### Stored cohort and returns
 
-On activation, the player selects five unupgraded cards and removes them from the deck. These five form Tooth's fixed stored cohort. At each subsequent combat trigger, return one of the remaining stored cards to the deck, upgraded, and remove that record from the cohort. After five such combats all five have returned upgraded. This is selection without replacement, not selection from a general history of removed cards; later removals do not add or recycle records into this cohort. Preserve the existing trigger timing and other source eligibility.
+Store five player-selected unupgraded cards outside the deck as a fixed cohort. At each subsequent combat trigger, return one remaining card upgraded and remove its record. Later removals never add or recycle cohort records. Preserve existing trigger timing and eligibility.
 
-Use Tooth-specific inherent return clocks under [corrected persistent selection](#corrected-persistent-card-selection-priorities). Store the logical occurrences independently of selection click order. Because the entire cohort is present before any return and each record returns once, sorting the five clocks once and consuming the resulting order is equivalent to subtracting the elapsed minima after every return; no return-priority renewal is needed. Retain the original occurrence and return-priority provenance on each stored record across save/load.
+Use Tooth-specific return clocks and the fixed-cohort shortcut under [shared persistent selection](#corrected-persistent-card-selection-priorities).
 
 ### Single-card reward-choice alignment
 
 For a reward choice that permits taking at most one card, use the first card's Tooth return-priority key for whichever card is acquired. Choosing any later card inherits that same return priority; it does not inherit the first card's identity, upgrade roll or unrelated inherent RNGs. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
 
 Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. Multi-card-capable selections, including bundles, do not apply this alignment, even when the player actually takes only one card. Each acquired occurrence there keeps its own return key. Selecting five cards for Tooth's storage is not a reward-choice alignment operation.
-
-Apply the shared [equivalent-copy requirement](#equivalent-card-selections) when routing physically interchangeable cards into the cohort; its exact routing mechanism remains in WORKING.
 
 ## Settled policy: Relic Trader
 
