@@ -1,6 +1,6 @@
 # Deterministic seed mod — design
 
-This file records settled design decisions, their rationale and reusable existing-mechanics references. These decisions form the specification as the design is completed. Unresolved choices and supporting evidence are maintained in [WORKING.md](WORKING.md); systems not yet specified retain existing behavior.
+This file records settled decisions, rationale and existing-mechanics references; it forms the specification as the design is completed. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Systems not yet specified retain existing behavior.
 
 **Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
 
@@ -43,7 +43,8 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ### Game context
 
-- **Map type / room type:** map type (`MapPointType`) is the map marker; `Unknown` (`?`) may resolve into different room types. Room type (`RoomType`) is the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype counted separately in this design. An event may start combat without changing the map type.
+- **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
+- **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype counted separately in this design. An event may start combat without changing the map type.
 - **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
 - **Normal fight / combat:** **normal fight** means `RoomType.Monster`; **combat** means any battle, including normal fights, elites, bosses and event battles. Avoid bare **fight**. **Monster** in prose means an individual enemy.
 
@@ -51,13 +52,17 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
 - **Card pool:** can be own character, colorless or a specified other character.
-- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
+- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it; choosing the granting event option beforehand does not make it a card reward offer.
+- **Ordinary relics:** Common / Uncommon / Rare / Shop; Event-exclusive relics sit outside these pools.
 - **Generation / acquisition:** generation determines an item; acquisition means actually receiving it.
 - **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is an item-specific source class defined by each relevant policy.
 
 ### Randomness and addressing
 
 - **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries even when they have the same identity. **Per-rarity identity sequences** provide one stream per rarity.
+- **Allocation:** finite relic stock assigned to one source, ordered into one or more identity sequences.
+- **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
+- **Filter / marker:** a filter defines eligibility for a draw. A marker occupies a sequence position and records one deferred advancement under the filter active when it was created.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; otherwise ordinals continue across acts.
 - **Ordinal-addressed generation:** generation derived from the run seed and an opportunity's ordinal within its stated scope, including components such as act or category where applicable. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
@@ -179,8 +184,6 @@ This opt-in mechanism remains available for effects such as Relic Trader. It doe
 
 **Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
-A **filter** defines eligibility for a draw. A **marker** occupies a sequence position and records one deferred advancement under the filter active when it was created.
-
 **Advancement:** generalize fixed-rarity draws. Viewing per-identity sequences and rarity rolls together as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
 
 **Method — deferred advancement:** a filtered draw returns the first eligible entry and replaces it with a marker for its filter. To resolve a marker, move the next eligible entry from the following sequence into the marker's position, leaving a marker for the same filter at the supplying position. An ordinary draw resolves any marker at the front, then returns the entry and removes the drawn position. This performs the same advancement on demand, for infinite sequences as well as finite relic allocations.
@@ -196,7 +199,7 @@ Markers freeze eligibility conditions at the original draw, including batch excl
 
 Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
-Card sequences generated as complete three-card groups reject duplicate candidates during group generation; other card sequences use filtered draws to exclude duplicates.
+Triple sequences reject duplicate candidates while generating each triple. Other card sequences use filtered draws to exclude duplicates.
 
 ### Saved state
 
@@ -229,11 +232,9 @@ Save sequence contents and progress, including original entry addresses, consump
 
 **Intent:** Shops, Courier and generic rewards no longer compete for relics during normal play. Random relic rewards no longer risk Catfood's fixed rarity-roll limit.
 
-Here, **ordinary relics** are Common / Uncommon / Rare / Shop; Event-exclusive relics sit outside these pools.
-
 ### Allocation
 
-An **allocation** is the finite relic stock assigned to one source, ordered into one or more identity sequences. Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Apply the same **45% / 35% / 20%** split within each of the Common, Uncommon and Rare pools, between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
+Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between these sources respectively. The shop source also owns a shuffled Shop-rarity sequence containing all Shop-rarity identities.
 
 Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
@@ -380,8 +381,6 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 #### Offer sequences and rerolls
 
-A **triple sequence** is a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
-
 Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. The non-Rare sequence split, fixed-odds routing and opening-entry placement remain [unresolved](WORKING.md#random-rarity-offer-sequences).
 
 A generated offer consumes the next triple from its applicable non-Rare sequence or, if a Rare is delivered, from the shared rare-bearing sequence. A suppressed occurrence reserves no additional triple. Follow the [shared consumption and identity rules](#shared-strategies).
@@ -392,9 +391,7 @@ Store the Rare first in each rare-bearing triple. After simulating the offer, sw
 
 **Rerolls:** process all replacement slots through the same luck, offset and deferral rules. Consume a fresh applicable non-Rare triple or the next triple from the same shared rare-bearing sequence. Never reuse the original offer's entry.
 
-**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five.
-
-The event-generated identities cannot themselves be Rare; the complete five-card offer contains at most one Rare and consumes only one shared triple.
+**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five. The extra generated identities cannot themselves be Rare; the complete five-card offer contains at most one Rare and consumes only one shared triple.
 
 ### Own-character fixed-rarity offers
 
@@ -473,9 +470,7 @@ Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the in
 
 ## Settled policy: event-specific rewards
 
-**Intent:** keep event-exclusive rewards independent of shared reward sequences.
-
-Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG. Preserve existing choices, costs and eligibility.
+Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
 ## Settled policy: Pael's Tooth
 

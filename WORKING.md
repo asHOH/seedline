@@ -2,8 +2,6 @@
 
 Settled systems and reusable existing-mechanics references are maintained exclusively in [DESIGN.md](DESIGN.md). This file contains only unresolved work and evidence needed to resolve it, evaluated against the [goals and fairness principle](DESIGN.md#goals-and-principles).
 
-When a decision settles, update its canonical section in DESIGN.md and delete the resolved discussion here; retain at most a one-line pointer where needed by remaining work.
-
 **Reading convention:** use **Known** for findings, **Constraints** for local requirements beyond DESIGN, **Decisions needed** for unresolved choices, **Candidates** for unadopted approaches, and **Validation** for checks still needed. Omit unused roles and obvious exhaustive candidate lists; weaker alternatives may remain when they are not the only other candidate. Candidates become specification only when adopted in DESIGN.
 
 ---
@@ -22,11 +20,9 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ## Rewards
 
-### Cards: offers and rarity
+### Random-rarity offer sequences
 
 Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
-
-#### Random-rarity offer sequences
 
 **Decisions needed:**
 
@@ -109,7 +105,7 @@ The [corrected persistent exponential-clock strategy](DESIGN.md#corrected-persis
 
 #### Equivalent-copy routing
 
-Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). Tooth's fixed cohort and reward-choice alignment are settled; its former return-lifecycle question is closed.
+Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). [Tooth's fixed cohort and reward-choice alignment](DESIGN.md#settled-policy-paels-tooth) are settled.
 
 **Decisions needed:**
 
