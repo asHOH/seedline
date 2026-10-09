@@ -242,7 +242,7 @@ Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards
 
 Mix shop-ineligible relics into allocations normally.
 
-**Generic opportunity coverage:** advancing ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the stated exhaustion/borrowing boundary. An outside multi-choice offer must not retire unchosen generic entries before those opportunities. Declining an ordinary generic reward still consumes that displayed opportunity.
+**Generic opportunity coverage:** advancing ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the stated exhaustion/borrowing boundary. An outside multi-choice offer must not retire unchosen generic entries before those opportunities.
 
 ### Source classification and consumption
 
@@ -317,7 +317,7 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 | A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
 | A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
 
-**Compensation:** for each pair `j`, derive an independent fair bit `h(j)` from run seed + compensation purpose + pair index, independently of `u`. Use `b(2j) = h(j)` and `b(2j + 1) = 1 - h(j)`, equivalently `b(n) = h(floor(n / 2)) XOR (n mod 2)`. Here `n` is the zero-based unreduced normal-fight gold-reward index; elites do not advance it. Both the shared gold ordinal and compensation index continue across acts; save their progress. Pair bits are reproducible from their addresses and require no saved phase bit.
+**Compensation:** for each pair `j`, derive an independent fair bit `h(j)` from run seed + compensation purpose + pair index, independently of `u`. Use `b(2j) = h(j)` and `b(2j + 1) = 1 - h(j)`, equivalently `b(n) = h(floor(n / 2)) XOR (n mod 2)`. Here `n` is the zero-based unreduced normal-fight gold-reward index; elites do not advance it. Both indices continue across acts. Pair bits are reproducible from their addresses and require no saved phase bit.
 
 **Rationale:** each pair contributes exactly one compensation gold; odd-length prefixes differ from their expected compensation by only 0.5 gold. Independent pair orientations preserve this balance without imposing correlations between different pairs.
 
@@ -385,15 +385,15 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. The non-Rare sequence split, fixed-odds routing and opening-entry placement remain [unresolved](WORKING.md#random-rarity-offer-sequences).
 
-A generated offer consumes the next triple from its applicable non-Rare sequence or, if a Rare is delivered, from the shared rare-bearing sequence. A suppressed occurrence reserves no additional triple. Follow the [shared consumption and identity rules](#shared-strategies).
+A generated offer consumes the next triple from its applicable non-Rare sequence or, if a Rare is delivered, from the shared rare-bearing sequence. A suppressed occurrence reserves no additional triple.
 
 Opening non-Rare entries use vanilla first-two-normal-offer probabilities through their own deterministic generation. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
 Store the Rare first in each rare-bearing triple. After simulating the offer, swap it with the card at the simulated Rare position if needed. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
 
-**Rerolls:** process all replacement slots through the same luck, offset and deferral rules. Consume a fresh applicable non-Rare triple or the next triple from the same shared rare-bearing sequence. Never reuse the original offer's entry.
+**Rerolls:** generate a fresh offer under the same luck, offset, deferral and sequence rules.
 
-**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five. The extra generated identities cannot themselves be Rare; the complete five-card offer contains at most one Rare and consumes only one shared triple.
+**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five.
 
 ### Own-character fixed-rarity offers
 
@@ -414,8 +414,6 @@ Resolve Defect's two independent 1% triple-Claw substitution checks with event R
 
 - **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
 - **Scroll Boxes — triple-Claw exception:** if either bundle is replaced, bypass the shared Common sequence entirely, without inspecting its head. Each substituted bundle contains three fixed Claws; generate any remaining ordinary bundle entirely with event RNG. If both bundles are substituted, generate no unused ordinary-bundle cards.
-
-Preserve the source's applicable eligibility, duplicate and upgrade rules. The Claw branch is an explicit exception to Scroll Boxes' normal one-Common-triple routing; it consumes no shared card identity/rarity entries. Ordinary generation is not performed and discarded before checking for substitution.
 
 ### Own-character Power offers
 
@@ -441,13 +439,9 @@ Colorless and other-character rewards explicitly share across different batch si
 
 A reachable reroll consumes a fresh replacement offer from the same applicable pool/request/filter group, using its ordinary offer structure and duplicate rules. Fixed-rarity offers consume fresh triples of that fixed rarity, not the random-rarity group's rare-bearing sequence. Other groups consume fresh entries under their existing grouping rules.
 
-New entries carry their own inherent upgrade rolls. Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address. Preserve source-specific upgrade behavior and any separately specified offset effects; rerolling does not enroll these sources in the shared luck system.
+Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address. Preserve separately specified offset effects; rerolling does not enroll these sources in the shared luck system.
 
 Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the intended normal-run scope. No Kaleidoscope reroll decision is required.
-
-### Context
-
-**Catfood baseline:** reward-screen patches use room/event counts and offer position, without shared per-rarity identity sequences.
 
 ## Settled policy: permanent transformations and direct card additions
 
@@ -458,9 +452,9 @@ Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the in
 ### Selection and consumption
 
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
-- **Transformations:** use the original card's pool; Quest cards and Event/Ancient/Token-rarity cards use colorless. Preserve [vanilla eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
+- **Transformations:** retain [vanilla target pools and eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
-- Transformations and direct additions consume on generation; canceled selections and previews consume nothing.
+- Transformations and direct additions consume on generation. Previews and canceled selections consume nothing.
 
 **Infested Automaton:** Study and Touch Core use its event RNG for rarity without advancing the addition rarity sequence. Identities still use the shared character sequences.
 
@@ -511,7 +505,7 @@ Preserve event access and tradability restrictions. Select three eligible owned 
 
 ### Replacement constraints and consumption
 
-Replacement rarity is independent of the outgoing relic's rarity; replacements need not themselves be tradable. Consume all three replacement identities and rarity outcomes when the offer is generated, before the player chooses a trade. The selected trade controls acquisition, not whether the other two offers were consumed.
+Replacement rarity is independent of the outgoing relic's rarity; replacements need not themselves be tradable. Consume all three replacement identities and rarity outcomes when the offer is generated, before the player chooses a trade.
 
 The replacement source and collision/eligibility handling remain [unresolved](WORKING.md#relic-trader). The mapping must be anchored to outgoing relic identity so that common inputs can keep their counterparts when feasible. Do not assign these replacements to the generic rewards allocation: preserve its [opportunity coverage](#allocation). Do not create a separate disjoint Trader allocation. The unresolved source policy must define how consuming Trader offers affects finite stock; it must not silently retire unchosen generic entries.
 
@@ -521,11 +515,11 @@ The replacement source and collision/eligibility handling remain [unresolved](WO
 
 ### Combat addresses
 
-For ordinary normal fights, elites and bosses, address setup by run seed + act + combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate ordinal progress for these combat categories; preserve encounter identity's existing role in setup generation.
+For ordinary normal fights, elites and bosses, address setup by run seed + act + combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate ordinal progress for these combat categories.
 
 Event-created battles that do not consume an ordinary encounter list use event identity + event-local battle ordinal instead of an ordinary combat-category ordinal, together with run seed, encounter identity and setup purpose. They do not advance ordinary encounter setup progress.
 
-Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI. Save local counters under the shared saved-state contract.
+Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI.
 
 ## Settled policy: forced events
 
@@ -545,10 +539,6 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
 - **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
 - **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
-
-### Context
-
-**Catfood baseline:** uses the [vanilla baseline](#vanilla-baseline); cumulative room counters do not determine `?` room type.
 
 ## Reference
 
