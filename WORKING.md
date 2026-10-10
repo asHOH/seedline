@@ -14,7 +14,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; choose and calibrate the non-Rare offer sequences; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; calibrate the two Uncommon probabilities for random-rarity offers; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
@@ -22,23 +22,12 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ### Random-rarity offer sequences
 
-Settled source sharing, luck, deferral, rerolls and Brain Leech grouping: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
+Settled sharing, opening entries, luck, deferral, rerolls and Brain Leech rules: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
 
 **Decisions needed:**
 
-- Choose two or three offer sequences below, including non-Rare routing for fixed-base-odds sources other than Brain Leech. Balance the elite Uncommon advantage against matching choices when different sources reach the Rare threshold.
-- Place the special opening entries under the chosen sharing scheme. Fixed-odds rewards can consume normal non-Rare entries before the first two normal-rule rewards; a fully shared non-Rare sequence can also be advanced by elites. Decide how the opening exception should be addressed without making stored entries depend on the live offset.
-- Calibrate Common/Uncommon distributions for each non-Rare sequence, the shared rare-bearing companions and Brain Leech's two event-generated cards. Exact modeling and probabilities are deferred; include varied routes, events, extra rewards and shops, especially Orrery. Do not adopt the illustrative `3 normal → 1 elite → 2 normal → 1 elite` route as the full model or transfer the shop's `0.008` offset adjustment.
+- Calibrate the two Uncommon probabilities: ordinary non-Rare entries and rare-bearing companions. Provisional starting points are `37/98.51` (about 37.6%) and `38/95` (40%), respectively; neither is settled. Use a proportionate route model covering later-act openings, post-Rare offset resets, source frequency and Rare position, including events, extra rewards and shop access to Orrery. Do not adopt the illustrative `3 normal → 1 elite → 2 normal → 1 elite` route as the full model or transfer the shop's `0.008` offset adjustment. Aim for small overall distribution changes rather than precision unsupported by route assumptions.
 - Behavior without Scarcity, including multiple Rares and deferral, remains deferred.
-
-**Candidates — both remain strong:**
-
-| Offer sequences | Tradeoff |
-|---|---|
-| Three: normal non-Rare, elite non-Rare, shared rare-bearing | Retains a richer elite non-Rare distribution, but which source produces a Rare changes both non-Rare consumption and the resulting Uncommon advantage. |
-| Two: shared non-Rare, shared rare-bearing | Aligns non-Rare choices across sources, at the cost of the distinct elite non-Rare Uncommon advantage. |
-
-**Known — tradeoff:** with one normal and one elite reward, a Rare in the normal reward consumes a shared Rare offer plus an elite non-Rare offer; a Rare in the elite consumes a normal non-Rare offer plus the same shared Rare offer. Changing the shared Rare companions alone cannot remove this difference.
 
 **Validation:** use automated comparison with vanilla across normal-heavy, elite-heavy and mixed routes, including fixed-odds and extra offers. Compare Rare-bearing offer counts, waiting distributions and conditional Uncommon rates; paired same-seed checks should verify offer alignment, rerolls, pending delivery across acts and Brain Leech crossings in slots four/five. Force rare multi-crossing cases rather than relying on manual runs to encounter them.
 

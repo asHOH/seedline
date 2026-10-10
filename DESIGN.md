@@ -342,7 +342,7 @@ Drawbacks below concern A3+:
 
 **Intent:** Equivalent rewards share identity order across granting sources. Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [sequence choices, calibration and behavior without Scarcity](WORKING.md#random-rarity-offer-sequences) remain unresolved.
+**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [exact Uncommon probabilities and behavior without Scarcity](WORKING.md#random-rarity-offer-sequences) remain unresolved.
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
@@ -384,17 +384,21 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 #### Offer sequences and rerolls
 
-Use deterministic triple sequences independent of the luck thresholds. One shared **rare-bearing sequence** supplies one Rare and two non-Rares per triple; non-Rare sequences supply three Common/Uncommon cards. The non-Rare sequence split, fixed-odds routing and opening-entry placement remain [unresolved](WORKING.md#random-rarity-offer-sequences).
+Use two deterministic triple sequences independent of the luck thresholds, shared by normal-fight-rule, elite and fixed-base-odds sources. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares.
 
-A generated offer consumes the next triple from its applicable non-Rare sequence or, if a Rare is delivered, from the shared rare-bearing sequence. A suppressed occurrence reserves no additional triple.
+A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
 
-Opening non-Rare entries use vanilla first-two-normal-offer probabilities through their own deterministic generation. Do not recalculate entries using the live offset or vanilla's shared RNG.
+**Accepted tradeoff:** separate normal/elite non-Rare sequences are rejected because moving a Rare between the two sources would change which non-Rare sequence advances. Sharing preserves both offered triples at the cost of the elite-specific Uncommon advantage, which is small (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Ordinary runs have relatively few elite rewards, some of which contain a Rare; elites retain their relic, gold and higher Rare-chance incentives. Calibrate the shared Uncommon probabilities to limit the overall distribution change; exact source- and route-specific rates are deliberately sacrificed for more consistent choices.
+
+**Uncommon probabilities:** use one probability for ordinary non-Rare entries and another for non-Rare companions in rare-bearing triples. The [two exact values remain deferred](WORKING.md#random-rarity-offer-sequences).
+
+The first two non-Rare triples use vanilla first-two-normal-offer probabilities after an offset reset, through their own deterministic generation. They approximate an Act 1 opening of two normal fights without elite intervention and follow ordinary shared consumption, including consumption by other covered sources. This exception occurs only once per run. Account for the commonly chosen normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
 Store the Rare first in each rare-bearing triple. After simulating the offer, swap it with the card at the simulated Rare position if needed. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
 
 **Rerolls:** generate a fresh offer under the same luck, offset, deferral and sequence rules.
 
-**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. If no Rare is delivered, consume one triple from the sequence used by normal-fight-rule non-Rare rewards; otherwise consume one shared rare-bearing triple. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected. Append them, then swap the triple's Rare into the simulated position, including positions four or five.
+**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them, then swap the triple's Rare into the simulated position, including positions four or five.
 
 ### Own-character fixed-rarity offers
 
