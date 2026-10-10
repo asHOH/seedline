@@ -98,6 +98,7 @@ The tables below are a navigation map, not a second specification. They show set
 |---|---|---|
 | [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
 | [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence progress. | Residual exponential clocks. |
+| [The Future of Potions: card types](#the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Tooth, Bracelet and Bridge selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific priorities; qualifying one-card reward choices share an anchor. | Fixed priority order; event RNG after Bridge exhaustion. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
@@ -525,9 +526,21 @@ With only one owned potion, leave its clock unchanged. Otherwise, renew the offe
 
 Equivalent player-chosen potion use/discard/trades remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks. Preserve slot-dependent offers and distinct trade payoffs; an already random-selected target needs no representative reselection. The representative-selection mechanism remains part of [equivalent-copy routing](WORKING.md#equivalent-copy-routing).
 
-**The Future of Potions:** retain vanilla potion selection without consuming this selection scope; generated rewards follow their existing policies. Card-type assignment remains [unresolved](WORKING.md#the-future-of-potions-card-type-assignment).
+**Vanilla baseline:** Ranwid and Stone select one owned potion uniformly with event RNG.
 
-**Vanilla baseline:** Ranwid and Stone select one owned potion uniformly with event RNG. The Future of Potions offers the first three owned potions in slot order and independently assigns a random allowed card type to each owned potion using event RNG.
+### The Future of Potions: card-type assignment
+
+**Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
+
+Retain the first three owned potions in slot order and their display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow the [Power](#own-character-power-offers) and [Attack/Skill](#other-the-future-of-potions-choices) policies.
+
+- Use three independent event-local type sequences, addressed by run seed + event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
+- Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order; acquisition provenance is irrelevant. Priorities are independent of the type sequences.
+- Within each reward rarity, assign successive sequence entries to potions in ascending priority order. Consume only for offered options, at most three entries total. Freeze assignments under the shared [saved-state contract](#saved-state).
+
+**Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories without arbitrary ID-order preferences, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
+
+**Vanilla baseline:** the event offers the first three owned potions in slot order and independently assigns a random allowed card type to every owned potion using event RNG.
 
 ## Settled policy: Relic Trader
 

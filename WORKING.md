@@ -73,10 +73,6 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 
 **Validation:** compare overlapping selected sets with identical replacement availability, then force competing targets, adjacent outgoing ring nodes, owned-but-unselected successors, cycles, cutoff-ineligible counterparts and per-rarity shortages. Check outgoing selection probabilities, independent replacement rarity, batch uniqueness/order neutrality, generic coverage and which ordinary source changes after an actual trade versus an unchosen offer.
 
-#### The Future of Potions: card-type assignment
-
-**Decision needed:** choose how potions are assigned reward-card types, including randomness addressing and sharing. Potion selection and the vanilla assignment baseline are recorded in [owned-potion selection](DESIGN.md#settled-policy-owned-potion-selection); reward generation for a given rarity/type is already settled.
-
 #### Remaining events and Ancients
 
 Remaining Encounter decisions have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
