@@ -14,7 +14,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; calibrate the two Uncommon probabilities for random-rarity offers; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; calibrate the A0–6 Uncommon probabilities for random-rarity offers; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
@@ -22,14 +22,11 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ### Random-rarity offer sequences
 
-Settled sharing, opening entries, luck, difficulty-specific multi-Rare handling, rerolls and Brain Leech rules: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers).
+Settled rules and A7+ probabilities: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers); supporting evidence: [A7+ calibration](DESIGN.md#a7-rarity-calibration).
 
-**Decisions needed:**
+**Decision needed:** calibrate the A0–6 Uncommon probabilities, accounting for Common-first replacement in multi-Rare offers.
 
-- Calibrate the two A7+ Uncommon probabilities: ordinary non-Rare entries and rare-bearing companions. Provisional starting points are `37/98.51` (about 37.6%) and `38/95` (40%), respectively; neither is settled. Use a proportionate route model covering later-act openings, post-Rare offset resets, source frequency and Rare position, including events, extra rewards and shop access to Orrery. Do not adopt the illustrative `3 normal → 1 elite → 2 normal → 1 elite` route as the full model or transfer the shop's `0.008` offset adjustment. Aim for small overall distribution changes rather than precision unsupported by route assumptions.
-- Calibrate the corresponding A0–6 Uncommon probabilities, accounting for Common-first replacement in multi-Rare offers.
-
-**Validation:** use automated comparison with vanilla across normal-heavy, elite-heavy and mixed routes, including fixed-odds and extra offers. Compare Rare-bearing offer counts, waiting distributions and conditional Uncommon rates; paired same-seed checks should verify offer alignment, rerolls, A7+ pending delivery across acts and Brain Leech crossings in slots four/five. Force A0–6 offers with two through five Rares, including all-Uncommon companions, replacements outside the triple and filtered duplicate skips; verify consumption and entry provenance. Force rare multi-crossing cases rather than relying on manual runs to encounter them.
+**Remaining validation:** verify implemented offer identities, rerolls, A7+ pending delivery across acts and Brain Leech crossings in slots four/five with paired same-seed checks. Force A0–6 offers with two through five Rares, including all-Uncommon companions, replacements outside the triple and filtered duplicate skips; verify consumption and entry provenance. Verify in-game RNG addressing and save/load.
 
 **Pending baseline validation:** determine gameplay impact of Catfood's initial-offer stream bug and direct/event seed collisions; see the baseline above.
 

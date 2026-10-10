@@ -219,7 +219,7 @@ Save sequence contents and progress, including original entry addresses, consump
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity). These approximations are informed by repeating `3 normal → 1 elite → 2 normal → 1 elite` and adjusted downward to account for boss resets.
+- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity). The [A7+ calibration](#a7-rarity-calibration) supports zero as an ordinary-route mean approximation, accepting changed Rare clustering. The A0–6 adjustment retains the earlier `3 normal → 1 elite → 2 normal → 1 elite` estimate, adjusted downward for boss resets; it was not validated by this simulation.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
@@ -342,7 +342,7 @@ Drawbacks below concern A3+:
 
 **Intent:** Equivalent rewards share identity order across granting sources. Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [exact Uncommon probabilities](WORKING.md#random-rarity-offer-sequences) remain unresolved.
+**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
@@ -398,9 +398,9 @@ Use two deterministic triple sequences independent of the luck thresholds, share
 
 A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
 
-**Accepted tradeoff:** separate normal/elite non-Rare sequences are rejected because moving a Rare between the two sources would change which non-Rare sequence advances. Sharing preserves both offered triples at the cost of the elite-specific Uncommon advantage, which is small (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Ordinary runs have relatively few elite rewards, some of which contain a Rare; elites retain their relic, gold and higher Rare-chance incentives. Calibrate the shared Uncommon probabilities to limit the overall distribution change; exact source- and route-specific rates are deliberately sacrificed for more consistent choices.
+**Accepted tradeoff:** separate normal/elite non-Rare sequences are rejected because moving a Rare between the two sources would change which non-Rare sequence advances. Sharing preserves both offered triples at the cost of the elite-specific Uncommon advantage, which is small (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Ordinary runs have relatively few elite rewards, some of which contain a Rare; elites retain their relic, gold and higher Rare-chance incentives. Shared Uncommon probabilities limit the overall distribution change; exact source- and route-specific rates are deliberately sacrificed for more consistent choices.
 
-**Uncommon probabilities:** use one probability for ordinary non-Rare entries and another for non-Rare companions in rare-bearing triples. The [two exact values remain deferred](WORKING.md#random-rarity-offer-sequences).
+**Uncommon probabilities:** at A7+, use **38%** for ordinary non-Rare entries and **39%** for non-Rare companions in rare-bearing triples, except for the opening entries below. These rounded rates closely match expected displayed Uncommon totals in the [three-act calibration](#a7-rarity-calibration), including reduced Act 3 elite preference. The [A0–6 probabilities remain unresolved](WORKING.md#random-rarity-offer-sequences); do not transfer the shop's `+0.008` offset adjustment.
 
 The first two non-Rare triples use vanilla first-two-normal-offer probabilities after an offset reset, through their own deterministic generation. They approximate an Act 1 opening of two normal fights without elite intervention and follow ordinary shared consumption, including consumption by other covered sources. This exception occurs only once per run. Account for the commonly chosen normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
@@ -577,6 +577,16 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 ## Reference
 
 [Event spreadsheet](references/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices, not hidden rewards: Punch-Off is true; Wongos is false. Detailed criteria and state restrictions are in the workbook.
+
+### A7+ rarity calibration
+
+[Rarity model](outputs/reward-calibration.cjs), [route/event projection](outputs/reward-calibration-environment.cjs) and [revised Act 3 results and assumptions](outputs/reward-calibration-act3-results.json), 2026-10-11. Fit expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, accounting for the once-per-run opening triples. Routes complete all three acts; Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%, and its zero-elite branch replaces the second elite with an event after removing the first. Other agreed route, event-choice and spending assumptions are recorded with the results.
+
+The revised model fits **38.022% / 38.876%** over 200,000 runs; 200,000 independent validation runs fit **38.016% / 38.942%**. The settled 38% / 39% differ from vanilla by **−0.011 displayed Uncommons per 100 slots** (−0.0074 per run) on validation. The [earlier route study](outputs/reward-calibration-results.json) includes fifteen sensitivity cases: one-/three-elite routes in all acts fit about 37.66% / 38.28% and 38.81% / 39.90%.
+
+For shops, revised validation gives **4.453% Rare per character-card slot**, versus **4.5%** at offset zero; at least one Rare character card appears in **19.55%** versus **20.56%** of shops. Matching the mean does not preserve clustering. The earlier always-owned Prayer Wheel stress case shifts the mean-matching offset to about `+0.01085`; zero is not a universal match.
+
+Checks cover the route distributions, forced A7+ multi-crossings and an independent vanilla exact-probability comparison. HP/deck eligibility, some event outcomes and non-rarity item effects are approximated; detailed limits accompany the results. Sampling intervals exclude modeling uncertainty. These studies do not validate A0–6 probabilities, in-game RNG addressing or save/load.
 
 ## Appendix: existing mechanics
 
