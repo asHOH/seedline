@@ -24,7 +24,7 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 **Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
-**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies also apply without Scarcity using the corresponding probabilities. The difficulty-specific exception is [own-character random-rarity offers](#own-character-random-rarity-offers), whose behavior without Scarcity remains unresolved; this does not defer shops, relics, potions or other settled policies.
+**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies also apply without Scarcity using the corresponding probabilities; [own-character random-rarity offers](#own-character-random-rarity-offers) specify difficulty-dependent handling of multiple Rares.
 
 **Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve ordinary probability and amount adjustments without repeating them unless their treatment changes. Specify interactions when they affect candidate eligibility, which random decisions occur, addressing, opportunity consumption or persistent RNG state.
 
@@ -342,7 +342,7 @@ Drawbacks below concern A3+:
 
 **Intent:** Equivalent rewards share identity order across granting sources. Corresponding rare-bearing offers share the same choices even when different reward sources reach them; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades cannot scramble later card choices; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [exact Uncommon probabilities and behavior without Scarcity](WORKING.md#random-rarity-offer-sequences) remain unresolved.
+**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior. The random-rarity group's [exact Uncommon probabilities](WORKING.md#random-rarity-offer-sequences) remain unresolved.
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
@@ -356,7 +356,7 @@ Drawbacks below concern A3+:
 | Elite rule | Elites and The Hunt in elite combats; three-card offers. |
 | Fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
 
-All three source groups share luck, thresholds, the rare-bearing sequence and pending-Rare delivery. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
+All three source groups share luck, thresholds and the rare-bearing sequence. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
 
 #### Luck and rarity offset
 
@@ -364,15 +364,15 @@ Maintain luck `L`, initially zero, and a threshold `T = -ln(U)`, where `U` is un
 
 Process card slots in order. Each slot adds `-ln(1 - p)` to luck, where `p` is its Rare probability. Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with one shared combat offset `o`; fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
 
-The combat offset starts at `-0.05`. Normal-fight-rule and elite non-Rare slots add `0.005`, capped at `0.40`; a delivered Rare in either group resets it to `-0.05`. Zero-probability slots add no luck but still grow the offset. Retain boss-reward offset resets, without advancing luck or these offer sequences.
+The combat offset starts at `-0.05`. Normal-fight-rule and elite non-Rare slots add `0.005` (`0.01` without Scarcity), capped at `0.40`; a delivered Rare in either group resets it to `-0.05`. Zero-probability slots add no luck but still grow the offset. Retain boss-reward offset resets, without advancing luck or these offer sequences.
 
-When a slot reaches the threshold and its offer has no Rare yet, resolve that slot as Rare, reset luck to zero and advance to the next threshold. Discard the overshoot. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
+Subject to the difficulty-specific cap below, when a slot reaches the threshold, resolve that slot as Rare, reset luck to zero and advance to the next threshold. Discard the overshoot. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
 
 Luck, the current threshold and sequence progress carry across acts; the combat offset resets to `-0.05` between acts. Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
 
 **Rationale:** before deferral, `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`. Exponential thresholds preserve the supplied waiting probabilities without fitting a route-dependent luck distribution. This does not make the capped, deferred reward system identical to vanilla.
 
-#### One Rare per offer and deferral
+#### A7+: one Rare per offer and deferral
 
 Cap each covered offer at one Rare. If a later slot reaches the next threshold, suppress its Rare and keep the reached threshold pending: do not reset luck or advance the threshold. Treat suppressed slots as non-Rare for applicable offset updates. Continue accumulating luck, but create no further pending occurrences until delivery.
 
@@ -381,6 +381,16 @@ A **Rare-eligible offer** has a positive chance of producing a Rare along its or
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
 **Accepted tradeoff:** separating the rare Scarcity double-Rare elite result changes acquisition opportunities. Fixed-odds offers can also produce multiple Rares in vanilla; additional occurrences beyond the single pending threshold are deliberately omitted rather than queued.
+
+#### A0–6: multiple Rares
+
+Deliver every threshold crossing immediately under the shared luck and source-offset rules, without a per-offer cap or deferral. Multiple Rares mean distinct card identities, not duplicate copies.
+
+Maintain one additional Rare-only identity sequence per character, shared by the three covered source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, consume one rare-bearing triple and `k - 1` draws from this sequence.
+
+Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
+
+**Accepted tradeoff:** extra draws and offer-dependent replacements substantially reduce fairness and consistency; Common-first replacement also favors retaining Uncommons. This may not be the most appropriate method, but is intentional because the design primarily targets A7+.
 
 #### Offer sequences and rerolls
 
@@ -394,11 +404,11 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 
 The first two non-Rare triples use vanilla first-two-normal-offer probabilities after an offset reset, through their own deterministic generation. They approximate an Act 1 opening of two normal fights without elite intervention and follow ordinary shared consumption, including consumption by other covered sources. This exception occurs only once per run. Account for the commonly chosen normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
-Store the Rare first in each rare-bearing triple. After simulating the offer, swap it with the card at the simulated Rare position if needed. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
+Store the Rare first in each rare-bearing triple. After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
 
 **Rerolls:** generate a fresh offer under the same luck, offset, deferral and sequence rules.
 
-**Brain Leech — Share Knowledge:** simulate all five slots first, including pending delivery and any later suppressed crossing. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them, then swap the triple's Rare into the simulated position, including positions four or five.
+**Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
 
 ### Own-character fixed-rarity offers
 
