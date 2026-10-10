@@ -580,25 +580,16 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 ### Rarity calibration
 
-[Rarity model](outputs/reward-calibration.cjs) and [route/event projection](outputs/reward-calibration-environment.cjs), 2026-10-11. Fit expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, accounting for the once-per-run opening triples. Routes complete all three acts; Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%, and its zero-elite branch replaces the second elite with an event after removing the first. Other route, event-choice and spending assumptions are recorded with the results below. Each study uses 200,000 baseline and 200,000 independent validation runs.
+[Rarity model](outputs/reward-calibration.cjs) and [route/event projection](outputs/reward-calibration-environment.cjs), 2026-10-11. Fit vanilla's expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, including once-per-run opening triples and A0–6 Common-first replacement. Each three-act study uses 200,000 baseline and 200,000 independent validation runs. Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%; its zero-elite branch removes the first elite and replaces the second with an event.
 
-#### A7+
+| Study | Validation fit: ordinary / companion | Settled rates | Uncommon difference per 100 displayed slots |
+|---|---|---|---|
+| [A7+](outputs/reward-calibration-act3-results.json) | 38.016% / 38.942% | 38% / 39% | −0.011 |
+| [A0–6](outputs/reward-calibration-a6-results.json) | 39.863% / 40.469% | 40% / 40.5% | +0.105 |
 
-The [revised Act 3 study](outputs/reward-calibration-act3-results.json) fits **38.022% / 38.876%**; validation fits **38.016% / 38.942%**. The settled 38% / 39% differ from vanilla by **−0.011 displayed Uncommons per 100 slots** (−0.0074 per run) on validation. The [earlier route study](outputs/reward-calibration-results.json) includes fifteen sensitivity cases: one-/three-elite routes in all acts fit about 37.66% / 38.28% and 38.81% / 39.90%.
+Shop offsets approximate the mean Rare count across the five character-card slots, excluding fixed colorless cards. Vanilla versus settled Rare chances per slot are **4.453% / 4.5%** at A7+ and **10.762% / 10.8%** at A0–6. Constant offsets change clustering: shops containing any Rare character card occur in **19.55% / 20.56%** and **41.78% / 43.53%**, respectively.
 
-For shops, revised validation gives **4.453% Rare per character-card slot**, versus **4.5%** at offset zero; at least one Rare character card appears in **19.55%** versus **20.56%** of shops. Matching the mean does not preserve clustering. The earlier always-owned Prayer Wheel stress case shifts the mean-matching offset to about `+0.01085`; zero is not a universal match.
-
-#### A0–6
-
-The [A0–6 study](outputs/reward-calibration-a6-results.json) fits **39.866% / 40.456%**; validation fits **39.863% / 40.469%**. The settled 40% / 40.5% add **0.105 displayed Uncommons per 100 slots** (+0.072 per run) on validation. Common-first replacement retains `min(original Uncommons, remaining non-Rare slots)`; ignoring this would fit companions at 40.772% instead of 40.469%.
-
-Seven sensitivity cases use 50,000 runs each. One-/three-elite routes in every act fit about **39.48% / 39.84%** and **40.78% / 41.61%**; restoring A0–2 combat/chest/boss gold gives **39.89% / 40.39%**. Other lower-ascension effects remain approximated.
-
-Shop validation estimates a mean-matching offset of `+0.01762`: **10.762% Rare per character-card slot**, versus **10.8%** at the settled `+0.018` (the former `+0.008` gave 9.8%). Shops with at least one Rare character card occur in **41.78%** of vanilla cases versus **43.53%** at the settled offset. Fixed colorless slots are excluded. One-/three-elite routes imply offsets of `+0.01847` / `+0.01413`; an always-owned Prayer Wheel implies `+0.02658`.
-
-#### Validation limits
-
-Checks cover route distributions, forced A7+ multi-crossings, A0–6 one-to-five-Rare offers, exhaustive Common-first replacement cases and independent exact Rare-probability comparisons. HP/deck eligibility, some event outcomes and non-rarity item effects are approximated; detailed limits accompany the results. Sampling intervals exclude modeling uncertainty. These studies do not validate in-game identities, RNG addressing or save/load.
+These are route-average choices: elite frequency and extra-offer sources shift the fitted rates. The [earlier A7+ study](outputs/reward-calibration-results.json) and A0–6 results retain sensitivity cases, assumptions and checks. The model approximates player-state eligibility, event outcomes and non-rarity item effects.
 
 ## Appendix: existing mechanics
 
