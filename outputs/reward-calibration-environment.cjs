@@ -141,7 +141,9 @@ function simulateEnvironment(seed, config, callbacks) {
     return id;
   }
   function combat(type, source) {
-    s.gold += type === 'elite' ? integer(r, 26, 33) : integer(r, 7, 15);
+    s.gold += config.poverty === false
+      ? (type === 'elite' ? integer(r, 35, 45) : integer(r, 10, 20))
+      : (type === 'elite' ? integer(r, 26, 33) : integer(r, 7, 15));
     offer(type, 3, source);
     if (type === 'normal' && (s.relics.has('PrayerWheel') || config.prayerWheel)) offer(type, 3, 'PrayerWheel');
     if (type === 'elite') relic();
@@ -286,7 +288,7 @@ function simulateEnvironment(seed, config, callbacks) {
       if (node.startsWith('M')) combat('normal', 'normal');
       else if (node.startsWith('E')) combat('elite', 'elite');
       else if (node === 'chest') {
-        s.gold += Math.floor(integer(r, 42, 52) * 0.75); relic();
+        s.gold += Math.floor(integer(r, 42, 52) * (config.poverty === false ? 1 : 0.75)); relic();
         if (config.extraNormal) offer('normal', 3, 'extraNormal');
       } else if (node === 'shop') shop();
       else if (node === 'event' && !config.noEvents) {
@@ -300,7 +302,7 @@ function simulateEnvironment(seed, config, callbacks) {
     }
     count('endGold:' + act, s.gold);
     callbacks.actEnd(act);
-    if (act < 2) s.gold += 75;
+    if (act < 2) s.gold += config.poverty === false ? 100 : 75;
     finishCombat();
   }
 }

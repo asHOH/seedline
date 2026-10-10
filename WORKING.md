@@ -14,7 +14,7 @@ Distinguish normal fights, elites, bosses, Ancients, chests, events and special 
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; calibrate the A0–6 Uncommon probabilities for random-rarity offers; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
@@ -22,9 +22,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ### Random-rarity offer sequences
 
-Settled rules and A7+ probabilities: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers); supporting evidence: [A7+ calibration](DESIGN.md#a7-rarity-calibration).
-
-**Decision needed:** calibrate the A0–6 Uncommon probabilities, accounting for Common-first replacement in multi-Rare offers.
+Settled rules and probabilities: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers); supporting evidence: [rarity calibration](DESIGN.md#rarity-calibration).
 
 **Remaining validation:** verify implemented offer identities, rerolls, A7+ pending delivery across acts and Brain Leech crossings in slots four/five with paired same-seed checks. Force A0–6 offers with two through five Rares, including all-Uncommon companions, replacements outside the triple and filtered duplicate skips; verify consumption and entry provenance. Verify in-game RNG addressing and save/load.
 

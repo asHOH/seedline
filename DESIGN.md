@@ -219,7 +219,7 @@ Save sequence contents and progress, including original entry addresses, consump
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` (`+0.008` without Scarcity). The [A7+ calibration](#a7-rarity-calibration) supports zero as an ordinary-route mean approximation, accepting changed Rare clustering. The A0–6 adjustment retains the earlier `3 normal → 1 elite → 2 normal → 1 elite` estimate, adjusted downward for boss resets; it was not validated by this simulation.
+- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes, accepting changed Rare clustering.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
@@ -400,9 +400,9 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 
 **Accepted tradeoff:** separate normal/elite non-Rare sequences are rejected because moving a Rare between the two sources would change which non-Rare sequence advances. Sharing preserves both offered triples at the cost of the elite-specific Uncommon advantage, which is small (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Ordinary runs have relatively few elite rewards, some of which contain a Rare; elites retain their relic, gold and higher Rare-chance incentives. Shared Uncommon probabilities limit the overall distribution change; exact source- and route-specific rates are deliberately sacrificed for more consistent choices.
 
-**Uncommon probabilities:** at A7+, use **38%** for ordinary non-Rare entries and **39%** for non-Rare companions in rare-bearing triples, except for the opening entries below. These rounded rates closely match expected displayed Uncommon totals in the [three-act calibration](#a7-rarity-calibration), including reduced Act 3 elite preference. The [A0–6 probabilities remain unresolved](WORKING.md#random-rarity-offer-sequences); do not transfer the shop's `+0.008` offset adjustment.
+**Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
 
-The first two non-Rare triples use vanilla first-two-normal-offer probabilities after an offset reset, through their own deterministic generation. They approximate an Act 1 opening of two normal fights without elite intervention and follow ordinary shared consumption, including consumption by other covered sources. This exception occurs only once per run. Account for the commonly chosen normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
+The first two non-Rare triples use vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare, through their own deterministic generation. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate an Act 1 opening of two normal fights without elite intervention and follow ordinary shared consumption, including consumption by other covered sources. This exception occurs only once per run. Account for the commonly chosen normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
 Store the Rare first in each rare-bearing triple. After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
 
@@ -578,15 +578,27 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 [Event spreadsheet](references/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices, not hidden rewards: Punch-Off is true; Wongos is false. Detailed criteria and state restrictions are in the workbook.
 
-### A7+ rarity calibration
+### Rarity calibration
 
-[Rarity model](outputs/reward-calibration.cjs), [route/event projection](outputs/reward-calibration-environment.cjs) and [revised Act 3 results and assumptions](outputs/reward-calibration-act3-results.json), 2026-10-11. Fit expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, accounting for the once-per-run opening triples. Routes complete all three acts; Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%, and its zero-elite branch replaces the second elite with an event after removing the first. Other agreed route, event-choice and spending assumptions are recorded with the results.
+[Rarity model](outputs/reward-calibration.cjs) and [route/event projection](outputs/reward-calibration-environment.cjs), 2026-10-11. Fit expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, accounting for the once-per-run opening triples. Routes complete all three acts; Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%, and its zero-elite branch replaces the second elite with an event after removing the first. Other route, event-choice and spending assumptions are recorded with the results below. Each study uses 200,000 baseline and 200,000 independent validation runs.
 
-The revised model fits **38.022% / 38.876%** over 200,000 runs; 200,000 independent validation runs fit **38.016% / 38.942%**. The settled 38% / 39% differ from vanilla by **−0.011 displayed Uncommons per 100 slots** (−0.0074 per run) on validation. The [earlier route study](outputs/reward-calibration-results.json) includes fifteen sensitivity cases: one-/three-elite routes in all acts fit about 37.66% / 38.28% and 38.81% / 39.90%.
+#### A7+
+
+The [revised Act 3 study](outputs/reward-calibration-act3-results.json) fits **38.022% / 38.876%**; validation fits **38.016% / 38.942%**. The settled 38% / 39% differ from vanilla by **−0.011 displayed Uncommons per 100 slots** (−0.0074 per run) on validation. The [earlier route study](outputs/reward-calibration-results.json) includes fifteen sensitivity cases: one-/three-elite routes in all acts fit about 37.66% / 38.28% and 38.81% / 39.90%.
 
 For shops, revised validation gives **4.453% Rare per character-card slot**, versus **4.5%** at offset zero; at least one Rare character card appears in **19.55%** versus **20.56%** of shops. Matching the mean does not preserve clustering. The earlier always-owned Prayer Wheel stress case shifts the mean-matching offset to about `+0.01085`; zero is not a universal match.
 
-Checks cover the route distributions, forced A7+ multi-crossings and an independent vanilla exact-probability comparison. HP/deck eligibility, some event outcomes and non-rarity item effects are approximated; detailed limits accompany the results. Sampling intervals exclude modeling uncertainty. These studies do not validate A0–6 probabilities, in-game RNG addressing or save/load.
+#### A0–6
+
+The [A0–6 study](outputs/reward-calibration-a6-results.json) fits **39.866% / 40.456%**; validation fits **39.863% / 40.469%**. The settled 40% / 40.5% add **0.105 displayed Uncommons per 100 slots** (+0.072 per run) on validation. Common-first replacement retains `min(original Uncommons, remaining non-Rare slots)`; ignoring this would fit companions at 40.772% instead of 40.469%.
+
+Seven sensitivity cases use 50,000 runs each. One-/three-elite routes in every act fit about **39.48% / 39.84%** and **40.78% / 41.61%**; restoring A0–2 combat/chest/boss gold gives **39.89% / 40.39%**. Other lower-ascension effects remain approximated.
+
+Shop validation estimates a mean-matching offset of `+0.01762`: **10.762% Rare per character-card slot**, versus **10.8%** at the settled `+0.018` (the former `+0.008` gave 9.8%). Shops with at least one Rare character card occur in **41.78%** of vanilla cases versus **43.53%** at the settled offset. Fixed colorless slots are excluded. One-/three-elite routes imply offsets of `+0.01847` / `+0.01413`; an always-owned Prayer Wheel implies `+0.02658`.
+
+#### Validation limits
+
+Checks cover route distributions, forced A7+ multi-crossings, A0–6 one-to-five-Rare offers, exhaustive Common-first replacement cases and independent exact Rare-probability comparisons. HP/deck eligibility, some event outcomes and non-rarity item effects are approximated; detailed limits accompany the results. Sampling intervals exclude modeling uncertainty. These studies do not validate in-game identities, RNG addressing or save/load.
 
 ## Appendix: existing mechanics
 
