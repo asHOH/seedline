@@ -296,7 +296,7 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 ### Rewards and consumption
 
-- Base gold uses ordinal-addressed generation with the non-empty chest ordinal.
+- Base gold uses ordinal-addressed generation with the non-empty chest ordinal. Combining it with the normal-fight/elite gold sequence is rejected because vanilla A3+ chest gold (31–39) is nonuniform.
 - Silver Crucible suppresses the first chest's rewards before generation, advancing neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 
 ### Context
