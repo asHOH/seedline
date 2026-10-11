@@ -451,6 +451,20 @@ Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences:
 
 Colorless and other-character rewards explicitly share across different batch sizes because these sources are few and their offer sizes vary.
 
+### Prismatic Gem and Dingy Rug
+
+**Intent:** align rewards from the same expanded pool while isolating their identities from ordinary character reward sequences.
+
+Preserve the [existing pool-modification boundaries](#card-reward-offers). Generate directly from the effective expanded pool using independent identity sequences under the existing pool/request/filter/draw-grouping rules: non-Rare and rare-bearing triples, fixed-rarity triples, Power sequences and the A0–6 additional-Rare sequence as applicable. Use generated identities directly, including own-character results; all consume only their expanded-pool identity group. Ordinary sources retain their existing sequences and triple boundaries.
+
+Reuse the existing identity group when expansion leaves the complete request's eligible pool unchanged, such as Rug's fixed-Common or already-colorless offers. Apply this to whole requests, not individual slots in mixed-rarity offers.
+
+Retain source rarity rules, eligible-card sampling weights, offer sizes, duplicate exclusions, luck rules and upgrade rules. Neither relic resets luck state or restarts opening-only rarity exceptions. Rerolls advance the same applicable pool group.
+
+Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll progress and fallback rules.
+
+**Accepted tradeoff:** own-character identities in expanded rewards no longer track ordinary own-character identity progress. Separate identity groups preserve ordinary triple boundaries and avoid acquisition-dependent reconstruction; prior shared rarity progress still matters.
+
 ### Rerolls outside the shared luck system
 
 A reachable reroll consumes a fresh replacement offer from the same applicable pool/request/filter group, using its ordinary offer structure and duplicate rules. Fixed-rarity offers consume fresh triples of that fixed rarity, not the random-rarity group's rare-bearing sequence. Other groups consume fresh entries under their existing grouping rules.
@@ -678,7 +692,8 @@ This overview summarizes interference and Catfood differences. Source-specific r
 | Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
 | Colorful Philosophers | Choose another character's color, then receive one three-card offer per ordinary rarity from that pool. Ordinary upgrade rolls apply. |
 | Sea Glass | Five cards per ordinary rarity from one featured other character; take any number of the 15. No random upgrades. |
-| Lasting Candy | Adds a Power on alternating qualifying combat rewards, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
+| Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions explicitly blocks pool modification. |
+| Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
 
 #### Permanent transformations and direct additions
 
