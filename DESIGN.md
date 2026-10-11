@@ -97,6 +97,7 @@ The tables below are a navigation map, not a second specification. They show set
 | System / randomized outcome | Sharing and address/progress | Form |
 |---|---|---|
 | [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
+| [Wing Charm selection](#wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
 | [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence progress. | Residual exponential clocks. |
 | [The Future of Potions: card types](#the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Tooth, Bracelet and Bridge selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific priorities; qualifying one-card reward choices share an anchor. | Fixed priority order; event RNG after Bridge exhaustion. |
@@ -473,6 +474,20 @@ Event-generated supplementary cards use fresh local generation rather than resta
 
 Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the intended normal-run scope. No Kaleidoscope reroll decision is required.
 
+### Wing Charm
+
+**Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
+
+Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the replaced slot's Wing Charm selection provenance (triple priority or supplementary-card membership), without generating a new priority; this does not replace the Rare's own identity/upgrade provenance. Evaluate Swift eligibility on the resulting cards when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; an eligible singleton is selected directly.
+
+**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and selection provenance move with the cards.
+
+- **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots preserves marginal gameplay outcomes while aligning the shared triple, with a presentation-position bias. The opening triples' differing rarity probabilities introduce a negligible accepted exception to this equivalence.
+- **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift counterpart randomness. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
+- **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
+
+**Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. In particular, other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite their different batch sizes. These priorities require no separate advancing Wing Charm counter.
+
 ## Settled policy: permanent transformations and direct card additions
 
 **Intent:** transformations and covered direct additions give comparable same-pool results, preserving source rarity odds and avoiding interference from card reward offers or combat transformations.
@@ -694,6 +709,7 @@ This overview summarizes interference and Catfood differences. Source-specific r
 | Sea Glass | Five cards per ordinary rarity from one featured other character; take any number of the 15. No random upgrades. |
 | Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions explicitly blocks pool modification. |
 | Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
+| Wing Charm / earlier enchantments | Wing Charm's late reward-options hook selects one currently Swift-eligible card per generation batch with `Niche` RNG, including direct generation. Swift cannot overwrite or stack with an existing enchantment. Earlier Glitter excludes its Glam-enchanted cards; earlier Fresnel Lens excludes its Nimble-enchanted Block cards. Ordinary modifiers run before late modifiers; late modifiers follow relic-list order. |
 
 #### Permanent transformations and direct additions
 
