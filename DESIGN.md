@@ -348,6 +348,14 @@ Drawbacks below concern A3+:
 
 **Grouping:** card rewards are organized first by pool, then by rarity request, eligibility filter and draw grouping. Upgrade rules and how many offered cards the player takes do not split identity groups.
 
+### Rerolls
+
+A reachable reroll consumes a fresh offer from the applicable pool/request/filter group, including expanded pools, using its ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects. Shared-luck offers also apply their luck and deferral rules; other sources remain outside that system. Fixed-rarity offers consume fresh triples of that fixed rarity, not the random-rarity group's rare-bearing sequence.
+
+Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address.
+
+Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the normal-run scope.
+
 ### Own-character random-rarity offers
 
 **Intent:** separate when a Rare appears from the complete choice offered. Align corresponding rare-bearing and non-Rare opportunities while preserving source-dependent Rare chances; matching combat-room ordinals need not consume matching offer entries.
@@ -394,7 +402,7 @@ Before presentation swaps, replace the first Common in canonical generation orde
 
 **Accepted tradeoff:** extra draws and offer-dependent replacements substantially reduce fairness and consistency; Common-first replacement also favors retaining Uncommons. This may not be the most appropriate method, but is intentional because the design primarily targets A7+.
 
-#### Offer sequences and rerolls
+#### Offer sequences
 
 Use two deterministic triple sequences independent of the luck thresholds, shared by normal-fight-rule, elite and fixed-base-odds sources. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares.
 
@@ -407,8 +415,6 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 The first two non-Rare triples use vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare, through their own deterministic generation. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate an Act 1 opening of two normal fights without elite intervention and follow ordinary shared consumption, including consumption by other covered sources. This exception occurs only once per run. Account for the commonly chosen normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
 Store the Rare first in each rare-bearing triple. After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
-
-**Rerolls:** generate a fresh offer under the same luck, offset, deferral and sequence rules.
 
 **Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
 
@@ -460,19 +466,11 @@ Preserve the [existing pool-modification boundaries](#card-reward-offers). Gener
 
 Reuse the existing identity group when expansion leaves the complete request's eligible pool unchanged, such as Rug's fixed-Common or already-colorless offers. Apply this to whole requests, not individual slots in mixed-rarity offers.
 
-Retain source rarity rules, eligible-card sampling weights, offer sizes, duplicate exclusions, luck rules and upgrade rules. Neither relic resets luck state or restarts opening-only rarity exceptions. Rerolls advance the same applicable pool group.
+Retain source rarity rules, eligible-card sampling weights, offer sizes, duplicate exclusions, luck rules and upgrade rules. Neither relic resets luck state or restarts opening-only rarity exceptions.
 
 Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll progress and fallback rules.
 
 **Accepted tradeoff:** own-character identities in expanded rewards no longer track ordinary own-character identity progress. Separate identity groups preserve ordinary triple boundaries and avoid acquisition-dependent reconstruction; prior shared rarity progress still matters.
-
-### Rerolls outside the shared luck system
-
-A reachable reroll consumes a fresh replacement offer from the same applicable pool/request/filter group, using its ordinary offer structure and duplicate rules. Fixed-rarity offers consume fresh triples of that fixed rarity, not the random-rarity group's rare-bearing sequence. Other groups consume fresh entries under their existing grouping rules.
-
-Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address. Preserve separately specified offset effects; rerolling does not enroll these sources in the shared luck system.
-
-Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the intended normal-run scope. No Kaleidoscope reroll decision is required.
 
 ### Wing Charm
 
