@@ -471,7 +471,7 @@ A reachable reroll consumes a fresh replacement offer from the same applicable p
 
 Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address. Preserve separately specified offset effects; rerolling does not enroll these sources in the shared luck system.
 
-Kaleidoscope's Neow offers cannot be rerolled with Pael's reroll relic in the intended normal-run scope. No Kaleidoscope reroll decision is required.
+Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the intended normal-run scope. No Kaleidoscope reroll decision is required.
 
 ## Settled policy: permanent transformations and direct card additions
 
