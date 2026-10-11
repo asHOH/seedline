@@ -73,9 +73,9 @@ Each controlled random decision can be described along five dimensions: **outcom
 
 Sharing scope and address/progress are separate design choices. Different stages of one source—such as occurrence, rarity, identity and attributes—may use different scopes and progress.
 
-Randomness follows the shared [opportunity-consumption](#opportunity-consumption) invariant: progress commits when the corresponding random opportunity becomes available to the player. Consumption is therefore a shared rule, not a separate architectural dimension.
+Consumption is a shared [invariant](#opportunity-consumption), not a separate architectural dimension.
 
-The tables below are a navigation map, not a second specification. They show settled mechanisms with distinct randomness architecture, not every policy or exception; linked policy sections own the details. Shared contracts for [opportunity consumption](#opportunity-consumption), [stable entry addresses](#stable-entry-addresses), [act-local resets](#act-local-resets) and [saved state](#saved-state) apply where relevant and are omitted unless a mechanism differs.
+These tables summarize distinct settled mechanisms; linked policies own the details and exceptions. [Shared contracts](#shared-strategies) are omitted unless a mechanism differs.
 
 ### Rewards
 
@@ -107,7 +107,7 @@ The tables below are a navigation map, not a second specification. They show set
 
 ## Shared strategies
 
-These are shared contracts for covered policies. The [fairness principle](#goals-and-principles), [opportunity consumption](#opportunity-consumption), [stable addresses](#stable-entry-addresses) and [act-local reset safety](#act-local-resets) are design invariants. Source policies specify sharing scopes, additional rules and exceptions; otherwise these contracts apply without restatement.
+The [fairness principle](#goals-and-principles) and labeled invariants are shared constraints. All contracts below apply to covered policies; source policies add sharing scopes, local rules and exceptions.
 
 ### RNG derivation and addressing
 
@@ -394,7 +394,7 @@ Use two deterministic triple sequences independent of the luck thresholds, share
 
 A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
 
-**Accepted tradeoff:** separate normal/elite non-Rare sequences are rejected because moving a Rare between the two sources would change which non-Rare sequence advances. Sharing preserves both offered triples at the cost of the elite-specific Uncommon advantage, which is small (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Ordinary runs have relatively few elite rewards, some of which contain a Rare; elites retain their relic, gold and higher Rare-chance incentives. Shared Uncommon probabilities limit the overall distribution change; exact source- and route-specific rates are deliberately sacrificed for more consistent choices.
+**Accepted tradeoff:** separate normal/elite non-Rare sequences would advance differently when a Rare moves between sources. Sharing preserves both triples but removes elites' Uncommon advantage (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Relatively few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives. Shared Uncommon rates limit the overall distribution change, deliberately sacrificing exact source- and route-specific rates for consistent choices.
 
 **Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
 
@@ -411,7 +411,7 @@ Use separate Common, Uncommon and Rare triple sequences.
 | Sequence | Sources and consumption |
 |---|---|
 | Rare | One triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. |
-| Common | Glass Eye consumes two triples; Crystal Sphere's Common offer consumes one. Room Full of Cheese consumes one; Scroll Boxes follows its branch rules below. |
+| Common | Glass Eye consumes two triples; Crystal Sphere's Common offer consumes one. Room Full of Cheese and Scroll Boxes follow the rules below. |
 | Uncommon | Glass Eye consumes two triples; Crystal Sphere's Uncommon offer consumes one. |
 
 - **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
@@ -446,9 +446,9 @@ Colorless and other-character rewards explicitly share across different batch si
 
 ### Prismatic Gem and Dingy Rug
 
-**Intent:** align rewards from the same expanded pool while isolating their identities from ordinary character reward sequences.
+**Intent:** align rewards from the same expanded pool.
 
-Preserve the [existing pool-modification boundaries](#card-reward-offers). Generate directly from the effective expanded pool using independent identity sequences under the existing pool/request/filter/draw-grouping rules: non-Rare and rare-bearing triples, fixed-rarity triples, Power sequences and the A0–6 additional-Rare sequence as applicable. Use generated identities directly, including own-character results; all consume only their expanded-pool identity group. Ordinary sources retain their existing sequences and triple boundaries.
+Preserve the [existing pool-modification boundaries](#card-reward-offers). Generate identities directly from the effective expanded pool using independent identity sequences under the card policy's pool/request/filter/draw-grouping rules. All results, including own-character cards, consume only that expanded group; ordinary identity sequences and triple boundaries remain unchanged.
 
 Reuse the existing identity group when expansion leaves the complete request's eligible pool unchanged, such as Rug's fixed-Common or already-colorless offers. Apply this to whole requests, not individual slots in mixed-rarity offers.
 
@@ -456,7 +456,7 @@ Retain source rarity rules, eligible-card sampling weights, offer sizes, duplica
 
 Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll progress and fallback rules.
 
-**Accepted tradeoff:** own-character identities in expanded rewards no longer track ordinary own-character identity progress. Separate identity groups preserve ordinary triple boundaries and avoid acquisition-dependent reconstruction; prior shared rarity progress still matters.
+**Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity progress still matters.
 
 ### Wing Charm
 

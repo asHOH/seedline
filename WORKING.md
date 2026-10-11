@@ -1,14 +1,12 @@
 # Deterministic seed mod — working document
 
-Settled systems and reusable existing-mechanics references are maintained exclusively in [DESIGN.md](DESIGN.md). This file contains only unresolved work and evidence needed to resolve it, evaluated against the [goals and fairness principle](DESIGN.md#goals-and-principles).
+Unresolved work and supporting evidence, evaluated against [DESIGN's goals and fairness principle](DESIGN.md#goals-and-principles). [DESIGN.md](DESIGN.md) owns settled policies and reusable mechanics references.
 
-**Reading convention:** use **Known** for findings, **Constraints** for local requirements beyond DESIGN, **Decisions needed** for unresolved choices, **Candidates** for unadopted approaches, and **Validation** for checks still needed. Omit unused roles and obvious exhaustive candidate lists; weaker alternatives may remain when they are not the only other candidate. Candidates become specification only when adopted in DESIGN.
+**Reading convention:** **Known** = findings; **Constraints** = requirements beyond DESIGN; **Decisions needed** = open choices; **Candidates** = unadopted approaches; **Validation** = pending checks. Candidates become specification only when adopted in DESIGN. Omit empty roles and obvious exhaustive alternatives; weaker alternatives may remain when they are not the only other candidate.
 
 ---
 
-Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview) to frame each remaining decision.
-
-Distinguish normal fights, elites, bosses, Ancients, chests, events and special relic effects only where their rules differ.
+Frame decisions with the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview), distinguishing contexts only where their rules differ.
 
 **Candidate defaults:** cumulative ordinals for Rewards; act-local ordinals for Encounter, subject to each unresolved source's sharing/addressing decision.
 
