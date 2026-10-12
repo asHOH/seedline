@@ -16,6 +16,12 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
+## Deviation review
+
+Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: A0–6 Common-first Rare replacement; finite relic allocation/filtering/borrowing, Wongos and empty-chest consumption; forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing, transformations and potion-option mapping; Wing Charm's position bias and opening-triple exception. Reassess the proposed NoSL 1 for presentation swaps: establish a visual difference from vanilla, rather than an internal rearrangement. Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
+
+**Deferred — Slippery Bridge:** revise its selection policy before assigning an impact grade.
+
 ## Rewards
 
 ### Random-rarity offer sequences

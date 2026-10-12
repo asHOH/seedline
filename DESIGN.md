@@ -2,7 +2,7 @@
 
 This file records settled decisions, rationale and existing-mechanics references; it forms the specification as the design is completed. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Systems not yet specified retain existing behavior.
 
-**Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
+**Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; deviation notes, rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
 
 ## Goals and principles
 
@@ -15,6 +15,16 @@ This file records settled decisions, rationale and existing-mechanics references
 **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
 
 **Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent RNG state, unless order dependence is explicitly intended by the effect. This does not change presentation order or erase meaningful sequential gameplay effects.
+
+### Vanilla deviations
+
+Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by what changes. Grade distinct deviations separately; omit unchanged behavior and do not repeat rationale in the label.
+
+**Impact levels:** **1** — presentation only; **2** — preserves expectation but changes distribution or correlations; **3** — minor expectation changes without meaningful effects on player experience or strategy; **4** — meaningful effects on player experience or strategy.
+
+**Play modes:** **NoSL** assumes no save/loading throughout the run. **SL** allows exploring every available action sequence from the current save before committing to the next saved state; gaining or losing useful outcome preview/manipulation counts as level 4. SL impact is at least NoSL impact: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
+
+For very rare deviations, append approximate frequency with its denominator and relevant conditions; identify estimates as such.
 
 ## Scope
 
@@ -221,13 +231,17 @@ Save sequence contents and progress, including original entry addresses, consump
 - Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes, accepting changed Rare clustering.
+- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use run seed + [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
 
-**Tradeoff — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
+**Vanilla deviation — NoSL 4:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
+
+**Vanilla deviation — SL 4:** independent restock streams and entry-bound prices remove outcome manipulation through unrelated purchase order.
+
+**Boundary — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 Baseline: [shop mechanics](#generation-and-selection-mechanics) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -276,6 +290,8 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 
 **Example — batch boundaries:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
+**Vanilla deviation — SL 4:** failed grants no longer let players advance to a different later potion outcome.
+
 ### Drop occurrence
 
 - Retain [Catfood addressing](#catfood-addressing-and-combat-rewards) and [vanilla's shared changing probability](#generation-and-selection-mechanics) across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
@@ -312,7 +328,7 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold do not co
 
 **Rationale:** each pair contributes exactly one compensation gold; odd-length prefixes differ from their expected compensation by only 0.5 gold. Independent pair orientations preserve this balance without imposing correlations between different pairs.
 
-**Tradeoff:** expected gold is unchanged, but A3+ normal gold is nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
+**Vanilla deviation — NoSL 2:** A3+ normal gold keeps its expectation but becomes nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8. Compensation bits within each pair are negatively correlated.
 
 **Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
 
@@ -376,7 +392,7 @@ A **Rare-eligible offer** has a positive chance of producing a Rare along its or
 
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Accepted tradeoff:** separating the rare Scarcity double-Rare elite result changes acquisition opportunities. Fixed-odds offers can also produce multiple Rares in vanilla; additional occurrences beyond the single pending threshold are deliberately omitted rather than queued.
+**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. Very rare: approximately **0.3% of runs** (estimate).
 
 #### A0–6: multiple Rares
 
@@ -394,7 +410,9 @@ Use two deterministic triple sequences independent of the luck thresholds, share
 
 A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
 
-**Accepted tradeoff:** separate normal/elite non-Rare sequences would advance differently when a Rare moves between sources. Sharing preserves both triples but removes elites' Uncommon advantage (about 0.14 extra Uncommons displayed per three-card non-Rare offer near zero starting offset). Relatively few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives. Shared Uncommon rates limit the overall distribution change, deliberately sacrificing exact source- and route-specific rates for consistent choices.
+**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates.
+
+**Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
 
 **Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
 
@@ -510,6 +528,8 @@ Consumed clocks are marked zero.
 
 Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
 Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
+
+**Vanilla deviation — SL 4:** replaying upgrade purchases affecting disjoint card sets in different orders no longer changes their targets, such as buying Whetstone before or after War Paint.
 
 ## Settled policy: fixed-priority card selection
 

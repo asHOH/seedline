@@ -12,4 +12,5 @@
 - Define shared invariants, boundaries, consumption rules and rationale once; source policies add only local rules and exceptions. Reference shared contracts instead of repeating them or predictable gameplay modifiers.
 - Within settled policies, put intent/scope before operative rules, baseline context last, and rationale beside the rule it explains; use architecture dimensions only where informative.
 - Link from `DESIGN.md` to `WORKING.md` only at explicit unresolved seams; settled behavior must not depend on `WORKING.md`.
-- Review all behavioral changes against the [behavior-preservation principle](DESIGN.md#goals-and-principles); flag changes without a stated rationale. Report conflicting policies explicitly; do not silently settle them during editorial cleanup.
+- Review all behavioral changes against the [behavior-preservation principle](DESIGN.md#goals-and-principles). Use the [vanilla-deviation convention](DESIGN.md#vanilla-deviations) for impact notes; do not repeat rationale in those notes.
+- Report conflicting policies explicitly; do not silently settle them.
