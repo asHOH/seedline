@@ -219,7 +219,9 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 ### Saved state
 
-Save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
+
+At each checkpoint, save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -537,7 +539,7 @@ Different one-card offers have distinct anchors; a rerolled offer uses its fresh
 
 Use the [shared corrected-clock strategy](#corrected-persistent-selection-priorities) in a Bridge-only scope over [vanilla's candidate set](#slippery-bridge-selection), including fallback. Retain [single-card reward-choice alignment](#single-card-reward-choice-alignment).
 
-When the event shows a newly selected card, apply the shared clock update once. Renew that copy's clock if the player declines it, once before selecting the next card. Use an independent draw keyed by the copy's selection key and renewal count. Save clocks, renewal counts, the shown card and rejection history under the shared [saved-state](#saved-state) contract.
+When the event shows a newly selected card, apply the shared clock update once. Renew that copy's clock if the player declines it, once before selecting the next card. Use an independent draw keyed by the copy's selection key and renewal count.
 
 ## Settled policy: owned-potion selection
 
@@ -545,7 +547,7 @@ When the event shows a newly selected card, apply the shared clock update once. 
 
 Ranwid the Elder and Stone of All Time share one run-wide scope using the [shared clock strategy](#corrected-persistent-selection-priorities), offering the lowest-clock owned potion. Each acquired copy remains a distinct logical occurrence.
 
-With only one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once at commitment, using its key and a per-occurrence renewal count, so a declined sacrifice remains selectable later. Save the offer target and clock state; restoring the offer does not advance clocks again. Preserve event access, costs and rewards.
+With only one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once at commitment, using its key and a per-occurrence renewal count, so a declined sacrifice remains selectable later. Run-wide clocks and renewal counts follow the shared [saved-state](#saved-state) contract. Preserve event access, costs and rewards.
 
 Equivalent player-chosen potion use/discard/trades remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks. Preserve slot-dependent offers and distinct trade payoffs; an already random-selected target needs no representative reselection. The representative-selection mechanism remains part of [equivalent-copy routing](WORKING.md#equivalent-copy-routing).
 
@@ -559,7 +561,7 @@ Retain the first three owned potions in slot order and their display order. Use 
 
 - Use three independent event-local type sequences, addressed by run seed + event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
 - Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order; acquisition provenance is irrelevant. Priorities are independent of the type sequences.
-- Within each reward rarity, assign successive sequence entries to potions in ascending priority order. Consume only for offered options, at most three entries total. Freeze assignments under the shared [saved-state contract](#saved-state).
+- Within each reward rarity, assign successive sequence entries to potions in ascending priority order. Consume only for offered options, at most three entries total. Keep assignments fixed for the current event.
 
 **Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories without arbitrary ID-order preferences, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
 
@@ -647,6 +649,18 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 | Potion drops | Earlier checks affect later drop probability. |
 | Potion generation | Failed grants can still shift later results. |
 | Transformations / direct additions | Results depend on the source and its other RNG consumption. |
+
+### Run-save checkpoints
+
+| Situation | Save timing |
+|---|---|
+| Map-node entry, all room types | After exiting the previous room, before resolving `?`, selecting the event/encounter or generating room contents. Loading regenerates the destination from this checkpoint. |
+| Ordinary event, shop, rest site, chest | No additional checkpoint for choices, purchases, rewards or completion. Results reach disk at the next checkpoint. |
+| Normal, elite and boss combat | Additional checkpoint after victory hooks, before ordinary room-end reward generation and selection. Loading regenerates those rewards. |
+| Ancient | Additional checkpoint when the Ancient finishes. Loading restores it as finished. |
+| Event-created combat | Starting combat adds no checkpoint; victory creates one with information needed to reconstruct the parent event. |
+
+`Save and Quit` returns to the menu without taking a new snapshot; loading uses the last checkpoint.
 
 ### Catfood addressing and combat rewards
 
