@@ -95,7 +95,7 @@ These tables summarize distinct settled mechanisms; linked policies own the deta
 | [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity progress is separate from per-rarity identity progress. | Rarity-roll streams and finite shuffled allocations. |
 | [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity progress. Ordinary drop checks share combat-wide progress and changing probability. | Rarity/identity streams and indexed drop checks. |
 | [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
-| [Combat gold](#shared-sequence-and-compensation) | Normal fights and elites share a gold ordinal; normal fights also advance a separate compensation index. | Shared uniform rolls and paired compensation bits. |
+| [Combat gold](#settled-policy-combat-gold) | Separate cumulative normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
 | [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and threshold progress are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Progress is separated by pool/request/offer group and is independent of shared Rare-occurrence progress. | Triple sequences, other identity/rarity streams and event-RNG draws. |
 | [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has independently addressed upgrade randomness. | Entry-derived roll. |
@@ -304,41 +304,25 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 
 ### Rewards and consumption
 
-- Base gold uses ordinal-addressed generation with the non-empty chest ordinal. Combining it with the normal-fight/elite gold sequence is rejected because vanilla A3+ chest gold (31–39) is nonuniform.
+- Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
 - Silver Crucible suppresses the first chest's rewards before generation, advancing neither chest ordinal nor relic sequences; the next chest is ordinal 1.
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
 ## Settled policy: combat gold
 
-**Intent:** share random variation between unreduced normal-fight and elite gold draws so reordering them preserves total base gold. Keep vanilla expected gold and isolate these draws from other rewards.
+**Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
 
-### Shared sequence and compensation
+**Generation and progress:** derive each draw from run seed + gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites have separate saved ordinals that continue across acts; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
 
-**Shared roll:** generate uniform `u ∈ [0,1)` from run seed + combined normal-fight/elite gold-reward ordinal, including event battles. Set `X = floor(11u)` at A0–2 or `floor(8u)` at A3+.
+Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
 
-Fixed or absent combat gold, fixed extra payouts and event-choice gold do not consume this sequence; see the appendix for exceptions.
-
-| Difficulty | Shared uniform integer `X` | Normal-fight gold | Elite gold |
-|---|---|---|---|
-| A0–2 | 0–10 inclusive | `10 + X` | `35 + X` |
-| A3+ | 0–7 inclusive | `7 + X + b` | `26 + X` |
-
-**Compensation:** for each pair `j`, derive an independent fair bit `h(j)` from run seed + compensation purpose + pair index, independently of `u`. Use `b(2j) = h(j)` and `b(2j + 1) = 1 - h(j)`, equivalently `b(n) = h(floor(n / 2)) XOR (n mod 2)`. Here `n` is the zero-based unreduced normal-fight gold-reward index; elites do not advance it. Both indices continue across acts. Pair bits are reproducible from their addresses and require no saved phase bit.
-
-**Rationale:** each pair contributes exactly one compensation gold; odd-length prefixes differ from their expected compensation by only 0.5 gold. Independent pair orientations preserve this balance without imposing correlations between different pairs.
-
-**Vanilla deviation — NoSL 2:** A3+ normal gold keeps its expectation but becomes nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8. Compensation bits within each pair are negatively correlated.
-
-**Gremlin Merc:** half-gold rewards use `5 + floor(6u)` at A0–2 or `4 + floor(5u)` at A3+, consuming the shared gold ordinal without applying or advancing compensation.
+**Rationale and tradeoff:** an extra elite does not shift later normal-fight gold, or vice versa. Reordering unreduced rewards with the same category counts preserves individual base payouts and therefore their total after unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward can instead change total base gold by 11–26 at A3+, rather than a nearly fixed premium.
 
 ### Rejected alternatives
 
-Drawbacks below concern A3+:
-
-- **Shared range-relative rolls:** preserves vanilla distributions, but swapping normal → elite to elite → normal can change total gold by 1.
-- **Shared identical offsets without compensation:** using `X = 0–7`, normal `7 + X` and elite `26 + X` removes order differences but lowers expected normal-fight gold by 0.5.
-- **Separate normal-fight and elite sequences:** preserves vanilla distributions, but replacing a normal fight with an elite can shift the premium roughly 8 gold above or below its expectation.
+- **Shared rolls with independent compensation:** one cumulative normal-fight/elite gold ordinal supplies uniform `u ∈ [0,1)`. At A0–2, use `X = floor(11u)`, normal `10 + X`, elite `35 + X`; at A3+, use `X = floor(8u)`, normal `7 + X + b`, elite `26 + X`. At A3+, `b` is a fair bit addressed by the cumulative unreduced normal-gold index, independently of `u` and other bits. Half-gold rewards consume only the shared ordinal and use the existing reduced range. This stabilizes the replacement premium and preserves base totals when reordering unreduced rewards, but Bowler Hat can still change the received total by 1. **Vanilla deviation — NoSL 2:** A3+ normal gold keeps its expectation but becomes nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
+- **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
 
 Baseline: [gold ranges and exceptions](#generation-and-selection-mechanics) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -778,6 +762,8 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 **Normal versus elite card rewards:** both offer three cards from the same character pool, exclude duplicates within the offer and use the same upgrade rules; elites have no inherent upgrade-chance bonus. Under Scarcity, ordinary normal offers cannot contain two Rares because the rare chance after offset is negative; elites can produce Rare → non-Rare → Rare because the last slot has a 0.5% Rare chance after the intervening non-Rare. Catfood preserves these rules.
 
 **Combat gold:** uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33.
+
+**Bowler Hat:** multiplies gold gained by 1.25; `PlayerCmd.GainGold` truncates the modified amount to an integer for each payout.
 
 **Combat-gold exceptions:** Fake Merchant grants a fixed 300 gold, unaffected by Poverty. Battleworn Dummy's three event combats grant no normal combat rewards. Gremlin Merc grants normal gold unless Fat Gremlin escapes: the gold proportion becomes one-half if no gold was stolen, or zero otherwise; vanilla rounds the reduced range endpoints before rolling and generates no gold reward at zero. Non-final bosses grant fixed 100 gold (75 with Poverty); the final boss grants no ordinary reward set. Fixed extra payouts, including recovered stolen gold, Royalties and Amethyst Aubergine, are separate from the normal combat-gold roll.
 
