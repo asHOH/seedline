@@ -49,6 +49,8 @@ The design has two top-level categories:
 
 These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
 
+Relic Trader's outgoing selection and replacement targets are handled together under Encounter.
+
 Category and RNG ownership are separate: a reward can use event RNG.
 
 ### Game context
