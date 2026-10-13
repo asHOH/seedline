@@ -81,6 +81,14 @@ Remaining Encounter decisions have not yet been decomposed. Evaluate them agains
 
 ### Item-selection priorities
 
+#### Canonical card order
+
+Shared contract and transformation use: [canonical card order](DESIGN.md#canonical-card-order) and [transformation batches](DESIGN.md#selection-and-consumption).
+
+**Decisions needed:** define the usefulness ranking of card identities, upgrade states and enchantments. The rough direction is Curse < Strike < Defend < other Basic < Common; complete and refine this ranking, including how status changes affect placement. Identical cards remain tied under the shared contract.
+
+**Validation:** permute batch enumeration and equivalent physical copies with different hidden RNG state; compare transformation results and subsequent sequence state. Include different original-identity exclusions. Assess combat-shuffle alignment separately under [Shuffles](#shuffles).
+
 #### Equivalent-copy routing
 
 Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). [Fixed-priority selection and reward-choice alignment](DESIGN.md#settled-policy-fixed-priority-card-selection) are settled.
@@ -105,6 +113,8 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 #### Shuffles
 
 **Decision needed:** opening-shuffle addressing and how later shuffles share or advance randomness.
+
+**Planned input ordering:** use [canonical card order](DESIGN.md#canonical-card-order), including upgrade/enchantment distinctions, before shuffling. The shuffle mechanism and its alignment guarantees remain open; a common input order alone does not settle them.
 
 **Candidates:**
 

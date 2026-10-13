@@ -188,6 +188,16 @@ Retain one logical occurrence per copy, with its own inherent randomness: multip
 
 **Presentation boundary:** operate visibly on the card the player selected. If the first displayed Strike is upgraded, that first Strike must visibly be upgraded; never substitute another displayed copy or reorder cards to implement equivalence. Preserve acquisition-order-based display and original reward entry addresses. Hidden selection provenance may be routed independently of the physical UI object, without rewriting past generated attributes.
 
+### Canonical card order
+
+**Intent:** give unordered card batches a common processing order based on usefulness, reusable by permanent transformations and planned combat shuffling.
+
+Use a fixed, authored usefulness ranking of card identities and their upgrade/enchantment states, rather than alphabetical names or seed-derived priorities. Identify cards by stable model IDs. The exact [ranking and state comparisons remain unresolved](WORKING.md#canonical-card-order).
+
+Identical cards remain tied regardless of hidden RNG provenance; retain every copy, without using internal RNG state, acquisition order or physical position to break ties. Tied-copy permutations must leave gameplay outcomes and subsequent RNG state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
+
+Source policies specify which parts of the order apply. Canonical card order controls random-request processing, not display order or intentionally sequential effects; reward offers' canonical generation order remains their existing entry order.
+
 ### Opportunity-specific selection priorities
 
 **Main idea:** for a source that adopts uniform selection without replacement, give each eligible candidate an independent priority and take the lowest `k` priorities. Removing an unselected candidate cannot change the selected set.
@@ -487,6 +497,7 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** retain [vanilla target pools and eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
+- **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Transformations and direct additions consume on generation. Previews and canceled selections consume nothing.
 
