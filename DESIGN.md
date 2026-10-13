@@ -339,7 +339,7 @@ Baseline: [gold ranges and exceptions](#generation-and-selection-mechanics) and 
 
 ### Rerolls
 
-A reachable reroll consumes a fresh offer from the applicable pool/request/filter group, including expanded pools, using its ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects. Shared-luck offers also apply their luck and deferral rules; other sources remain outside that system. Fixed-rarity offers consume fresh triples of that fixed rarity, not the random-rarity group's rare-bearing sequence.
+A reachable reroll consumes a fresh offer from the applicable pool/request/filter group, including expanded pools, using its ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects. Shared-luck offers also apply their luck and deferral rules; other sources remain outside that system. Fixed-rarity rerolls retain their group's sequence structure: triple-backed offers consume fresh triples, while Power and other-character offers consume the required number of individual entries from their respective sequences. They do not consume the random-rarity group's rare-bearing sequence.
 
 Event-generated supplementary cards use fresh local generation rather than restarting the original offer's address.
 
@@ -379,7 +379,7 @@ A **Rare-eligible offer** has a positive chance of producing a Rare along its or
 
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. Very rare: approximately **0.3% of runs** (estimate).
+**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Baseline frequency:** approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
 #### A0–6: multiple Rares
 
@@ -389,7 +389,7 @@ Maintain one additional Rare-only identity sequence per character, shared by the
 
 Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
-**Accepted tradeoff:** extra draws and offer-dependent replacements substantially reduce fairness and consistency; Common-first replacement also favors retaining Uncommons. This may not be the most appropriate method, but is intentional because the design primarily targets A7+.
+**Accepted tradeoff:** extra-Rare sequence progress depends on prior Rare counts, and companion replacements depend on each offer's composition; Common-first replacement favors retaining Uncommons. These alignment and distribution tradeoffs are accepted for A0–6 because the design primarily targets A7+.
 
 #### Offer sequences
 
@@ -765,7 +765,7 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 
 **Event-list wrapping (vanilla):** the cursor indexes `events[cursor % events.Count]`; the list wraps without reshuffling or clearing visits, and skipped entries remain in it. Skips advance the cursor too. A skipped event can qualify after wrapping; a full unsuccessful scan instead returns the cursor's event anyway, potentially repeated or ineligible. See [RoomSet.NextEvent / EnsureNextEventIsValid](sts2-decompiled/MegaCrit.Sts2.Core.Rooms/RoomSet.cs).
 
-**Event-pool capacity:** act lists contain 25–31 entries before eligibility/visited filtering, versus 13–15 ordinary floors per act. Ordinary event-policy discussion assumes sufficient eligible, unvisited supply and excludes wrapping, exhaustion and singleton sets.
+**Event-pool capacity:** act lists contain 25–31 entries before eligibility/visited filtering, versus 13–15 ordinary floors per act.
 
 **Event skipping and probability:** with a uniform hidden shuffle, other eligibility held fixed and no wrapping, encounters while condition K is false do not themselves change K-events' later selection probability when K becomes true. Skipping passes hidden K entries along with encountered non-K entries; exchangeability of their positions preserves the odds. For two K events and three others, zero, one or two non-K encounters while K is false leave the next K chance at `2/5`. Encounters while K is true have the usual without-replacement effect. This is a distributional property, not identical outcomes for each seed or invariance under other eligibility changes.
 
