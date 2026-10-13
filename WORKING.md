@@ -18,7 +18,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ## Deviation review
 
-Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: A0–6 Common-first Rare replacement; ordinary finite relic allocation/filtering and Wongos; forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing, transformations and potion-option mapping. Preserve the [borrowing boundary](DESIGN.md#borrowing). Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
+Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing and potion-option mapping. Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
 
 ## Encounter
 

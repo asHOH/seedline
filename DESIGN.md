@@ -403,6 +403,8 @@ Before presentation swaps, replace the first Common in canonical generation orde
 
 **Accepted tradeoff:** extra-Rare sequence progress depends on prior Rare counts, and companion replacements depend on each offer's composition; Common-first replacement favors retaining Uncommons. These alignment and distribution tradeoffs are accepted for A0–6 because the design primarily targets A7+.
 
+**Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Baseline frequency:** at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
+
 #### Offer sequences
 
 Use two deterministic triple sequences independent of the luck thresholds, shared by normal-fight-rule, elite and fixed-base-odds sources. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares.
@@ -488,6 +490,10 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 - **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
 
 **Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. In particular, other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite their different batch sizes. These priorities require no separate advancing Wing Charm counter.
+
+**Vanilla deviation — NoSL 1:** larger non-Rare offers favor enchanting positions in the canonical triple.
+
+**Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
 
 ## Settled policy: permanent transformations and direct card additions
 
