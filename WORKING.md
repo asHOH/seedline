@@ -18,17 +18,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ## Deviation review
 
-Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: A0–6 Common-first Rare replacement; finite relic allocation/filtering/borrowing, Wongos and empty-chest consumption; forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing, transformations and potion-option mapping; Wing Charm's position bias and opening-triple exception. Reassess the proposed NoSL 1 for presentation swaps: establish a visual difference from vanilla, rather than an internal rearrangement. Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
-
-## Rewards
-
-### Random-rarity offer sequences
-
-Settled rules and probabilities: [own-character random-rarity offers](DESIGN.md#own-character-random-rarity-offers); supporting evidence: [rarity calibration](DESIGN.md#rarity-calibration).
-
-**Remaining validation:** verify implemented offer identities, rerolls, A7+ pending delivery across acts and Brain Leech crossings in slots four/five with paired same-seed checks. Force A0–6 offers with two through five Rares, including all-Uncommon companions, replacements outside the triple and filtered duplicate skips; verify consumption and entry provenance. Verify in-game RNG addressing and save/load.
-
-**Pending baseline validation:** determine gameplay impact of Catfood's initial-offer stream bug and direct/event seed collisions; see the baseline above.
+Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: A0–6 Common-first Rare replacement; ordinary finite relic allocation/filtering and Wongos; forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing, transformations and potion-option mapping. Preserve the [borrowing boundary](DESIGN.md#borrowing). Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
 
 ## Encounter
 
