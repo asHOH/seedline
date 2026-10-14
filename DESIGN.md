@@ -97,6 +97,7 @@ These tables summarize distinct settled mechanisms; linked policies own the deta
 | [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity progress is separate from per-rarity identity progress. | Rarity-roll streams and finite shuffled allocations. |
 | [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity progress. Ordinary drop checks share combat-wide progress and changing probability. | Rarity/identity streams and indexed drop checks. |
 | [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
+| [Chest relic marker lifetime](#relic-advancement) | Rarity + non-empty chest ordinal. | Shared uniform fraction scaled by remaining generic and original shop/Courier shared stock. |
 | [Combat gold](#settled-policy-combat-gold) | Separate cumulative normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
 | [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and threshold progress are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Progress is separated by pool/request/offer group and is independent of shared Rare-occurrence progress. | Triple sequences, other identity/rarity streams and event-RNG draws. |
@@ -225,6 +226,8 @@ Apply the same rule recursively to further collisions, including identical filte
 
 Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
+**Finite lifetime:** a source may limit its marker to `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and carries the marker to the supplying position. At zero, immediately delete the vacancy and compact survivors; initial `x = 0` removes the drawn position directly. Collisions retain each marker's own lifetime, and surviving entries retain their stable addresses. Ordinary markers are permanent.
+
 Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences reject duplicate candidates while generating each triple. Other card sequences use filtered draws to exclude duplicates.
@@ -233,7 +236,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
 
-At each checkpoint, save sequence contents and progress, including original entry addresses, consumption, marker positions and conditions, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+At each checkpoint, save sequence contents and progress, including original entry addresses, consumption, marker positions, conditions and remaining lifetimes, and RNG progress. Also preserve residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -250,9 +253,11 @@ At each checkpoint, save sequence contents and progress, including original entr
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
 
 **Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
+
+**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards and leaving the chest lifetime count unchanged.
 
 **Vanilla deviation — NoSL 4:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
@@ -279,12 +284,6 @@ Mix shop-ineligible relics into allocations normally.
 ### Source classification and consumption
 
 Hidden random relic rewards from combat/chests/events use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box). Classify deferred payoffs separately from their granting relic.
-
-**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
-
-**Vanilla deviation — NoSL 3:** chest markers preserve character-specific positions instead of reproducing vanilla's acquisition-driven increase in their later draw probabilities under the [uniform-order assumptions](#relic-bags).
-
-Chest probability and retirement remain [under review](WORKING.md#chest-relic-probability-and-retirement).
 
 ### Borrowing
 
@@ -326,6 +325,22 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 **Intent:** Chest gold no longer depends on how many normal fights you took. Silver Crucible's empty chest no longer shifts later chest rewards.
 
 **Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
+
+### Relic advancement
+
+**Intent:** distribute the character-specific probability increase across later positions while preserving shared-relic identity order and source isolation, within the sufficient-supply boundary.
+
+Draw the next eligible shared identity from the generic rarity sequence and use a [finite-lifetime marker](#filtered-draws) with `x = floor(u * S)`. Derive a fresh uniform `u` in `[0, 1)` from rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests use independent draws.
+
+**Lifetime range:** before the draw, `S` counts shared identities of that rarity in the remaining generic sequence, including the drawn entry, plus the **original shop and Courier allocations**. Apply current run-state eligibility throughout. Shop/Courier identities remain counted after display or acquisition; shop eligibility adds no restriction. Character-specific identities and marker placeholders contribute zero. Retaining these tail counts reflects vanilla's back-drawing shops while keeping shop progress outside chest lifetime generation.
+
+Advancement stays within generic stock. If the draw or marker resolution requires borrowing, use a permanent marker under the existing [borrowing boundary](#borrowing).
+
+**Probability model:** treat the original shop/Courier allocations as a retained tail after the remaining generic order. Uniform expiration models deletion of a uniform shared position in this combined order under the [uniform-order assumptions](#relic-bags), within the sufficient-supply boundary.
+
+**Alignment:** using the same `u`, reducing `S` by one changes `x` by zero or one. When one run starts one shared entry later in the same order and `x` decreases by one, both markers expire at the same shared relic.
+
+Skipped-chest retirement remains [under review](WORKING.md#chest-relic-retirement); current generation-time consumption continues pending settlement.
 
 ### Rewards and consumption
 
