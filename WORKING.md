@@ -16,9 +16,9 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
-## Deviation review
+## Pending impact assessments
 
-Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing and potion-option mapping. Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
+Assess forced-event bypass, selection priorities and reward-choice anchors, equivalent-copy routing, and potion-option mapping for gameplay impact under the [vanilla-deviation convention](DESIGN.md#vanilla-deviations). This is an assessment backlog; policy improvements require a separate decision. Grade unresolved policies when settled.
 
 ## Rewards
 

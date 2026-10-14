@@ -10,13 +10,15 @@ This file records settled decisions, rationale and existing-mechanics references
 
 **Fairness principle — opportunity isolation:** preserve meaningful consequences while changing as little unrelated future gameplay as possible. For example, visiting an extra room or choosing a reward should not shift unrelated later randomness.
 
-**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs or potential bug fixes. Currently, only the [forced-event policy](#settled-policy-forced-events)'s bypass of ordinary event-list advancement is classified as a potential bug fix.
+**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or potential bug fixes. Currently, only the [forced-event policy](#settled-policy-forced-events)'s bypass of ordinary event-list advancement is classified as a potential bug fix.
 
 **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
 
 **Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent RNG state, unless order dependence is explicitly intended by the effect. This does not change presentation order or erase meaningful sequential gameplay effects.
 
 ### Vanilla deviations
+
+Consistency fixes that only remove same-seed inconsistency, with no gameplay impact, are not deviation.
 
 Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by what changes. Grade distinct deviations separately; omit unchanged behavior and do not repeat rationale in the label.
 
@@ -253,15 +255,17 @@ At each checkpoint, save sequence contents and progress, including original entr
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
 
 **Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
 
-**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards and leaving the chest lifetime count unchanged.
+**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
 
 **Vanilla deviation — NoSL 4:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
-**Vanilla deviation — SL 4:** independent restock streams and entry-bound prices remove outcome manipulation through unrelated purchase order.
+**Vanilla deviation — SL 4:** independent restock streams remove restock manipulation through unrelated purchase order.
+
+**Vanilla deviation — SL 4:** entry-bound prices remove price manipulation through unrelated purchase order.
 
 **Boundary — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
@@ -426,7 +430,7 @@ Maintain one additional Rare-only identity sequence per character, shared by the
 
 Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
-**Accepted tradeoff:** extra-Rare sequence progress depends on prior Rare counts, and companion replacements depend on each offer's composition; Common-first replacement favors retaining Uncommons. These alignment and distribution tradeoffs are accepted for A0–6 because the design primarily targets A7+.
+**Accepted tradeoff:** extra-Rare sequence progress depends on prior Rare counts, and companion replacements depend on each offer's composition. These alignment and distribution tradeoffs are accepted for A0–6 because the design primarily targets A7+.
 
 **Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Baseline frequency:** at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
 
@@ -510,7 +514,7 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 
 **Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and selection provenance move with the cards.
 
-- **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots preserves marginal gameplay outcomes while aligning the shared triple, with a presentation-position bias. The opening triples' differing rarity probabilities introduce a negligible accepted exception to this equivalence.
+- **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
 - **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift counterpart randomness. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
 - **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
 
@@ -742,7 +746,7 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 |---|---|
 | Chests | Relics are generated on room entry; base gold uses `Rewards` on opening. Pool and consumption rules: [relic bags](#relic-bags). |
 | Neow — Silver Crucible | First treasure room is empty, with neither gold nor relics. |
-| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. Featured Rare is consumed when offered even if unaffordable/declined; hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
+| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. Featured Rare is generated and consumed from stock on offer, even if declined. This also occurs below 200 gold and is **harmful to same-seed consistency**. Hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |
 | Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Randomly selects three owned relics and three replacements to offer; consumes all three replacement identities/rarities before the player's selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
 | Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
