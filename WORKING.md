@@ -12,7 +12,7 @@ Frame decisions with the [Rewards / Encounter categories](DESIGN.md#concepts-and
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve chest relic probability/retirement, ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
@@ -20,7 +20,16 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing and potion-option mapping. Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
 
-**Observed — skipped chest relics:** the current design's generic-source consumption retires the generated identity even when skipped; [vanilla](DESIGN.md#relic-bags) leaves it available for a later player-bag draw. This is separate from the documented character-specific probability difference. Impact grade remains unassessed; no policy change is adopted.
+## Rewards
+
+### Chest relic probability and retirement
+
+**Known — remaining deviations:**
+
+- Current markers suppress vanilla's acquisition-driven increase in character-specific probability across all later positions of the affected rarity, under the [uniform-order assumptions](DESIGN.md#relic-bags).
+- Current generic-source consumption retires a generated chest identity even when skipped; vanilla leaves it available for a later player-bag draw. This retirement deviation's impact grade remains unassessed.
+
+**Decisions needed:** address both deviations within the existing allocation strategy; preserve the [exclusion of a separate chest allocation](DESIGN.md#settled-policy-chests). Current chest rules remain in place pending settlement.
 
 ## Encounter
 

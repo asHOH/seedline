@@ -225,7 +225,7 @@ Apply the same rule recursively to further collisions, including identical filte
 
 Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
-Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls. Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
+Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences reject duplicate candidates while generating each triple. Other card sequences use filtered draws to exclude duplicates.
 
@@ -251,6 +251,8 @@ At each checkpoint, save sequence contents and progress, including original entr
 - **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, the featured offer is not shown and consumes nothing. Other options use [generic relic rewards](#source-classification-and-consumption).
+
+**Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
 
 **Vanilla deviation — NoSL 4:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
@@ -278,9 +280,11 @@ Mix shop-ineligible relics into allocations normally.
 
 Hidden random relic rewards from combat/chests/events use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box). Classify deferred payoffs separately from their granting relic.
 
-**Vanilla deviation — NoSL 3:** Wongos no longer advances shop-ineligible identities toward later generic rewards: its featured Rare uses shop stock, and its Common purchase preserves skipped positions through markers. See [filtered relic pulls](#relic-bags).
+**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
 
 **Vanilla deviation — NoSL 3:** chest markers preserve character-specific positions instead of reproducing vanilla's acquisition-driven increase in their later draw probabilities under the [uniform-order assumptions](#relic-bags).
+
+Chest probability and retirement remain [under review](WORKING.md#chest-relic-probability-and-retirement).
 
 ### Borrowing
 
@@ -320,6 +324,8 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 ## Settled policy: chests
 
 **Intent:** Chest gold no longer depends on how many normal fights you took. Silver Crucible's empty chest no longer shifts later chest rewards.
+
+**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
 
 ### Rewards and consumption
 
@@ -839,7 +845,7 @@ One-rarity example, front at left; `K` is character-specific. Acquire and skip a
 
 **Eligibility:** pool membership, requested rarity and depletion constrain every draw. Run-state `IsAllowed` failures are purged from all rarity lists in the queried bag. Source filters instead retain skipped entries. Shops and Wongos require `IsAllowedInShops`, excluding Amethyst Aubergine (Common), Bowler Hat and Lucky Fysh (Uncommon), Old Coin and The Courier (Rare). Wongos is the only non-shop ordinary-bag caller with an additional identity filter; Relic Trader's tradability restriction applies to outgoing relics, not replacements.
 
-**Filtered relic pulls:** remove the first matching entry from the requested end and compact the list. For a uniform shuffle of two eligible identities and one excluded identity, a filtered front pull followed by an unrestricted front pull gives the excluded identity with probability `2/3`; a filtered back pull instead leaves that probability at `1/3`. The front bias can span multiple later positions. Both examples retain eligible supply after the filtered pull.
+**Filtered relic pulls:** remove the first matching entry from the requested end and compact the list. Within one rarity, for a uniform shuffle of two shop-eligible identities and one shop-ineligible identity, a filtered front pull followed by an unrestricted front pull gives the shop-ineligible identity with probability `2/3`, twice its initial `1/3`; a filtered back pull leaves that probability at `1/3`. The multiplier depends on bag composition, and the front bias can span multiple later positions. Both examples retain eligible supply after the filtered pull.
 
 **Chest probability:** for one rarity with a uniform unseen player-bag order, `N` remaining identities and `C` character-specific identities, acquiring a shared identity selected independently of that order leaves probability `C/(N-1)` at every remaining position: e.g. `5/100` becomes `5/99`. Skipping leaves the player bag unchanged. This describes marginal probabilities before further observations/restrictions, not every source history; preceding filtered draws can invalidate the uniform-order assumption.
 
