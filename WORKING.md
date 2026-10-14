@@ -20,6 +20,8 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 Use [vanilla-deviation grades](DESIGN.md#vanilla-deviations). Remaining assessment: forced-event bypass; selection priorities and reward-choice anchors, equivalent-copy routing and potion-option mapping. Distinguish vanilla deviations from changes only to Catfood or cross-run alignment; establish SL effects within one save interval. Grade unresolved policies when settled.
 
+**Observed — skipped chest relics:** the current design's generic-source consumption retires the generated identity even when skipped; [vanilla](DESIGN.md#relic-bags) leaves it available for a later player-bag draw. This is separate from the documented character-specific probability difference. Impact grade remains unassessed; no policy change is adopted.
+
 ## Encounter
 
 ### Events and Ancients
