@@ -113,7 +113,7 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 
 #### Generated cards
 
-**Decision needed:** sharing and addressing by pool/type: own-character Attack/Skill/Power, colorless and other characters; include special-relic interactions.
+**Decision needed:** sharing and addressing for remaining combat card-generation sources by pool/type: own-character Attack/Skill/Power, colorless and other characters; include special-relic interactions. [Potion-generated cards](DESIGN.md#settled-policy-potion-generated-cards) are settled.
 
 #### Other combat randomness
 

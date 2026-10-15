@@ -133,6 +133,7 @@ These tables summarize distinct settled mechanisms; linked policies own the deta
 | [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys; qualifying one-card reward choices share an anchor. | Fixed priority order. |
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
+| [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate run-wide committed-use ordinals per potion type. | Ordinal-addressed batches. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 
@@ -654,6 +655,16 @@ Replacement rarity is independent of the outgoing relic's rarity; replacements n
 
 The replacement source and collision/eligibility handling remain [unresolved](WORKING.md#relic-trader). The mapping must be anchored to outgoing relic identity so that common inputs can keep their counterparts when feasible. Do not assign these replacements to the generic rewards allocation: preserve its [opportunity coverage](#allocation). Do not create a separate disjoint Trader allocation. The unresolved source policy must define how consuming Trader offers affects finite stock; it must not silently retire unchosen generic entries.
 
+## Settled policy: potion-generated cards
+
+**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding uses.
+
+Determine each use's complete card batch by potion type + that type's run-wide committed-use ordinal. Count skipped offers. Each type progresses independently of other potion types and other combat card generation.
+
+Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
+
+**Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
+
 ## Settled policy: encounter setup
 
 **Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
@@ -825,6 +836,12 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 | Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
 | Phial Holster | Adds one slot but generates two potions, so its second grant can fail. |
 | Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. |
+
+##### Potion card generation
+
+Attack/Skill/Power Potions offer three distinct eligible own-character cards of the specified type; Colorless Potion offers three distinct eligible colorless cards. The player may skip or choose one, which becomes free this turn. Cosmic Concoction adds three distinct upgraded colorless cards; Orobic Acid adds one own-character Attack, Skill and Power, each free this turn.
+
+All six use shared `CombatCardGeneration` RNG and sample uniformly over eligible identities, without a separate rarity roll. Combat generation excludes Basic/Ancient/Event rarities and cards with `CanBeGeneratedInCombat == false`, retaining unlock and player-count restrictions. Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools, matching vanilla.
 
 ### Generation and selection mechanics
 
