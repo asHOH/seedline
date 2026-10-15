@@ -18,7 +18,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ## Pending impact assessments
 
-Assess forced-event bypass, selection priorities and reward-choice anchors, equivalent-copy routing, and potion-option mapping for gameplay impact under the [vanilla-deviation convention](DESIGN.md#vanilla-deviations). This is an assessment backlog; policy improvements require a separate decision. Grade unresolved policies when settled.
+Regrade existing impact notes under the [vanilla-deviation convention](DESIGN.md#vanilla-deviations). Also assess forced-event bypass, selection priorities and reward-choice anchors, equivalent-copy routing, and potion-option mapping. This is an assessment backlog; policy improvements require a separate decision. Grade unresolved policies when settled.
 
 ## Encounter
 

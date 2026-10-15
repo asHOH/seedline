@@ -18,13 +18,30 @@ This file records settled decisions, rationale and existing-mechanics references
 
 ### Vanilla deviations
 
-Consistency fixes that only remove same-seed inconsistency, with no gameplay impact, are not deviation.
+Consistency fixes that only remove same-seed inconsistency, with no gameplay impact, are outside deviation grading.
 
 Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by what changes. Grade distinct deviations separately; omit unchanged behavior and do not repeat rationale in the label.
 
-**Impact levels:** **1** — presentation only; **2** — preserves expectation but changes distribution or correlations; **3** — minor expectation changes without meaningful effects on player experience or strategy; **4** — meaningful effects on player experience or strategy.
+**Unnoticeable:** the deviation's overall presence across ordinary runs is too small to be felt, considering both frequency and effect size. Roughly 500 runs is a soft calibration scale. The A7+ multiple-Rare cap is the reference example. Association with victory can support the assessment.
 
-**Play modes:** **NoSL** assumes no save/loading throughout the run. **SL** allows exploring every available action sequence from the current save before committing to the next saved state; gaining or losing useful outcome preview/manipulation counts as level 4. SL impact is at least NoSL impact: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
+**Neutral:** an informed player would make no meaningful change to strategy within the play mode's scope below.
+
+| Grade | Impact |
+|---|---|
+| **1** | Presentation only. |
+| **2** | Preserves expectation but changes distribution or correlations; neutral. |
+| **3** | Changes expectation; unnoticeable and neutral. |
+| **4A** | noticeable and neutral. |
+| **4B** | Unnoticeable and non-neutral. |
+| **5** | Noticeable and non-neutral. |
+
+**Strategy-change notation:** for 4B and 5, append **↓** for simplification (removing strategic dependencies), **↑** for complication (adding strategic dependencies), or leave unsuffixed for alteration (changing existing tradeoffs). For example, `4B↓` or `5↑`.
+
+**Play modes:** **NoSL** assumes no save/loading throughout the run and includes both in-room and upper-level strategy. **SL** allows exploring every available action sequence from the current save before committing to the next saved state; assess the best attainable room outcomes, with strategy limited to upper-level decisions such as routing and how many normal fights to take before a shop. In-room choices are excluded from SL strategy grading. Search effort or loss of an in-room manipulation option alone preserves SL neutrality.
+
+Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
+
+**Assessment status:** existing source-level grades are legacy assessments awaiting regrading under this convention.
 
 For very rare deviations, append approximate frequency with its denominator and relevant conditions; identify estimates as such.
 
