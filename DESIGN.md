@@ -22,7 +22,7 @@ Consistency fixes that only remove same-seed inconsistency, with no gameplay imp
 
 Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by what changes. Grade distinct deviations separately; omit unchanged behavior and do not repeat rationale in the label.
 
-**Unnoticeable:** the deviation's overall presence across ordinary runs is too small to be felt, considering both frequency and effect size. Roughly 500 runs is a soft calibration scale. The A7+ multiple-Rare cap is the reference example. Association with victory can support the assessment.
+**Unnoticeable:** too small to be felt across ordinary runs, considering frequency and effect size. Roughly 500 runs is a soft calibration scale; the A7+ multiple-Rare cap is the reference example. Association with victory supplies supporting evidence.
 
 **Neutral:** an informed player would make no meaningful change to strategy within the play mode's scope below.
 
@@ -35,13 +35,11 @@ Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by w
 | **4B** | Unnoticeable and non-neutral. |
 | **5** | Noticeable and non-neutral. |
 
-**Strategy-change notation:** for 4B and 5, append **↓** for simplification (removing strategic dependencies), **↑** for complication (adding strategic dependencies), or leave unsuffixed for alteration (changing existing tradeoffs). For example, `4B↓` or `5↑`.
+**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones, and no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe in-room exploration at any grade: `5(↓)` alters meaningful strategy while simplifying exploration.
 
-**Play modes:** **NoSL** assumes no save/loading throughout the run and includes both in-room and upper-level strategy. **SL** allows exploring every available action sequence from the current save before committing to the next saved state; assess the best attainable room outcomes, with strategy limited to upper-level decisions such as routing and how many normal fights to take before a shop. In-room choices are excluded from SL strategy grading. Search effort or loss of an in-room manipulation option alone preserves SL neutrality.
+**Play modes:** **NoSL** assumes no save/loading and covers in-room and upper-level strategy. **SL** explores every available action sequence from the current save before committing to the next saved state. Assess its best attainable room outcomes and upper-level or future-planning in-room decisions, such as which potions to carry onward.
 
 Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
-
-**Assessment status:** existing source-level grades are legacy assessments awaiting regrading under this convention.
 
 For very rare deviations, append approximate frequency with its denominator and relevant conditions; identify estimates as such.
 
@@ -280,11 +278,11 @@ At each checkpoint, save sequence contents and progress, including original entr
 
 **Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
 
-**Vanilla deviation — NoSL 4:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
+**Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
-**Vanilla deviation — SL 4:** independent restock streams remove restock manipulation through unrelated purchase order.
+**Vanilla deviation — SL 4A(↓):** independent restock streams remove restock manipulation through interleaved purchase categories and effects.
 
-**Vanilla deviation — SL 4:** entry-bound prices remove price manipulation through unrelated purchase order.
+**Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
 
 **Boundary — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
@@ -335,7 +333,7 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 
 **Example — batch boundaries:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
-**Vanilla deviation — SL 4:** failed grants no longer let players advance to a different later potion outcome.
+**Vanilla deviation — SL 5(↓):** failed grants no longer let players advance to a different later potion outcome.
 
 ### Drop occurrence
 
@@ -438,6 +436,8 @@ Subject to the difficulty-specific cap below, when a slot reaches the threshold,
 Luck, the current threshold and sequence progress carry across acts; the combat offset resets to `-0.05` between acts. Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
 
 **Rationale:** before deferral, `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`. Exponential thresholds preserve the supplied waiting probabilities without fitting a route-dependent luck distribution. This does not make the capped, deferred reward system identical to vanilla.
+
+**Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. Rare delivery resets luck and advances the threshold, ending this timing guarantee.
 
 #### A7+: one Rare per offer and deferral
 
@@ -591,7 +591,7 @@ Consumed clocks are marked zero.
 Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
 Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
 
-**Vanilla deviation — SL 4:** replaying upgrade purchases affecting disjoint card sets in different orders no longer changes their targets, such as buying Whetstone before or after War Paint.
+**Vanilla deviation — SL 4A(↓):** replaying upgrade purchases affecting disjoint card sets in different orders no longer changes their targets, such as buying Whetstone before or after War Paint.
 
 ## Settled policy: fixed-priority card selection
 
@@ -830,7 +830,23 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 
 **Card pools:** there are no Common Power cards in the game.
 
-**Shops and events:** shops use `Shops` RNG for identities/prices and shared `Rewards` for card rarity/upgrades and relic rarity. Events may consume shared rewards/bags despite having an event RNG. Courier shares these generators.
+**Shop and Courier RNG:** initial stock and restocks share these player RNG streams. Each listed decision consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
+
+| Restock | `Rewards` draws | `Shops` draws |
+|---|---|---|
+| Character card | 2: rarity, upgrade check | 2: identity, price |
+| Fixed-rarity colorless card | 1: upgrade check | 2: identity, price |
+| Relic | 1: rarity | 1: price |
+| Potion | 0 | 3: rarity, identity, price |
+
+Ordinary shop cards suppress random upgrades but still consume the check draw.
+
+**Harmful to same-seed consistency — later restock effects:**
+
+- **Card → relic; relic → character card:** rarity, identity and price can change. Both also shift potion rarity, identity and price; relics shift fixed-rarity colorless card identity/price.
+- **Potion → card:** identity and price can change. **Potion → relic:** price only; rarity and bag order stay unchanged.
+
+Thus even one restock per category can interfere. Equivalent slots share generators; matching RNG state, request and candidates preserves outcomes. Events may consume shared rewards/bags despite having event RNG.
 
 **Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG progress continues.
 
@@ -838,7 +854,7 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 
 **Event / encounter identity selection:** per-act lists are generated upfront with `UpFront` RNG; event lists shuffle act-specific plus shared identities without explicit weights. Room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
 
-**Event-list wrapping (vanilla):** the cursor indexes `events[cursor % events.Count]`; the list wraps without reshuffling or clearing visits, and skipped entries remain in it. Skips advance the cursor too. A skipped event can qualify after wrapping; a full unsuccessful scan instead returns the cursor's event anyway, potentially repeated or ineligible. See [RoomSet.NextEvent / EnsureNextEventIsValid](sts2-decompiled/MegaCrit.Sts2.Core.Rooms/RoomSet.cs).
+**Event-list wrapping (vanilla):** the cursor indexes `events[cursor % events.Count]`; the list wraps without reshuffling or clearing visits, and skipped entries remain in it. Skips advance the cursor too. A skipped event can qualify after wrapping; a full unsuccessful scan instead returns the cursor's event anyway, potentially repeated or ineligible.
 
 **Event-pool capacity:** act lists contain 25–31 entries before eligibility/visited filtering, versus 13–15 ordinary floors per act.
 
