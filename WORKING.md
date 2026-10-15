@@ -12,23 +12,13 @@ Frame decisions with the [Rewards / Encounter categories](DESIGN.md#concepts-and
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve chest relic retirement, ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
+**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
 ## Pending impact assessments
 
 Assess forced-event bypass, selection priorities and reward-choice anchors, equivalent-copy routing, and potion-option mapping for gameplay impact under the [vanilla-deviation convention](DESIGN.md#vanilla-deviations). This is an assessment backlog; policy improvements require a separate decision. Grade unresolved policies when settled.
-
-## Rewards
-
-### Chest relic retirement
-
-Probability handling is settled in [relic advancement](DESIGN.md#relic-advancement).
-
-**Known:** current generic-source consumption retires a generated chest identity even when skipped; [vanilla](DESIGN.md#relic-bags) leaves it available for a later player-bag draw. This retirement deviation's impact grade remains unassessed.
-
-**Decision needed:** settle acquire/skip retirement within the existing allocations. Current generation-time consumption remains in place pending settlement.
 
 ## Encounter
 
