@@ -228,7 +228,9 @@ Apply the same rule recursively to further collisions, including identical filte
 
 Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
-**Finite lifetime:** a source may limit its marker to `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and carries the marker to the supplying position. At zero, delete the vacancy and compact survivors unless the source restores a carried entry there; initial `x = 0` applies this expiry action at the drawn position. Collisions retain each marker's own lifetime and carried entry, and surviving entries retain their stable addresses. Ordinary markers are permanent.
+**Finite lifetime:** a marker may expire after `x` eligible-entry advances. At expiry, it either disappears, compacting survivors, or turns into a relic saved with it (its **carried entry**). This lets a skipped chest relic return to ordinary rewards farther along the sequence. Ordinary markers are permanent.
+
+Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry; entries keep their original stable addresses through movement and return.
 
 Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
@@ -332,28 +334,27 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 
 ### Relic advancement
 
-**Intent:** preserve the acquire/skip distinction and distribute the acquisition-driven character-specific probability increase across later positions, keeping common future identities aligned within the sufficient-supply boundary.
+**Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
 
-Draw the next eligible shared identity from the generic rarity sequence and use a [finite-lifetime marker](#filtered-draws) with `x = floor(u * S)`. Derive a fresh uniform `u` in `[0, 1)` from rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests use independent draws.
+Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#filtered-draws). Both choices advance along the same path:
 
-**Lifetime range:** before recording the new offer, `S` counts chest-eligible shared identities of that rarity in the remaining generic sequence, including the drawn entry, plus the **original shop and Courier allocations**. Apply current run-state eligibility throughout. Previously chest-offered identities are excluded from chest selection and `S`, even if retained for ordinary rewards. Shop/Courier identities remain counted after display or acquisition; shop eligibility adds no restriction. Character-specific identities and marker placeholders contribute zero. Retaining these tail counts reflects vanilla's back-drawing shops while keeping shop progress outside chest lifetime generation.
+- **Acquire:** retire the relic; the marker disappears at expiry.
+- **Skip or leave behind:** save the relic with the marker; at expiry it becomes an ordinary reward entry again. A later ordinary offer consumes it even if declined.
 
-Advancement stays within generic stock. If the draw or marker resolution requires borrowing, use a permanent marker under the existing [borrowing boundary](#borrowing).
+Generation consumes the rarity roll, chest opportunity and lifetime draw, and exhausts the identity for future chests. Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
 
-**Probability model:** treat the original shop/Courier allocations as a retained tail after the remaining generic order. On acquisition, uniform expiration models deletion of a uniform chest-eligible position in this combined order under the [uniform-order assumptions](#relic-bags), within the sufficient-supply boundary. On skip, restoring the carried relic rotates eligible identities through their positions, preserving the character-specific position pattern.
+**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests draw independently.
 
-**Alignment:** using the same `u`, reducing `S` by one changes `x` by zero or one. When one run starts one shared entry later in the same order and `x` decreases by one, both markers expire at the same shared relic.
+Before recording the offer, `S` counts chest-eligible shared identities of that rarity, excluding previous chest offers, in:
 
-### Relic retirement
+- The remaining generic sequence, including the drawn entry.
+- The **original shop and Courier allocations**, retaining identities after display or acquisition.
 
-Generation consumes the rarity roll, chest opportunity and lifetime draw, and records the offered identity as exhausted for future chests. Acquisition and skipping use the same marker path:
+Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop progress outside lifetime generation. Advancement uses generic stock; borrowing during selection or resolution uses a permanent marker under the [borrowing boundary](#borrowing).
 
-- **Acquire:** retire the offered entry; expiry deletes the vacancy.
-- **Skip or leave behind:** carry the offered entry with the marker; expiry restores it at the vacancy with its original stable address, available to ordinary rewards. A later ordinary offer consumes it normally, even if declined.
+**Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
 
-Resolve acquisition/skip before applying expiry, including `x = 0`. If the carried relic becomes permanently ineligible or is acquired elsewhere, cancel its return and use deletion at expiry.
-
-**Alignment:** the two branches share the same future sequence up to the return position; the skipped branch then retains one extra ordinary opportunity, preserving the order of common entries. Relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
+**Alignment:** acquire and skip share the future sequence up to the return position; skip adds one ordinary opportunity while preserving common-entry order. Across runs, reducing `S` by one changes `x` by zero or one; starting one shared entry later in the same order and reducing `x` by one gives the same expiry relic. Relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
 
 ### Rewards and consumption
 
