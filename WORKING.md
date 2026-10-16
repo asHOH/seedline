@@ -20,10 +20,6 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
-## Pending impact assessments
-
-Assess forced-event bypass, selection priorities and reward-choice anchors, equivalent-copy routing, and potion-option mapping under the [vanilla-deviation convention](DESIGN.md#vanilla-deviations). Grade unresolved policies when settled; policy improvements are separate decisions.
-
 ## Encounter
 
 ### Events and Ancients

@@ -10,7 +10,7 @@ This file records settled decisions, rationale and existing-mechanics references
 
 **Fairness principle — opportunity isolation:** preserve meaningful consequences while changing as little unrelated future gameplay as possible. For example, visiting an extra room or choosing a reward should not shift unrelated later randomness.
 
-**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or potential bug fixes. Currently, only the [forced-event policy](#settled-policy-forced-events)'s bypass of ordinary event-list advancement is classified as a potential bug fix.
+**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or fixes to unintended vanilla behavior. Such fixes still receive impact grades; the currently classified fix is [forced-event bypass](#settled-policy-forced-events).
 
 **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
 
@@ -592,7 +592,7 @@ Consumed clocks are marked zero.
 Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
 Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
 
-**Vanilla deviation — SL 4A(↓):** replaying upgrade purchases affecting disjoint card sets in different orders no longer changes their targets, such as buying Whetstone before or after War Paint.
+**Vanilla deviation — SL 4A(↓):** reordering random upgrades, such as Whetstone and War Paint, with candidate addition/removal or another disjoint random upgrade no longer rerolls their targets.
 
 ## Settled policy: fixed-priority card selection
 
@@ -679,11 +679,13 @@ Preserve existing encounter identity selection and setup sampling rules. This ch
 
 ## Settled policy: forced events
 
-**Intent:** inserting a forced event must not consume or skip an ordinary event opportunity and thereby alter later ordinary-event availability.
+**Intent:** inserting a forced event must not affect later ordinary-event availability.
 
 Resolve room type under the [unknown-room policy](#settled-policy-unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its existing event RNG; it needs no special ordinary-event ordinal.
 
 Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its visited-node ordinal; preserve the existing forced room type and frozen non-event chances. Ordinary event-list advancement is deliberately removed from forced insertion, not from ordinary event visits.
+
+**Vanilla deviation — NoSL 3:** vanilla forced insertion consumes an opportunity, changing which ordinary events can appear later, though this is probably unintended by developers. This design doesn't.
 
 ## Settled policy: unknown-room resolution
 
