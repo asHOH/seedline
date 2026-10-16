@@ -12,7 +12,11 @@ Frame decisions with the [Rewards / Encounter categories](DESIGN.md#concepts-and
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Next decisions:** resolve ordinary event identity selection, equivalent-copy routing, and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
+**Remaining work roadmap:**
+
+1. [Events and Ancients](#events-and-ancients): settle ordinary event identity selection and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
+2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking and equivalent-copy routing for cards and potions.
+3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
 **Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
 
