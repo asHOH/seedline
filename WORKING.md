@@ -67,7 +67,7 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 
 #### Remaining events and Ancients
 
-Remaining Encounter decisions have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
+Remaining Encounter random operations have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
 
 ### Item-selection priorities
 
@@ -77,7 +77,7 @@ Shared contract and transformation use: [canonical card order](DESIGN.md#canonic
 
 **Decisions needed:** define the usefulness ranking of card identities, upgrade states and enchantments. The rough direction is Curse < Strike < Defend < other Basic < Common; complete and refine this ranking, including how status changes affect placement. Identical cards remain tied under the shared contract.
 
-**Validation:** permute batch enumeration and equivalent physical copies with different hidden RNG state; compare transformation results and subsequent sequence state. Include different original-identity exclusions. Assess combat-shuffle alignment separately under [Shuffles](#shuffles).
+**Validation:** permute batch enumeration and equivalent physical copies with different hidden random state; compare transformation results and subsequent random state. Include different original-identity exclusions. Assess combat-shuffle alignment separately under [Shuffles](#shuffles).
 
 #### Equivalent-copy routing
 
@@ -85,7 +85,7 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 
 **Decisions needed:**
 
-- Define the gameplay-equivalence status key for each relevant card/effect, and the hidden representative chosen when interchangeable physical copies carry different inherent RNG provenance.
+- Define the gameplay-equivalence status key for each relevant card/effect, and the hidden representative chosen when interchangeable physical copies carry different hidden selection provenance.
 - Choose count coupling: compare equivalent-copy cohorts of two versus three, not only equal-sized decks. Decide how logical tokens enter, leave, split into different status classes and merge again without renumbering surviving tokens.
 - Choose operation-purpose sharing and opportunity progress. Separate upgrade/removal/etc. representative streams are the leading direction; which sources of the same operation share progress remains open. For opportunity-indexed variants, decide advancement for singleton or whole-class selections so count differences do not inadvertently shift later addresses.
 - Specify hidden-token association after routing an operation. For unordered batches, define snapshot-based assignment to the selected physical cards, including effects producing different results.
@@ -102,7 +102,7 @@ Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.
 
 #### Shuffles
 
-**Decision needed:** opening-shuffle addressing and how later shuffles share or advance randomness.
+**Decision needed:** opening-shuffle addressing and how later shuffles share randomness and advance their random state.
 
 **Planned input ordering:** use [canonical card order](DESIGN.md#canonical-card-order), including upgrade/enchantment distinctions, before shuffling. The shuffle mechanism and its alignment guarantees remain open; a common input order alone does not settle them.
 

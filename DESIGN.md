@@ -14,7 +14,7 @@ This file records settled decisions, rationale and existing-mechanics references
 
 **Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine same-seed consistency, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
 
-**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent RNG state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
+**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent random state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
 
 ### Vanilla deviations
 
@@ -51,9 +51,9 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 **Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies apply without Scarcity using the corresponding probabilities.
 
-**Discussion boundary:** describe base random outcomes while preserving existing modifiers, including eggs, Fresnel Lens and fixed discounts, unless these modifiers affect random decisions.
+**Discussion boundary:** describe base random outcomes and preserve existing modifiers, including eggs, Fresnel Lens and fixed discounts. Discuss modifier interactions when they affect random operations.
 
-**No-random identities:** predetermined card, relic and potion grants or replacements are outside randomness-control scope: they require no randomness. Fixed-rarity requests remain in scope. Player choices and fixed selections involve no randomness and are outside scope, except for equivalent-copy routing.
+**Fixed identities and selections:** predetermined card, relic and potion identities, player choices and fixed selections are outside scope, except for equivalent-copy routing. Fixed-rarity requests with random identities remain in scope.
 
 ## Concepts and terms
 
@@ -62,7 +62,7 @@ The design has two top-level categories:
 - **Rewards:** generated reward identities and amounts, including permanent transformation results and otherwise-unspecified random rewards that are not event-exclusive.
 - **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
 
-These categories classify random decisions, not effects.
+These categories classify random operations within effects.
 
 Relic Trader's outgoing selection and replacement targets are handled together under Encounter.
 
@@ -86,6 +86,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ### Randomness and addressing
 
+- **RNG / random state:** an RNG (random number generator) supplies random values. Random state includes RNG state and relevant context including sequence contents and progress, opportunity counters, and stored rolls or selection priorities.
 - **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries. **Per-rarity identity sequences** provide one stream per rarity.
 - **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
 - **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
@@ -96,7 +97,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ## Architecture overview
 
-Each controlled random decision can be described along five dimensions: **outcome** (what is randomized), **sharing scope** (which requests share randomness), **address/progress** (how corresponding opportunities are identified, advanced and reset), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what must survive save/load).
+Each controlled random operation can be described along five dimensions: **outcome** (what is randomized), **sharing scope** (which operations share randomness), **address/progress** (how corresponding opportunities are identified, advanced and reset), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what must survive save/load).
 
 Different stages of one source—such as occurrence, rarity, identity and attributes—may use different scopes and progress.
 
@@ -116,7 +117,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Combat gold](#settled-policy-combat-gold) | Separate cumulative normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
 | [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and threshold progress are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Progress is separated by pool/request/offer group and is independent of shared Rare-occurrence progress. | Triple sequences, other identity/rarity streams and event-RNG draws. |
-| [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has independently addressed upgrade randomness. | Entry-derived roll. |
+| [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has an independently addressed upgrade roll. | Entry-derived roll. |
 | [Permanent transformation / direct-addition results](#selection-and-consumption) | Identity progress is shared by pool; transformations and additions use separate rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
 | [Event-specific rewards](#settled-policy-event-specific-rewards) | Event-local draws. | Event RNG outside shared reward sequences. |
 
@@ -159,9 +160,9 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 ### Opportunity consumption
 
-**Invariant — opportunity consumption:** randomness advances when the player is granted the corresponding random opportunity—that is, when its result becomes available to reveal or receive. Actual viewing, acceptance or selection is not required.
+**Invariant — opportunity consumption:** random state advances when the player is granted the corresponding random opportunity—that is, when its result becomes available to reveal or receive. Actual viewing, acceptance or selection is not required.
 
-If an operation is prevented or bypassed before any random result becomes available, its randomness does not advance. Deferred rewards consume when their payoff opportunity occurs, not when the effect creating that future opportunity is acquired.
+If a random operation is prevented or bypassed before any result becomes available, its random state does not advance. Deferred rewards consume when their payoff opportunity occurs, not when the effect creating that future opportunity is acquired.
 
 ### Stable entry addresses
 
@@ -179,7 +180,7 @@ An entry's address is its original source sequence + original entry position. Pr
 
 Each card entry carries an **inherent upgrade roll** `u` uniformly distributed in `[0, 1)`, derived independently from its [stable entry address](#stable-entry-addresses) and the upgrade purpose.
 
-When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's randomness. This does not upgrade cards already in the deck when the act changes.
+When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's random state. This does not upgrade cards already in the deck when the act changes.
 
 Baseline upgrade chances: [generation and selection mechanics](#generation-and-selection-mechanics).
 
@@ -201,7 +202,7 @@ Use independently addressed deterministic tie-breaks, never collection order. Pr
 
 ### Equivalent-card selections
 
-**Invariant — equivalent copies:** choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences, regardless of which copy was clicked. Hidden selection state must remain equivalent up to the association with physical copies. This applies to all card identities, not only Basic Strikes and Defends. Equivalence requires the same identity and all gameplay-relevant status; hidden RNG provenance and presentation position do not distinguish the class.
+**Invariant — equivalent copies:** choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences, regardless of which copy was clicked. Hidden selection state must remain equivalent up to the association with physical copies. This applies to all card identities, not only Basic Strikes and Defends. Equivalence requires the same identity and all gameplay-relevant status; hidden selection provenance and presentation position do not distinguish the class.
 
 Retain one logical occurrence per copy, with its own inherent randomness: multiplicity must not collapse into one roll per identity. Representative-selection progress is separate for different card identities. Exact count coupling, operation-purpose scopes and logical-to-physical association are [unresolved](WORKING.md#equivalent-copy-routing).
 
@@ -213,9 +214,9 @@ Retain one logical occurrence per copy, with its own inherent randomness: multip
 
 Use a fixed, authored usefulness ranking of card identities and their upgrade/enchantment states, rather than alphabetical names or seed-derived priorities. Identify cards by stable model IDs. The exact [ranking and state comparisons remain unresolved](WORKING.md#canonical-card-order).
 
-Identical cards remain tied regardless of hidden RNG provenance; retain every copy, without using internal RNG state, acquisition order or physical position to break ties. Tied-copy permutations must leave gameplay outcomes and subsequent RNG state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
+Identical cards remain tied regardless of hidden selection provenance; retain every copy, without using hidden random state, acquisition order or physical position to break ties. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
 
-Source policies specify which parts of the order apply. Canonical card order controls random-request processing, not display order or intentionally sequential effects; reward offers' canonical generation order remains their existing entry order.
+Source policies specify which parts of the order apply. Canonical card order controls random-operation processing, not display order or intentionally sequential effects; reward offers' canonical generation order remains their existing entry order.
 
 ### Opportunity-specific selection priorities
 
@@ -254,9 +255,9 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
 
-At each checkpoint, save sequence contents and progress, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, and RNG progress. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+At each checkpoint, save sequence contents and progress, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
-**Validation:** verify save/load preserves counters and outcomes. Use targeted RNG logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
+**Validation:** verify save/load preserves counters and outcomes. Use targeted random-operation logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
 ## Settled policy: shops, Wongos and Courier
 
@@ -541,7 +542,7 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 **Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and selection provenance move with the cards.
 
 - **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
-- **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift counterpart randomness. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
+- **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift draws for corresponding selections. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
 - **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
 
 **Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. In particular, other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite their different batch sizes. These priorities require no separate advancing Wing Charm counter.
@@ -623,7 +624,7 @@ Ranwid the Elder and Stone of All Time share one run-wide scope using the [share
 
 With only one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once at commitment, using its key and a per-occurrence renewal count, so a declined sacrifice remains selectable later. Run-wide clocks and renewal counts follow the shared [saved-state](#saved-state) contract. Preserve event access, costs and rewards.
 
-Equivalent player-chosen potion use/discard/trades remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks. Preserve slot-dependent offers and distinct trade payoffs; an already random-selected target needs no representative reselection. The representative-selection mechanism remains part of [equivalent-copy routing](WORKING.md#equivalent-copy-routing).
+Equivalent player-chosen potion use/discard/trades remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks. Preserve slot-dependent offers and distinct trade payoffs; an already randomly selected target needs no representative reselection. The representative-selection mechanism remains part of [equivalent-copy routing](WORKING.md#equivalent-copy-routing).
 
 Baseline selection: [potion event mechanics](#potions).
 
@@ -847,7 +848,7 @@ All six use shared `CombatCardGeneration` RNG and sample uniformly over eligible
 
 **Card pools:** there are no Common Power cards in the game.
 
-**Shop and Courier RNG:** initial stock and restocks share these player RNG streams. Each listed decision consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
+**Shop and Courier RNG:** initial stock and restocks share these player RNG streams. Each listed random operation consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
 
 | Restock | `Rewards` draws | `Shops` draws |
 |---|---|---|
