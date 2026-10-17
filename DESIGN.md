@@ -1,6 +1,6 @@
 # Deterministic seed mod — design
 
-This file records settled decisions, rationale and existing-mechanics references; it forms the specification as the design is completed. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Systems not yet specified retain existing behavior.
+This file records settled decisions, rationale and existing-mechanics references; it forms the specification as the design is completed. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Systems not specified retain existing behavior.
 
 **Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; deviation notes, rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
 
@@ -8,23 +8,21 @@ This file records settled decisions, rationale and existing-mechanics references
 
 **Goal:** make same-seed runs offer comparable choices and combat challenges even when players take different routes or make different decisions. Compare corresponding ordinal opportunities—for example, each run's first shop or third normal-fight reward—even when reached on different floors.
 
-**Fairness principle — opportunity isolation:** preserve meaningful consequences while changing as little unrelated future gameplay as possible. For example, visiting an extra room or choosing a reward should not shift unrelated later randomness.
+**Fairness principle — opportunity isolation:** preserve meaningful consequences while changing as little unrelated future gameplay as possible. For example, visiting a different room or choosing a reward should not shift unrelated later randomness.
 
 **Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or fixes to unintended vanilla behavior. Such fixes still receive impact grades; the currently classified fix is [forced-event bypass](#settled-policy-forced-events).
 
-**Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine fair same-seed comparison, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
+**Same-seed divergence (歪种):** outcome differences caused by uncontrolled randomness that undermine same-seed consistency, often appearing early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
 
-**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent RNG state, unless order dependence is explicitly intended by the effect. This does not change presentation order or erase meaningful sequential gameplay effects.
+**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent RNG state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
 
 ### Vanilla deviations
 
 Consistency fixes that only remove same-seed inconsistency, with no gameplay impact, are outside deviation grading.
 
-Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by what changes. Grade distinct deviations separately; omit unchanged behavior and do not repeat rationale in the label.
+**Unnoticeable:** too small to be felt across ordinary runs, considering frequency and effect size. Roughly 500 runs is a soft calibration scale; the A7+ one-Rare cap is the reference example. Association with victory supplies supporting evidence.
 
-**Unnoticeable:** too small to be felt across ordinary runs, considering frequency and effect size. Roughly 500 runs is a soft calibration scale; the A7+ multiple-Rare cap is the reference example. Association with victory supplies supporting evidence.
-
-**Neutral:** an informed player would make no meaningful change to strategy within the play mode's scope below.
+**Neutral:** an informed player would make no meaningful change to strategy.
 
 | Grade | Impact |
 |---|---|
@@ -37,7 +35,7 @@ Label each assessed deviation as **Vanilla deviation — NoSL 3**, followed by w
 
 **Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones, and no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe in-room exploration at any grade: `5(↓)` alters meaningful strategy while simplifying exploration.
 
-**Play modes:** **NoSL** assumes no save/loading and covers in-room and upper-level strategy. **SL** explores every available action sequence from the current save before committing to the next saved state. Assess its best attainable room outcomes and upper-level or future-planning in-room decisions, such as which potions to carry onward.
+**Play modes:** **NoSL** assumes no save/loading and covers in-room and upper-level strategy. **SL** explores every available action sequence from the current save before committing to the next saved state. Assess its best attainable room outcomes and upper-level decisions, or future-planning in-room decisions such as which potions to carry onward.
 
 Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
 
@@ -51,11 +49,11 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 **Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
-**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies also apply without Scarcity using the corresponding probabilities; [own-character random-rarity offers](#own-character-random-rarity-offers) specify difficulty-dependent handling of multiple Rares.
+**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies apply without Scarcity using the corresponding probabilities.
 
-**Discussion boundary:** compare random outcomes before predictable modifiers such as eggs, Fresnel Lens and fixed discounts. Preserve ordinary probability and amount adjustments without repeating them unless their treatment changes. Specify interactions when they affect candidate eligibility, which random decisions occur, addressing, opportunity consumption or persistent RNG state.
+**Discussion boundary:** describe base random outcomes while preserving existing modifiers, including eggs, Fresnel Lens and fixed discounts, unless these modifiers affect random decisions.
 
-**Fixed identities:** predetermined card, relic and potion grants or replacements are outside randomness-control scope: they require no identity draw and consume no controlled reward sequences. Fixed-rarity requests remain in scope when the identity is random.
+**No-random identities:** predetermined card, relic and potion grants or replacements are outside randomness-control scope: they require no randomness. Fixed-rarity requests remain in scope. Player choices and fixed selections involve no randomness and are outside scope, except for equivalent-copy routing.
 
 ## Concepts and terms
 
@@ -64,7 +62,7 @@ The design has two top-level categories:
 - **Rewards:** generated reward identities and amounts, including permanent transformation results and otherwise-unspecified random rewards that are not event-exclusive.
 - **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
 
-These categories classify random decisions, not whole effects; player choices and fixed selections belong to neither.
+These categories classify random decisions, not effects.
 
 Relic Trader's outgoing selection and replacement targets are handled together under Encounter.
 
@@ -74,37 +72,37 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 - **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype counted separately in this design. An event may start combat without changing the map type.
-- **Event ID / encounter ID:** identifies a specific event / combat encounter, not its room type.
-- **Normal fight / combat:** **normal fight** means `RoomType.Monster`; **combat** means any battle, including normal fights, elites, bosses and event battles. Avoid bare **fight**. **Monster** in prose means an individual enemy.
+- **Event ID / encounter ID:** identifies a specific event / combat encounter.
+- **Normal fight / combat:** **normal fight** means `RoomType.Monster`; **combat** means any battle, including normal fights, elites, bosses and event battles.
 
 ### Reward terminology
 
 - **Card reward offer:** cards presented together for one choice, usually three. A **card slot** is one position within an offer.
 - **Card pool:** can be own character, colorless or a specified other character.
-- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it; choosing the granting event option beforehand does not make it a card reward offer.
+- **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
 - **Ordinary relics:** Common / Uncommon / Rare / Shop; Event-exclusive relics sit outside these pools.
-- **Generation / acquisition:** generation determines an item; acquisition means actually receiving it.
-- **Reward sources:** **Courier** means restocks from The Courier relic, distinct from the Potion Courier event. **Generic rewards** is an item-specific source class defined by each relevant policy.
+- **Generation / acquisition:** generation determines an item; acquisition means receiving it.
+- **Reward sources:** **Generic rewards** is an item-specific source class defined by each relevant policy. **Courier** means restocks from The Courier relic, distinct from the Potion Courier event.
 
 ### Randomness and addressing
 
-- **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries even when they have the same identity. **Per-rarity identity sequences** provide one stream per rarity.
-- **Allocation:** finite relic stock assigned to one source, ordered into one or more identity sequences.
+- **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries. **Per-rarity identity sequences** provide one stream per rarity.
+- **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
 - **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
-- **Filter / marker:** a filter defines eligibility for a draw. A marker occupies a sequence position and records one deferred advancement under the filter active when it was created.
+- **Filter:** the eligibility conditions for a draw.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; otherwise ordinals continue across acts.
-- **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope, including components such as act or category where applicable. **Shop-ordinal generation** names the shop case.
+- **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
 
 ## Architecture overview
 
 Each controlled random decision can be described along five dimensions: **outcome** (what is randomized), **sharing scope** (which requests share randomness), **address/progress** (how corresponding opportunities are identified, advanced and reset), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what must survive save/load).
 
-Sharing scope and address/progress are separate design choices. Different stages of one source—such as occurrence, rarity, identity and attributes—may use different scopes and progress.
+Different stages of one source—such as occurrence, rarity, identity and attributes—may use different scopes and progress.
 
-Consumption is a shared [invariant](#opportunity-consumption), not a separate architectural dimension.
+Consumption is a shared [invariant](#opportunity-consumption).
 
-These tables summarize distinct settled mechanisms; linked policies own the details and exceptions. [Shared contracts](#shared-strategies) are omitted unless a mechanism differs.
+These tables summarize settled mechanisms. [Shared contracts](#shared-strategies) are omitted unless a mechanism differs.
 
 ### Rewards
 
@@ -375,7 +373,7 @@ Apply current run-state eligibility throughout; shop eligibility adds no restric
 ### Rewards and consumption
 
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
-- Silver Crucible suppresses the first chest's rewards before generation, advancing neither chest ordinal nor relic sequences; the next chest is ordinal 1.
+- Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -700,7 +698,7 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 ## Reference
 
-[Event spreadsheet](references/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices, not hidden rewards: Punch-Off is true; Wongos is false. Detailed criteria and state restrictions are in the workbook.
+[Event spreadsheet](references/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices. Detailed criteria and state restrictions are in the workbook.
 
 ### Rarity calibration
 
