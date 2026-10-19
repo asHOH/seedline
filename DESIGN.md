@@ -86,7 +86,8 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ### Randomness and addressing
 
-- **RNG / random state:** an RNG (random number generator) supplies random values. Random state includes RNG state and relevant context including sequence contents and progress, opportunity counters, and stored rolls or selection priorities.
+- **RNG / random state:** an RNG (random number generator) supplies random values. Random state includes RNG state and relevant context, such as sequence contents and positions, opportunity counters, and stored rolls or selection priorities.
+- **Roll:** a random draw for a named purpose, such as rarity or upgrading.
 - **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries. **Per-rarity identity sequences** provide one stream per rarity.
 - **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
 - **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
@@ -97,9 +98,9 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ## Architecture overview
 
-Each controlled random operation can be described along five dimensions: **outcome** (what is randomized), **sharing scope** (which operations share randomness), **address/progress** (how corresponding opportunities are identified, advanced and reset), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what must survive save/load).
+Each controlled random operation can be described along five dimensions: **outcome** (what is randomized), **sharing scope** (which operations share randomness), **address** (how corresponding opportunities or entries are identified), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what changes, resets and must survive save/load).
 
-Different stages of one source—such as occurrence, rarity, identity and attributes—may use different scopes and progress.
+Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
 
 Consumption is a shared [invariant](#opportunity-consumption).
 
@@ -107,33 +108,33 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 
 ### Rewards
 
-| System / randomized outcome | Sharing and address/progress | Form |
+| System / randomized outcome | Sharing and addressing | Form |
 |---|---|---|
-| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards and sale use shop ordinal; restocks have source-specific progress; prices use stable entry addresses. | Ordinal-addressed draws, item sequences and entry-derived price rolls. |
-| [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity progress is separate from per-rarity identity progress. | Rarity-roll streams and finite shuffled allocations. |
-| [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity progress. Ordinary drop checks share combat-wide progress and changing probability. | Rarity/identity streams and indexed drop checks. |
+| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards and sale use shop ordinal; restocks use source-specific sequences; prices use stable entry addresses. | Ordinal-addressed draws, item sequences and entry-derived price rolls. |
+| [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity-roll and per-rarity identity sequences advance independently. | Rarity-roll streams and finite shuffled allocations. |
+| [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity sequences. Ordinary drop checks share a combat-wide check index and changing probability. | Rarity/identity streams and indexed drop checks. |
 | [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
 | [Chest relic marker lifetime](#relic-advancement) | Rarity + non-empty chest ordinal. | Shared uniform fraction scaled by remaining generic and original shop/Courier shared stock. |
 | [Combat gold](#settled-policy-combat-gold) | Separate cumulative normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
-| [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and threshold progress are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
-| [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Progress is separated by pool/request/offer group and is independent of shared Rare-occurrence progress. | Triple sequences, other identity/rarity streams and event-RNG draws. |
+| [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and the threshold sequence are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
+| [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Separate sequences by pool/request/offer group, independent of shared Rare-occurrence state. | Triple sequences, other identity/rarity streams and event-RNG draws. |
 | [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has an independently addressed upgrade roll. | Entry-derived roll. |
-| [Permanent transformation / direct-addition results](#selection-and-consumption) | Identity progress is shared by pool; transformations and additions use separate rarity progress, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
+| [Permanent transformation / direct-addition results](#selection-and-consumption) | Identity sequences are shared by pool; transformations and additions use separate rarity-roll sequences, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
 | [Event-specific rewards](#settled-policy-event-specific-rewards) | Event-local draws. | Event RNG outside shared reward sequences. |
 
 ### Encounter
 
-| System / randomized outcome | Sharing and address/progress | Form |
+| System / randomized outcome | Sharing and addressing | Form |
 |---|---|---|
-| [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries progress within its selection scope. | Residual exponential clocks. |
+| [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries a clock within its selection scope. | Residual exponential clocks. |
 | [Wing Charm selection](#wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
-| [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence progress. | Residual exponential clocks. |
+| [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
 | [The Future of Potions: card types](#the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys; qualifying one-card reward choices share an anchor. | Fixed priority order. |
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate run-wide committed-use ordinals per potion type. | Ordinal-addressed batches. |
-| [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category progress plus encounter identity; event-created battles use event-local progress. | Purpose-separated addressed RNG. |
+| [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 
 ## Shared strategies
@@ -142,13 +143,13 @@ The [fairness principle](#goals-and-principles) and labeled invariants are share
 
 ### RNG derivation and addressing
 
-**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable sharing-scope and purpose identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and progress. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
+**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable sharing-scope and purpose identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
 Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
 
 ### Rarity and identity sequences
 
-**Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and progress.
+**Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and sequence state.
 
 **Sharing rationale:** generic rewards represent successive opportunities to receive the same kind of item, regardless of route. Shops are isolated to preserve corresponding inventories; Courier and potion-generating effects are isolated so repeated use cannot displace ordinary rewards. Transformations and direct additions both generate permanent cards from a pool, so they share identity order while separate rarity rolls preserve their different odds.
 
@@ -204,7 +205,7 @@ Use independently addressed deterministic tie-breaks, never collection order. Pr
 
 **Invariant — equivalent copies:** choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences, regardless of which copy was clicked. Hidden selection state must remain equivalent up to the association with physical copies. This applies to all card identities, not only Basic Strikes and Defends. Equivalence requires the same identity and all gameplay-relevant status; hidden selection provenance and presentation position do not distinguish the class.
 
-Retain one logical occurrence per copy, with its own inherent randomness: multiplicity must not collapse into one roll per identity. Representative-selection progress is separate for different card identities. Exact count coupling, operation-purpose scopes and logical-to-physical association are [unresolved](WORKING.md#equivalent-copy-routing).
+Retain one logical occurrence per copy, with its own inherent randomness: multiplicity must not collapse into one roll per identity. Representative-selection state is separate for different card identities. Exact count coupling, operation-purpose scopes and logical-to-physical association are [unresolved](WORKING.md#equivalent-copy-routing).
 
 **Presentation boundary:** operate visibly on the card the player selected. If the first displayed Strike is upgraded, that first Strike must visibly be upgraded; never substitute another displayed copy or reorder cards to implement equivalence. Preserve acquisition-order-based display and original reward entry addresses. Hidden selection provenance may be routed independently of the physical UI object, without rewriting past generated attributes.
 
@@ -222,7 +223,7 @@ Source policies specify which parts of the order apply. Canonical card order con
 
 **Main idea:** for a source that adopts uniform selection without replacement, give each eligible candidate an independent priority and take the lowest `k` priorities. Removing an unselected candidate cannot change the selected set.
 
-Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose. Neither the current candidate collection nor its list positions enter the address. Use independent deterministic tie-break draws rather than collection order. A fresh opportunity uses fresh priorities; the source defines its sharing scope and progress. For unique owned relics, the candidate key is relic identity.
+Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose. Neither the current candidate collection nor its list positions enter the address. Use independent deterministic tie-break draws rather than collection order. A fresh opportunity uses fresh priorities; the source defines its sharing scope and opportunity counting. For unique owned relics, the candidate key is relic identity.
 
 This opt-in mechanism remains available for effects such as Relic Trader. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
 
@@ -255,7 +256,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
 
-At each checkpoint, save sequence contents and progress, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes. Use targeted random-operation logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -365,7 +366,7 @@ Before recording the offer, `S` counts chest-eligible shared identities of that 
 - The remaining generic sequence, including the drawn entry.
 - The **original shop and Courier allocations**, retaining identities after display or acquisition.
 
-Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop progress outside lifetime generation. Advancement uses generic stock; borrowing during selection or resolution uses a permanent marker under the [borrowing boundary](#borrowing).
+Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation. Advancement uses generic stock; borrowing during selection or resolution uses a permanent marker under the [borrowing boundary](#borrowing).
 
 **Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
 
@@ -382,7 +383,7 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 
 **Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
 
-**Generation and progress:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites have separate saved ordinals that continue across acts; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
+**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites have separate saved ordinals that continue across acts; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
 
 Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
 
@@ -433,7 +434,7 @@ The combat offset starts at `-0.05`. Normal-fight-rule and elite non-Rare slots 
 
 Subject to the difficulty-specific cap below, when a slot reaches the threshold, resolve that slot as Rare, reset luck to zero and advance to the next threshold. Discard the overshoot. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
 
-Luck, the current threshold and sequence progress carry across acts; the combat offset resets to `-0.05` between acts. Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
+Luck, the current threshold and sequence state carry across acts; the combat offset resets to `-0.05` between acts. Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
 
 **Rationale:** before deferral, `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`. Exponential thresholds preserve the supplied waiting probabilities without fitting a route-dependent luck distribution. This does not make the capped, deferred reward system identical to vanilla.
 
@@ -457,7 +458,7 @@ Maintain one additional Rare-only identity sequence per character, shared by the
 
 Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
-**Accepted tradeoff:** extra-Rare sequence progress depends on prior Rare counts, and companion replacements depend on each offer's composition. These alignment and distribution tradeoffs are accepted for A0–6 because the design primarily targets A7+.
+**Accepted tradeoff:** the extra-Rare sequence state depends on prior Rare counts, and companion replacements depend on each offer's composition. These alignment and distribution tradeoffs are accepted for A0–6 because the design primarily targets A7+.
 
 **Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Baseline frequency:** at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
 
@@ -529,9 +530,9 @@ Reuse the existing identity group when expansion leaves the complete request's e
 
 Retain source rarity rules, eligible-card sampling weights, offer sizes, duplicate exclusions, luck rules and upgrade rules. Neither relic resets luck state or restarts opening-only rarity exceptions.
 
-Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll progress and fallback rules.
+Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll sequence position and fallback rules.
 
-**Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity progress still matters.
+**Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
 ### Wing Charm
 
@@ -589,7 +590,7 @@ Consumed clocks are marked zero.
 - **Downgrade-clock refill:** Wongos refreshes the downgraded card's downgrade clock using event RNG. Reflections leaves consumed downgrade clocks at zero; no later permanent downgrade source can use them.
 
 Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
-Shared progress aligns successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
+Shared clocks align successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
 
 **Vanilla deviation — SL 4A(↓):** reordering random upgrades, such as Whetstone and War Paint, with candidate addition/removal or another disjoint random upgrade no longer rerolls their targets.
 
@@ -604,7 +605,7 @@ For Tooth and Bracelet, use separate purpose-specific priorities and the [fixed-
 
 ### Single-card reward-choice alignment
 
-For Tooth, Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key for whichever card is acquired. Choosing a later card inherits that key, not the first card's identity, upgrade roll or unrelated inherent RNGs. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
+For Tooth, Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key for whichever card is acquired. Choosing a later card inherits that key, not the first card's identity, upgrade roll or unrelated random state. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
 
 Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. Multi-card-capable selections, including bundles, do not apply this alignment, even when the player actually takes only one card. Each acquired occurrence there keeps its own selection keys. Selecting existing deck cards is not a reward-choice alignment operation.
 
@@ -658,7 +659,7 @@ The replacement source and collision/eligibility handling remain [unresolved](WO
 
 **Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding uses.
 
-Determine each use's complete card batch by potion type + that type's run-wide committed-use ordinal. Count skipped offers. Each type progresses independently of other potion types and other combat card generation.
+Determine each use's complete card batch by potion type + that type's run-wide committed-use ordinal. Count skipped offers. Each type's counter advances independently of other potion types and other combat card generation.
 
 Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
 
@@ -670,9 +671,9 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 
 ### Combat addresses
 
-For ordinary normal fights, elites and bosses, address setup by act + combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate ordinal progress for these combat categories.
+For ordinary normal fights, elites and bosses, address setup by act + combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate counters for these combat categories.
 
-Event-created battles that do not consume an ordinary encounter list use event identity + event-local battle ordinal instead of an ordinary combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary encounter setup progress.
+Event-created battles that do not consume an ordinary encounter list use event identity + event-local battle ordinal instead of an ordinary combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary combat-category counters.
 
 Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI.
 
@@ -724,8 +725,8 @@ This table maps baseline interference. Detailed rules follow under [relic and ev
 
 | Mechanism | Baseline and interference |
 |---|---|
-| Unknown room types | Changing odds and RNG progress make `?` resolution route-dependent. Catfood leaves this unchanged. |
-| Event / encounter identities | Eligibility and room visits affect list progression. |
+| Unknown room types | Changing odds and RNG state make `?` resolution route-dependent. Catfood leaves this unchanged. |
+| Event / encounter identities | Eligibility and room visits affect list cursors. |
 | Shops and events | Visits and restocks can shift later stock, prices and rewards. |
 | Combat | Earlier rooms and reshuffles affect later setup and opening hands. |
 | Combat gold | Other reward draws can shift later gold. |
@@ -866,7 +867,7 @@ Ordinary shop cards suppress random upgrades but still consume the check draw.
 
 Thus even one restock per category can interfere. Equivalent slots share generators; matching RNG state, request and candidates preserves outcomes. Events may consume shared rewards/bags despite having event RNG.
 
-**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG progress continues.
+**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG state persists across acts.
 
 **Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
 
