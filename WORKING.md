@@ -81,14 +81,16 @@ Shared contract and transformation use: [canonical card order](DESIGN.md#canonic
 
 #### Equivalent-copy routing
 
-Requirements, multiplicity and UI behavior: [equivalent-card selections](DESIGN.md#equivalent-card-selections). [Fixed-priority selection and reward-choice alignment](DESIGN.md#settled-policy-fixed-priority-card-selection) are settled.
+**Scope:** routing hidden selection state for player-selected gameplay-equivalent copies outside combat. Visual behavior is settled by the [equivalent-card contract](DESIGN.md#equivalent-card-selections): logical representative selection is separate from presentation, and the clicked copies visibly receive the effects.
+
+**Adopted batch boundary:** select one-by-one within all logical targets, excluding previously chosen ones. Apply effect after all selections complete.
 
 **Decisions needed:**
 
 - Define the gameplay-equivalence status key for each relevant card/effect, and the hidden representative chosen when interchangeable physical copies carry different hidden selection provenance.
 - Choose count coupling: compare equivalent-copy cohorts of two versus three, not only equal-sized decks. Decide how logical tokens enter, leave, split into different status classes and merge again without renumbering surviving tokens.
 - Choose operation-purpose sharing and opportunity consumption. Separate upgrade/removal/etc. representative streams are the leading direction; which sources of the same operation share selection state remains open. For opportunity-indexed variants, decide counter advancement for singleton or whole-class selections so count differences do not inadvertently shift later addresses.
-- Specify hidden-token association after routing an operation. For unordered batches, define snapshot-based assignment to the selected physical cards, including effects producing different results.
+- Specify hidden-token association with the selected physical copies and assignment of differing batch results under the adopted boundary.
 
 **Candidate — representative selection over logical tokens:** represent each logical occurrence with a token bundling its relevant future selection keys, aliases, residual clocks and renewal counters. Give tokens independent representative priorities within each card-identity/operation scope; choose the lowest priority, or the lowest `k` for `k` equivalent selected copies. Reusing [corrected persistent clocks](DESIGN.md#corrected-persistent-selection-priorities) in this separate routing scope would preserve surviving-token order; fresh [opportunity-specific priorities](DESIGN.md#opportunity-specific-selection-priorities) remain an alternative with less persistent state. Route the chosen hidden token(s) to the selected physical card(s), preserving the remaining token multiset. An already randomly selected logical winner needs no second representative draw. Do not choose representatives by the Tooth-return clock or another downstream outcome being aligned.
 

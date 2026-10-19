@@ -598,7 +598,7 @@ Shared clocks align successive opportunities while preserving uniform selection 
 
 **Intent:** align affected cards across decks and single-card reward choices.
 
-For Tooth and Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
+For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck. At each subsequent combat trigger, return the next card upgraded and remove its record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
@@ -848,6 +848,8 @@ All six use shared `CombatCardGeneration` RNG and sample uniformly over eligible
 ### Generation and selection mechanics
 
 **Card pools:** there are no Common Power cards in the game.
+
+**Out-of-combat player card batches:** batch selections are unordered. Deck selectors and reward grids collect the full selection before effects. Enumeration can still affect transformation RNG (e.g. Astrolabe) and acquisition order (e.g. Sea Glass).
 
 **Shop and Courier RNG:** initial stock and restocks share these player RNG streams. Each listed random operation consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
 
