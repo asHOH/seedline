@@ -81,7 +81,7 @@ Shared contract and transformation use: [canonical card order](DESIGN.md#canonic
 
 #### Equivalent-copy routing
 
-**Scope:** route hidden selection state for player-selected gameplay-equivalent copies outside combat. The [equivalent-card contract](DESIGN.md#equivalent-card-selections) settles presentation: logical representative selection is separate; clicked copies visibly receive effects.
+**Scope:** route hidden selection state for player-selected gameplay-equivalent copies outside combat. The [equivalent-card contract](DESIGN.md#equivalent-card-selections) settles presentation: logical representative selection is separate from presentation; clicked copies visibly receive effects.
 
 **Adopted batch boundary:** select one-by-one within all logical targets, excluding previously chosen ones. Apply effect after all selections complete.
 

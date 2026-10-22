@@ -10,7 +10,7 @@ This evolving specification records settled decisions, rationale and existing-me
 
 **Fairness principle — opportunity isolation:** preserve meaningful consequences while minimizing unrelated future gameplay changes. For example, room visits or reward choices should not shift unrelated later randomness.
 
-**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or fixes to unintended vanilla behavior. The latter still receive impact grades; currently classified: [forced-event bypass](#settled-policy-forced-events).
+**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or fixes to unintended vanilla behavior. Fixes to unintended behavior still receive impact grades; currently classified: [forced-event bypass](#settled-policy-forced-events).
 
 **Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that undermine same-seed consistency, often early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
 
@@ -155,13 +155,13 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
 
-**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool divisions. Each potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
+**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool divisions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
 ### Opportunity consumption
 
 **Invariant — opportunity consumption:** random state advances when the corresponding random result becomes available for the player to reveal or receive, regardless of actual viewing, acceptance or selection.
 
-Operations prevented or bypassed before any result becomes available leave random state unchanged. Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
+If a random operation is prevented or bypassed before any result becomes available, its random state does not advance. Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
 ### Stable entry addresses
 
@@ -219,7 +219,7 @@ Source policies specify applicable parts of this order. It controls random-opera
 
 ### Opportunity-specific selection priorities
 
-**Main idea:** for sources adopting uniform selection without replacement, give eligible candidates independent priorities and take the lowest `k`. Removing an unselected candidate cannot change the selected set.
+**Main idea:** for sources adopting uniform selection without replacement, give each eligible candidate an independent priority and select the `k` candidates with lowest priorities. Removing an unselected candidate cannot change the selected set.
 
 Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Use independent deterministic tie-break draws, never collection order. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
 
@@ -321,13 +321,13 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 
 ## Settled policy: potions
 
-**Intent:** isolate potions across rewards, shops, Courier and potion-generating effects; preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue leaves ordinary potion drops unchanged after removal.
+**Intent:** isolate potions across rewards, shops, Courier and potion-generating effects; preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
 
 ### Acquisition and sequences
 
 - Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 - Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
-- Generic rewards use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes share per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
+- Generic rewards use separate rarity-roll sequences for **[standard weights](#generation-and-selection-mechanics)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
 - Preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
 
 **Example — batch boundaries:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
@@ -396,7 +396,7 @@ Baseline: [gold ranges and exceptions](#generation-and-selection-mechanics) and 
 
 ## Settled policy: card reward offers
 
-**Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share choices across sources; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
+**Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
 
 **Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
 
@@ -470,7 +470,7 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 
 **Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
 
-**Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply.
+**Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
 
 The first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate two opening Act 1 normal fights without elite intervention and follow ordinary shared consumption, including by other covered sources. This exception occurs only once per run. Account for common normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
@@ -536,7 +536,7 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 **Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
-Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the slot's Wing Charm selection provenance (triple priority or supplementary-card membership), without a new priority; the Rare keeps its own identity/upgrade provenance. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
+Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the replaced slot's Wing Charm selection provenance (triple priority or supplementary-card membership), without a new priority; the Rare keeps its own identity/upgrade provenance. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
 **Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and selection provenance move with the cards.
 
@@ -560,7 +560,7 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** retain [vanilla target pools and eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
-- **Unordered transformation batches:** process originals in identity-only [canonical card order](#canonical-card-order), ignoring upgrade/enchantment state. Repeated requests for the same identity remain tied and retain their multiplicity.
+- **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Transformations and direct additions consume on generation. Previews and canceled selections consume nothing.
 
@@ -584,7 +584,7 @@ Use the [shared clock strategy](#corrected-persistent-selection-priorities). All
 
 Consumed clocks are marked zero.
 
-- **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise draw from one dedicated run-wide refill sequence shared only by Wongos and Reflections, consumed at most three times per run.
+- **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise take the next value from one dedicated run-wide refill sequence, shared only by Wongos and Reflections. This sequence is consumed at most three times per run.
 - **Downgrade-clock refill:** Wongos refreshes the downgraded card's downgrade clock using event RNG. Reflections leaves consumed downgrade clocks at zero; no later permanent downgrade source can use them.
 
 Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
@@ -621,7 +621,7 @@ Apply the shared clock update once when the event shows a newly selected card. I
 
 Ranwid the Elder and Stone of All Time share one run-wide scope using the [shared clock strategy](#corrected-persistent-selection-priorities), offering the lowest-clock owned potion. Each acquired copy remains a distinct logical occurrence.
 
-With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once at commitment using its key and per-occurrence renewal count, keeping declined sacrifices selectable later. Run-wide clocks and renewal counts follow the shared [saved-state](#saved-state) contract. Preserve event access, costs and rewards.
+With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its key and per-occurrence renewal count. Renewal occurs regardless of acceptance, keeping declined potions selectable later. Run-wide clocks and renewal counts follow the shared [saved-state](#saved-state) contract. Preserve event access, costs and rewards.
 
 Equivalent player-chosen potion use/discard/trades remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks. Preserve slot-dependent offers and distinct trade payoffs; an already randomly selected target needs no representative reselection. The representative-selection mechanism remains part of [equivalent-copy routing](WORKING.md#equivalent-copy-routing).
 
@@ -683,7 +683,7 @@ Resolve room type under the [unknown-room policy](#settled-policy-unknown-room-r
 
 Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its visited-node ordinal; preserve the existing forced room type and frozen non-event chances. Ordinary event-list advancement is deliberately removed from forced insertion, not from ordinary event visits.
 
-**Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability. Vanilla's consumption is probably unintended by developers.
+**Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
 
 ## Settled policy: unknown-room resolution
 
@@ -891,7 +891,7 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 **Without Scarcity (A0–6):** normal/elite/shop base Rare chances are 3%/10%/9%, non-Rare offset growth is `0.01`, and ordinary Common/Uncommon upgrade chances in Acts 1/2/3 are 0%/25%/50%. Base normal/direct-addition Common/Uncommon/Rare odds are 60%/37%/3%.
 
-**Normal versus elite card rewards:** both offer three distinct cards from the same character pool under the same upgrade rules; elites have no inherent upgrade-chance bonus. Under Scarcity, ordinary normal offers cannot contain two Rares because the rare chance after offset is negative; elites can produce Rare → non-Rare → Rare because the last slot has a 0.5% Rare chance after the intervening non-Rare. Catfood preserves these rules.
+**Normal versus elite card rewards:** both offer three distinct card identities from the same character pool under the same upgrade rules; elites have no inherent upgrade-chance bonus. Under Scarcity, ordinary normal offers cannot contain two Rares because the rare chance after offset is negative; elites can produce Rare → non-Rare → Rare because the last slot has a 0.5% Rare chance after the intervening non-Rare. Catfood preserves these rules.
 
 **Combat gold:** uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33.
 
@@ -909,7 +909,7 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 #### Relic bags
 
-**Pools and order:** the fully unlocked player bag contains **122 ordinary relics**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag has separately shuffled per-rarity lists; their identities overlap.
+**Pools and order:** the fully unlocked player bag contains **122 ordinary relics**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag has separately shuffled per-rarity lists; the two bags overlap in identity.
 
 **Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare; fixed-rarity requests consume identity only, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front. Factory rarity rolls default to player `Rewards` RNG; chests use separate `TreasureRoomRelics` RNG.
 
