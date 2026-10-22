@@ -6,7 +6,7 @@ Unresolved work and supporting evidence, evaluated against [DESIGN's goals and f
 
 ---
 
-Frame decisions with the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview), distinguishing contexts only where their rules differ.
+Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview); distinguish contexts only where rules differ.
 
 **Candidate defaults:** cumulative ordinals for Rewards; act-local ordinals for Encounter, subject to each unresolved source's sharing/addressing decision.
 
@@ -18,7 +18,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking and equivalent-copy routing for cards and potions.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
-**Stakeholder input:** [Questions for 二硫键](Questions.md) covers perceived Act 1/shop Rare rates and potentially fixable same-seed divergence; use the answers to inform calibration and remaining investigation.
+**Stakeholder input:** use answers to [Questions for 二硫键](Questions.md) about perceived Act 1/shop Rare rates and potentially fixable same-seed divergence to inform calibration and remaining investigation.
 
 ## Encounter
 
@@ -32,7 +32,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Candidate class model:** partition identities by equivalent complete predicates, including act availability within the chosen scope. Predicate domains may overlap while identity classes remain disjoint: `gold >= 100` and `gold >= 125` can both be active, but each identity is counted once. Use stable event/class keys, not the current candidate set or enumeration order. Whether to preserve additional ordering across distinct nested/intersecting conditions remains open.
 
-**Candidates — both remain under consideration:**
+**Candidates:**
 
 - **Paused clocks:** reuse [corrected persistent clocks](DESIGN.md#corrected-persistent-selection-priorities) per event. Equivalent conditions give survivors identical updates, preserving their relative order without a separate group draw. Visited events leave selection; no within-act renewal is needed. This retains eligibility-history effects and lets previously ineligible events compete immediately on re-entry, unlike vanilla passing. Matching current sets and ordinals need not reconverge.
 - **Condition-level passing:** separate each condition's fixed identity order from its scheduling entries. Pass an inactive condition's scheduling entry without consuming its identity head. Define entry retirement/deferral and later scheduling weights; a finite schedule can lose all of a condition's entries while its identities remain. Simple identity-level passing fails the condition-order requirement. Nested/intersecting conditions must not duplicate identity weight.
@@ -51,7 +51,7 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 
 **Decisions needed:** choose replacement stock and input-linked assignment; define collision resolution, ownership/eligibility handling and any unavoidable changes to source isolation.
 
-**Constraints:** only one trade is executed: resolving a proposed target for another outgoing relic does not remove that relic from the player's inventory. All three displayed replacements must be legal alternatives against the actual inventory, not a hypothetical simultaneous three-relic exchange.
+**Constraints:** only one trade executes; resolving another outgoing relic's proposed target leaves that relic owned. All three displayed replacements must be legal against the actual inventory, not a hypothetical simultaneous three-relic exchange.
 
 **Candidates — graph and assignment:**
 
@@ -67,7 +67,7 @@ Owned-relic selection, replacement constraints and offer consumption: [Relic Tra
 
 #### Remaining events and Ancients
 
-Remaining Encounter random operations have not yet been decomposed. Evaluate them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules as they are investigated.
+Decompose remaining Encounter random operations as investigated, evaluating them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules.
 
 ### Item-selection priorities
 
@@ -75,13 +75,13 @@ Remaining Encounter random operations have not yet been decomposed. Evaluate the
 
 Shared contract and transformation use: [canonical card order](DESIGN.md#canonical-card-order) and [transformation batches](DESIGN.md#selection-and-consumption).
 
-**Decisions needed:** define the usefulness ranking of card identities, upgrade states and enchantments. The rough direction is Curse < Strike < Defend < other Basic < Common; complete and refine this ranking, including how status changes affect placement. Identical cards remain tied under the shared contract.
+**Decisions needed:** define the usefulness ranking of card identities, upgrade states and enchantments, including placement after status changes. Refine and complete the rough direction Curse < Strike < Defend < other Basic < Common. Identical cards remain tied under the shared contract.
 
 **Validation:** permute batch enumeration and equivalent physical copies with different hidden random state; compare transformation results and subsequent random state. Include different original-identity exclusions. Assess combat-shuffle alignment separately under [Shuffles](#shuffles).
 
 #### Equivalent-copy routing
 
-**Scope:** routing hidden selection state for player-selected gameplay-equivalent copies outside combat. Visual behavior is settled by the [equivalent-card contract](DESIGN.md#equivalent-card-selections): logical representative selection is separate from presentation, and the clicked copies visibly receive the effects.
+**Scope:** route hidden selection state for player-selected gameplay-equivalent copies outside combat. The [equivalent-card contract](DESIGN.md#equivalent-card-selections) settles presentation: logical representative selection is separate; clicked copies visibly receive effects.
 
 **Adopted batch boundary:** select one-by-one within all logical targets, excluding previously chosen ones. Apply effect after all selections complete.
 
@@ -106,7 +106,7 @@ Shared contract and transformation use: [canonical card order](DESIGN.md#canonic
 
 **Decision needed:** opening-shuffle addressing and how later shuffles share randomness and advance their random state.
 
-**Planned input ordering:** use [canonical card order](DESIGN.md#canonical-card-order), including upgrade/enchantment distinctions, before shuffling. The shuffle mechanism and its alignment guarantees remain open; a common input order alone does not settle them.
+**Planned input ordering:** use [canonical card order](DESIGN.md#canonical-card-order), including upgrade/enchantment distinctions, before shuffling. A common input order leaves the shuffle mechanism and its alignment guarantees unresolved.
 
 **Candidates:**
 
@@ -119,4 +119,4 @@ Shared contract and transformation use: [canonical card order](DESIGN.md#canonic
 
 #### Other combat randomness
 
-**Backlog:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations. As each area is investigated, decide sharing by source/effect and special-relic interactions, and split it into its own decision unit only where useful.
+**Backlog:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations. During investigation, decide source/effect sharing and special-relic interactions; split decision units only where useful.
