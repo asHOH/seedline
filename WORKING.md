@@ -15,7 +15,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 **Remaining work roadmap:**
 
 1. [Events and Ancients](#events-and-ancients): settle ordinary event identity selection and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
-2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking and equivalent-copy routing for cards and potions.
+2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking; validate settled equivalent-copy routing for cards and potions.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
 **Stakeholder input:** use answers to [Questions for 二硫键](Questions.md) about perceived Act 1/shop Rare rates and potentially fixable same-seed divergence to inform calibration and remaining investigation.
@@ -81,26 +81,15 @@ Shared contract and transformation use: [canonical card order](DESIGN.md#canonic
 
 #### Equivalent-copy routing
 
-**Scope:** route hidden selection state for player-selected gameplay-equivalent copies outside combat. The [equivalent-card contract](DESIGN.md#equivalent-card-selections) settles presentation: logical representative selection is separate from presentation; clicked copies visibly receive effects.
+Settled equivalence, state preservation and association: [equivalent-card selections](DESIGN.md#equivalent-card-selections).
 
-**Adopted batch boundary:** select one-by-one within all logical targets, excluding previously chosen ones. Apply effect after all selections complete.
-
-**Decisions needed:**
-
-- Define the gameplay-equivalence status key for each relevant card/effect, and the hidden representative chosen when interchangeable physical copies carry different hidden selection provenance.
-- Choose count coupling: compare equivalent-copy cohorts of two versus three, not only equal-sized decks. Decide how logical tokens enter, leave, split into different status classes and merge again without renumbering surviving tokens.
-- Choose operation-purpose sharing and opportunity consumption. Separate upgrade/removal/etc. representative streams are the leading direction; which sources of the same operation share selection state remains open. For opportunity-indexed variants, decide counter advancement for singleton or whole-class selections so count differences do not inadvertently shift later addresses.
-- Specify hidden-token association with the selected physical copies and assignment of differing batch results under the adopted boundary.
-
-**Candidate — representative selection over logical tokens:** represent each logical occurrence with a token bundling its relevant future selection keys, aliases, residual clocks and renewal counters. Give tokens independent representative priorities within each card-identity/operation scope; choose the lowest priority, or the lowest `k` for `k` equivalent selected copies. Reusing [corrected persistent clocks](DESIGN.md#corrected-persistent-selection-priorities) in this separate routing scope would preserve surviving-token order; fresh [opportunity-specific priorities](DESIGN.md#opportunity-specific-selection-priorities) remain an alternative with less persistent state. Route the chosen hidden token(s) to the selected physical card(s), preserving the remaining token multiset. An already randomly selected logical winner needs no second representative draw. Do not choose representatives by the Tooth-return clock or another downstream outcome being aligned.
-
-**Known — count coupling:** for nested logical-token cohorts with shared independent representative priorities, selections agree whenever the larger cohort selects a common token; two-versus-three agreement is `2/3`, the maximal uniform coupling. This is a matched-state result, not a guarantee across different eligibility histories; first establish meaningful common token keys across runs.
-
-**Validation:** swap clicked copies of any identity while holding gameplay status fixed; compare subsequent identity/status outcomes and retained hidden-token multisets without changing which UI card visibly changed. Test multiplicity, two/three-copy cohorts, multi-selection click permutations, class splits/merges, reward-choice priority aliases and save/load.
-
-**Potion routing:** choose the representative-selection mechanism for [equivalent potion actions](DESIGN.md#settled-policy-owned-potion-selection) alongside the card mechanism above.
+**Validation:** swap clicked copies of any identity while holding gameplay status fixed; compare subsequent identity/status outcomes and retained logical selection state without changing which UI card visibly changed. Test persistent progress distinctions, multiplicity, two/three-copy cohorts, multi-selection click permutations, class splits/merges, reward-choice priority aliases, Tooth storage/return, same-type potion trades with different payoffs, and save/load. Assess changed correlations and SL exploration against behavior preservation; report any discovered policy conflict explicitly.
 
 ### Combat randomness
+
+#### Potion departure impact
+
+**Validation:** grade the [potion departure rule](DESIGN.md#settled-policy-potion-generated-cards) separately from RNG isolation, comparing NoSL correlations and SL outcomes with vanilla use/discard alternatives. Check one advancement per use/discard/trade, including skipped offers, and save/load replay.
 
 #### Shuffles
 
