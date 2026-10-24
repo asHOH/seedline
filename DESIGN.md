@@ -149,6 +149,8 @@ The [fairness principle](#goals-and-principles) and labeled invariants are share
 
 Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
 
+**Invariant — selection tie-breaks:** resolve equal random-selection priorities with independently addressed deterministic tie-breaks.
+
 ### Rarity and identity sequences
 
 **Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and sequence state.
@@ -163,15 +165,17 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 ### Opportunity consumption
 
-**Invariant — opportunity consumption:** random state advances when the corresponding random result becomes available for the player to reveal or receive, regardless of actual viewing, acceptance or selection.
+**Invariant — opportunity consumption:** an operation's random state, including selection clocks, stays unchanged until its random result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
 
-If a random operation is prevented or bypassed before any result becomes available, its random state does not advance. Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
+Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
 **Exception:** [potion-generated cards](#settled-policy-potion-generated-cards) also consume opportunities on discard, trade and covered reward skips.
 
 ### Stable entry addresses
 
 **Invariant — stable addresses:** filtered advancement, borrowing and removals never change an entry's original address.
+
+**Invariant — presentation-only reordering:** change only display positions, keeping each entry's address, attached random state and group membership with it.
 
 An entry's address is its original source sequence + original entry position. Prices and saved state use this stable address, distinguishing occurrences of repeated identities.
 
@@ -209,7 +213,7 @@ Baseline upgrade chances: [generation and selection mechanics](#generation-and-s
 
 **Fixed-cohort shortcut:** if all members remain eligible until selected and each leaves permanently, sort their initial clocks once. Consume that order without subtraction or renewal.
 
-Use independently addressed deterministic tie-breaks, never collection order. Previews or cancellations before an opportunity becomes available consume no clocks. A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks. An unrelated purpose's selection does not advance these clocks.
+A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks. An unrelated purpose's selection does not advance these clocks.
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
 
@@ -223,7 +227,7 @@ Retain one logical occurrence per copy, keeping its selection state together und
 
 **Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. Apply effects after all representatives are selected.
 
-Commit the association permutation and shared clock update with the action; cancellations consume nothing. Renew each selected routing clock once if its logical occurrence survives, using its selection key, routing purpose and renewal count. Player-selected singleton and whole-class choices follow this same rule.
+Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its selection key, routing purpose and renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
 Status changes retain logical occurrences and unused clocks through class splits and merges; eligibility determines participation.
 
@@ -261,7 +265,7 @@ Shuffle outcomes must be independent of original deck sequence; the [shuffle add
 
 **Main idea:** for sources adopting uniform selection without replacement, give each eligible candidate an independent priority and select the `k` candidates with lowest priorities. Removing an unselected candidate cannot change the selected set.
 
-Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Use independent deterministic tie-break draws, never collection order. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
+Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
 
 This opt-in mechanism remains available for effects such as Relic Trader. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
 
@@ -514,7 +518,7 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 
 The first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate two opening Act 1 normal fights without elite intervention and follow ordinary shared consumption, including by other covered sources. This exception occurs only once per run. Account for common normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
-Store the Rare first in each rare-bearing triple. After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order. Move each card's stable entry address and inherent rolls with it; presentation does not change the simulated state.
+Store the Rare first in each rare-bearing triple. After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
 **Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
 
@@ -578,7 +582,7 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
-**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and group membership move with the cards.
+**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps.
 
 - **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
 - **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift draws for corresponding selections. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
@@ -603,7 +607,7 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 - **Occurrence lifetime:** each transformation retires the original logical occurrence. After applying source-specific gameplay inheritance, initialize fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization).
 - **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
-- Transformations and direct additions consume on generation. Previews and canceled selections consume nothing.
+- Transformations and direct additions consume on generation.
 
 **Infested Automaton:** Study and Touch Core use its event RNG for rarity without advancing the addition rarity sequence. Identities still use the shared character sequences.
 
@@ -700,9 +704,9 @@ The replacement source and collision/eligibility handling remain [unresolved](WO
 
 **Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
 
-Determine each complete card batch by potion type + that type's run-wide card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Counters advance independently of other potion types and other combat card generation.
+Determine each complete card batch by potion type + that type's run-wide card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Acquisition leaves this ordinal unchanged. Counters advance independently of other potion types and other combat card generation.
 
-**Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal, except for Cauldron rewards. Count each skipped reward once. Acquired Cauldron potions don't skip a potion reward if discarded before the player enters the next room, but they follow the ordinary use/discard/trade rule after the player enters the next room. Acquisition, failed acquisition and canceled actions consume nothing.
+**Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal, except for Cauldron rewards. Count each skipped reward once. Acquired Cauldron potions don't skip a potion reward if discarded before the player enters the next room, but they follow the ordinary use/discard/trade rule after the player enters the next room.
 
 Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
 
