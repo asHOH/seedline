@@ -173,7 +173,11 @@ An entry's address is its original source sequence + original entry position. Pr
 
 ### Card occurrence initialization
 
-Starting-deck cards and later card additions share one occurrence-initialization rule, deriving initial selection state from stable occurrence provenance and applying source-specific selection-key aliases. Treat the starting deck as an initial source with a stable address for each occurrence.
+Each new logical card occurrence gets one stable address from its source. Derive selection keys from this address, applying aliases for the purposes specified by source policies. Initialization preserves generated attributes and presentation order.
+
+Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Acquisition preserves each card's address and selection keys, regardless of which other offered cards are taken.
+
+For sources without generation entries, use source opportunity address + copy index. Assign indices in [canonical identity/status order](#canonical-card-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
 ### Act-local resets
 
@@ -209,7 +213,7 @@ Use independently addressed deterministic tie-breaks, never collection order. Pr
 
 **Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#settled-policy-owned-potion-selection), including combat departures. These policies define equivalence and operation sharing.
 
-Retain one logical occurrence per copy, preserving its future selection provenance, keys, aliases, clocks and renewal counts under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities), in a routing scope independent of gameplay selectors. An already randomly selected logical target bypasses representative reselection.
+Retain one logical occurrence per copy, keeping its address, selection keys, aliases, clocks and renewal counts together under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities), in a routing scope independent of gameplay selectors. An already randomly selected logical target bypasses representative reselection.
 
 **Presentation boundary:** routing permutes associations between logical occurrences and physical copies. Apply effects to the clicked copies; preserve display order, acquisition metadata, original reward entry addresses and past generated attributes. For example, upgrading the first displayed Strike visibly upgrades that Strike.
 
@@ -239,13 +243,15 @@ Copying preserves the source's selection state and consumes no routing clocks. I
 
 ### Canonical card order
 
-**Intent:** give unordered card batches a common usefulness-based processing order for permanent transformations and planned combat shuffling.
+**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-occurrence-initialization), permanent transformations and planned combat shuffling.
 
-Use a fixed, authored usefulness ranking of card identities and their upgrade/enchantment states, rather than alphabetical names or seed-derived priorities. Identify cards by stable model IDs. The exact [ranking and state comparisons remain unresolved](WORKING.md#canonical-card-order).
+Use a fixed, authored usefulness ranking of card identities and their gameplay-relevant statuses. Identify cards by stable model IDs. The exact [ranking and state comparisons remain unresolved](WORKING.md#canonical-card-order).
 
 Identical cards remain tied regardless of hidden selection provenance; retain every copy, without using hidden random state, acquisition order or physical position to break ties. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
+
+Shuffle outcomes must be independent of original deck sequence; the [shuffle addressing and advancement policy remains unresolved](WORKING.md#shuffles).
 
 ### Opportunity-specific selection priorities
 
@@ -590,8 +596,8 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** retain [vanilla target pools and eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
-- **Occurrence lifetime:** each transformation retires the original logical occurrence and initializes fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization), using the replacement's generation provenance.
-- **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order, preserving source-specific gameplay inheritance. Assignment of fresh occurrence addresses across tied originals with different inherited statuses remains [unresolved](WORKING.md#canonical-card-order).
+- **Occurrence lifetime:** each transformation retires the original logical occurrence. After applying source-specific gameplay inheritance, initialize fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization).
+- **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Transformations and direct additions consume on generation. Previews and canceled selections consume nothing.
 

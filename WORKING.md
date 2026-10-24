@@ -73,34 +73,30 @@ Decompose remaining Encounter random operations as investigated, evaluating them
 
 #### Canonical card order
 
-Shared contract and transformation use: [canonical card order](DESIGN.md#canonical-card-order) and [transformation batches](DESIGN.md#selection-and-consumption).
-
-**Decisions needed:** define the usefulness ranking of card identities, upgrade states and enchantments, including placement after status changes. Refine and complete the rough direction Curse < Strike < Defend < other Basic < Common. Identical cards remain tied under the shared contract.
-
-**Validation:** permute batch enumeration and equivalent physical copies with different hidden random state; compare transformation results and subsequent random state. Include different original-identity exclusions. Assess combat-shuffle alignment separately under [Shuffles](#shuffles).
+**Decisions needed:** complete the [canonical ranking](DESIGN.md#canonical-card-order) for identities, upgrades, enchantments and persistent progress. Starting point: Curse < Strike < Defend < other Basic < Common.
 
 #### Equivalent-copy routing
 
-Settled equivalence, state preservation and association: [equivalent-card selections](DESIGN.md#equivalent-card-selections).
+[Settled policy](DESIGN.md#representative-routing) · [Model checks](outputs/routing-validation.cjs).
 
-**Validation:** swap clicked copies of any identity while holding gameplay status fixed; compare subsequent identity/status outcomes and retained logical selection state without changing which UI card visibly changed. Test persistent progress distinctions, multiplicity, two/three-copy cohorts, multi-selection click permutations, class splits/merges, reward-choice priority aliases, Tooth storage/return, same-type potion trades with different payoffs, and save/load. Assess changed correlations and SL exploration against behavior preservation; report any discovered policy conflict explicitly.
+**Impact assessment:** grade NoSL correlations and SL outcomes separately from selector changes and [potion departure advancement](#potion-departure-impact).
+
+**Validation:** in-game commit/cancel and snapshot timing; occurrence state through Tooth storage/return and save/load; clock/tie handling. End-to-end checks await [canonical ranking](#canonical-card-order) and [shuffles](#shuffles).
 
 ### Combat randomness
 
 #### Potion departure impact
 
-**Validation:** grade the [potion departure rule](DESIGN.md#settled-policy-potion-generated-cards) separately from RNG isolation, comparing NoSL correlations and SL outcomes with vanilla use/discard alternatives. Check one advancement per use/discard/trade, including skipped offers, and save/load replay.
+**Validation:** grade NoSL/SL effects of [departure advancement](DESIGN.md#settled-policy-potion-generated-cards) separately from RNG isolation. Verify exactly-once consumption, including skipped offers, and save/load.
 
 #### Shuffles
 
-**Decision needed:** opening-shuffle addressing and how later shuffles share randomness and advance their random state.
-
-**Planned input ordering:** use [canonical card order](DESIGN.md#canonical-card-order), including upgrade/enchantment distinctions, before shuffling. A common input order leaves the shuffle mechanism and its alignment guarantees unresolved.
+**Decision needed:** opening-shuffle addressing, sharing with later shuffles, and advancement rules, subject to [deck-order independence](DESIGN.md#canonical-card-order).
 
 **Candidates:**
 
-- Act-local opening-shuffle ordinals. Together with act-local setup, this would align the first Act 2 normal fight's setup/shuffle addresses despite different Act 1 normal-fight counts; cumulative reward addresses would still differ.
-- Add run seed to boss shuffle initialization.
+- Act-local opening-shuffle ordinals, matching encounter setup.
+- Include run seed in boss-shuffle initialization.
 
 #### Generated cards
 
