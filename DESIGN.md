@@ -93,6 +93,10 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; otherwise ordinals continue across acts.
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
+- **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
+- **Occurrence address:** the stable source identifier of a logical occurrence, distinct for each copy.
+- **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
+- **Selection state:** an occurrence's address, selection keys and aliases, priorities or residual clocks, and renewal counts.
 
 ## Architecture overview
 
@@ -197,7 +201,7 @@ Baseline upgrade chances: [generation and selection mechanics](#generation-and-s
 
 **Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades), [fixed-priority card selection](#settled-policy-fixed-priority-card-selection), [Slippery Bridge](#settled-policy-slippery-bridge) and [owned-potion selection](#settled-policy-owned-potion-selection).
 
-**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and [representative routing](#representative-routing); never use current list position.
+**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose. Derive initial selection keys from occurrence addresses, applying source-specific aliases; never use current list position.
 
 **Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; a selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution. Mere eligibility loss/re-entry does not consume an unused clock.
 
@@ -213,21 +217,21 @@ Use independently addressed deterministic tie-breaks, never collection order. Pr
 
 **Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#settled-policy-owned-potion-selection), including combat departures. These policies define equivalence and operation sharing.
 
-Retain one logical occurrence per copy, keeping its address, selection keys, aliases, clocks and renewal counts together under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities), in a routing scope independent of gameplay selectors. An already randomly selected logical target bypasses representative reselection.
+Retain one logical occurrence per copy, keeping its selection state together under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities). An already randomly selected logical target bypasses representative routing.
 
 **Presentation boundary:** routing permutes associations between logical occurrences and physical copies. Apply effects to the clicked copies; preserve display order, acquisition metadata, original reward entry addresses and past generated attributes. For example, upgrading the first displayed Strike visibly upgrades that Strike.
 
-**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in pre-selection routing order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. For out-of-combat card batches, apply effects after all representatives are selected.
+**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. For out-of-combat card batches, apply effects after all representatives are selected.
 
 Commit the association permutation and shared clock update with the action; cancellations consume nothing. Renew each selected routing clock once if its logical occurrence survives, using its selection key, routing purpose and renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
 Status changes retain logical occurrences and unused clocks through class splits and merges; eligibility determines participation.
 
-**Coupling limit:** shared independent priorities on matched nested occurrence cohorts give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different provenance or eligibility histories can reduce agreement.
+**Coupling limit:** shared independent priorities on matched nested occurrence cohorts give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
 
 ### Equivalent-card selections
 
-**Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; hidden selection provenance and presentation position do not distinguish the class.
+**Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; selection state and presentation position do not distinguish the class.
 
 **Within-run equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#generation-and-selection-mechanics).
 
@@ -239,7 +243,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 | Enchant | All player-chosen enchantments, across enchantment types and amounts. |
 | Permanent removal | Removal, transformation and Amalgamator's combining: each retires the selected logical inputs, so sharing aligns the surviving originals. |
 
-Copying preserves the source's selection state and consumes no routing clocks. Initialize the new copy through [card occurrence initialization](#card-occurrence-initialization), using the granting source's occurrence address.
+Copying leaves the original card's selection state unchanged and consumes no routing clocks. Initialize the new copy from the granting source through [card occurrence initialization](#card-occurrence-initialization).
 
 ### Canonical card order
 
@@ -247,7 +251,7 @@ Copying preserves the source's selection state and consumes no routing clocks. I
 
 Use a fixed, authored usefulness ranking of card identities and their gameplay-relevant statuses. Identify cards by stable model IDs. The exact [ranking and state comparisons remain unresolved](WORKING.md#canonical-card-order).
 
-Identical cards remain tied regardless of hidden selection provenance; retain every copy, without using hidden random state, acquisition order or physical position to break ties. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
+Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
 
@@ -290,7 +294,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
 
-At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks and renewal counts, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, selection state, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes with targeted random-operation logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -572,9 +576,9 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 **Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
-Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the replaced slot's Wing Charm selection provenance (triple priority or supplementary-card membership), without a new priority; the Rare keeps its own identity/upgrade provenance. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
+Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
-**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and selection provenance move with the cards.
+**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps; priorities and group membership move with the cards.
 
 - **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
 - **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift draws for corresponding selections. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
@@ -640,7 +644,7 @@ For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific prioritie
 
 ### Single-card reward-choice alignment
 
-For Tooth, Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key for whichever card is acquired. Choosing a later card inherits that key, not the first card's identity, upgrade roll or unrelated random state. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot. Do not derive it from a subsequently sorted UI list.
+For Tooth, Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key as an alias for whichever card is acquired. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot.
 
 Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. In multi-card-capable selections, including bundles, each acquired occurrence keeps its own selection keys even when only one card is taken. Selecting existing deck cards is not a reward-choice alignment operation.
 
@@ -671,7 +675,7 @@ Baseline selection: [potion event mechanics](#potions).
 Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow the [Power](#own-character-power-offers) and [Attack/Skill](#other-the-future-of-potions-choices) policies.
 
 - Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order; acquisition provenance is irrelevant. Priorities are independent of the type sequences.
+- Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order, independently of occurrence addresses. Priorities are independent of the type sequences.
 - Within each reward rarity, assign successive sequence entries to potions in ascending priority order. Consume only for offered options, at most three entries total. Keep assignments fixed for the current event.
 
 **Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories without arbitrary ID-order preferences, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
