@@ -163,7 +163,7 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 If a random operation is prevented or bypassed before any result becomes available, its random state does not advance. Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
-**Exception:** [potion departures](#settled-policy-potion-generated-cards) also advance their card-generation ordinal on discard or trade, skipping that batch.
+**Exception:** covered [potion departures](#settled-policy-potion-generated-cards) also consume a card-generation opportunity on discard or trade.
 
 ### Stable entry addresses
 
@@ -193,7 +193,7 @@ Baseline upgrade chances: [generation and selection mechanics](#generation-and-s
 
 **Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades), [fixed-priority card selection](#settled-policy-fixed-priority-card-selection), [Slippery Bridge](#settled-policy-slippery-bridge) and [owned-potion selection](#settled-policy-owned-potion-selection).
 
-**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and, for cards, [equivalent-copy routing](#equivalent-card-selections); never use current list position.
+**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its inherent selection key + selection scope/purpose. Initial keys use stable occurrence provenance, subject to explicit source alignment and [representative routing](#representative-routing); never use current list position.
 
 **Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; a selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution. Mere eligibility loss/re-entry does not consume an unused clock.
 
@@ -205,39 +205,37 @@ Use independently addressed deterministic tie-breaks, never collection order. Pr
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
 
+### Representative routing
+
+**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#settled-policy-owned-potion-selection), including combat departures. These policies define equivalence and operation sharing.
+
+Retain one logical occurrence per copy, preserving its future selection provenance, keys, aliases, clocks and renewal counts under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities), in a routing scope independent of gameplay selectors. An already randomly selected logical target bypasses representative reselection.
+
+**Presentation boundary:** routing permutes associations between logical occurrences and physical copies. Apply effects to the clicked copies; preserve display order, acquisition metadata, original reward entry addresses and past generated attributes. For example, upgrading the first displayed Strike visibly upgrades that Strike.
+
+**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in pre-selection routing order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. For out-of-combat card batches, apply effects after all representatives are selected.
+
+Commit the association permutation and shared clock update with the action; cancellations consume nothing. Renew each selected routing clock once if its logical occurrence survives, using its selection key, routing purpose and renewal count. Player-selected singleton and whole-class choices follow this same rule.
+
+Status changes retain logical occurrences and unused clocks through class splits and merges; eligibility determines participation.
+
+**Coupling limit:** shared independent priorities on matched nested occurrence cohorts give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different provenance or eligibility histories can reduce agreement.
+
 ### Equivalent-card selections
 
-**Invariant — equivalent copies:** choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences, regardless of which copy was clicked. Hidden selection state must remain equivalent up to the association with physical copies. This applies to all card identities, not only Basic Strikes and Defends. Equivalence requires the same identity and all gameplay-relevant status; hidden selection provenance and presentation position do not distinguish the class.
+**Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; hidden selection provenance and presentation position do not distinguish the class.
 
-**Within-run equivalence key:** in the same owner and eligible deck context, compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Use an explicit gameplay-state comparison. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. These exclusions leave gameplay properties intact; see [persistent-state references](#generation-and-selection-mechanics).
+**Within-run equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#generation-and-selection-mechanics).
 
-Retain one logical occurrence per copy, with its own inherent randomness: multiplicity must not collapse into one roll per identity. Representative-selection state is separate for different card identities.
-
-**Presentation boundary:** operate visibly on the card the player selected. If the first displayed Strike is upgraded, that first Strike must visibly be upgraded; never substitute another displayed copy or reorder cards to implement equivalence. Preserve acquisition-order-based display and original reward entry addresses. Hidden selection provenance may be routed independently of the physical UI object, without rewriting past generated attributes.
-
-**Out-of-combat batch boundary:** select logical targets one by one from the initial eligibility snapshot, excluding previously selected targets. Apply effects after all selections complete.
-
-#### Representative routing
-
-For out-of-combat player-selected equivalent cards, choose logical representatives with the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities), in a routing scope independent of downstream gameplay selectors. All sources of the same card operation share routing clocks; different operations use separate scopes.
-
-Preserve each logical occurrence's future selection provenance, keys, aliases, clocks and renewal counts under their existing source policies. Routing changes its association with the physical card. A stable physical-to-logical mapping suffices; a separate token object is optional.
+All out-of-combat player-selected sources share [routing clocks](#representative-routing) by operation, separately for each card identity:
 
 | Routing scope | Operations |
 |---|---|
-| Upgrade | Player-chosen upgrades and Pael's Tooth's initial selection for storage and later upgrading. |
+| Upgrade | Player-chosen upgrades, including Pael's Tooth's initial selection. |
 | Enchant | All player-chosen enchantments, across enchantment types and amounts. |
 | Permanent removal | Removal, transformation and Amalgamator's combining: each retires the selected logical inputs, so sharing aligns the surviving originals. |
 
-Copying reads the source card's gameplay properties and leaves its selection state unchanged. Initialize each copy through the [shared addition rule](#card-occurrence-initialization), using the granting source's occurrence address; copying consumes no representative-routing clocks.
-
-**Batch association:** freeze presentation order with the initial eligibility snapshot. Within each equivalence class, pair selected occurrences in pre-selection routing order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-key order with unclicked copies in that order. Commit the association permutation with the action. Presentation positions only place already-selected occurrences; this adds no random draws or counters.
-
-Apply the shared clock update and renew each selected routing clock once if its logical occurrence survives, using its stable key, routing purpose and renewal count. Apply the same consumption rule to singleton and whole-class choices; cancellations consume nothing. An already randomly selected logical target bypasses representative reselection.
-
-Status changes retain logical occurrences and unused clocks through class splits and merges; eligibility determines participation. Initialization follows the [shared occurrence rule](#card-occurrence-initialization), with fresh transformation outputs as specified by their policy. Preserve saved logical-to-physical associations.
-
-**Coupling limit:** shared independent priorities on matched nested occurrence cohorts give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different provenance or eligibility histories can reduce agreement.
+Copying preserves the source's selection state and consumes no routing clocks. Initialize the new copy through [card occurrence initialization](#card-occurrence-initialization), using the granting source's occurrence address.
 
 ### Canonical card order
 
@@ -286,7 +284,7 @@ Triple sequences reject duplicate candidates while generating each triple. Other
 
 Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
 
-At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, residual clocks and renewal counts, source-specific priority aliases, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
 **Validation:** verify save/load preserves counters and outcomes with targeted random-operation logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
 
@@ -592,8 +590,8 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 
 - Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
 - **Transformations:** retain [vanilla target pools and eligibility](#generation-and-selection-mechanics). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
-- **Occurrence lifetime:** each transformation removes the original logical occurrence and initializes its replacement through the shared [card-addition rule](#card-occurrence-initialization), using the replacement's generation provenance. The replacement starts with fresh selection state.
-- **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order, preserving source-specific gameplay inheritance.
+- **Occurrence lifetime:** each transformation retires the original logical occurrence and initializes fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization), using the replacement's generation provenance.
+- **Unordered transformation batches:** process the selected originals in the identity-only [canonical card order](#canonical-card-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order, preserving source-specific gameplay inheritance. Assignment of fresh occurrence addresses across tied originals with different inherited statuses remains [unresolved](WORKING.md#canonical-card-order).
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
 - Transformations and direct additions consume on generation. Previews and canceled selections consume nothing.
 
@@ -631,7 +629,7 @@ Shared clocks align successive opportunities while preserving uniform selection 
 
 For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
 
-- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving their gameplay properties and logical selection state through storage and return, including physical-object recreation. Initial selection uses the shared upgrade-routing scope; the return-order priorities above remain separate. At each subsequent combat trigger, return the next card upgraded and retire only its completed return-order record. Later removals never add or recycle cohort records.
+- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving gameplay properties and logical selection state through storage and physical-object recreation. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 
 ### Single-card reward-choice alignment
@@ -656,9 +654,7 @@ Ranwid the Elder and Stone of All Time share one run-wide scope using the [share
 
 With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its key and per-occurrence renewal count. Renewal occurs regardless of acceptance, keeping declined potions selectable later. Run-wide clocks and renewal counts follow the shared [saved-state](#saved-state) contract. Preserve event access, costs and rewards.
 
-For player-chosen use/discard/trades, treat same-type owned potion copies as equivalent for departure routing, including copies with different displayed trade payoffs. Use the shared [representative routing](#representative-routing) to remove the same logical occurrence, with its clock and renewal state, regardless of the clicked slot. Visibly consume the clicked potion and preserve the same remaining hidden clocks; slot-dependent offers and trade payoffs stay with the clicked option.
-
-All use, discard and trade sources share one departure-routing scope within each potion type, so equivalent departures retain the same surviving logical occurrences. This scope is separate from the sacrifice-offer selector above.
+**Departure routing:** for player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the selected logical occurrence; slot-dependent offers and trade payoffs stay with the clicked option.
 
 Baseline selection: [potion event mechanics](#potions).
 
@@ -690,7 +686,7 @@ The replacement source and collision/eligibility handling remain [unresolved](WO
 
 ## Settled policy: potion-generated cards
 
-**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding departures, treating discard and trade as consuming their potential card batch.
+**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding departures.
 
 Determine each complete card batch by potion type + that type's run-wide departure ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Use consumes once even if its card offer is skipped. Failed acquisition and canceled actions consume nothing. Counters advance independently of other potion types and other combat card generation.
 
@@ -925,6 +921,8 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 **Ancient options:** use event RNG seeded with run seed + event identity hash + player-slot contribution, independently of event counts.
 
 **Combat setup and shuffles:** encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats; extra reshuffles advance the same generator used for later opening hands.
+
+**Shuffle input order:** `Player.PopulateCombatState` clones cards in deck order; `CardPile.RandomizeOrderInternal` applies `UnstableShuffle` directly. Later `CardPileCmd.Shuffle` calls `StableShuffle`, which sorts before shuffling. `CardModel.CompareTo` compares model identity and upgrade level; enchantment and persistent progress remain tied.
 
 **Card rarity:** shared offset starts at `-0.05` and resets there after a Rare combat reward roll, but not after direct additions or on Ancient entry. Normal/elite non-rare rolls add `0.005`, capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 1.49%/5%/4.5%, plus the offset; base Uncommon chances are 37%/40%/37%. A negative Rare threshold also reduces the Uncommon chance: initial normal rewards have 0% Rare and 33.49% Uncommon. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
 
