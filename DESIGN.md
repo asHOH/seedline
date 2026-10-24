@@ -135,7 +135,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys; qualifying one-card reward choices share an anchor. | Fixed priority order. |
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
 | [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
-| [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate run-wide departure ordinals per potion type. | Ordinal-addressed batches. |
+| [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate run-wide card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 
@@ -167,7 +167,7 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 If a random operation is prevented or bypassed before any result becomes available, its random state does not advance. Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
-**Exception:** covered [potion departures](#settled-policy-potion-generated-cards) also consume a card-generation opportunity on discard or trade.
+**Exception:** [potion-generated cards](#settled-policy-potion-generated-cards) also consume opportunities on discard, trade and covered reward skips.
 
 ### Stable entry addresses
 
@@ -219,9 +219,9 @@ Use independently addressed deterministic tie-breaks, never collection order. Pr
 
 Retain one logical occurrence per copy, keeping its selection state together under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities). An already randomly selected logical target bypasses representative routing.
 
-**Presentation boundary:** routing permutes associations between logical occurrences and physical copies. Apply effects to the clicked copies; preserve display order, acquisition metadata, original reward entry addresses and past generated attributes. For example, upgrading the first displayed Strike visibly upgrades that Strike.
+**Presentation boundary:** routing permutes associations between logical occurrences and physical copies. Apply effects to the clicked copies; preserve display order.
 
-**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. For out-of-combat card batches, apply effects after all representatives are selected.
+**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. Apply effects after all representatives are selected.
 
 Commit the association permutation and shared clock update with the action; cancellations consume nothing. Renew each selected routing clock once if its logical occurrence survives, using its selection key, routing purpose and renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
@@ -609,6 +609,8 @@ Resolve A0–6 Rare replacements before reward enchantments. Each replacement re
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
+**Vanilla deviation — SL 5(↓):** canonicalizing unordered transformation batches removes order-dependent replacement alternatives.
+
 Baseline: [generation mechanics](#generation-and-selection-mechanics) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
 ## Settled policy: event-specific rewards
@@ -696,15 +698,17 @@ The replacement source and collision/eligibility handling remain [unresolved](WO
 
 ## Settled policy: potion-generated cards
 
-**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding departures.
+**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
 
-Determine each complete card batch by potion type + that type's run-wide departure ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Use consumes once even if its card offer is skipped. Failed acquisition and canceled actions consume nothing. Counters advance independently of other potion types and other combat card generation.
+Determine each complete card batch by potion type + that type's run-wide card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Counters advance independently of other potion types and other combat card generation.
+
+**Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal, except for Cauldron rewards. Count each skipped reward once. Acquired Cauldron potions don't skip a potion reward if discarded before the player enters the next room, but they follow the ordinary use/discard/trade rule after the player enters the next room. Acquisition, failed acquisition and canceled actions consume nothing.
 
 Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
 
 **Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
 
-**Vanilla deviation — [impact grading pending](WORKING.md#potion-departure-impact):** discarding or trading a covered potion changes the next same-type use's card-generation address, allowing a spare copy to skip a batch during save/load exploration.
+**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type card batch.
 
 ## Settled policy: encounter setup
 
@@ -878,6 +882,7 @@ Baseline interference; details under [relic and event rules](#relic-and-event-ru
 | Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
 | Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers; each batch excludes duplicate identities. |
 | Phial Holster | Adds one slot but generates two potions, so its second grant can fail. |
+| Cauldron | Shop relic offering five separate potion rewards on acquisition. |
 | Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. |
 
 ##### Potion card generation
@@ -890,7 +895,7 @@ All six use shared `CombatCardGeneration` RNG and sample uniformly over eligible
 
 **Card pools:** Common Power cards do not exist.
 
-**Out-of-combat player card batches:** batch selections are unordered. Deck selectors and reward grids collect the full selection before effects. Enumeration can still affect transformation RNG (e.g. Astrolabe) and acquisition order (e.g. Sea Glass).
+**Out-of-combat player card batches:** batch selections are unordered. Deck selectors and reward grids collect the full selection before effects. Enumeration can affect acquisition order (e.g. Sea Glass).
 
 **Player-selected deck operations:** the inspected deck-selection callers cover upgrading (Smith), enchanting (Gnarled Hammer), permanent removal (Empty Cage), transformation (Astrolabe, Claws, Wood Carvings), combining removals with a new addition (Amalgamator), temporary storage for return (Pael's Tooth), and copying (Dolly's Mirror). Wongos and Reflections downgrade randomly. Reward selections acquire new occurrences. Catfood's inspected patches add no operation category.
 
@@ -956,7 +961,9 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 **Direct card additions:** sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll the base-odds card-offer rates above, with the stated A0–6 direct-addition rates, before identity and independently of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools.
 
-**Permanent transformation's target:** callers use event RNG, `Niche` or player `Transformations` RNG. Use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. Selection is uniform over eligible identities, with no batch uniqueness. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
+**Permanent transformation's target:** callers use event RNG, `Niche` or player `Transformations` RNG. Use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. `CardFactory` preserves pool enumeration order through filtering, then consumes one RNG draw for a uniform index into the eligible list; batches allow repeated results. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
+
+**Random transformation batches:** Astrolabe, Morphic Grove and Trial iterate returned selection order; Pandora's Box uses deck order; Leafy Poultice uses Strike then Defend. `CardCmd.Transform` resolves replacements before sorting by recorded pile position. Reordering inputs with different eligible lists can change the result multiset, even if only one original identity can replace another. Identical ordered lists preserve the multiset, including ordinary own-character Strike/Defend batches such as Pandora's Box.
 
 #### Relic bags
 

@@ -79,15 +79,13 @@ Decompose remaining Encounter random operations as investigated, evaluating them
 
 [Settled policy](DESIGN.md#representative-routing) · [Model checks](outputs/routing-validation.cjs).
 
-**Impact assessment:** grade NoSL correlations and SL outcomes separately from selector changes and [potion departure advancement](#potion-departure-impact).
-
 **Validation:** in-game commit/cancel and snapshot timing; occurrence state through Tooth storage/return and save/load; clock/tie handling. End-to-end checks await [canonical ranking](#canonical-card-order) and [shuffles](#shuffles).
 
 ### Combat randomness
 
-#### Potion departure impact
+#### Potion-generated cards
 
-**Validation:** grade NoSL/SL effects of [departure advancement](DESIGN.md#settled-policy-potion-generated-cards) separately from RNG isolation. Verify exactly-once consumption, including skipped offers, and save/load.
+**Validation:** verify [card-generation ordinal consumption](DESIGN.md#settled-policy-potion-generated-cards) through use, discard, trade, reward skips and save/load. Include skipped card offers, the Cauldron reward-skip exception, failed acquisitions and cancellations.
 
 #### Shuffles
 
