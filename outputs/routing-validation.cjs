@@ -27,7 +27,7 @@ function equivalence(c) {
 const selectionKey = (logical, scope) => logical.aliases[scope] ?? logical.key;
 function priority(scope) {
   return (a, b) => a.clocks[scope] - b.clocks[scope] ||
-    compare(digest(selectionKey(a, scope), scope, a.counts[scope], 'tie').toString('hex'), digest(selectionKey(b, scope), scope, b.counts[scope], 'tie').toString('hex')) ||
+    compare(selectionKey(a, scope), selectionKey(b, scope)) ||
     compare(a.key, b.key);
 }
 function renew(logical, scope) {
@@ -93,6 +93,12 @@ function choices(n) {
   const result = [];
   for (let mask = 0; mask < 2 ** n; mask++) result.push(...permutations(Array.from({length: n}, (_, i) => i).filter(i => mask & 1 << i)));
   return result;
+}
+
+const tiedAliases = [occurrence('a', {upgrade: 'z'}), occurrence('b', {upgrade: 'a'}), occurrence('c', {upgrade: 'a'})];
+tiedAliases.forEach(c => { c.clocks.upgrade = 1; });
+for (const order of permutations(tiedAliases)) {
+  assert.deepEqual(order.sort(priority('upgrade')).map(c => c.key), ['b', 'c', 'a']);
 }
 
 let exhaustiveCases = 0;

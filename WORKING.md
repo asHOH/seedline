@@ -79,7 +79,7 @@ Decompose remaining Encounter random operations as investigated, evaluating them
 
 [Settled policy](DESIGN.md#representative-routing) · [Model checks](outputs/routing-validation.cjs).
 
-**Validation:** in-game commit/cancel and snapshot timing; occurrence state through Tooth storage/return and save/load; clock/tie handling. End-to-end checks await [canonical ranking](#canonical-card-order) and [shuffles](#shuffles).
+**Validation:** in-game commit/cancel and snapshot timing; occurrence state through Tooth storage/return and save/load. End-to-end checks await [canonical ranking](#canonical-card-order) and [shuffles](#shuffles).
 
 ### Combat randomness
 
