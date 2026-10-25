@@ -14,7 +14,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Remaining work roadmap:**
 
-1. [Events and Ancients](#events-and-ancients): settle ordinary event identity selection and Relic Trader replacement sourcing/mapping; then decompose remaining events/Ancients as needed.
+1. [Events and Ancients](#events-and-ancients): settle ordinary event identity selection; then decompose remaining events/Ancients as needed.
 2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking; validate settled equivalent-copy routing for cards and potions.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
@@ -45,25 +45,6 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Implementation and validation:** a common offset replaces equal subtraction; pausing needs separate active-time offsets per class. Track identity-sequence positions and scheduling state separately where the candidate requires them. Leaving raw clocks unchanged across different eligibility histories is not equivalent: with A,C active and B inactive, after A wins, B beats corrected `C-A` with probability `1/2`, but uncorrected C with `2/3`. Check same-condition order, overlapping thresholds, eligibility re-entry, the inactive-K probability example, different visit histories, forced insertion, act changes and save/load.
 
-#### Relic Trader
-
-Owned-relic selection, replacement constraints and offer consumption: [Relic Trader policy](DESIGN.md#settled-policy-relic-trader).
-
-**Decisions needed:** choose replacement stock and input-linked assignment; define collision resolution, ownership/eligibility handling and any unavoidable changes to source isolation.
-
-**Constraints:** only one trade executes; resolving another outgoing relic's proposed target leaves that relic owned. All three displayed replacements must be legal against the actual inventory, not a hypothetical simultaneous three-relic exchange.
-
-**Candidates — graph and assignment:**
-
-- **Successor ring:** construct a stable seeded ring of relic identities and trade each outgoing relic to a successor. If the successor is another selected outgoing relic, resolve that relic's target first; if already owned otherwise, continue around the ring. This is a sketch, not a complete algorithm: specify occupied-target skipping, cycle handling, termination and deterministic resolution independent of offer order. An unweighted identity ring does not implement the standard replacement-rarity weights by itself, and a ring does not solve stock ownership/isolation.
-- **Rarity-first input-linked preferences:** key an independent rarity roll and per-rarity replacement preference order to each outgoing identity. Resolve distinct targets in a stable, independently addressed outgoing priority order, skipping claimed or unavailable targets without rerolling rarity merely because of a collision. Keep eligibility separate from preference addresses. Where each input can use every available target of its rolled rarity, feasibility reduces to available count per rarity, not a general graph-matching problem; genuinely input-specific restrictions may require matching.
-- **Graph-aware outgoing selection:** jointly choose three outgoing relics and feasible replacement edges. This reopens the settled uniform opportunity-priority selection; it is not adopted. Feasibility or degree-based filtering can bias the outgoing choices, so compare its sampling law as well as counterpart alignment.
-
-**Known — rarity-first sampling:** with fixed eligibility shared by all inputs requesting a rarity, sufficient capacity, independent uniform preference rankings and a processing order independent of those rankings, sequential assignment is uniform without replacement within that rarity. Each input's highest-ranked remaining target is uniform among the unclaimed eligible identities.
-
-**Candidates — stock:** an overlapping Trader-local offer ledger could consume all three local offers while leaving unchosen ordinary entries available, reconciling only the acquired identity with ordinary stock. This changes global retirement semantics and cannot preserve a future ordinary offer of an identity already acquired from Trader. Another possibility is using eligible, unowned identities whose closed ordinary opportunities are already consumed, avoiding future-stock depletion where sufficient; its per-rarity availability and route-dependent replacement support prevent treating it as a complete source solution. No stock model is adopted.
-
-**Validation:** compare overlapping selected sets with identical replacement availability, then force competing targets, adjacent outgoing ring nodes, owned-but-unselected successors, cycles, cutoff-ineligible counterparts and per-rarity shortages. Check outgoing selection probabilities, independent replacement rarity, batch uniqueness/order neutrality, generic coverage and which ordinary source changes after an actual trade versus an unchosen offer.
 
 #### Remaining events and Ancients
 

@@ -134,7 +134,8 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [The Future of Potions: card types](#the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys; qualifying one-card reward choices share an anchor. | Fixed priority order. |
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
-| [Relic Trader's owned-relic selection](#owned-relic-selection) | Event-local selection opportunity; candidates are addressed by relic identity. | Fresh candidate priorities. |
+| [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
+| [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate run-wide card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
@@ -267,7 +268,7 @@ Shuffle outcomes must be independent of original deck sequence; the [shuffle add
 
 Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
 
-This opt-in mechanism remains available for effects such as Relic Trader. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
+This opt-in mechanism applies to sources such as The Future of Potions. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
 
 ### Filtered draws
 
@@ -688,17 +689,26 @@ Offer the first three owned potions in slot order, preserving display order. Use
 
 ## Settled policy: Relic Trader
 
-**Intent:** make owned-relic offers independent of collection order and anchor replacements to outgoing relic identity.
+**Intent:** align replacement relics; prioritize outgoing-relic overlap over trade matching.
 
-### Owned-relic selection
+### Replacement generation
 
-Preserve event access and tradability restrictions. Select three eligible owned relics with [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event identity + event-local selection-opportunity index as the selection address and relic identity as the candidate key.
+For fixed slots 1–3 in generation order, roll the ordinary relic rarity using event ID + slot, then draw the last eligible identity from Courier's sequence of that rarity. Draws add no filters.
 
-### Replacement constraints and consumption
+### Outgoing relic assignment
 
-Replacement rarity is independent of outgoing rarity; replacements need not be tradable. Consume all three replacement identities and rarity outcomes on offer generation, before the player chooses a trade.
+1. For each tradable owned relic and reward slot, derive an independent uniform pair priority from event ID + relic identity + slot.
+2. Freeze the three relics with the lowest minimum of its three pair priorities.
+3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
 
-The replacement source and collision/eligibility handling remain [unresolved](WORKING.md#relic-trader). The mapping must be anchored to outgoing relic identity so that common inputs can keep their counterparts when feasible. Do not assign these replacements to the generic rewards allocation: preserve its [opportunity coverage](#allocation). Do not create a separate disjoint Trader allocation. The unresolved source policy must define how consuming Trader offers affects finite stock; it must not silently retire unchosen generic entries.
+**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap.
+
+### Rejected alternatives
+
+- **Independent candidate priorities:** lower trade agreement than the settled rule, with the same outgoing overlap.
+- **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
+
+Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 ## Settled policy: potion-generated cards
 

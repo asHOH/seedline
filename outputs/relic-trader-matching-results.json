@@ -1,0 +1,1118 @@
+{
+  "assumptions": [
+    "Three identical distinct replacements in corresponding fixed reward slots, legal for every outgoing relic in both runs.",
+    "Independent continuous pair scores, shared by stable outgoing identity + fixed reward slot and independent of replacement identities.",
+    "Separate: independent row priorities select three, then greedy pair assignment.",
+    "Direct: greedy pair assignment over every eligible outgoing relic.",
+    "Hybrid: each row priority is its minimum pair score; select three, then greedy pair assignment.",
+    "Substitution exchanges one eligible identity. Removal compares a set with its one-item subset."
+  ],
+  "method": "Exact rational recurrence over the next lowest active edge; irrelevant edges are discarded permanently. Multiplicities aggregate exchangeable rows. Each remaining active edge is equally likely to be next.",
+  "proofs": {
+    "uniformMarginals": "All three methods are equivariant under permutations of outgoing identities and reward columns. With independent continuous scores, these permutations act transitively on all ordered three-outgoing assignments. Every three-item subset is therefore uniform, and its six reward assignments are uniform.",
+    "optimalOutgoingOverlap": "For substitution with N eligible relics, consider all N+1 inventories obtained by omitting one identity from a common N+1-identity universe. There are 3(N+1) selected-identity appearances, with at most N appearances per identity. Total outgoing overlap across inventory pairs is the sum of choose(d_i, 2). Convexity bounds this by 3*choose(N, 2)+choose(3, 2), attained by shared top-three priorities with counts N,N,N,3,0,... . Thus the maximum symmetric average outgoing overlap is 3-6(N-1)/(N(N+1)); both candidate-first rules attain it.",
+    "scope": "The outgoing-overlap bound assumes an identity-symmetric rule applied consistently across possible inventories. It does not establish optimality for unchanged trade pairs."
+  },
+  "substitution": [
+    {
+      "eligibleLeft": 5,
+      "eligibleRight": 5,
+      "commonEligible": 4,
+      "separate": {
+        "meanPairs": 1.7407407407407407,
+        "meanOutgoing": 2.2,
+        "noPairs": 0.05925925925925926,
+        "wholeMenu": 0.2,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "47/27",
+          "meanOutgoing": "11/5",
+          "noPairs": "8/135",
+          "wholeMenu": "1/5",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.05925925925925926,
+            "exact": "8/135"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.34074074074074073,
+            "exact": "46/135"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.4,
+            "exact": "2/5"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.2,
+            "exact": "1/5"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 1.934074074074074,
+        "meanOutgoing": 2.0832098765432097,
+        "noPairs": 0.020370370370370372,
+        "wholeMenu": 0.2,
+        "outgoingOverlapUnderTwo": 0.11679012345679013,
+        "exact": {
+          "meanPairs": "2611/1350",
+          "meanOutgoing": "8437/4050",
+          "noPairs": "11/540",
+          "wholeMenu": "1/5",
+          "outgoingOverlapUnderTwo": "473/4050"
+        },
+        "states": 87,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 1,
+            "probability": 0.012469135802469136,
+            "exact": "101/8100"
+          },
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.007901234567901235,
+            "exact": "16/2025"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 1,
+            "probability": 0.10432098765432099,
+            "exact": "169/1620"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.12086419753086419,
+            "exact": "979/8100"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.5544444444444444,
+            "exact": "499/900"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.2,
+            "exact": "1/5"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 1.8047212047212047,
+        "meanOutgoing": 2.2,
+        "noPairs": 0.036304436304436305,
+        "wholeMenu": 0.2,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "22171/12285",
+          "meanOutgoing": "11/5",
+          "noPairs": "446/12285",
+          "wholeMenu": "1/5",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 329,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.036304436304436305,
+            "exact": "446/12285"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.32266992266992267,
+            "exact": "3964/12285"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.441025641025641,
+            "exact": "86/195"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.2,
+            "exact": "1/5"
+          }
+        ]
+      }
+    },
+    {
+      "eligibleLeft": 8,
+      "eligibleRight": 8,
+      "commonEligible": 7,
+      "separate": {
+        "meanPairs": 2.08179012345679,
+        "meanOutgoing": 2.4166666666666665,
+        "noPairs": 0.043209876543209874,
+        "wholeMenu": 0.4166666666666667,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "1349/648",
+          "meanOutgoing": "29/12",
+          "noPairs": "7/162",
+          "wholeMenu": "5/12",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.043209876543209874,
+            "exact": "7/162"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.24845679012345678,
+            "exact": "161/648"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.2916666666666667,
+            "exact": "7/24"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.4166666666666667,
+            "exact": "5/12"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.2996897833207357,
+        "meanOutgoing": 2.3521497333501302,
+        "noPairs": 0.005535084404132023,
+        "wholeMenu": 0.4166666666666667,
+        "outgoingOverlapUnderTwo": 0.06451693331653649,
+        "exact": {
+          "meanPairs": "292079/127008",
+          "meanOutgoing": "1792451/762048",
+          "noPairs": "703/127008",
+          "wholeMenu": "5/12",
+          "outgoingOverlapUnderTwo": "49165/762048"
+        },
+        "states": 87,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 1,
+            "probability": 0.004199210548416898,
+            "exact": "50/11907"
+          },
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.0013358738557151255,
+            "exact": "509/381024"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 1,
+            "probability": 0.06031772276811959,
+            "exact": "45965/762048"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.045588991769547324,
+            "exact": "709/15552"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.4718915343915344,
+            "exact": "1427/3024"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.4166666666666667,
+            "exact": "5/12"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.147574781632753,
+        "meanOutgoing": 2.4166666666666665,
+        "noPairs": 0.019238276484653295,
+        "wholeMenu": 0.4166666666666667,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "176041/81972",
+          "meanOutgoing": "29/12",
+          "noPairs": "1577/81972",
+          "wholeMenu": "5/12",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 329,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.019238276484653295,
+            "exact": "1577/81972"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.23061533206460744,
+            "exact": "4726/20493"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.3334797247840726,
+            "exact": "2278/6831"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.4166666666666667,
+            "exact": "5/12"
+          }
+        ]
+      }
+    },
+    {
+      "eligibleLeft": 12,
+      "eligibleRight": 12,
+      "commonEligible": 11,
+      "separate": {
+        "meanPairs": 2.334045584045584,
+        "meanOutgoing": 2.576923076923077,
+        "noPairs": 0.03133903133903134,
+        "wholeMenu": 0.5769230769230769,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "3277/1404",
+          "meanOutgoing": "67/26",
+          "noPairs": "11/351",
+          "wholeMenu": "15/26",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.03133903133903134,
+            "exact": "11/351"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.1801994301994302,
+            "exact": "253/1404"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.21153846153846154,
+            "exact": "11/52"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.5769230769230769,
+            "exact": "15/26"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.5215764874855786,
+        "meanOutgoing": 2.543873172282263,
+        "noPairs": 0.0017335358244449154,
+        "wholeMenu": 0.5769230769230769,
+        "outgoingOverlapUnderTwo": 0.03304990464081373,
+        "exact": {
+          "meanPairs": "856751/339768",
+          "meanOutgoing": "320121/125840",
+          "noPairs": "589/339768",
+          "wholeMenu": "15/26",
+          "outgoingOverlapUnderTwo": "4159/125840"
+        },
+        "states": 87,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 1,
+            "probability": 0.001414494596312778,
+            "exact": "89/62920"
+          },
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.0003190412281321372,
+            "exact": "271/849420"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 1,
+            "probability": 0.031635410044500954,
+            "exact": "3981/125840"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.020244107744107745,
+            "exact": "481/23760"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.36946386946386944,
+            "exact": "317/858"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.5769230769230769,
+            "exact": "15/26"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.388290358878594,
+        "meanOutgoing": 2.576923076923077,
+        "noPairs": 0.01140798199621729,
+        "wholeMenu": 0.5769230769230769,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "199513/83538",
+          "meanOutgoing": "67/26",
+          "noPairs": "953/83538",
+          "wholeMenu": "15/26",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 329,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.01140798199621729,
+            "exact": "953/83538"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.16581675405204818,
+            "exact": "6926/41769"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.2458521870286576,
+            "exact": "163/663"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.5769230769230769,
+            "exact": "15/26"
+          }
+        ]
+      }
+    },
+    {
+      "eligibleLeft": 20,
+      "eligibleRight": 20,
+      "commonEligible": 19,
+      "separate": {
+        "meanPairs": 2.572751322751323,
+        "meanOutgoing": 2.7285714285714286,
+        "noPairs": 0.020105820105820106,
+        "wholeMenu": 0.7285714285714285,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "1945/756",
+          "meanOutgoing": "191/70",
+          "noPairs": "19/945",
+          "wholeMenu": "51/70",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.020105820105820106,
+            "exact": "19/945"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.1156084656084656,
+            "exact": "437/3780"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.1357142857142857,
+            "exact": "19/140"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.7285714285714285,
+            "exact": "51/70"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.70764579577599,
+        "meanOutgoing": 2.715433242788583,
+        "noPairs": 0.00039096278708467073,
+        "wholeMenu": 0.7285714285714285,
+        "outgoingOverlapUnderTwo": 0.013138185782845679,
+        "exact": {
+          "meanPairs": "36947993/13645800",
+          "meanOutgoing": "666976661/245624400",
+          "noPairs": "1067/2729160",
+          "wholeMenu": "51/70",
+          "outgoingOverlapUnderTwo": "3227059/245624400"
+        },
+        "states": 87,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 1,
+            "probability": 0.0003337372020043611,
+            "exact": "40987/122812200"
+          },
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.00005722558508030961,
+            "exact": "251/4386150"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 1,
+            "probability": 0.012804448580841317,
+            "exact": "629017/49124880"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.007339258640428231,
+            "exact": "94879/12927600"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.2508939014202172,
+            "exact": "7508/29925"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.7285714285714285,
+            "exact": "51/70"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.610577990531234,
+        "meanOutgoing": 2.7285714285714286,
+        "noPairs": 0.0061169711082043055,
+        "wholeMenu": 0.7285714285714285,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "8442061/3233790",
+          "meanOutgoing": "191/70",
+          "noPairs": "19781/3233790",
+          "wholeMenu": "51/70",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 329,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.0061169711082043055,
+            "exact": "19781/3233790"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.10575949582378572,
+            "exact": "171002/1616895"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.15955210449658142,
+            "exact": "85993/538965"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.7285714285714285,
+            "exact": "51/70"
+          }
+        ]
+      }
+    }
+  ],
+  "removal": [
+    {
+      "eligibleLeft": 6,
+      "eligibleRight": 5,
+      "commonEligible": 5,
+      "separate": {
+        "meanPairs": 2.212962962962963,
+        "meanOutgoing": 2.5,
+        "noPairs": 0.037037037037037035,
+        "wholeMenu": 0.5,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "239/108",
+          "meanOutgoing": "5/2",
+          "noPairs": "1/27",
+          "wholeMenu": "1/2",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.037037037037037035,
+            "exact": "1/27"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.21296296296296297,
+            "exact": "23/108"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.25,
+            "exact": "1/4"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.5,
+            "exact": "1/2"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.441666666666667,
+        "meanOutgoing": 2.5,
+        "noPairs": 0.001388888888888889,
+        "wholeMenu": 0.5,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "293/120",
+          "meanOutgoing": "5/2",
+          "noPairs": "1/720",
+          "wholeMenu": "1/2",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 27,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.001388888888888889,
+            "exact": "1/720"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.05555555555555555,
+            "exact": "1/18"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.44305555555555554,
+            "exact": "319/720"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.5,
+            "exact": "1/2"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.291208791208791,
+        "meanOutgoing": 2.5,
+        "noPairs": 0.010073260073260074,
+        "wholeMenu": 0.5,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "417/182",
+          "meanOutgoing": "5/2",
+          "noPairs": "11/1092",
+          "wholeMenu": "1/2",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 111,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.010073260073260074,
+            "exact": "11/1092"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.18864468864468864,
+            "exact": "103/546"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.30128205128205127,
+            "exact": "47/156"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.5,
+            "exact": "1/2"
+          }
+        ]
+      }
+    },
+    {
+      "eligibleLeft": 9,
+      "eligibleRight": 8,
+      "commonEligible": 8,
+      "separate": {
+        "meanPairs": 2.4753086419753085,
+        "meanOutgoing": 2.6666666666666665,
+        "noPairs": 0.024691358024691357,
+        "wholeMenu": 0.6666666666666666,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "401/162",
+          "meanOutgoing": "8/3",
+          "noPairs": "2/81",
+          "wholeMenu": "2/3",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.024691358024691357,
+            "exact": "2/81"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.1419753086419753,
+            "exact": "23/162"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.16666666666666666,
+            "exact": "1/6"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.6666666666666666,
+            "exact": "2/3"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.6438492063492065,
+        "meanOutgoing": 2.6666666666666665,
+        "noPairs": 0.00033068783068783067,
+        "wholeMenu": 0.6666666666666666,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "2665/1008",
+          "meanOutgoing": "8/3",
+          "noPairs": "1/3024",
+          "wholeMenu": "2/3",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 27,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.00033068783068783067,
+            "exact": "1/3024"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.022156084656084655,
+            "exact": "67/3024"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.31084656084656087,
+            "exact": "235/756"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.6666666666666666,
+            "exact": "2/3"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.5272288098375055,
+        "meanOutgoing": 2.6666666666666665,
+        "noPairs": 0.006221636656419265,
+        "wholeMenu": 0.6666666666666666,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "11509/4554",
+          "meanOutgoing": "8/3",
+          "noPairs": "85/13662",
+          "wholeMenu": "2/3",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 111,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.006221636656419265,
+            "exact": "85/13662"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.12699458351632265,
+            "exact": "1735/13662"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.20011711316059141,
+            "exact": "1367/6831"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.6666666666666666,
+            "exact": "2/3"
+          }
+        ]
+      }
+    },
+    {
+      "eligibleLeft": 13,
+      "eligibleRight": 12,
+      "commonEligible": 12,
+      "separate": {
+        "meanPairs": 2.6367521367521367,
+        "meanOutgoing": 2.769230769230769,
+        "noPairs": 0.017094017094017096,
+        "wholeMenu": 0.7692307692307693,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "617/234",
+          "meanOutgoing": "36/13",
+          "noPairs": "2/117",
+          "wholeMenu": "10/13",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.017094017094017096,
+            "exact": "2/117"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.09829059829059829,
+            "exact": "23/234"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.11538461538461539,
+            "exact": "3/26"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.7692307692307693,
+            "exact": "10/13"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.759032634032634,
+        "meanOutgoing": 2.769230769230769,
+        "noPairs": 0.00009712509712509713,
+        "wholeMenu": 0.7692307692307693,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "9469/3432",
+          "meanOutgoing": "36/13",
+          "noPairs": "1/10296",
+          "wholeMenu": "10/13",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 27,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.00009712509712509713,
+            "exact": "1/10296"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.010003885003885004,
+            "exact": "103/10296"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.22066822066822067,
+            "exact": "284/1287"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.7692307692307693,
+            "exact": "10/13"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.672592113768584,
+        "meanOutgoing": 2.769230769230769,
+        "noPairs": 0.004129857071033542,
+        "wholeMenu": 0.7692307692307693,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "8269/3094",
+          "meanOutgoing": "36/13",
+          "noPairs": "115/27846",
+          "wholeMenu": "10/13",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 111,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.004129857071033542,
+            "exact": "115/27846"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.0883789413201178,
+            "exact": "2461/27846"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.13826043237807945,
+            "exact": "275/1989"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.7692307692307693,
+            "exact": "10/13"
+          }
+        ]
+      }
+    },
+    {
+      "eligibleLeft": 21,
+      "eligibleRight": 20,
+      "commonEligible": 20,
+      "separate": {
+        "meanPairs": 2.7751322751322753,
+        "meanOutgoing": 2.857142857142857,
+        "noPairs": 0.010582010582010581,
+        "wholeMenu": 0.8571428571428571,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "1049/378",
+          "meanOutgoing": "20/7",
+          "noPairs": "2/189",
+          "wholeMenu": "6/7",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 0,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.010582010582010581,
+            "exact": "2/189"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.06084656084656084,
+            "exact": "23/378"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.07142857142857142,
+            "exact": "1/14"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.8571428571428571,
+            "exact": "6/7"
+          }
+        ]
+      },
+      "direct": {
+        "meanPairs": 2.8534461152882207,
+        "meanOutgoing": 2.857142857142857,
+        "noPairs": 0.000020885547201336676,
+        "wholeMenu": 0.8571428571428571,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "45541/15960",
+          "meanOutgoing": "20/7",
+          "noPairs": "1/47880",
+          "wholeMenu": "6/7",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 27,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.000020885547201336676,
+            "exact": "1/47880"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.003654970760233918,
+            "exact": "5/1368"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.1391812865497076,
+            "exact": "119/855"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.8571428571428571,
+            "exact": "6/7"
+          }
+        ]
+      },
+      "hybrid": {
+        "meanPairs": 2.7972642008293676,
+        "meanOutgoing": 2.857142857142857,
+        "noPairs": 0.002472331227445196,
+        "wholeMenu": 0.8571428571428571,
+        "outgoingOverlapUnderTwo": 0,
+        "exact": {
+          "meanPairs": "201017/71862",
+          "meanOutgoing": "20/7",
+          "noPairs": "533/215586",
+          "wholeMenu": "6/7",
+          "outgoingOverlapUnderTwo": "0/1"
+        },
+        "states": 111,
+        "joint": [
+          {
+            "pairs": 0,
+            "outgoing": 2,
+            "probability": 0.002472331227445196,
+            "exact": "533/215586"
+          },
+          {
+            "pairs": 1,
+            "outgoing": 2,
+            "probability": 0.05493399385859935,
+            "exact": "11843/215586"
+          },
+          {
+            "pairs": 2,
+            "outgoing": 2,
+            "probability": 0.08545081777109831,
+            "exact": "9211/107793"
+          },
+          {
+            "pairs": 3,
+            "outgoing": 3,
+            "probability": 0.8571428571428571,
+            "exact": "6/7"
+          }
+        ]
+      }
+    }
+  ],
+  "simulationChecks": [
+    {
+      "eligibleLeft": 5,
+      "eligibleRight": 5,
+      "samples": 75000,
+      "passed": true
+    },
+    {
+      "eligibleLeft": 12,
+      "eligibleRight": 12,
+      "samples": 75000,
+      "passed": true
+    },
+    {
+      "eligibleLeft": 6,
+      "eligibleRight": 5,
+      "samples": 75000,
+      "passed": true
+    },
+    {
+      "eligibleLeft": 13,
+      "eligibleRight": 12,
+      "samples": 75000,
+      "passed": true
+    }
+  ]
+}
