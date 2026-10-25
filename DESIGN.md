@@ -132,9 +132,9 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | System / randomized outcome | Sharing and addressing | Form |
 |---|---|---|
 | [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries a clock within its selection scope. | Residual exponential clocks. |
-| [Wing Charm selection](#wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
+| [Wing Charm selection](#settled-policy-wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
 | [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
-| [The Future of Potions: card types](#the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
+| [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys; qualifying one-card reward choices share an anchor. | Fixed priority order. |
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
@@ -260,11 +260,17 @@ Shuffle outcomes must be independent of original deck sequence; the [shuffle add
 
 #### Card occurrence initialization
 
-Each new logical card occurrence gets one stable address from its source. Derive selection keys from this address, applying aliases for the purposes specified by source policies. Initialization preserves generated attributes and presentation order.
+Each new logical card occurrence gets one stable address from its source. Derive selection keys from this address, applying [aliases](#single-card-reward-choice-alignment) for the purposes specified by source policies. Initialization preserves generated attributes and presentation order.
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Acquisition preserves each card's address and selection keys, regardless of which other offered cards are taken.
 
 For sources without generation entries, use source opportunity address + copy index. Assign indices in [canonical identity/status order](#canonical-card-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
+
+#### Single-card reward-choice alignment
+
+For Pael's Tooth, Beautiful Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key as an alias for whichever card is acquired. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot.
+
+Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. In multi-card-capable selections, including bundles, each acquired occurrence keeps its own selection keys even when only one card is taken. Selecting existing deck cards is not a reward-choice alignment operation.
 
 #### Corrected persistent selection priorities
 
@@ -580,24 +586,6 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 **Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
-### Wing Charm
-
-**Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
-
-Resolve A0–6 Rare replacements before reward enchantments. Each replacement retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
-
-**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The canonical triple precedes presentation swaps.
-
-- **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
-- **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift draws for corresponding selections. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
-- **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
-
-**Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
-
-**Vanilla deviation — NoSL 1:** larger non-Rare offers favor enchanting positions in the canonical triple.
-
-**Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
-
 ## Settled policy: permanent transformations and direct card additions
 
 **Intent:** align same-pool transformations and covered direct additions, preserving source rarity odds and isolating them from card reward offers and combat transformations.
@@ -625,6 +613,24 @@ Baseline: [generation mechanics](#generation-and-selection-mechanics) and [Catfo
 
 Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
+## Settled policy: Wing Charm
+
+**Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
+
+Resolve [A0–6 Rare replacements](#a06-multiple-rares) before reward enchantments. Each replacement retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
+
+**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [canonical triple](#settled-policy-card-reward-offers) precedes presentation swaps.
+
+- **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
+- **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift draws for corresponding selections. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
+- **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
+
+**Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
+
+**Vanilla deviation — NoSL 1:** larger non-Rare offers favor enchanting positions in the canonical triple.
+
+**Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
+
 ## Settled policy: permanent upgrades and downgrades
 
 **Intent:** align random permanent upgrade and downgrade targets across sources.
@@ -647,16 +653,10 @@ Shared clocks align successive opportunities while preserving uniform selection 
 
 **Intent:** align affected cards across decks and single-card reward choices.
 
-For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Preserve existing costs and triggers.
+For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Apply [single-card reward-choice alignment](#single-card-reward-choice-alignment). Preserve existing costs and triggers.
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving gameplay properties and logical selection state through storage and physical-object recreation. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
-
-### Single-card reward-choice alignment
-
-For Tooth, Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key as an alias for whichever card is acquired. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot.
-
-Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. In multi-card-capable selections, including bundles, each acquired occurrence keeps its own selection keys even when only one card is taken. Selecting existing deck cards is not a reward-choice alignment operation.
 
 ## Settled policy: Slippery Bridge
 
@@ -678,7 +678,7 @@ With one owned potion, leave its clock unchanged. Otherwise, renew the offered o
 
 Baseline selection: [potion event mechanics](#potions).
 
-### The Future of Potions: card-type assignment
+## Settled policy: The Future of Potions: card-type assignment
 
 **Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
 
