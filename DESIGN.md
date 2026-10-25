@@ -135,8 +135,8 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Wing Charm selection](#settled-policy-wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
 | [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
 | [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
-| [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys; qualifying one-card reward choices share an anchor. | Fixed priority order. |
-| [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
+| [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys with [reward aliases](#card-reward-selection-keys). | Fixed priority order. |
+| [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts with [reward aliases](#card-reward-selection-keys). | Residual clocks over vanilla candidates, including fallback. |
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
 | [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
@@ -260,17 +260,17 @@ Shuffle outcomes must be independent of original deck sequence; the [shuffle add
 
 #### Card occurrence initialization
 
-Each new logical card occurrence gets one stable address from its source. Derive selection keys from this address, applying [aliases](#single-card-reward-choice-alignment) for the purposes specified by source policies. Initialization preserves generated attributes and presentation order.
+Each new logical card occurrence gets one stable address from its source. Derive selection keys from this address, applying [aliases](#card-reward-selection-keys) for the purposes specified by source policies. Initialization preserves generated attributes and presentation order.
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Acquisition preserves each card's address and selection keys, regardless of which other offered cards are taken.
 
 For sources without generation entries, use source opportunity address + copy index. Assign indices in [canonical identity/status order](#canonical-card-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
-#### Single-card reward-choice alignment
+#### Card reward selection keys
 
-For Pael's Tooth, Beautiful Bracelet and Slippery Bridge, a reward choice that permits taking at most one card uses the first card's selection key as an alias for whichever card is acquired. Freeze the anchor in canonical offer generation order, before presentation-only swaps such as moving the Rare to its simulated slot.
+When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet and Slippery Bridge. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
 
-Different one-card offers have distinct anchors; a rerolled offer uses its fresh entries. In multi-card-capable selections, including bundles, each acquired occurrence keeps its own selection keys even when only one card is taken. Selecting existing deck cards is not a reward-choice alignment operation.
+Different offers have distinct anchors; rerolls use fresh entries. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
 
 #### Corrected persistent selection priorities
 
@@ -651,9 +651,9 @@ Shared clocks align successive opportunities while preserving uniform selection 
 
 ## Settled policy: fixed-priority card selection
 
-**Intent:** align affected cards across decks and single-card reward choices.
+**Intent:** align affected cards across decks and reward choices.
 
-For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Apply [single-card reward-choice alignment](#single-card-reward-choice-alignment). Preserve existing costs and triggers.
+For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Apply [card reward selection keys](#card-reward-selection-keys). Preserve existing costs and triggers.
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving gameplay properties and logical selection state through storage and physical-object recreation. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
@@ -662,7 +662,7 @@ For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific prioritie
 
 **Intent:** align removal offers across decks; preserve vanilla eligibility, uniform per-copy selection, costs and triggers.
 
-Use the [shared corrected-clock strategy](#corrected-persistent-selection-priorities) in a Bridge-only scope over [vanilla's candidate set](#slippery-bridge-selection), including fallback. Retain [single-card reward-choice alignment](#single-card-reward-choice-alignment).
+Use the [shared corrected-clock strategy](#corrected-persistent-selection-priorities) in a Bridge-only scope over [vanilla's candidate set](#slippery-bridge-selection), including fallback. Retain [card reward selection keys](#card-reward-selection-keys).
 
 Apply the shared clock update once when the event shows a newly selected card. If declined, renew that copy's clock once before the next selection, using an independent draw keyed by its selection key and renewal count.
 
