@@ -210,9 +210,7 @@ Apply the same rule recursively to further collisions, including identical filte
 
 Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
-**Finite lifetime:** a marker may expire after `x` eligible-entry advances. At expiry, it either disappears, compacting survivors, or turns into a relic saved with it (its **carried entry**). This lets a skipped chest relic return to ordinary rewards farther along the sequence. Ordinary markers are permanent.
-
-Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry; entries keep their original stable addresses through movement and return.
+Ordinary markers are permanent; chests use the [finite-lifetime extension](#finite-lifetime-chest-markers).
 
 Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
 
@@ -404,12 +402,16 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 
 **Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
 
-Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#filtered-draws). Both choices advance along the same path:
+Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
 
-- **Acquire:** retire the relic; the marker disappears at expiry.
-- **Skip or leave behind:** save the relic with the marker; at expiry it returns as an ordinary reward entry. A later ordinary offer consumes it even if declined.
+- **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
+- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an ordinary reward entry. A later ordinary offer consumes it even if declined.
 
 Generation consumes the rarity roll, chest opportunity and lifetime draw, and exhausts the identity for future chests. Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
+
+#### Finite-lifetime chest markers
+
+Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry; entries keep their original stable addresses through movement and return.
 
 **Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests draw independently.
 
@@ -474,9 +476,11 @@ Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the nor
 | Elite rule | Elites and The Hunt in elite combats; three-card offers. |
 | Fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
 
-All three source groups share luck, thresholds and the rare-bearing sequence. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
+All three source groups share luck, thresholds and two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
 
-#### Luck and rarity offset
+#### Rare occurrence
+
+##### Luck and rarity offset
 
 Maintain luck `L`, initially zero, and a threshold `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal. Advance it only when a Rare is delivered into a generated offer.
 
@@ -492,7 +496,7 @@ Luck, the current threshold and sequence state carry across acts; the combat off
 
 **Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. Rare delivery resets luck and advances the threshold, ending this timing guarantee.
 
-#### A7+: one Rare per offer and deferral
+##### A7+: one Rare per offer and deferral
 
 Cap each covered offer at one Rare. If a later slot reaches the next threshold, suppress its Rare and keep the reached threshold pending: do not reset luck or advance the threshold. Treat suppressed slots as non-Rare for applicable offset updates. Continue accumulating luck, but create no further pending occurrences until delivery.
 
@@ -502,11 +506,31 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 **Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Baseline frequency:** approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
-#### A0–6: multiple Rares
+##### A0–6: Rare delivery
 
-Deliver every threshold crossing immediately under the shared luck and source-offset rules, without a per-offer cap or deferral. Multiple Rares mean distinct card identities, not duplicate copies.
+Deliver every threshold crossing immediately under the shared luck and source-offset rules, without a per-offer cap or deferral.
 
-Maintain one additional Rare-only identity sequence per character, shared by the three covered source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, consume one rare-bearing triple and `k - 1` draws from this sequence.
+#### Offer construction
+
+##### Offer sequences
+
+A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
+
+**Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
+
+**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates.
+
+**Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
+
+The first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate two opening Act 1 normal fights without elite intervention and follow ordinary shared consumption, including by other covered sources. This exception occurs only once per run. Account for common normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
+
+##### Supplementary cards
+
+**Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
+
+##### A0–6: multiple Rares
+
+Maintain one additional Rare-only identity sequence per character, shared by the three covered source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
 
 Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
@@ -514,23 +538,9 @@ Before presentation swaps, replace the first Common in canonical generation orde
 
 **Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Baseline frequency:** at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
 
-#### Offer sequences
+##### Presentation
 
-Use two deterministic triple sequences independent of the luck thresholds, shared by normal-fight-rule, elite and fixed-base-odds sources. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares.
-
-A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
-
-**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates.
-
-**Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
-
-**Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
-
-The first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate two opening Act 1 normal fights without elite intervention and follow ordinary shared consumption, including by other covered sources. This exception occurs only once per run. Account for common normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
-
-Store the Rare first in each rare-bearing triple. After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
-
-**Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
+After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
 ### Own-character fixed-rarity offers
 
