@@ -24,12 +24,14 @@ Consistency fixes that only remove same-seed inconsistency, with no gameplay imp
 
 **Neutral:** an informed player would make no meaningful change to strategy.
 
+For gameplay changes, noticeability and strategic impact take precedence over expectation.
+
 | Grade | Impact |
 |---|---|
 | **1** | Presentation only. |
-| **2** | Preserves expectation but changes distribution or correlations; neutral. |
+| **2** | Preserves expectation but changes distribution or correlations; unnoticeable and neutral. |
 | **3** | Changes expectation; unnoticeable and neutral. |
-| **4A** | noticeable and neutral. |
+| **4A** | Noticeable and neutral. |
 | **4B** | Unnoticeable and non-neutral. |
 | **5** | Noticeable and non-neutral. |
 
@@ -274,7 +276,7 @@ This opt-in mechanism applies to sources such as The Future of Potions. It does 
 
 **Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
-**Advancement:** generalize fixed-rarity draws. Viewing per-identity sequences and rarity rolls together as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
+**Advancement:** generalize fixed-rarity draws. Viewing per-rarity identity sequences and rarity rolls together as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
 
 **Method — deferred advancement:** a filtered draw returns the first eligible entry, replacing it with a marker for its filter. Resolve a marker by moving the next eligible entry after it into the marker's position, leaving the same filter's marker at the supplying position. An ordinary draw resolves any front marker, then returns the entry and removes the drawn position. This performs the same advancement on demand for infinite sequences and finite relic allocations.
 
@@ -352,7 +354,7 @@ Hidden random relic rewards from combat/chests/events use the generic rewards so
 
 **Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion is outside discussion scope; fallback and chest refilling are implementation details. Ordinary isolation analysis excludes borrowing's rare tail effects and cross-sequence interactions.
 
-On exhaustion, borrow the **last eligible remaining identity** of the requested rarity. Other sequences borrow from Courier first; Courier borrows from generic rewards first.
+On source exhaustion, borrow the **last eligible remaining identity** of the requested rarity from another sequence. Priority: Courier sequence borrows from generic rewards first; Others borrow from Courier first.
 
 Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
 
@@ -432,7 +434,7 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold consume n
 
 ### Rejected alternatives
 
-- **Shared rolls with independent compensation:** one cumulative normal-fight/elite gold ordinal supplies uniform `u ∈ [0,1)`. At A0–2, use `X = floor(11u)`, normal `10 + X`, elite `35 + X`; at A3+, use `X = floor(8u)`, normal `7 + X + b`, elite `26 + X`. At A3+, `b` is a fair bit addressed by the cumulative unreduced normal-gold index, independently of `u` and other bits. Half-gold rewards consume only the shared ordinal and use the existing reduced range. This stabilizes the replacement premium and preserves base totals when reordering unreduced rewards, but Bowler Hat can still change the received total by 1. **Vanilla deviation — NoSL 2:** A3+ normal gold keeps its expectation but becomes nonuniform: endpoints 7 and 15 each have probability 1/16; 8–14 each have 1/8.
+- **Shared rolls with independent compensation:** share ordinal for normal-fight and elite rewards. A3+ normal gold preserves expectation but becomes nonuniform (**Vanilla deviation — NoSL 2**); Bowler Hat can change the received total by 1. [Derivation](#rejected-combat-gold-coupling).
 - **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
 
 Baseline: [gold ranges and exceptions](#generation-and-selection-mechanics) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
@@ -714,7 +716,9 @@ Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 Determine each complete card batch by potion type + that type's run-wide card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Acquisition leaves this ordinal unchanged. Counters advance independently of other potion types and other combat card generation.
 
-**Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal, except for Cauldron rewards. Count each skipped reward once. Acquired Cauldron potions don't skip a potion reward if discarded before the player enters the next room, but they follow the ordinary use/discard/trade rule after the player enters the next room.
+**Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal. Count each skipped reward once.
+
+**Cauldron exception:** leaving a Cauldron reward unclaimed or discarding an acquired Cauldron potion before entering the next room leaves the card-generation ordinal unchanged. After entering the next room, acquired Cauldron potions follow the ordinary use/discard/trade rule.
 
 Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
 
@@ -771,6 +775,17 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 Shop offsets approximate the mean Rare count across five character-card slots, excluding fixed colorless cards. Vanilla versus settled Rare chances per slot are **4.453% / 4.5%** at A7+ and **10.762% / 10.8%** at A0–6. Constant offsets change clustering: shops with any Rare character card occur in **19.55% / 20.56%** and **41.78% / 43.53%**, respectively.
 
 These are route-average choices: elite frequency and extra-offer sources shift the fitted rates. The [earlier A7+ study](outputs/reward-calibration-results.json) and A0–6 results retain sensitivity cases, assumptions and checks. The model approximates player-state eligibility, event outcomes and non-rarity item effects.
+
+### Rejected combat-gold coupling
+
+The [compensated shared-roll alternative](#rejected-alternatives) used one cumulative normal-fight/elite gold ordinal to supply uniform `u ∈ [0,1)`:
+
+| Difficulty | Shared draw | Normal-fight gold | Elite gold |
+|---|---|---|---|
+| A0–2 | `X = floor(11u)` | `10 + X` | `35 + X` |
+| A3+ | `X = floor(8u)` | `7 + X + b` | `26 + X` |
+
+At A3+, `b` was a fair bit addressed by the cumulative unreduced normal-gold index, independently of `u` and other bits. Normal gold's endpoints 7 and 15 each had probability 1/16; 8–14 each had 1/8.
 
 ## Appendix: existing mechanics
 

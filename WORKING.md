@@ -60,12 +60,11 @@ Decompose remaining Encounter random operations as investigated, evaluating them
 
 #### Shuffles
 
-**Decision needed:** opening-shuffle addressing, sharing with later shuffles, and advancement rules, subject to [deck-order independence](DESIGN.md#canonical-card-order).
+**Decision needed:** opening-shuffle addressing, sharing with later shuffles, and advancement rules.
 
-**Candidates:**
+**Candidate:** act-local opening-shuffle ordinals, matching encounter setup.
 
-- Act-local opening-shuffle ordinals, matching encounter setup.
-- Include run seed in boss-shuffle initialization.
+**Shared constraints:** [deck-order independence](DESIGN.md#canonical-card-order) and [run-seed derivation](DESIGN.md#rng-derivation-and-addressing), including boss-shuffle initialization.
 
 #### Generated cards
 
