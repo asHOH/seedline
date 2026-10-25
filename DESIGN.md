@@ -115,11 +115,11 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 
 | System / randomized outcome | Sharing and addressing | Form |
 |---|---|---|
-| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards and sale use shop ordinal; restocks use source-specific sequences; prices use stable entry addresses. | Ordinal-addressed draws, item sequences and entry-derived price rolls. |
 | [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity-roll and per-rarity identity sequences advance independently. | Rarity-roll streams and finite shuffled allocations. |
-| [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity sequences. Ordinary drop checks share a combat-wide check index and changing probability. | Rarity/identity streams and indexed drop checks. |
 | [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
 | [Chest relic marker lifetime](#relic-advancement) | Rarity + non-empty chest ordinal. | Shared uniform fraction scaled by remaining generic and original shop/Courier shared stock. |
+| [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity sequences. Ordinary drop checks share a combat-wide check index and changing probability. | Rarity/identity streams and indexed drop checks. |
+| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards and sale use shop ordinal; restocks use source-specific sequences; prices use stable entry addresses. | Ordinal-addressed draws, item sequences and entry-derived price rolls. |
 | [Combat gold](#settled-policy-combat-gold) | Separate normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
 | [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and the threshold sequence are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Separate sequences by pool/request/offer group, independent of shared Rare-occurrence state. | Triple sequences, other identity/rarity streams and event-RNG draws. |
@@ -131,17 +131,17 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 
 | System / randomized outcome | Sharing and addressing | Form |
 |---|---|---|
-| [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries a clock within its selection scope. | Residual exponential clocks. |
 | [Wing Charm selection](#settled-policy-wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
-| [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
-| [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
+| [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries a clock within its selection scope. | Residual exponential clocks. |
 | [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys with [reward aliases](#card-reward-selection-keys). | Fixed priority order. |
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts with [reward aliases](#card-reward-selection-keys). | Residual clocks over vanilla candidates, including fallback. |
-| [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
+| [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
+| [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
+| [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
-| [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
+| [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 
 ## Shared strategies
 
@@ -310,35 +310,6 @@ Derive priorities from the source's selection-opportunity address + candidate's 
 
 This opt-in mechanism applies to sources such as The Future of Potions. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
 
-## Settled policy: shops, Wongos and Courier
-
-**Intent:** Extra rewards and Courier restocks no longer scramble later shops. Corresponding shops keep the same sale slot; relocated offers keep their base prices. Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
-
-### Stock and prices
-
-- Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
-- **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
-- **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
-- Sale slot uses independent shop-ordinal generation.
-- **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
-- **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
-
-**Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
-
-**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
-
-**Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
-
-**Vanilla deviation — SL 4A(↓):** independent restock streams remove restock manipulation through interleaved purchase categories and effects.
-
-**Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
-
-**Boundary — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
-
-Baseline: [shop mechanics](#generation-and-selection-mechanics) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
-
 ## Settled policy: relics
 
 **Intent:** isolate normal-play relic supplies for shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
@@ -371,6 +342,49 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 Baseline pool sizes and draw rules: [generation and selection mechanics](#generation-and-selection-mechanics); Catfood's roll limit: [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
+## Settled policy: chests
+
+**Intent:** isolate chest gold from normal-fight counts and later chest rewards from Silver Crucible's empty chest.
+
+**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
+
+### Rewards and consumption
+
+- Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
+- Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
+
+Relic generation consumes the rarity roll, chest opportunity and lifetime draw, and exhausts the identity for future chests.
+
+### Relic advancement
+
+**Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
+
+Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
+
+- **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
+- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an ordinary reward entry. A later ordinary offer consumes it even if declined.
+
+Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
+
+#### Finite-lifetime chest markers
+
+Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry; entries keep their original stable addresses through movement and return.
+
+**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests draw independently.
+
+Before recording the offer, `S` counts chest-eligible shared identities of that rarity, excluding previous chest offers, in:
+
+- The remaining generic sequence, including the drawn entry.
+- The **original shop and Courier allocations**, retaining identities after display or acquisition.
+
+Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation. Advancement uses generic stock; borrowing during selection or resolution uses a permanent marker under the [borrowing boundary](#borrowing).
+
+**Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
+
+**Alignment:** acquire and skip share the future sequence up to the return position; skip adds one ordinary opportunity while preserving common-entry order. Across runs, reducing `S` by one changes `x` by zero or one; starting one shared entry later in the same order and reducing `x` by one gives the same expiry relic. Relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
+
+Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+
 ## Settled policy: potions
 
 **Intent:** isolate potions across rewards, shops, Courier and potion-generating effects; preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
@@ -392,46 +406,34 @@ Baseline pool sizes and draw rules: [generation and selection mechanics](#genera
 - **White Beast Statue:** forced drops freeze the occurrence index and stored probability; the potion still consumes a reward identity.
 - Save the occurrence index and probability.
 
-## Settled policy: chests
+## Settled policy: shops, Wongos and Courier
 
-**Intent:** isolate chest gold from normal-fight counts and later chest rewards from Silver Crucible's empty chest.
+**Intent:** Extra rewards and Courier restocks no longer scramble later shops. Corresponding shops keep the same sale slot; relocated offers keep their base prices. Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
 
-**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
+### Stock and prices
 
-### Relic advancement
+- Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
+- **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
+- **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
+- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
+- Sale slot uses independent shop-ordinal generation.
+- **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
+- **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
 
-**Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
+**Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
 
-Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
+**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
 
-- **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an ordinary reward entry. A later ordinary offer consumes it even if declined.
+**Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
-Generation consumes the rarity roll, chest opportunity and lifetime draw, and exhausts the identity for future chests. Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
+**Vanilla deviation — SL 4A(↓):** independent restock streams remove restock manipulation through interleaved purchase categories and effects.
 
-#### Finite-lifetime chest markers
+**Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
 
-Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry; entries keep their original stable addresses through movement and return.
+**Boundary — relic floor cutoffs (see [appendix](#generation-and-selection-mechanics)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
-**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests draw independently.
-
-Before recording the offer, `S` counts chest-eligible shared identities of that rarity, excluding previous chest offers, in:
-
-- The remaining generic sequence, including the drawn entry.
-- The **original shop and Courier allocations**, retaining identities after display or acquisition.
-
-Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation. Advancement uses generic stock; borrowing during selection or resolution uses a permanent marker under the [borrowing boundary](#borrowing).
-
-**Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
-
-**Alignment:** acquire and skip share the future sequence up to the return position; skip adds one ordinary opportunity while preserving common-entry order. Across runs, reducing `S` by one changes `x` by zero or one; starting one shared entry later in the same order and reducing `x` by one gives the same expiry relic. Relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
-
-### Rewards and consumption
-
-- Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
-- Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
-
-Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [shop mechanics](#generation-and-selection-mechanics) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
 ## Settled policy: combat gold
 
@@ -739,17 +741,16 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 
 **Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type card batch.
 
-## Settled policy: encounter setup
+## Settled policy: unknown-room resolution
 
-**Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
+**Intent:** align draws within each act and minimize movement of each room type's probability interval, limiting interference from earlier acts and other room types' changing chances.
 
-### Combat addresses
+### Addressing and room-type chances
 
-For ordinary normal fights, elites and bosses, address setup by combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate counters for these combat categories.
-
-Event-created battles that do not consume an ordinary encounter list use an event-local battle ordinal instead of an act-local combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary combat-category counters.
-
-Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI.
+- **Addressing:** room-type RNG uses the act-local ordinal of visited `?` nodes.
+- **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
+- **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
+- **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
 
 ## Settled policy: forced events
 
@@ -761,16 +762,17 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 **Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
 
-## Settled policy: unknown-room resolution
+## Settled policy: encounter setup
 
-**Intent:** align draws within each act and minimize movement of each room type's probability interval, limiting interference from earlier acts and other room types' changing chances.
+**Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
 
-### Addressing and room-type chances
+### Combat addresses
 
-- **Addressing:** room-type RNG uses the act-local ordinal of visited `?` nodes.
-- **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
-- **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
-- **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
+For ordinary normal fights, elites and bosses, address setup by combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate counters for these combat categories.
+
+Event-created battles that do not consume an ordinary encounter list use an event-local battle ordinal instead of an act-local combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary combat-category counters.
+
+Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI.
 
 ## Reference
 
