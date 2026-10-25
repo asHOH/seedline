@@ -92,7 +92,8 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
 - **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
 - **Filter:** the eligibility conditions for a draw.
-- **Ordinal:** an opportunity's position within its category. Act-local ordinals reset each act; otherwise ordinals continue across acts.
+- **Ordinal:** an opportunity's position within its category across the run, unless a scope is stated.
+- **Scoped ordinal:** counts within its named scope and resets for each new scope instance. Using it in an RNG address includes the scope identity alongside the count, e.g. `(act number, ordinal)` for act-local ordinals or `(event ID, ordinal)` for event-local ordinals.
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
@@ -119,7 +120,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity sequences. Ordinary drop checks share a combat-wide check index and changing probability. | Rarity/identity streams and indexed drop checks. |
 | [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
 | [Chest relic marker lifetime](#relic-advancement) | Rarity + non-empty chest ordinal. | Shared uniform fraction scaled by remaining generic and original shop/Courier shared stock. |
-| [Combat gold](#settled-policy-combat-gold) | Separate cumulative normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
+| [Combat gold](#settled-policy-combat-gold) | Separate normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
 | [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and the threshold sequence are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
 | [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Separate sequences by pool/request/offer group, independent of shared Rare-occurrence state. | Triple sequences, other identity/rarity streams and event-RNG draws. |
 | [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has an independently addressed upgrade roll. | Entry-derived roll. |
@@ -138,7 +139,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts; qualifying one-card reward choices share an anchor. | Residual clocks over vanilla candidates, including fallback. |
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
 | [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
-| [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate run-wide card-generation ordinals per potion type. | Ordinal-addressed batches. |
+| [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 
@@ -153,8 +154,6 @@ The [fairness principle](#goals-and-principles) and labeled invariants are share
 **Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable sharing-scope and purpose identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
 Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
-
-**Invariant — act-local reset safety:** act-local RNG seeds include the act number so resetting ordinals never restarts a previous act's RNG sequence.
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the candidate keys already used to generate them, in ascending order.
 
@@ -430,7 +429,7 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 
 **Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
 
-**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites save separate ordinals continuing across acts; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
+**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites save separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
 
 Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
 
@@ -718,7 +717,7 @@ Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 **Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
 
-Determine each complete card batch by potion type + that type's run-wide card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Acquisition leaves this ordinal unchanged. Counters advance independently of other potion types and other combat card generation.
+Determine each complete card batch by potion type + that type's card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Acquisition leaves this ordinal unchanged. Counters advance independently of other potion types and other combat card generation.
 
 **Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal. Count each skipped reward once.
 
@@ -736,9 +735,9 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 
 ### Combat addresses
 
-For ordinary normal fights, elites and bosses, address setup by act + combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate counters for these combat categories.
+For ordinary normal fights, elites and bosses, address setup by combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate counters for these combat categories.
 
-Event-created battles that do not consume an ordinary encounter list use event identity + event-local battle ordinal instead of an ordinary combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary combat-category counters.
+Event-created battles that do not consume an ordinary encounter list use an event-local battle ordinal instead of an act-local combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary combat-category counters.
 
 Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI.
 
@@ -748,7 +747,7 @@ Preserve existing encounter identity selection and setup sampling rules. This ch
 
 Resolve room type under the [unknown-room policy](#settled-policy-unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its existing event RNG; it needs no special ordinary-event ordinal.
 
-Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its visited-node ordinal; preserve the existing forced room type and frozen non-event chances. Ordinary event-list advancement is deliberately removed from forced insertion, not from ordinary event visits.
+Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its act-local visited-node ordinal; preserve the existing forced room type and frozen non-event chances. Ordinary event-list advancement is deliberately removed from forced insertion, not from ordinary event visits.
 
 **Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
 
@@ -758,7 +757,7 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 ### Addressing and room-type chances
 
-- **Addressing:** room-type RNG uses act + act-local ordinal of visited `?` nodes.
+- **Addressing:** room-type RNG uses the act-local ordinal of visited `?` nodes.
 - **Shop chance:** when the map-adjacency policy excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
 - **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
 - **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
@@ -782,7 +781,7 @@ These are route-average choices: elite frequency and extra-offer sources shift t
 
 ### Rejected combat-gold coupling
 
-The [compensated shared-roll alternative](#rejected-alternatives) used one cumulative normal-fight/elite gold ordinal to supply uniform `u ∈ [0,1)`:
+The [compensated shared-roll alternative](#rejected-alternatives) used one normal-fight/elite gold ordinal to supply uniform `u ∈ [0,1)`:
 
 | Difficulty | Shared draw | Normal-fight gold | Elite gold |
 |---|---|---|---|
@@ -842,7 +841,7 @@ Baseline interference; details under [relic and event rules](#relic-and-event-ru
 
 **Direct/event generation:** card factories seed by adding room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified. Transformations retain caller-supplied RNGs. Neither uses dedicated shared identity sequences by pool.
 
-**Encounter setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + cumulative room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
+**Encounter setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
 
 **Shuffles:** re-seeds shuffle RNG at combat start; later shuffles continue it.
 
