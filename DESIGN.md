@@ -301,8 +301,6 @@ Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload disca
 
 At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, selection state, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
 
-**Validation:** verify save/load preserves counters and outcomes with targeted random-operation logs and paired runs; histories alone miss internal calls/actions. Use consistent seed derivation.
-
 ## Settled policy: shops, Wongos and Courier
 
 **Intent:** Extra rewards and Courier restocks no longer scramble later shops. Corresponding shops keep the same sale slot; relocated offers keep their base prices. Wongos affects only future Rare shop offers, and only when its featured relic is affordable.

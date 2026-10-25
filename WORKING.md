@@ -2,7 +2,7 @@
 
 Unresolved work and supporting evidence, evaluated against [DESIGN's goals and fairness principle](DESIGN.md#goals-and-principles). [DESIGN.md](DESIGN.md) owns settled policies and reusable mechanics references.
 
-**Reading convention:** **Known** = findings; **Constraints** = requirements beyond DESIGN; **Decisions needed** = open choices; **Candidates** = approaches still under consideration; **Reference alternative** = comparison for an open decision, not a leading candidate; **Validation** = pending checks. Adopted candidates become spec in DESIGN; settled exclusions worth retaining become its **Rejected alternatives**. Omit empty roles and obvious exhaustive alternatives.
+**Reading convention:** **Known** = findings; **Constraints** = requirements beyond DESIGN; **Decisions needed** = open choices; **Candidates** = approaches still under consideration; **Reference alternative** = comparison for an open decision, not a leading candidate; **Validation** = checks informing open choices. [Implementation verification](#implementation-verification) checks conformance to settled policies. Adopted candidates become spec in DESIGN; settled exclusions worth retaining become its **Rejected alternatives**. Omit empty roles and obvious exhaustive alternatives.
 
 ---
 
@@ -15,7 +15,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 **Remaining work roadmap:**
 
 1. [Events and Ancients](#events-and-ancients): settle ordinary event identity selection; then decompose remaining events/Ancients as needed.
-2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking; validate settled equivalent-copy routing for cards and potions.
+2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
 **Stakeholder input:** use answers to [Questions for 二硫键](Questions.md) about perceived Act 1/shop Rare rates and potentially fixable same-seed divergence to inform calibration and remaining investigation.
@@ -43,7 +43,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Decisions needed:** choose paused clocks or fully specified condition-level passing, with a stated rationale for any change to vanilla's inactive-condition probability property. Define class equivalence and overlap guarantees, scheduling weights and state, and separate lifetimes for act-specific and cross-act identities/timing. Act-local clock initialization uses act + event ID + purpose; resetting removes prior-act timing history, not visited exclusions. Keeping a cross-act class's identity order while resetting its timing is a separate candidate. Ordinary-event ordinals, if used, count encounters rather than rejected candidates. Ancients remain separate.
 
-**Implementation and validation:** a common offset replaces equal subtraction; pausing needs separate active-time offsets per class. Track identity-sequence positions and scheduling state separately where the candidate requires them. Leaving raw clocks unchanged across different eligibility histories is not equivalent: with A,C active and B inactive, after A wins, B beats corrected `C-A` with probability `1/2`, but uncorrected C with `2/3`. Check same-condition order, overlapping thresholds, eligibility re-entry, the inactive-K probability example, different visit histories, forced insertion, act changes and save/load.
+**Candidate mechanics and validation:** a common offset replaces equal subtraction; pausing needs separate active-time offsets per class. Track identity-sequence positions and scheduling state separately where the candidate requires them. Leaving raw clocks unchanged across different eligibility histories is not equivalent: with A,C active and B inactive, after A wins, B beats corrected `C-A` with probability `1/2`, but uncorrected C with `2/3`. Check same-condition order, overlapping thresholds, eligibility re-entry, the inactive-K probability example, different visit histories, forced insertion and act changes.
 
 
 #### Remaining events and Ancients
@@ -56,17 +56,7 @@ Decompose remaining Encounter random operations as investigated, evaluating them
 
 **Decisions needed:** complete the [canonical ranking](DESIGN.md#canonical-card-order) for identities, upgrades, enchantments and persistent progress. Starting point: Curse < Strike < Defend < other Basic < Common.
 
-#### Equivalent-copy routing
-
-[Settled policy](DESIGN.md#representative-routing) · [Model checks](outputs/routing-validation.cjs).
-
-**Validation:** in-game commit/cancel and snapshot timing; occurrence state through Tooth storage/return and save/load. End-to-end checks await [canonical ranking](#canonical-card-order) and [shuffles](#shuffles).
-
 ### Combat randomness
-
-#### Potion-generated cards
-
-**Validation:** verify [card-generation ordinal consumption](DESIGN.md#settled-policy-potion-generated-cards) through use, discard, trade, reward skips and save/load. Include skipped card offers, the Cauldron reward-skip exception, failed acquisitions and cancellations.
 
 #### Shuffles
 
@@ -84,3 +74,7 @@ Decompose remaining Encounter random operations as investigated, evaluating them
 #### Other combat randomness
 
 **Backlog:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations. During investigation, decide source/effect sharing and special-relic interactions; split decision units only where useful.
+
+## Implementation verification
+
+**Deferred:** check each implemented policy against DESIGN. Use targeted state assertions and paired same-seed runs; log random operations where outcomes hide incorrect advancement.
