@@ -14,7 +14,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Remaining work roadmap:**
 
-1. [Events and Ancients](#events-and-ancients): settle ordinary event identity selection; then decompose remaining events/Ancients as needed.
+1. [Events and Ancients](#events-and-ancients): finish family assignment and cross-act carryover from the one-act event baseline; then decompose remaining events/Ancients as needed.
 2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
@@ -26,25 +26,46 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 #### Ordinary event identity
 
-**Intent and constraints:** retain the same seeded identity order for events with equivalent complete eligibility conditions within the chosen scope. Unavailability must not consume that condition's next identity. Preserve the act-specific plus shared pool, live eligibility, run-wide visits, [forced-event bypass](DESIGN.md#settled-policy-forced-events) and event-internal RNG. Different actual visits remain meaningful exclusions; state dependence alone does not rule out the shared filtered-draw strategy, but that strategy does not automatically settle event scheduling.
+**Status:** agreed one-act baseline, held here at the user's request pending promotion to DESIGN.
 
-**Boundary:** assume sufficient eligible, unvisited supply; exclude wrapping, exhaustion and singleton sets from this decision's scope. Use the vanilla skipping probability property in [existing mechanics](DESIGN.md#generation-and-selection-mechanics). Small examples isolate selection behavior, not ordinary pool capacity.
+**Intent and constraints:** align ordinary events across same-seed eligibility histories. Keep the act-specific plus shared pool, live eligibility, run-wide visited exclusions, [forced-event bypass](DESIGN.md#settled-policy-forced-events) and event-internal RNG. Different actual visits remain meaningful exclusions.
 
-**Candidate class model:** partition identities by equivalent complete predicates, including act availability within the chosen scope. Predicate domains may overlap while identity classes remain disjoint: `gold >= 100` and `gold >= 125` can both be active, but each identity is counted once. Use stable event/class keys, not the current candidate set or enumeration order. Whether to preserve additional ordering across distinct nested/intersecting conditions remains open.
+**Boundary:** a fixed family hierarchy within one act, with eligible, unvisited supply. Empty eligible pools and singleton sets remain outside this decision; Ancients remain separate.
 
-**Candidates:**
+**Conditions and families:** a condition is a complete eligibility predicate, including act availability; equivalent predicates share one key. A family groups conditions or smaller families; it is available when a contained condition is true and has unvisited event IDs. Each event belongs to one condition and one path through the hierarchy, so overlapping predicates never duplicate its weight. Use stable event, condition and family keys, independently of current candidates and enumeration order.
 
-- **Paused clocks:** reuse [corrected persistent clocks](DESIGN.md#corrected-persistent-selection-priorities) per event. Equivalent conditions give survivors identical updates, preserving their relative order without a separate group draw. Visited events leave selection; no within-act renewal is needed. This retains eligibility-history effects and lets previously ineligible events compete immediately on re-entry, unlike vanilla passing. Matching current sets and ordinals need not reconverge.
-- **Condition-level passing:** separate each condition's fixed identity order from its scheduling entries. Pass an inactive condition's scheduling entry without consuming its identity head. Define entry retirement/deferral and later scheduling weights; a finite schedule can lose all of a condition's entries while its identities remain. Simple identity-level passing fails the condition-order requirement. Nested/intersecting conditions must not duplicate identity weight.
+| Structure | Key / contents |
+|---|---|
+| **Family schedule** | Act; entries name top-level families. |
+| **Condition schedule** | Family; entries name its conditions or child families. |
+| **Event ID sequence** | Condition; entries are its unvisited event IDs. |
 
-**Known — probability tradeoff:** corrected paused clocks remain uniform over current eligible, unvisited identities, assuming eligibility does not inspect hidden clocks; memorylessness makes active survivors' residuals and frozen inactive clocks independent equal-rate exponentials. A class with `n` of `N` eligible survivors has chance `n/N`; an aggregated class clock needs rate `n`. This is not vanilla's invariance to encounters while K is false: in the appendix's two-K/three-other example, retaining all K identities gives `2/4` after one such encounter and `2/3` after two, versus vanilla's `2/5`. Neither is a clock-calculation bias; adopting paused clocks deliberately changes this baseline probability behavior.
+**Initialization:** for a fresh one-act instance, independently and uniformly shuffle each structure. Each schedule contains one entry per initial unvisited event inside the named condition/family; repeated labels are distinct entries. Each event ID sequence contains each identity once. Use act + structure key + purpose under the shared [addressing and state contracts](DESIGN.md#addressing-and-state); those contracts also govern commitment and save/load.
 
-**Reference alternative — fresh per-event priorities:** act + ordinary-event ordinal + event ID + purpose gives uniform selection and reconvergence for matching ordinals and current sets, without failed-check history. It does not retain a condition's identity order, so it is not a leading candidate. For candidate sets `S,T`, agreement is `|S ∩ T| / |S ∪ T|`, optimal for nested sets but not every pair; `{A,B}` versus `{A,C}` gives `1/3`, while a pair-specific coupling can reach `1/2`. This does not establish a universally better independent-run coupling.
+**Selection:**
 
-**Decisions needed:** choose paused clocks or fully specified condition-level passing, with a stated rationale for any change to vanilla's inactive-condition probability property. Define class equivalence and overlap guarantees, scheduling weights and state, and separate lifetimes for act-specific and cross-act identities/timing. Act-local clock initialization uses act + event ID + purpose; resetting removes prior-act timing history, not visited exclusions. Keeping a cross-act class's identity order while resetting its timing is a separate candidate. Ordinary-event ordinals, if used, count encounters rather than rejected candidates. Ancients remain separate.
+1. Examine the next family-schedule entry. Pass an unavailable family, retaining every sequence position inside it, and continue the family schedule.
+2. For an available family, examine exactly one condition-schedule entry. An available child family repeats this step. A failed condition or child family passes the examined scheduling entries and resumes the top-level family schedule; retain all positions below the failed entry.
+3. An available condition supplies its next event ID. On commit, advance its event ID sequence and permanently remove the successful entry at each schedule level. Passed entries remain.
 
-**Candidate mechanics and validation:** a common offset replaces equal subtraction; pausing needs separate active-time offsets per class. Track identity-sequence positions and scheduling state separately where the candidate requires them. Leaving raw clocks unchanged across different eligibility histories is not equivalent: with A,C active and B inactive, after A wins, B beats corrected `C-A` with probability `1/2`, but uncorrected C with `2/3`. Check same-condition order, overlapping thresholds, eligibility re-entry, the inactive-K probability example, different visit histories, forced insertion and act changes.
+**Wrapping:** each schedule loops through its remaining entries in original order when its end is reached. Event ID sequences retain their positions and visited exclusions. Probability changes after wrapping are accepted to keep event selection running with remaining eligible identities.
 
+**Behavior preservation:** before any schedule wraps, independent uniform hidden schedules preserve vanilla's single-run selection distribution, assuming eligibility never inspects their hidden order. A uniform shuffle decomposes into independent family interleaving and internal orders; unseen internal positions can be deferred. This preserves [vanilla's inactive-condition probability property](DESIGN.md#event-and-encounter-identities). Alignment changes cross-run and SL correlations; eligibility-history differences can persist.
+
+**Evidence:** before wrapping, six-event enumeration matched vanilla across 81 threshold histories, 64 intersecting-condition histories with a fixed hierarchy, and adaptive examples.
+
+##### Remaining decisions
+
+- **Family assignment:** map actual conditions into the hierarchy, including which grouping receives protection when predicates intersect without nesting.
+- **Cross-act carryover:** choose lifetimes separately for the family schedule, condition schedules and event ID sequences. One candidate retains shared-event ID order while resetting schedules; run-wide visited exclusions persist.
+
+##### Selection refinements
+
+**Candidate — markers:** apply the shared [filtered-draw strategy](DESIGN.md#filtered-draws) to a single mixed condition schedule, freezing the currently eligible condition keys in each marker; retain event ID sequences by condition. This may preserve future selected-condition order within wholly unavailable groups, including crossing groups. Judge future selections, including pending marker resolution. Schedule consumption changes; general guarantees, marker collisions and finite-capacity behavior need assessment before adoption.
+
+**Preliminary evidence:** across three two-event conditions, all 343 histories of three nonempty eligible-condition sets matched vanilla over 720 permutations each, including each model's unresolved ends as terminal outcomes. Marker wrapping remains open.
+
+**Reference alternatives:** [Paused clocks](DESIGN.md#corrected-persistent-selection-priorities) keep every eligible, unvisited identity competing uniformly; the two-K/three-other example changes from vanilla's `2/5` to `2/4` and `2/3` after one and two encounters with K unavailable. Fresh per-event priorities restore agreement for matching ordinals/current sets but lose condition identity order.
 
 #### Remaining events and Ancients
 
