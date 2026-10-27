@@ -847,6 +847,60 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 **Ancient options:** use event RNG seeded with run seed + event identity hash + player-slot contribution, independently of event counts.
 
+#### Event condition classes
+
+**Scope:** the mod’s classification of vanilla entry predicates for solo ordinary runs with permanent unlocks satisfied; Ancients are separate. These **31 scheduling classes cover 56 ordinary events**. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout.
+
+**Keys:** `CX-Y` identifies one scheduling condition. `X` gives eligible acts: `1O` = Overgrowth, `1U` = Underdocks, `1` = either Act 1, `2` = Hive, `3` = Glory; `12`, `23`, `123` combine acts. `Y` gives a descriptive family and consecutive index starting at 1 within each act/family prefix: `N` = no additional condition, `G` = gold, `H` = HP, `D` = deck, `F` = floor, `P` = potions, `R` = relics, `M` = mixed predicates. Rare checks stay outside the grouping predicate.
+
+| Class | Scheduling condition beyond act | Count | Events |
+|---|---|---:|---|
+| C1O-N | None | 8 | Aroma of Chaos; Byrdonis’ Nest; Dense Vegetation; Jungle Maze Adventure; Sapphire Seed; Tablet of Truth; Wellspring; Wood Carvings |
+| C1O-G1 | Gold ≥ 44 | 1 | Whispering Hollow |
+| C1O-G2 | Gold ≥ 100 | 1 | Morphic Grove |
+| C1O-G3 | Gold ≥ 149 | 1 | Luminous Choir |
+| C1O-H1 | HP ≤ 70% of maximum | 1 | Unrest Site |
+| C1U-N | None | 5 | Abyssal Baths; Doors of Light and Dark; Drowning Beacon; Spiraling Whirlpool; Sunken Treasury |
+| C1U-G1 | Gold ≥ 55 | 1 | Waterlogged Scriptorium |
+| C1U-G2 | Gold ≥ 120 | 1 | Endless Conveyor |
+| C1U-H1 | HP > 5 | 1 | Trash Heap |
+| C1U-F1 | Total floor ≥ 6 | 1 | Punch-Off |
+| C1-N | None | 1 | Sunken Statue |
+| C1-H1 | HP ≥ 10 | 1 | The Legends Were True |
+| C2-N | None | 8 | Bugslayer; Colorful Philosophers; Doll Room; Field of Man-Sized Holes; Infested Automaton; Lost Wisp; Spirit Grafter; The Lantern Key |
+| C2-G1 | Gold ≥ 100 | 1 | Welcome to Wongos |
+| C2-G2 | Gold ≥ 125 | 1 | Zen Weaver |
+| C2-H1 | HP ≥ 19 | 1 | Colossal Flower |
+| C2-D1 | ≥ 2 removable Basic Strikes and ≥ 2 removable Basic Defends | 1 | Amalgamator |
+| C2-P1 | ≥ 1 potion | 1 | Stone of All Time |
+| C3-N | None | 5 | Battleworn Dummy; Hungry for Mushrooms; Reflections; Tinker Time; Trial |
+| C3-H1 | HP ≥ 12 | 1 | Round Tea Party |
+| C3-D1 | A card eligible for Soul’s Power | 1 | Grave of the Forgotten |
+| C12-N | None | 2 | Brain Leech; Room Full of Cheese |
+| C12-G1 | Gold ≥ 150 | 1 | Tea Master |
+| C23-N | None | 2 | Potion Courier; Symbiote |
+| C23-G1 | Gold ≥ 100 | 1 | Crystal Sphere |
+| C23-M1 | Gold ≥ 100 or holding Foul Potion | 1 | Fake Merchant |
+| C23-M2 | Gold ≥ 100, ≥ 1 potion and ≥ 1 tradable relic | 1 | Ranwid the Elder |
+| C23-R1 | ≥ 5 tradable relics | 1 | Relic Trader |
+| C123-N | None | 2 | Self Help Book; This Or That |
+| C123-F1 | Total floor > 6 | 1 | Slippery Bridge |
+| C123-P1 | ≥ 2 potions | 1 | The Future of Potions |
+
+**Rare checks on selected IDs:**
+
+| Event | Rare check |
+|---|---|
+| Wood Carvings | a removable Basic card |
+| Morphic Grove | ≥ 2 transformable cards |
+| Luminous Choir | Available relic stock |
+| Spiraling Whirlpool | a card eligible for Spiral |
+| The Legends Were True | A nonempty deck |
+| Field of Man-Sized Holes | a card eligible for Perfect Fit |
+| Slippery Bridge | A removable card |
+
+**Forced event:** War Historian Repy adds one event outside these classes: Lantern Key inserts it in Act 3; ordinary `IsAllowed` is always false.
+
 #### Combat setup and shuffles
 
 Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats; extra reshuffles advance the same generator used for later opening hands.

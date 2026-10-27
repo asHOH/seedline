@@ -47,17 +47,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ##### Rare conditions
 
-**Intent:** keep classification compact. Evaluate rare checks at ID selection, allowing otherwise equivalent events to share one scheduling condition.
-
-| Event | Eligible acts | Rare check | Scheduling condition beyond act availability |
-|---|---|---|---|
-| Luminous Choir | Overgrowth | Available relic stock | Gold ≥ 149 |
-| Morphic Grove | Overgrowth | ≥ 2 transformable cards | Gold ≥ 100 |
-| Wood Carvings | Overgrowth | A removable Basic card | None |
-| Spiraling Whirlpool | Underdocks | A card eligible for Spiral | None |
-| The Legends Were True | Act 1 | A nonempty deck | HP ≥ 10 |
-| Field of Man-Sized Holes | Hive | A card eligible for Perfect Fit | None |
-| Slippery Bridge | Acts 1–3 | A removable card | Total floor > 6 |
+**Intent:** keep classification compact. Evaluate rare checks at ID selection, allowing otherwise equivalent events to share one scheduling condition. The [event condition classes](DESIGN.md#event-condition-classes) list the predicates and rare checks.
 
 ##### Evidence and eliminated candidate
 
