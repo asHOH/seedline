@@ -32,7 +32,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Boundary:** a fixed family hierarchy within one act, with eligible, unvisited supply. Empty eligible pools and singleton sets remain outside this decision; Ancients remain separate.
 
-**Conditions and families:** a condition is a complete eligibility predicate, including act availability; equivalent predicates share one key. A family groups conditions or smaller families; it is available when a contained condition is true and has unvisited event IDs. Each event belongs to one condition and one path through the hierarchy, so overlapping predicates never duplicate its weight. Use stable event, condition and family keys, independently of current candidates and enumeration order.
+**Conditions and families:** a condition is the eligibility predicate used for grouping and scheduling, including act availability and excluding the designated [rare conditions](#rare-conditions); equivalent predicates share one key. A family groups conditions or smaller families; it is available when a contained condition is true and has unvisited event IDs. Each event belongs to one condition and one path through the hierarchy, so overlapping predicates never duplicate its weight. Use stable event, condition and family keys, independently of current candidates and enumeration order.
 
 | Structure | Key / contents |
 |---|---|
@@ -40,19 +40,38 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 | **Condition schedule** | Family; entries name its conditions or child families. |
 | **Event ID sequence** | Condition; entries are its unvisited event IDs. |
 
+**Passing:** advance past an entry while retaining it for wrapping.
+
 **Initialization:** for a fresh one-act instance, independently and uniformly shuffle each structure. Each schedule contains one entry per initial unvisited event inside the named condition/family; repeated labels are distinct entries. Each event ID sequence contains each identity once. Use act + structure key + purpose under the shared [addressing and state contracts](DESIGN.md#addressing-and-state); those contracts also govern commitment and save/load.
 
 **Selection:**
 
 1. Examine the next family-schedule entry. Pass an unavailable family, retaining every sequence position inside it, and continue the family schedule.
 2. For an available family, examine exactly one condition-schedule entry. An available child family repeats this step. A failed condition or child family passes the examined scheduling entries and resumes the top-level family schedule; retain all positions below the failed entry.
-3. An available condition supplies its next event ID. On commit, advance its event ID sequence and permanently remove the successful entry at each schedule level. Passed entries remain.
+3. An available condition attempts its next event ID, checking that event's rare conditions. On failure, pass the ID and every examined scheduling entry, then resume the top-level family schedule. Rejected candidates add no visit or ordinary-event opportunity and consume no event RNG.
+4. On successful selection, advance its event ID sequence and permanently remove the successful entry at each schedule level. Commit all passing with the selected event under the shared state contract.
 
-**Wrapping:** each schedule loops through its remaining entries in original order when its end is reached. Event ID sequences retain their positions and visited exclusions. Probability changes after wrapping are accepted to keep event selection running with remaining eligible identities.
+**Wrapping:** each schedule and event ID sequence loops through its remaining entries in original order when its end is reached; visited IDs remain excluded. Probability changes after wrapping are accepted to keep event selection running with remaining eligible identities.
 
-**Behavior preservation:** before any schedule wraps, independent uniform hidden schedules preserve vanilla's single-run selection distribution, assuming eligibility never inspects their hidden order. A uniform shuffle decomposes into independent family interleaving and internal orders; unseen internal positions can be deferred. This preserves [vanilla's inactive-condition probability property](DESIGN.md#event-and-encounter-identities). Alignment changes cross-run and SL correlations; eligibility-history differences can persist.
+**Behavior preservation:** before any schedule or event ID sequence wraps, independent uniform hidden schedules preserve vanilla's single-run selection distribution, assuming eligibility never inspects their hidden order. A uniform shuffle decomposes into independent family interleaving and internal orders; unseen internal positions can be deferred. This preserves [vanilla's inactive-condition probability property](DESIGN.md#event-and-encounter-identities). Alignment changes cross-run and SL correlations; eligibility-history differences can persist.
 
 **Evidence:** before wrapping, six-event enumeration matched vanilla across 81 threshold histories, 64 intersecting-condition histories with a fixed hierarchy, and adaptive examples.
+
+##### Rare conditions
+
+**Scope and intent:** solo ordinary runs with permanent unlocks satisfied. A rare failure may defer a recovered identity behind later IDs; this alignment tradeoff keeps classification compact.
+
+| Event | Eligible acts | Rare check | Scheduling condition beyond act availability |
+|---|---|---|---|
+| Luminous Choir | Overgrowth | Available relic stock | Gold ≥ 149 |
+| Morphic Grove | Overgrowth | ≥ 2 transformable cards | Gold ≥ 100 |
+| Wood Carvings | Overgrowth | A removable Basic card | None |
+| Spiraling Whirlpool | Underdocks | A card eligible for Spiral | None |
+| The Legends Were True | Act 1 | A nonempty deck | HP ≥ 10 |
+| Field of Man-Sized Holes | Hive | A card eligible for Perfect Fit | None |
+| Slippery Bridge | Acts 1–3 | A removable card | Total floor > 6 |
+
+**Validation:** before wrapping, exact enumeration matched vanilla across 196 two-opportunity histories and 720 initial orders, using three two-event conditions, a nested family and one event-specific rare check; unresolved ends were included. A recovery check retained a rejected ID for wrapping while excluding it from visits and opportunity counts. Retrying within the same condition instead changed one three-event example's selection chance from `1/2` to `2/3`.
 
 ##### Remaining decisions
 
