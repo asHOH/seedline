@@ -14,7 +14,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Remaining work roadmap:**
 
-1. [Events and Ancients](#events-and-ancients): finish family assignment and cross-act carryover from the one-act event baseline; then decompose remaining events/Ancients as needed.
+1. [Events and Ancients](#events-and-ancients): settle cross-act event carryover; then decompose remaining events/Ancients as needed.
 2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
@@ -24,42 +24,30 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ### Events and Ancients
 
-#### Ordinary event identity
+#### Act-local event selection
 
-**Status:** agreed one-act baseline, held here at the user's request pending promotion to DESIGN.
+**Status:** settled policy, held here temporarily.
 
-**Intent and constraints:** align ordinary events across same-seed eligibility histories. Keep the act-specific plus shared pool, live eligibility, run-wide visited exclusions, [forced-event bypass](DESIGN.md#settled-policy-forced-events) and event-internal RNG. Different actual visits remain meaningful exclusions.
+**Intent and scope:** improve same-seed event matching within one act. Ancients remain separate.
 
-**Boundary:** a fixed family hierarchy within one act, with eligible, unvisited supply. Empty eligible pools and singleton sets remain outside this decision; Ancients remain separate.
-
-**Conditions and families:** a condition is the eligibility predicate used for grouping and scheduling, including act availability and excluding the designated [rare conditions](#rare-conditions); equivalent predicates share one key. A family groups conditions or smaller families; it is available when a contained condition is true and has unvisited event IDs. Each event belongs to one condition and one path through the hierarchy, so overlapping predicates never duplicate its weight. Use stable event, condition and family keys, independently of current candidates and enumeration order.
-
-| Structure | Key / contents |
-|---|---|
-| **Family schedule** | Act; entries name top-level families. |
-| **Condition schedule** | Family; entries name its conditions or child families. |
-| **Event ID sequence** | Condition; entries are its unvisited event IDs. |
-
-**Passing:** advance past an entry while retaining it for wrapping.
-
-**Initialization:** for a fresh one-act instance, independently and uniformly shuffle each structure. Each schedule contains one entry per initial unvisited event inside the named condition/family; repeated labels are distinct entries. Each event ID sequence contains each identity once. Use act + structure key + purpose under the shared [addressing and state contracts](DESIGN.md#addressing-and-state); those contracts also govern commitment and save/load.
+**State:** a condition is an eligibility predicate, including act availability and excluding [rare checks](#rare-conditions). Equivalent predicates share a stable key; each event belongs to one condition. Initially shuffle unvisited IDs independently per condition using act + condition key + purpose, with one scheduling entry per ID. Follow the shared [addressing, consumption and saved-state contracts](DESIGN.md#addressing-and-state).
 
 **Selection:**
 
-1. Examine the next family-schedule entry. Pass an unavailable family, retaining every sequence position inside it, and continue the family schedule.
-2. For an available family, examine exactly one condition-schedule entry. An available child family repeats this step. A failed condition or child family passes the examined scheduling entries and resumes the top-level family schedule; retain all positions below the failed entry.
-3. An available condition attempts its next event ID, checking that event's rare conditions. On failure, pass the ID and every examined scheduling entry, then resume the top-level family schedule. Rejected candidates add no visit or ordinary-event opportunity and consume no event RNG.
-4. On successful selection, advance its event ID sequence and permanently remove the successful entry at each schedule level. Commit all passing with the selected event under the shared state contract.
+1. At each **act-local event ordinal**, initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries. Independent uniform `U ∈ (0, 1)` draws use act + act-local event ordinal + condition key + per-condition draw index, starting at zero for each resolution.
+2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a rare-check failure passes that ID too.
+3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
+4. On success, advance the ID sequence and commit the visit and all passing. Refresh priorities at the next resolution.
 
-**Wrapping:** each schedule and event ID sequence loops through its remaining entries in original order when its end is reached; visited IDs remain excluded. Probability changes after wrapping are accepted to keep event selection running with remaining eligible identities.
+**Wrapping:** when the schedule exhausts, restore passed entries and restart priorities within the same ordinal, continuing each condition's draw index. ID sequences wrap in original order; visited IDs stay excluded. Probability changes after wrapping are accepted.
 
-**Behavior preservation:** before any schedule or event ID sequence wraps, independent uniform hidden schedules preserve vanilla's single-run selection distribution, assuming eligibility never inspects their hidden order. A uniform shuffle decomposes into independent family interleaving and internal orders; unseen internal positions can be deferred. This preserves [vanilla's inactive-condition probability property](DESIGN.md#event-and-encounter-identities). Alignment changes cross-run and SL correlations; eligibility-history differences can persist.
+**Implementation detail — empty eligible pool:** outside this policy's scope; relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
 
-**Evidence:** before wrapping, six-event enumeration matched vanilla across 81 threshold histories, 64 intersecting-condition histories with a fixed hierarchy, and adaptive examples.
+**Guarantees:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Refreshing order changes cross-run and SL correlations to improve recovery after mismatch; shared priorities handle eligible-set overlap.
 
 ##### Rare conditions
 
-**Scope and intent:** solo ordinary runs with permanent unlocks satisfied. A rare failure may defer a recovered identity behind later IDs; this alignment tradeoff keeps classification compact.
+**Intent:** keep classification compact. Evaluate rare checks at ID selection, allowing otherwise equivalent events to share one scheduling condition.
 
 | Event | Eligible acts | Rare check | Scheduling condition beyond act availability |
 |---|---|---|---|
@@ -71,20 +59,17 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 | Field of Man-Sized Holes | Hive | A card eligible for Perfect Fit | None |
 | Slippery Bridge | Acts 1–3 | A removable card | Total floor > 6 |
 
-**Validation:** before wrapping, exact enumeration matched vanilla across 196 two-opportunity histories and 720 initial orders, using three two-event conditions, a nested family and one event-specific rare check; unresolved ends were included. A recovery check retained a rejected ID for wrapping while excluding it from visits and opportunity counts. Retrying within the same condition instead changed one three-event example's selection chance from `1/2` to `2/3`.
+##### Evidence and eliminated candidate
 
-##### Remaining decisions
+**Validation:** Vanilla-distribution and same-state checks pass. Rare failures and wrapping remain untested; some history pairs worsen.
 
-- **Family assignment:** map actual conditions into the hierarchy, including which grouping receives protection when predicates intersect without nesting.
-- **Cross-act carryover:** choose lifetimes separately for the family schedule, condition schedules and event ID sequences. One candidate retains shared-event ID order while resetting schedules; run-wide visited exclusions persist.
+**Eliminated candidate — flat condition schedule:** fix one shuffled schedule, one entry per initial unvisited ID; pass failures, remove successful entries and wrap in original order. Shares the ID sequences and preserves pre-wrap probabilities. Eliminated for lower average matching in the tested histories.
 
-##### Selection refinements
+Baseline: [event selection and wrapping](DESIGN.md#event-and-encounter-identities).
 
-**Candidate — markers:** apply the shared [filtered-draw strategy](DESIGN.md#filtered-draws) to a single mixed condition schedule, freezing the currently eligible condition keys in each marker; retain event ID sequences by condition. This may preserve future selected-condition order within wholly unavailable groups, including crossing groups. Judge future selections, including pending marker resolution. Schedule consumption changes; general guarantees, marker collisions and finite-capacity behavior need assessment before adoption.
+#### Cross-act event carryover
 
-**Preliminary evidence:** across three two-event conditions, all 343 histories of three nonempty eligible-condition sets matched vanilla over 720 permutations each, including each model's unresolved ends as terminal outcomes. Marker wrapping remains open.
-
-**Reference alternatives:** [Paused clocks](DESIGN.md#corrected-persistent-selection-priorities) keep every eligible, unvisited identity competing uniformly; the two-K/three-other example changes from vanilla's `2/5` to `2/4` and `2/3` after one and two encounters with K unavailable. Fresh per-event priorities restore agreement for matching ordinals/current sets but lose condition identity order.
+**Decision needed:** determine whether shared-event ID sequences carry across acts; run-wide visited exclusions persist.
 
 #### Remaining events and Ancients
 

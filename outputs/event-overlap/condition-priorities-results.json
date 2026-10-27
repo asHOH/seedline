@@ -1,0 +1,86 @@
+{
+  "method": "Seeded Monte Carlo; within-resolution condition priorities persist, with fresh priorities at each act-local event ordinal.",
+  "counts": [
+    3,
+    2,
+    2
+  ],
+  "trials": 200000,
+  "average": 0.5445524881293743,
+  "confidence95": [
+    0.5438117414721414,
+    0.5452932347866072
+  ],
+  "maxMarginalError": 0.002159285714285558,
+  "scenarios": [
+    {
+      "a": [
+        0,
+        2,
+        2
+      ],
+      "b": [
+        1,
+        2,
+        2
+      ],
+      "matches": [
+        0.59974,
+        0.69409,
+        0.696635
+      ]
+    },
+    {
+      "a": [
+        1,
+        2,
+        2
+      ],
+      "b": [
+        2,
+        2,
+        2
+      ],
+      "matches": [
+        0.714175,
+        0.828595,
+        0.823235
+      ]
+    },
+    {
+      "a": [
+        1,
+        1,
+        1
+      ],
+      "b": [
+        2,
+        2,
+        2
+      ],
+      "matches": [
+        0.714175,
+        0.591225,
+        0.46415
+      ]
+    },
+    {
+      "a": [
+        0,
+        1,
+        0
+      ],
+      "b": [
+        1,
+        1,
+        0
+      ],
+      "matches": [
+        0.59974,
+        0.59974,
+        0.625085
+      ]
+    }
+  ],
+  "checks": "All 27 single-run path distributions checked against exact vanilla enumeration with six-standard-error tolerance; same-selection state preservation checked across 27 starting count vectors and three eligibility levels."
+}
