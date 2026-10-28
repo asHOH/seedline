@@ -140,6 +140,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice) | Event ID + relic identity, independent of Relic Trader | Opportunity-specific selection priorities |
 | [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
+| [Endless Conveyor dishes](#settled-policy-endless-conveyor) | Event-local dish-selection sequence with a persistent position. | Weighted candidate stream with rejection of ineligible entries. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 | [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act-local event ordinal + condition key; ID order carries across acts. | Refreshed condition priorities; shared position priorities insert newly available IDs. |
@@ -732,6 +733,12 @@ For fixed slots 1–3 in generation order, roll the ordinary relic rarity using 
 - **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
 
 Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
+
+## Settled policy: Endless Conveyor
+
+**Intent:** preserve shared dish order across runs.
+
+Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dedicated dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries—including the previous displayed dish—until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
 
 ## Settled policy: potion-generated cards
 

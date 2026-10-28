@@ -14,7 +14,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Remaining work roadmap:**
 
-1. [Events and Ancients](#events-and-ancients): decompose remaining events/Ancients as needed.
+1. [Ancients](#ancients): audit remaining Encounter random operations.
 2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
 3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
@@ -22,11 +22,11 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ## Encounter
 
-### Events and Ancients
+**Known:** ordinary and forced events' out-of-combat randomness is settled in [DESIGN.md](DESIGN.md).
 
-#### Remaining events and Ancients
+### Ancients
 
-Decompose remaining Encounter random operations as investigated, evaluating them against the [event-specific reward policy](DESIGN.md#settled-policy-event-specific-rewards) and existing event-list rules.
+Investigate remaining Ancient Encounter random operations against existing shared and source policies; decompose decision units as needed.
 
 ### Item-selection priorities
 
