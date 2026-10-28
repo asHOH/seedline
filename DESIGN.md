@@ -137,6 +137,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts with [reward aliases](#card-reward-selection-keys). | Residual clocks over vanilla candidates, including fallback. |
 | [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
 | [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
+| [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice) | Event ID + relic identity, independent of Relic Trader | Opportunity-specific selection priorities |
 | [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
@@ -626,6 +627,8 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
+Fake Merchant uses event RNG for stock and price rolls, keeping its shop fixed for the same seed.
+
 ## Settled policy: Wing Charm
 
 **Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
@@ -702,6 +705,10 @@ Offer the first three owned potions in slot order, preserving display order. Use
 - Within each reward rarity, assign successive sequence entries to potions in ascending priority order. Consume only for offered options, at most three entries total. Keep assignments fixed for the current event.
 
 **Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
+
+## Settled policy: Ranwid relic sacrifice
+
+To align Ranwid's relic sacrifice, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities), with event ID as the opportunity address and relic identity as the candidate key, independently of Relic Trader. Offer the lowest-priority tradable owned relic, preserving existing eligibility, costs and rewards.
 
 ## Settled policy: Relic Trader
 
