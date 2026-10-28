@@ -1,0 +1,371 @@
+{
+  "method": "Exact enumeration and deterministic state traces; no Monte Carlo.",
+  "scope": "Scheduling examples keep the act pool unchanged and avoid wrapping and rare failures. The insertion example isolates one condition whose act pool expands.",
+  "scheduleExample": {
+    "k": 1,
+    "o": 2,
+    "visits": 1,
+    "carry": 0.3333333333333333,
+    "restore": 0.5,
+    "vanilla": 0.5
+  },
+  "scheduleCases": [
+    {
+      "k": 1,
+      "o": 2,
+      "visits": 1,
+      "carry": 0.3333333333333333,
+      "restore": 0.5,
+      "vanilla": 0.5
+    },
+    {
+      "k": 1,
+      "o": 3,
+      "visits": 1,
+      "carry": 0.25000000000000006,
+      "restore": 0.3333333333333333,
+      "vanilla": 0.3333333333333333
+    },
+    {
+      "k": 1,
+      "o": 3,
+      "visits": 2,
+      "carry": 0.25,
+      "restore": 0.5,
+      "vanilla": 0.5
+    },
+    {
+      "k": 1,
+      "o": 4,
+      "visits": 1,
+      "carry": 0.1999999999999999,
+      "restore": 0.25,
+      "vanilla": 0.25
+    },
+    {
+      "k": 1,
+      "o": 4,
+      "visits": 2,
+      "carry": 0.1999999999999998,
+      "restore": 0.3333333333333333,
+      "vanilla": 0.3333333333333333
+    },
+    {
+      "k": 1,
+      "o": 4,
+      "visits": 3,
+      "carry": 0.2000000000000002,
+      "restore": 0.5,
+      "vanilla": 0.5
+    },
+    {
+      "k": 2,
+      "o": 2,
+      "visits": 1,
+      "carry": 0.5000000000000001,
+      "restore": 0.6666666666666666,
+      "vanilla": 0.6666666666666666
+    },
+    {
+      "k": 2,
+      "o": 3,
+      "visits": 1,
+      "carry": 0.39999999999999986,
+      "restore": 0.5,
+      "vanilla": 0.5
+    },
+    {
+      "k": 2,
+      "o": 3,
+      "visits": 2,
+      "carry": 0.3999999999999997,
+      "restore": 0.6666666666666666,
+      "vanilla": 0.6666666666666666
+    },
+    {
+      "k": 2,
+      "o": 4,
+      "visits": 1,
+      "carry": 0.3333333333333307,
+      "restore": 0.4,
+      "vanilla": 0.4
+    },
+    {
+      "k": 2,
+      "o": 4,
+      "visits": 2,
+      "carry": 0.33333333333333226,
+      "restore": 0.5,
+      "vanilla": 0.5
+    },
+    {
+      "k": 2,
+      "o": 4,
+      "visits": 3,
+      "carry": 0.33333333333333265,
+      "restore": 0.6666666666666666,
+      "vanilla": 0.6666666666666666
+    },
+    {
+      "k": 3,
+      "o": 2,
+      "visits": 1,
+      "carry": 0.599999999999999,
+      "restore": 0.75,
+      "vanilla": 0.75
+    },
+    {
+      "k": 3,
+      "o": 3,
+      "visits": 1,
+      "carry": 0.5000000000000048,
+      "restore": 0.6,
+      "vanilla": 0.6
+    },
+    {
+      "k": 3,
+      "o": 3,
+      "visits": 2,
+      "carry": 0.49999999999999917,
+      "restore": 0.75,
+      "vanilla": 0.75
+    },
+    {
+      "k": 3,
+      "o": 4,
+      "visits": 1,
+      "carry": 0.4285714285714271,
+      "restore": 0.5,
+      "vanilla": 0.5
+    },
+    {
+      "k": 3,
+      "o": 4,
+      "visits": 2,
+      "carry": 0.4285714285714404,
+      "restore": 0.6,
+      "vanilla": 0.6
+    },
+    {
+      "k": 3,
+      "o": 4,
+      "visits": 3,
+      "carry": 0.42857142857143327,
+      "restore": 0.75,
+      "vanilla": 0.75
+    }
+  ],
+  "consistencyExample": {
+    "left": {
+      "remaining": [
+        1,
+        1
+      ],
+      "used": [
+        1,
+        1
+      ],
+      "visited": [
+        "A1",
+        "B1"
+      ]
+    },
+    "right": {
+      "remaining": [
+        0,
+        1
+      ],
+      "used": [
+        1,
+        1
+      ],
+      "visited": [
+        "B1",
+        "A1"
+      ]
+    },
+    "carryAgreement": 0.5,
+    "restoreAgreement": 1
+  },
+  "insertionExample": {
+    "carriedNewEventProbability": 0.6666666666666666,
+    "vanillaNewEventProbability": 0.5,
+    "rows": [
+      {
+        "masterOrder": [
+          "A",
+          "B",
+          "C"
+        ],
+        "firstVisit": "A",
+        "nextView": [
+          "B",
+          "C"
+        ],
+        "nextVisit": "B"
+      },
+      {
+        "masterOrder": [
+          "A",
+          "C",
+          "B"
+        ],
+        "firstVisit": "A",
+        "nextView": [
+          "C",
+          "B"
+        ],
+        "nextVisit": "C"
+      },
+      {
+        "masterOrder": [
+          "B",
+          "A",
+          "C"
+        ],
+        "firstVisit": "B",
+        "nextView": [
+          "A",
+          "C"
+        ],
+        "nextVisit": "A"
+      },
+      {
+        "masterOrder": [
+          "B",
+          "C",
+          "A"
+        ],
+        "firstVisit": "B",
+        "nextView": [
+          "C",
+          "A"
+        ],
+        "nextVisit": "C"
+      },
+      {
+        "masterOrder": [
+          "C",
+          "A",
+          "B"
+        ],
+        "firstVisit": "A",
+        "nextView": [
+          "C",
+          "B"
+        ],
+        "nextVisit": "C"
+      },
+      {
+        "masterOrder": [
+          "C",
+          "B",
+          "A"
+        ],
+        "firstVisit": "B",
+        "nextView": [
+          "C",
+          "A"
+        ],
+        "nextVisit": "C"
+      }
+    ]
+  },
+  "insertionFix": {
+    "rule": "Preserve old and newly eligible cohort orders; choose the next cohort in proportion to its remaining size, using shared act/condition/merge-position draws.",
+    "example": [
+      {
+        "order": [
+          "B",
+          "C"
+        ],
+        "probability": 0.5
+      },
+      {
+        "order": [
+          "C",
+          "B"
+        ],
+        "probability": 0.5
+      }
+    ],
+    "cases": [
+      {
+        "oldCount": 0,
+        "newCount": 1,
+        "permutations": 1
+      },
+      {
+        "oldCount": 0,
+        "newCount": 2,
+        "permutations": 2
+      },
+      {
+        "oldCount": 0,
+        "newCount": 3,
+        "permutations": 6
+      },
+      {
+        "oldCount": 1,
+        "newCount": 0,
+        "permutations": 1
+      },
+      {
+        "oldCount": 1,
+        "newCount": 1,
+        "permutations": 2
+      },
+      {
+        "oldCount": 1,
+        "newCount": 2,
+        "permutations": 6
+      },
+      {
+        "oldCount": 1,
+        "newCount": 3,
+        "permutations": 24
+      },
+      {
+        "oldCount": 2,
+        "newCount": 0,
+        "permutations": 2
+      },
+      {
+        "oldCount": 2,
+        "newCount": 1,
+        "permutations": 6
+      },
+      {
+        "oldCount": 2,
+        "newCount": 2,
+        "permutations": 24
+      },
+      {
+        "oldCount": 2,
+        "newCount": 3,
+        "permutations": 120
+      },
+      {
+        "oldCount": 3,
+        "newCount": 0,
+        "permutations": 6
+      },
+      {
+        "oldCount": 3,
+        "newCount": 1,
+        "permutations": 24
+      },
+      {
+        "oldCount": 3,
+        "newCount": 2,
+        "permutations": 120
+      },
+      {
+        "oldCount": 3,
+        "newCount": 3,
+        "permutations": 720
+      }
+    ]
+  },
+  "checks": "18 schedule cases; shared-priority trace with equal visited sets; all six master orders; independent next-act vanilla shuffle; activation before the previous cursor; uniform insertion for 15 old/new pool sizes including empty cohorts."
+}

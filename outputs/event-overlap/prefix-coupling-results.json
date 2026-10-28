@@ -1,0 +1,254 @@
+{
+  "example": {
+    "weightedMerge": [
+      0.8333333333333333,
+      0.5833333333333333
+    ],
+    "sharedSlotPriorities": [
+      0.8333333333333333,
+      0.6666666666666666
+    ],
+    "possibleUpperBound": [
+      0.8333333333333333,
+      0.6666666666666666
+    ]
+  },
+  "multipleNewExample": {
+    "oldA": [
+      "A"
+    ],
+    "oldB": [
+      "A",
+      "B"
+    ],
+    "newCount": 2,
+    "weightedMerge": [
+      0.8333333333333334,
+      0.6388888888888888,
+      0.40277777777777773
+    ],
+    "sharedSlotPriorities": [
+      0.8333333333333334,
+      0.6666666666666666,
+      0.5
+    ],
+    "possibleUpperBound": [
+      0.8333333333333333,
+      0.8333333333333333,
+      0.5
+    ]
+  },
+  "independentRankOracle": {
+    "maxPositions": 7,
+    "poolConfigurations": 120,
+    "rankCases": 204556,
+    "outcome": "Exact joint probabilities, uniform marginals, and both internal orders passed, including empty pools."
+  },
+  "optimalityCounterexample": {
+    "rows": [
+      {
+        "short": "CDA",
+        "long": "CDAB"
+      },
+      {
+        "short": "CAD",
+        "long": "CADB"
+      },
+      {
+        "short": "CAD",
+        "long": "CABD"
+      },
+      {
+        "short": "ACD",
+        "long": "ACDB"
+      },
+      {
+        "short": "ACD",
+        "long": "ACBD"
+      },
+      {
+        "short": "CDA",
+        "long": "ABCD"
+      }
+    ],
+    "probabilityPerRow": "1/6",
+    "prefixSurvival": [
+      0.8333333333333333,
+      0.8333333333333333,
+      0.5
+    ],
+    "preservesBothMarginals": true,
+    "reachesEveryPrefixUpperBoundForThisPair": true
+  },
+  "varyingBatchCounterexample": {
+    "oldCounts": [
+      1,
+      2
+    ],
+    "newCounts": [
+      1,
+      2
+    ],
+    "sharedOldHead": true,
+    "sharedNewHead": true,
+    "firstAgreement": {
+      "weightedMerge": 1,
+      "sharedSlotPriorities": 0.833333333333333
+    }
+  },
+  "method": "Exact enumeration of shared output-slot priority order effects; analytical shared-threshold merging; uniform marginal assertions for every pair.",
+  "scope": "All subsets of four old IDs in their common order, with one, two, or four identical ordered new IDs. Count pairs are nested subsets; identity pairs have equal lengths. Prefix survival through at most three outputs.",
+  "comparisons": [
+    {
+      "m": 1,
+      "kind": "count",
+      "pairs": 65,
+      "averageFirstThreePrefixSurvival": {
+        "merge": 0.3665099715099717,
+        "slots": 0.37871794871794895,
+        "pairwiseUpperBound": 0.37871794871794895
+      },
+      "improved": [
+        0,
+        25,
+        7
+      ],
+      "equal": [
+        65,
+        25,
+        15
+      ],
+      "worse": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "m": 1,
+      "kind": "identity",
+      "pairs": 27,
+      "averageFirstThreePrefixSurvival": {
+        "merge": 0.26337448559670773,
+        "slots": 0.26337448559670773,
+        "pairwiseUpperBound": 0.26337448559670773
+      },
+      "improved": [
+        0,
+        0,
+        0
+      ],
+      "equal": [
+        27,
+        27,
+        21
+      ],
+      "worse": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "m": 2,
+      "kind": "count",
+      "pairs": 65,
+      "averageFirstThreePrefixSurvival": {
+        "merge": 0.38258831908831925,
+        "slots": 0.3931623931623935,
+        "pairwiseUpperBound": 0.4119658119658123
+      },
+      "improved": [
+        0,
+        25,
+        25
+      ],
+      "equal": [
+        65,
+        40,
+        25
+      ],
+      "worse": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "m": 2,
+      "kind": "identity",
+      "pairs": 27,
+      "averageFirstThreePrefixSurvival": {
+        "merge": 0.38353909465020547,
+        "slots": 0.38353909465020547,
+        "pairwiseUpperBound": 0.38353909465020547
+      },
+      "improved": [
+        0,
+        0,
+        0
+      ],
+      "equal": [
+        27,
+        27,
+        27
+      ],
+      "worse": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "m": 4,
+      "kind": "count",
+      "pairs": 65,
+      "averageFirstThreePrefixSurvival": {
+        "merge": 0.4953413861271003,
+        "slots": 0.49886446886446834,
+        "pairwiseUpperBound": 0.5293528693528688
+      },
+      "improved": [
+        0,
+        25,
+        25
+      ],
+      "equal": [
+        65,
+        40,
+        40
+      ],
+      "worse": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "m": 4,
+      "kind": "identity",
+      "pairs": 27,
+      "averageFirstThreePrefixSurvival": {
+        "merge": 0.574368018812463,
+        "slots": 0.5743680188124629,
+        "pairwiseUpperBound": 0.574368018812463
+      },
+      "improved": [
+        0,
+        0,
+        0
+      ],
+      "equal": [
+        27,
+        27,
+        27
+      ],
+      "worse": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "reversals": []
+}

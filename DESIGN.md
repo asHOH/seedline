@@ -141,6 +141,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
+| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act-local event ordinal + condition key; ID order carries across acts. | Refreshed condition priorities; shared position priorities insert newly available IDs. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 
 ## Shared strategies
@@ -752,6 +753,40 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 - **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
 - **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
 
+## Settled policy: ordinary-event selection
+
+**Intent and scope:** improve same-seed event matching within and across acts, prioritizing agreement before the first mismatch. Ancients remain separate; [forced events](#settled-policy-forced-events) bypass ordinary selection.
+
+**Conditions and state:** group IDs by equivalent eligibility predicates, excluding act availability and rare checks, with one stable key per condition. Act availability determines participating IDs; evaluate rare checks at ID selection to keep grouping compact. Follow the shared [addressing, consumption and saved-state contracts](#addressing-and-state).
+
+### Act entry and carryover
+
+At run start, independently shuffle each condition's IDs using condition key + ID-order purpose. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
+
+**Shared position priorities:** for `n` surviving and `m` incoming IDs, give the `n+m` output positions independent uniform priorities addressed by act + condition key + insertion purpose + output position. Reserve the `m` lowest-priority positions for incoming IDs; fill both sets of positions in their respective sequence orders. This preserves uniform interleaving and improves early agreement when surviving counts differ and the incoming sequence matches.
+
+Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order. Event ordinals restart within each act.
+
+### Within-act selection
+
+1. At each **act-local event ordinal**, initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries. Independent uniform `U ∈ (0, 1)` draws use act + act-local event ordinal + condition key + per-condition draw index, starting at zero for each resolution.
+2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a rare-check failure passes that ID too.
+3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
+4. On success, advance the ID sequence and commit the visit and all passing. Refresh priorities at the next resolution.
+
+**Wrapping:** when the schedule exhausts, restore passed entries and restart priorities within the same ordinal, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded. Probability changes after wrapping are accepted.
+
+**Implementation detail — empty eligible pool:** outside this policy's scope; relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
+
+**Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Refreshing scheduling priorities changes cross-run and SL correlations to improve recovery after mismatch; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
+
+### Rejected alternatives
+
+- **Flat condition schedule:** fix one shuffled schedule, one entry per initial unvisited ID; pass failures, remove successful entries and wrap in original order. Preserves pre-wrap probabilities but had lower average matching in the tested histories.
+- **Old-ID priority sorting:** assign survivors evenly spaced priorities `i/(n+1)` and incoming IDs random priorities, then sort. Multiple incoming IDs bias insertion. Assigning survivors sorted random priorities corrects the probabilities, but the tested sharing rule gives weaker early agreement than shared position priorities.
+
+Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and rare checks](#event-condition-classes).
+
 ## Settled policy: forced events
 
 **Intent:** inserting a forced event must not affect later ordinary-event availability.
@@ -849,9 +884,9 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 #### Event condition classes
 
-**Scope:** the mod’s classification of vanilla entry predicates for solo ordinary runs with permanent unlocks satisfied; Ancients are separate. These **31 scheduling classes cover 56 ordinary events**. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout.
+**Scope:** vanilla entry predicates for solo ordinary runs with permanent unlocks satisfied; Ancients are separate. These **31 reference classes cover 56 ordinary events**. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout. [Ordinary-event selection](#settled-policy-ordinary-event-selection) groups rows with equivalent non-act predicates into one scheduling condition.
 
-**Keys:** `CX-Y` identifies one scheduling condition. `X` gives eligible acts: `1O` = Overgrowth, `1U` = Underdocks, `1` = either Act 1, `2` = Hive, `3` = Glory; `12`, `23`, `123` combine acts. `Y` gives a descriptive family and consecutive index starting at 1 within each act/family prefix: `N` = no additional condition, `G` = gold, `H` = HP, `D` = deck, `F` = floor, `P` = potions, `R` = relics, `M` = mixed predicates. Rare checks stay outside the grouping predicate.
+**Reference labels:** `CX-Y` identifies one table row. `X` gives eligible acts: `1O` = Overgrowth, `1U` = Underdocks, `1` = either Act 1, `2` = Hive, `3` = Glory; `12`, `23`, `123` combine acts. `Y` gives a descriptive family and consecutive index starting at 1 within each act/family prefix: `N` = no additional condition, `G` = gold, `H` = HP, `D` = deck, `F` = floor, `P` = potions, `R` = relics, `M` = mixed predicates. Rare checks stay outside the grouping predicate.
 
 | Class | Scheduling condition beyond act | Count | Events |
 |---|---|---:|---|
