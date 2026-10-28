@@ -41,7 +41,7 @@ For gameplay changes, noticeability and strategic impact take precedence over ex
 
 Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
 
-For very rare deviations, append approximate frequency with its denominator and relevant conditions; identify estimates as such.
+Rare deviations are appended with a **Frequency:** field.
 
 ## Scope
 
@@ -507,7 +507,7 @@ A **Rare-eligible offer** has a positive chance of producing a Rare along its or
 
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Baseline frequency:** approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
+**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Frequency:** rare — approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
 ##### A0–6: Rare delivery
 
@@ -539,7 +539,7 @@ Before presentation swaps, replace the first Common in canonical generation orde
 
 **Accepted tradeoff:** extra-Rare sequence state depends on prior Rare counts; companion replacements depend on offer composition. These A0–6 alignment and distribution tradeoffs are accepted because the design primarily targets A7+.
 
-**Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Baseline frequency:** at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
+**Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Frequency:** rare — at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
 
 ##### Presentation
 
@@ -774,7 +774,9 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
 4. On success, advance the ID sequence and commit the visit and all passing. Refresh priorities at the next resolution.
 
-**Wrapping:** when the schedule exhausts, restore passed entries and restart priorities within the same ordinal, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded. Probability changes after wrapping are accepted.
+**Wrapping:** when the schedule exhausts, restore passed entries and restart priorities within the same ordinal, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
+
+**Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
 **Implementation detail — empty eligible pool:** outside this policy's scope; relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
 

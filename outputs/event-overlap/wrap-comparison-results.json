@@ -1,0 +1,82 @@
+{
+  "scope": "Four singleton conditions; three predetermined eligibility sets, always with an unvisited eligible candidate. Uniform hidden vanilla permutation versus refreshed weighted scheduling, including schedule wrapping. No rare checks, fallback or forced events.",
+  "histories": 825,
+  "firstWrapDistributionMatches": 825,
+  "preWrapPathDistributionMatches": 825,
+  "differentFinal": 426,
+  "differentPaths": 426,
+  "maximumDifference": {
+    "allowed": [
+      "D",
+      "AC",
+      "ABC"
+    ],
+    "firstWrapOpportunity": {
+      "0": 0.4166666666666667,
+      "2": 0.3333333333333333,
+      "3": 0.24999999999999997
+    },
+    "vanillaFinal": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0
+    ],
+    "policyFinal": [
+      0.29861111111111116,
+      0.40277777777777785,
+      0.29861111111111116,
+      0
+    ],
+    "delta": 0.06944444444444453,
+    "vanillaPaths": {
+      "DAB": 0.16666666666666666,
+      "DCA": 0.3333333333333333,
+      "DAC": 0.3333333333333333,
+      "DCB": 0.16666666666666666
+    },
+    "policyPaths": {
+      "DAB": 0.2013888888888889,
+      "DAC": 0.29861111111111116,
+      "DCA": 0.29861111111111116,
+      "DCB": 0.2013888888888889
+    }
+  },
+  "simpleExample": {
+    "allowed": [
+      "A",
+      "BC",
+      "ABCD"
+    ],
+    "firstWrapOpportunity": {
+      "0": 0.4166666666666667,
+      "2": 0.3333333333333333,
+      "3": 0.24999999999999997
+    },
+    "vanillaFinal": [
+      0,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "policyFinal": [
+      0,
+      0.29861111111111105,
+      0.29861111111111105,
+      0.4027777777777775
+    ],
+    "delta": 0.0694444444444442,
+    "vanillaPaths": {
+      "ABC": 0.3333333333333333,
+      "ABD": 0.16666666666666666,
+      "ACB": 0.3333333333333333,
+      "ACD": 0.16666666666666666
+    },
+    "policyPaths": {
+      "ABC": 0.29861111111111105,
+      "ABD": 0.2013888888888889,
+      "ACB": 0.29861111111111105,
+      "ACD": 0.20138888888888892
+    }
+  }
+}
