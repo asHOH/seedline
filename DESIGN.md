@@ -144,7 +144,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 | [Ancient offerings](#settled-policy-ancient-offerings) | Ancient ID + option-pool ID + stable option identity for conditional pools; fixed pools retain vanilla. | Stable selection priorities, with vanilla weights. |
-| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act-local event ordinal + condition key; ID order carries across acts. | Refreshed condition priorities; sorted random priorities insert newly available IDs. |
+| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act + condition key; Acts 2–3 add act-local event ordinal. ID order carries across acts. | Fixed Act 1 schedule; refreshed Acts 2–3 priorities; sorted insertion. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 
 ## Shared strategies
@@ -802,22 +802,25 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 ### Within-act selection
 
-1. At each **act-local event ordinal**, initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries. Independent uniform `U ∈ (0, 1)` draws use act + act-local event ordinal + condition key + per-condition draw index, starting at zero for each resolution.
+**Schedule:** fixed in Act 1 for shared-event order; refreshed in Acts 2–3 for prefix agreement with differing pools.
+
+1. Initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries: once at Act 1 entry, at each resolution in Acts 2–3. Independent uniform `U ∈ (0, 1)` draws use act + condition key + per-condition draw index; Acts 2–3 also include act-local event ordinal.
 2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a rare-check failure passes that ID too.
 3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
-4. On success, advance the ID sequence and commit the visit and all passing. Refresh priorities at the next resolution.
+4. On success, advance the ID sequence and commit the visit and all passing. In Act 1, update the winning priority as in step 3 and retain priorities and draw indices; Acts 2–3 refresh at the next resolution.
 
-**Wrapping:** when the schedule exhausts, restore passed entries and restart priorities within the same ordinal, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
+**Wrapping:** on exhaustion, restore passed entries and restart priorities, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
 
 **Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
 **Implementation detail — empty eligible pool:** outside this policy's scope; relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
 
-**Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Refreshing scheduling priorities changes cross-run and SL correlations to improve recovery after mismatch; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
+**Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
 
 ### Rejected alternatives
 
-- **Within-act selection — flat condition schedule:** fix one shuffled schedule, one entry per initial unvisited ID; pass failures, remove successful entries and wrap in original order. Preserves pre-wrap probabilities and can better retain shared-event order under stable eligibility, but had lower average same-ordinal matching in the tested histories.
+- **Fixed scheduling in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
+- **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more Act 1 shared-order reversals.
 - **Cross-act insertion — shared position priorities:** reserve incoming positions using the lowest shared output-position priorities, then fill both sequences in order. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
 - **Cross-act insertion — weighted merging:** use shared output-position draws to choose old or incoming in proportion to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order in tests that consumed different numbers of leading events.
 
