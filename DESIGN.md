@@ -93,7 +93,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
 - **Filter:** the eligibility conditions for a draw.
 - **Ordinal:** an opportunity's position within its category across the run, unless a scope is stated.
-- **Scoped ordinal:** counts within its named scope and resets for each new scope instance. Using it in an RNG address includes the scope identity alongside the count, e.g. `(act number, ordinal)` for act-local ordinals or `(event ID, ordinal)` for event-local ordinals.
+- **Scoped ordinal:** counts within its named scope and resets for each scope instance. In RNG addresses, it denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
@@ -144,8 +144,9 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 | [Ancient offerings](#settled-policy-ancient-offerings) | Ancient ID + option-pool ID + stable option identity for conditional pools; fixed pools retain vanilla. | Stable selection priorities, with vanilla weights. |
-| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act + condition key; Acts 2–3 add act-local event ordinal. ID order carries across acts. | Fixed Act 1 schedule; refreshed Acts 2–3 priorities; sorted insertion. |
+| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act 1: act + condition key; Acts 2–3: act-local event ordinal + condition key. ID order carries across acts. | Fixed Act 1 schedule; refreshed Acts 2–3 priorities; sorted insertion. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
+| [Monster HP](#settled-policy-monster-hp) | Per-monster HP opportunity; integer HP keys. | Opportunity-specific selection priorities. |
 
 ## Shared strategies
 
@@ -168,6 +169,22 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 **Invariant — presentation-only reordering:** change only display positions, keeping each entry's address, attached random state and group membership with it.
 
 An entry's address is its original source sequence + original entry position. Prices and saved state use this stable address, distinguishing occurrences of repeated identities.
+
+#### Combat addresses
+
+Ordinary combats use combat category + act-local combat ordinal + encounter identity, with separate normal-fight, elite and boss counters.
+
+Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter identity, leaving ordinary combat counters unchanged.
+
+Combat-local purposes derive independently from this address + purpose and reset each combat. Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [global consumption](#opportunity-consumption).
+
+#### Monster occurrence identity
+
+Monster address = source-local spawn opportunity + creation index, stable for the monster's lifetime.
+
+Initial enemies use this combat's encounter setup as their source; summons/replacements use the summoning/replaced occurrence.
+
+One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
 
 #### Opportunity consumption
 
@@ -804,7 +821,7 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 **Schedule:** fixed in Act 1 for shared-event order; refreshed in Acts 2–3 for prefix agreement with differing pools.
 
-1. Initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries: once at Act 1 entry, at each resolution in Acts 2–3. Independent uniform `U ∈ (0, 1)` draws use act + condition key + per-condition draw index; Acts 2–3 also include act-local event ordinal.
+1. Initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries: once at Act 1 entry, at each resolution in Acts 2–3. Independent uniform `U ∈ (0, 1)` draws use condition key + per-condition draw index, plus act in Act 1 or act-local event ordinal in Acts 2–3.
 2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a rare-check failure passes that ID too.
 3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
 4. On success, advance the ID sequence and commit the visit and all passing. In Act 1, update the winning priority as in step 3 and retain priorities and draw indices; Acts 2–3 refresh at the next resolution.
@@ -840,13 +857,19 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 **Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
 
-### Combat addresses
+Use the shared [combat address](#combat-addresses) + setup purpose.
 
-For ordinary normal fights, elites and bosses, address setup by combat category + act-local combat ordinal + encounter identity + setup purpose. Keep separate counters for these combat categories.
+Preserve encounter identity selection and setup sampling; reward ordinals and AI retain their own policies.
 
-Event-created battles that do not consume an ordinary encounter list use an event-local battle ordinal instead of an act-local combat-category ordinal, together with encounter identity and setup purpose. They do not advance ordinary combat-category counters.
+## Settled policy: monster HP
 
-Preserve existing encounter identity selection and setup sampling rules. This changes setup addressing, not reward ordinals, ordinary monster HP or AI.
+**Intent:** align HP rolls for initial enemies, summons, replacements and Tough Egg's hatch.
+
+For every covered HP roll, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with `k = 1`: opportunity = [monster occurrence](#monster-occurrence-identity) + purpose-local roll ordinal; candidate key = integer HP value; purpose = initial HP or hatch. Hatch retains the egg's occurrence.
+
+Preserve vanilla eligibility and full-range fallback, conditional probabilities, fixed values, range modifiers, subsequent HP changes, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#settled-policy-encounter-setup).
+
+Baseline: [monster HP mechanics](#monster-hp).
 
 ## Reference
 
@@ -996,9 +1019,17 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 
 #### Combat setup and shuffles
 
-Encounter setup uses floor-based addressing. Ordinary monster HP uses `Niche` RNG. Shuffle RNG persists across combats; extra reshuffles advance the same generator used for later opening hands.
+Encounter setup uses floor-based addressing. Shuffle RNG persists across combats; extra reshuffles advance the same generator used for later opening hands.
 
 **Shuffle input order:** `Player.PopulateCombatState` clones cards in deck order; `CardPile.RandomizeOrderInternal` applies `UnstableShuffle` directly. Later `CardPileCmd.Shuffle` calls `StableShuffle`, which sorts before shuffling. `CardModel.CompareTo` compares model identity and upgrade level; enchantment and persistent progress remain tied.
+
+#### Monster HP
+
+Enemy creation samples uniformly with `Niche` from the inclusive initial HP range, excluding `MaxHp` values (current/max HP denominators) in the enemy list; an empty candidate set restores the full range (`Creature.SetUniqueMonsterHpValue`). Startup creates/adds enemies sequentially; summons share this path. Death-triggered spawns precede source removal, so dying enemies still count.
+
+**Special cases:** Tough Egg's hatch samples its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter-setup RNG.
+
+**Summons:** ordinary sampling covers Fabricator's bots, Two-Tailed Rats, Ovicopter's eggs and Phrog Parasite's four sequential Wrigglers. Eye with Teeth (6), Parafright (21) and Gas Bomb (7/8 by ascension) have fixed HP. Gremlin Merc creates Fat, creates/adds Sneaky, then adds Fat: each rolls before the other joins the enemy list (`SurprisePower.AfterDeath`).
 
 ### Relics, shops and chests
 
