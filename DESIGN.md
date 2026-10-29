@@ -440,7 +440,7 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 
 ### Stock and prices
 
-- Shop stock depends only on shop ordinal, except for Wongos and relic floor cutoffs.
+- Initial shop stock depends only on shop ordinal, except for Wongos, relic floor cutoffs and [borrowing](#borrowing).
 - **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
 - **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
@@ -735,7 +735,7 @@ Offer the first three owned potions in slot order, preserving display order. Use
 
 ## Settled policy: Ranwid relic sacrifice
 
-To align Ranwid's relic sacrifice, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities), with event ID as the opportunity address and relic identity as the candidate key, independently of Relic Trader. Offer the lowest-priority tradable owned relic, preserving existing eligibility, costs and rewards.
+To align Ranwid's relic sacrifice, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities), with event ID as the opportunity address, independently of Relic Trader. Offer the lowest-priority tradable owned relic, preserving existing eligibility, costs and rewards.
 
 ## Settled policy: Relic Trader
 
@@ -817,7 +817,7 @@ At run start, independently shuffle each condition's IDs using condition key + I
 
 **Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
 
-**Alignment tradeoff:** prioritize agreement before the first mismatch, then shared-event order; sufficiently rare prefix-agreement losses are acceptable.
+**Alignment tradeoff:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable.
 
 Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
 

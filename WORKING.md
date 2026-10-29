@@ -12,44 +12,28 @@ Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [arch
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Out-of-combat status:** policies are settled. The [Deterministic Card Processing Order](DESIGN.md#deterministic-card-processing-order) is ready for use but may require fine-tuning.
-
-**Remaining work roadmap:**
-
-1. [Deterministic Card Processing Order](#deterministic-card-processing-order): fine-tune the preliminarily settled ranking.
-2. [Combat randomness](#combat-randomness).
+**Out-of-combat status:** policies are settled.
 
 **Stakeholder input — 二硫键:** perceived slightly more combat Rares in Catfood, especially early in Act 1, against expected code behavior; considered this acceptable because both competitors were affected. Shop Rare rates were unobserved.
 
-## Encounter
+## Deterministic Card Processing Order
 
-### Item-selection priorities
+The [card-processing ranking](CARD_ORDER.md) is preliminarily settled. Fine-tuning remains.
 
-#### Deterministic Card Processing Order
+## Combat randomness
 
-**Known:** the [Deterministic Card Processing Order](DESIGN.md#deterministic-card-processing-order) is preliminarily settled and ready for use. Fine-tune the rankings later.
+Open topics; develop each into a decision unit as choices and evidence emerge:
 
-### Combat randomness
-
-#### Opening shuffle
-
-#### Later shuffles
-
-#### Random pile insertion
-
-#### Monster AI
-
-#### Generated cards
-
-#### Combat transformations
-
-#### Random card selection
-
-#### Random creature targets
-
-#### Random cost values
-
-#### Random orb types
+- [ ] Opening shuffle
+- [ ] Later shuffles
+- [ ] Random pile insertion
+- [ ] Monster AI
+- [ ] Generated cards
+- [ ] Combat transformations
+- [ ] Random card selection
+- [ ] Random creature targets
+- [ ] Random cost values
+- [ ] Random orb types
 
 ## Implementation verification
 

@@ -77,8 +77,6 @@ Example: with all earlier rows tied, two cards that cost 0 and 1 this turn sort 
 
 For example, `none = Spiral` lets upgrade level and later copy-state rows decide first; only a remaining tie uses the written `none < Spiral` fallback.
 
-Expired Glam and expired Swift also remain `=` during stage 4. Enchantment amount and the remaining stage-4 rows decide first; a remaining tie uses Glam < Swift from the active order.
-
 ### 6. Remaining state
 
 After deferred equalities, use these deterministic tie-breakers in order:
