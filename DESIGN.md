@@ -161,15 +161,17 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 
 In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
+**Selection keys:** derive initial keys from occurrence addresses, applying [source-specific aliases](#card-reward-selection-keys); never use current list position.
+
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the candidate keys already used to generate them, in ascending order.
 
 #### Stable entry addresses
 
-**Invariant — stable addresses:** filtered advancement, borrowing and removals never change an entry's original address.
+**Invariant — stable addresses:** entries retain their original addresses through movement, filtered advancement, borrowing, removal and return.
 
 **Invariant — presentation-only reordering:** change only display positions, keeping each entry's address, attached random state and group membership with it.
 
-An entry's address is its original source sequence + original entry position. Prices and saved state use this stable address, distinguishing occurrences of repeated identities.
+An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
 
 #### Combat addresses
 
@@ -177,7 +179,7 @@ Ordinary combats use combat category + act-local combat ordinal + encounter iden
 
 Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter identity, leaving ordinary combat counters unchanged.
 
-Combat-local purposes derive independently from this address + purpose and reset each combat. Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [global consumption](#opportunity-consumption).
+Combat-local purposes derive from this address + purpose and reset each combat. Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [global consumption](#opportunity-consumption).
 
 #### Monster occurrence identity
 
@@ -282,7 +284,7 @@ Shuffle outcomes must be independent of original deck sequence; the [shuffle add
 
 #### Card occurrence initialization
 
-Each new logical card occurrence gets one stable address from its source. Derive selection keys from this address, applying [aliases](#card-reward-selection-keys) for the purposes specified by source policies. Initialization preserves generated attributes and presentation order.
+Each new logical card occurrence gets one stable address from its source and selection keys under the [shared addressing contract](#rng-derivation-and-addressing). Initialization preserves generated attributes and presentation order.
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Acquisition preserves each card's address and selection keys, regardless of which other offered cards are taken.
 
@@ -298,7 +300,9 @@ Different offers have distinct anchors; rerolls use fresh entries. Offers allowi
 
 **Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades), [fixed-priority card selection](#settled-policy-fixed-priority-card-selection), [Slippery Bridge](#settled-policy-slippery-bridge) and [owned-potion selection](#settled-policy-owned-potion-selection).
 
-**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose. Derive initial selection keys from occurrence addresses, applying source-specific aliases; never use current list position.
+**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose.
+
+Where renewal uses a per-occurrence count, derive each independent draw from selection key + selection scope/purpose + renewal count.
 
 **Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; a selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution. Mere eligibility loss/re-entry does not consume an unused clock.
 
@@ -306,7 +310,7 @@ Different offers have distinct anchors; rerolls use fresh entries. Offers allowi
 
 **Fixed-cohort shortcut:** if all members remain eligible until selected and each leaves permanently, sort their initial clocks once. Consume that order without subtraction or renewal.
 
-A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks. An unrelated purpose's selection does not advance these clocks.
+A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks.
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
 
@@ -320,7 +324,7 @@ Retain one logical occurrence per copy, keeping its selection state together und
 
 **Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. Apply effects after all representatives are selected.
 
-Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its selection key, routing purpose and renewal count. Player-selected singleton and whole-class choices follow this same rule.
+Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
 Status changes retain logical occurrences and unused clocks through class splits and merges; eligibility determines participation.
 
@@ -392,7 +396,7 @@ Resolve the choice before expiry, including `x = 0`; permanent ineligibility or 
 
 #### Finite-lifetime chest markers
 
-Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry; entries keep their original stable addresses through movement and return.
+Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry.
 
 **Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests draw independently.
 
@@ -463,7 +467,7 @@ Baseline: [shop mechanics](#shop-and-courier-rng) and [Catfood addressing](#catf
 
 **Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
 
-**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites save separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
+**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
 
 Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
 
@@ -704,7 +708,7 @@ For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific prioritie
 
 Use the [shared corrected-clock strategy](#corrected-persistent-selection-priorities) in a Bridge-only scope over [vanilla's candidate set](#slippery-bridge-selection), including fallback. Retain [card reward selection keys](#card-reward-selection-keys).
 
-Apply the shared clock update once when the event shows a newly selected card. If declined, renew that copy's clock once before the next selection, using an independent draw keyed by its selection key and renewal count.
+Apply the shared clock update once when the event shows a newly selected card. If declined, renew that copy's clock once before the next selection, using its per-occurrence renewal count.
 
 ## Settled policy: owned-potion selection
 
@@ -712,7 +716,7 @@ Apply the shared clock update once when the event shows a newly selected card. I
 
 Ranwid the Elder and Stone of All Time share one run-wide scope using the [shared clock strategy](#corrected-persistent-selection-priorities), offering the lowest-clock owned potion. Each acquired copy remains a distinct logical occurrence.
 
-With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its key and per-occurrence renewal count. Renewal occurs regardless of acceptance, keeping declined potions selectable later. Run-wide clocks and renewal counts follow the shared [saved-state](#saved-state) contract. Preserve event access, costs and rewards.
+With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its per-occurrence renewal count. Renewal occurs regardless of acceptance, keeping declined potions selectable later. Preserve event access, costs and rewards.
 
 **Departure routing:** for player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the selected logical occurrence; slot-dependent offers and trade payoffs stay with the clicked option.
 
