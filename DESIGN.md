@@ -330,7 +330,7 @@ Mix shop-ineligible relics into allocations normally.
 
 ### Source classification and consumption
 
-Hidden random relic rewards from combat/chests/events use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box). Classify deferred payoffs separately from their granting relic.
+Hidden random relic rewards from combat, chests, events and rest sites, including relic-triggered grants in any room, use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box), subject to explicit source exceptions. Classify deferred payoffs separately from their granting relic.
 
 ### Borrowing
 
