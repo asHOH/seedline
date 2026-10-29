@@ -144,7 +144,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
 | [Ancient offerings](#settled-policy-ancient-offerings) | Ancient ID + option-pool ID + stable option identity for conditional pools; fixed pools retain vanilla. | Stable selection priorities, with vanilla weights. |
-| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act-local event ordinal + condition key; ID order carries across acts. | Refreshed condition priorities; shared position priorities insert newly available IDs. |
+| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act-local event ordinal + condition key; ID order carries across acts. | Refreshed condition priorities; sorted random priorities insert newly available IDs. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 
 ## Shared strategies
@@ -794,7 +794,9 @@ Baseline: [Ancient offerings](#ancient-offerings).
 
 At run start, independently shuffle each condition's IDs using condition key + ID-order purpose. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
 
-**Shared position priorities:** for `n` surviving and `m` incoming IDs, give the `n+m` output positions independent uniform priorities addressed by act + condition key + insertion purpose + output position. Reserve the `m` lowest-priority positions for incoming IDs; fill both sets of positions in their respective sequence orders. This preserves uniform interleaving and improves early agreement when surviving counts differ and the incoming sequence matches.
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
+
+**Alignment tradeoff:** prioritize agreement before the first mismatch, then shared-event order; sufficiently rare prefix-agreement losses are acceptable.
 
 Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order. Event ordinals restart within each act.
 
@@ -815,8 +817,9 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 ### Rejected alternatives
 
-- **Flat condition schedule:** fix one shuffled schedule, one entry per initial unvisited ID; pass failures, remove successful entries and wrap in original order. Preserves pre-wrap probabilities but had lower average matching in the tested histories.
-- **Old-ID priority sorting:** assign survivors evenly spaced priorities `i/(n+1)` and incoming IDs random priorities, then sort. Multiple incoming IDs bias insertion. Assigning survivors sorted random priorities corrects the probabilities, but the tested sharing rule gives weaker early agreement than shared position priorities.
+- **Within-act selection — flat condition schedule:** fix one shuffled schedule, one entry per initial unvisited ID; pass failures, remove successful entries and wrap in original order. Preserves pre-wrap probabilities and can better retain shared-event order under stable eligibility, but had lower average same-ordinal matching in the tested histories.
+- **Cross-act insertion — shared position priorities:** reserve incoming positions using the lowest shared output-position priorities, then fill both sequences in order. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
+- **Cross-act insertion — weighted merging:** use shared output-position draws to choose old or incoming in proportion to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order in tests that consumed different numbers of leading events.
 
 Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and rare checks](#event-condition-classes).
 

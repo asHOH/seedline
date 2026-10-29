@@ -12,18 +12,23 @@ Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [arch
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Out-of-combat status:** all settled. The [Deterministic Card Processing Order](DESIGN.md#deterministic-card-processing-order) is ready for use but may require fine-tuning. Event selection may need a reconsideration.
+**Out-of-combat status:** policies are settled, with [within-act event selection](#ordinary-event-selection) under reconsideration. The [Deterministic Card Processing Order](DESIGN.md#deterministic-card-processing-order) is ready for use but may require fine-tuning.
 
 **Remaining work roadmap:**
 
-1. [Deterministic Card Processing Order](#deterministic-card-processing-order): fine-tune the preliminarily settled ranking.
-2. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
+1. [Ordinary-event selection](#ordinary-event-selection): reconsider within-act condition scheduling.
+2. [Deterministic Card Processing Order](#deterministic-card-processing-order): fine-tune the preliminarily settled ranking.
+3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
 **Stakeholder input — 二硫键:** perceived slightly more combat Rares in Catfood, especially early in Act 1, against expected code behavior; considered this acceptable because both competitors were affected. Shop Rare rates were unobserved.
 
 ## Encounter
 
 Ancient combat effects remain in their shared decision units below.
+
+### Ordinary-event selection
+
+**Decision needed:** reconsider refreshed within-act condition priorities versus a flat condition schedule, comparing same-ordinal matching and shared-event order.
 
 ### Item-selection priorities
 
