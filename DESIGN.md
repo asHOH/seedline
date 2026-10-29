@@ -294,7 +294,7 @@ For sources without generation entries, use source opportunity address + copy in
 
 When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet and Slippery Bridge. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
 
-Different offers have distinct anchors; rerolls use fresh entries. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
+Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
 
 #### Corrected persistent selection priorities
 
@@ -390,7 +390,7 @@ Relic generation consumes the rarity roll, chest opportunity and lifetime draw, 
 Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an ordinary reward entry. A later ordinary offer consumes it even if declined.
+- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption).
 
 Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
 
@@ -639,7 +639,6 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 - **Occurrence lifetime:** each transformation retires the original logical occurrence. After applying source-specific gameplay inheritance, initialize fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization).
 - **Unordered transformation batches:** process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 - **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
-- Transformations and direct additions consume on generation.
 
 **Infested Automaton:** Study and Touch Core use its event RNG for rarity without advancing the addition rarity sequence. Identities still use the shared character sequences.
 
@@ -697,7 +696,7 @@ Shared clocks align successive opportunities while preserving uniform selection 
 
 **Intent:** align affected cards across decks and reward choices.
 
-For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities): lowest first, without correction or renewal. Apply [card reward selection keys](#card-reward-selection-keys). Preserve existing costs and triggers.
+For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities). Apply [card reward selection keys](#card-reward-selection-keys). Preserve existing costs and triggers.
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving gameplay properties and logical selection state through storage and physical-object recreation. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
@@ -716,7 +715,7 @@ Apply the shared clock update once when the event shows a newly selected card. I
 
 Ranwid the Elder and Stone of All Time share one run-wide scope using the [shared clock strategy](#corrected-persistent-selection-priorities), offering the lowest-clock owned potion. Each acquired copy remains a distinct logical occurrence.
 
-With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its per-occurrence renewal count. Renewal occurs regardless of acceptance, keeping declined potions selectable later. Preserve event access, costs and rewards.
+With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its per-occurrence renewal count. Declined potions remain selectable. Preserve event access, costs and rewards.
 
 **Departure routing:** for player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the selected logical occurrence; slot-dependent offers and trade payoffs stay with the clicked option.
 
@@ -854,7 +853,7 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 
 Resolve room type under the [unknown-room policy](#settled-policy-unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its existing event RNG; it needs no special ordinary-event ordinal.
 
-Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its act-local visited-node ordinal; preserve the existing forced room type and frozen non-event chances. Ordinary event-list advancement is deliberately removed from forced insertion, not from ordinary event visits.
+Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its act-local visited-node ordinal; preserve the existing forced room type and frozen non-event chances.
 
 **Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
 
