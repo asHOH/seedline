@@ -92,8 +92,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
 - **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
 - **Filter:** the eligibility conditions for a draw.
-- **Ordinal:** an opportunity's position within its category across the run, unless a scope is stated.
-- **Scoped ordinal:** counts within its named scope and resets for each scope instance. In RNG addresses, it denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
+- **Ordinal:** an opportunity's position within its category, counted across the run unless a scope is stated; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
@@ -159,6 +158,8 @@ The [fairness principle](#goals-and-principles) and labeled invariants are share
 **Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable sharing-scope and purpose identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
 Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
+
+In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the candidate keys already used to generate them, in ascending order.
 
@@ -815,7 +816,7 @@ At run start, independently shuffle each condition's IDs using condition key + I
 
 **Alignment tradeoff:** prioritize agreement before the first mismatch, then shared-event order; sufficiently rare prefix-agreement losses are acceptable.
 
-Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order. Event ordinals restart within each act.
+Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
 
 ### Within-act selection
 
