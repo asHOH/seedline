@@ -14,19 +14,14 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Remaining work roadmap:**
 
-1. [Ancients](#ancients): audit remaining Encounter random operations.
-2. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
-3. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
+1. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
+2. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
 **Stakeholder input:** use answers to [Questions for 二硫键](Questions.md) about perceived Act 1/shop Rare rates and potentially fixable same-seed divergence to inform calibration and remaining investigation.
 
 ## Encounter
 
-**Known:** ordinary and forced events' out-of-combat randomness is settled in [DESIGN.md](DESIGN.md).
-
-### Ancients
-
-Investigate remaining Ancient Encounter random operations against existing shared and source policies; decompose decision units as needed.
+**Known:** ordinary events, forced events and Ancients' out-of-combat randomness is settled. Ancient combat effects remain in their shared decision units below.
 
 ### Item-selection priorities
 
@@ -44,13 +39,19 @@ Investigate remaining Ancient Encounter random operations against existing share
 
 **Shared constraints:** [deck-order independence](DESIGN.md#canonical-card-order) and [run-seed derivation](DESIGN.md#rng-derivation-and-addressing), including boss-shuffle initialization.
 
+**Ancient sources:** Blessed Antler inserts Dazed cards at random draw-pile positions before the opening draw; Biiig Hug inserts Soot after shuffles. Both use the shared `Shuffle` RNG through `CardPileCmd`.
+
 #### Generated cards
 
 **Decision needed:** sharing and addressing for remaining combat card-generation sources by pool/type: own-character Attack/Skill/Power, colorless and other characters; include special-relic interactions. [Potion-generated cards](DESIGN.md#settled-policy-potion-generated-cards) are settled.
 
+**Ancient sources:** Crossbow generates an own-character Attack each turn; Choices Paradox generates five own-character choices on turn one. Both use `CombatCardGeneration`.
+
 #### Other combat randomness
 
 **Backlog:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations. During investigation, decide source/effect sharing and special-relic interactions; split decision units only where useful.
+
+**Ancient sources:** Jeweled Mask selects a Power from the opening draw pile with `CombatCardSelection`, preferring non-Innate candidates; Snecko Eye applies Confused's `CombatEnergyCosts` rolls. Whispering Earring's card selection and enemy targeting follow fixed order in solo play; its random ally targeting is multiplayer-only.
 
 ## Implementation verification
 

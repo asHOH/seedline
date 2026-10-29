@@ -143,6 +143,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Endless Conveyor dishes](#settled-policy-endless-conveyor) | Event-local dish-selection sequence with a persistent position. | Weighted candidate stream with rejection of ineligible entries. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
 | [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
+| [Ancient offerings](#settled-policy-ancient-offerings) | Ancient ID + option-pool ID + stable option identity for conditional pools; fixed pools retain vanilla. | Stable selection priorities, with vanilla weights. |
 | [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act-local event ordinal + condition key; ID order carries across acts. | Refreshed condition priorities; shared position priorities insert newly available IDs. |
 | [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
 
@@ -628,6 +629,8 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
 
+Neow's Bones' Ancient relic pair follows this policy; its curse follows [direct additions](#settled-policy-permanent-transformations-and-direct-card-additions).
+
 Fake Merchant uses event RNG for stock and price rolls, keeping its shop fixed for the same seed.
 
 ## Settled policy: Wing Charm
@@ -767,6 +770,18 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 - **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
 - **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
 
+## Settled policy: Ancient offerings
+
+**Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla option pools, weights, prerequisites and menu structure. Granted effects follow their policies separately.
+
+Use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) for Orobas's third pool, Pael's second and third pools, Tezcatara's first pool, and Tanx's and Nonupeipe's three-choice pools. The opportunity address is Ancient ID + option-pool ID; each candidate uses its stable option identity. Select the lowest-priority eligible option, or the three lowest for Tanx and Nonupeipe. Retain surviving entries' relative display order.
+
+**Pael's second pool:** use weighted priorities `-ln(U) / weight`, with independent candidate-addressed uniform `U ∈ (0, 1)` and vanilla weights: Growth 1; each other option 2.
+
+Retain vanilla generation and RNG positions for other menu components.
+
+Baseline: [Ancient offerings](#ancient-offerings).
+
 ## Settled policy: ordinary-event selection
 
 **Intent and scope:** improve same-seed event matching within and across acts, prioritizing agreement before the first mismatch. Ancients remain separate; [forced events](#settled-policy-forced-events) bypass ordinary selection.
@@ -865,7 +880,7 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 | [Combat](#combat-setup-and-shuffles) | Earlier rooms and reshuffles affect later setup and opening hands. |
 | [Combat gold](#combat-gold) | Other reward draws can shift later gold. |
 | [Card rarity](#card-reward-offers) | Combat reward history affects later combat and shop rarities. |
-| [Ancient options](#event-and-encounter-identities) | Options are independent of event counts. |
+| [Ancient options](#ancient-offerings) | Options are independent of event counts; current eligibility can change the menu. |
 | [Chests](#shops-chests-and-relic-events) | Other rewards can shift chest contents. |
 | [Relic pools](#relic-bags) | Finite stock couples sources; depletion can change delivered rarity. |
 | [Potion drops](#potions) | Earlier checks affect later drop probability. |
@@ -896,7 +911,26 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 **Event skipping and probability:** with a uniform hidden shuffle, other eligibility held fixed and no wrapping, encounters while condition K is false do not themselves change K-events' later selection probability when K becomes true. Skipping passes hidden K entries along with encountered non-K entries; exchangeability of their positions preserves the odds. For two K events and three others, zero, one or two non-K encounters while K is false leave the next K chance at `2/5`. Encounters while K is true have the usual without-replacement effect. This is a distributional property, not identical outcomes for each seed or invariance under other eligibility changes.
 
-**Ancient options:** use event RNG seeded with run seed + event identity hash + player-slot contribution, independently of event counts.
+**Ancient identity:** selected during upfront room generation, using `UpFront` RNG. Shared Ancients are partitioned between later acts before each act selects its Ancient. Earlier room visits leave these selections unchanged. Evidence: `RunManager.GenerateRooms`, `ActModel.GenerateRooms`.
+
+#### Ancient offerings
+
+All eight Ancients select their menus with event RNG seeded by run seed + event identity hash + player-slot contribution (`EventModel.BeginEvent`). Matching seed, Ancient and ordered eligible pools reproduce the menu independently of earlier event visits. Changed eligibility can also change which still-eligible options appear.
+
+| Ancient | Menu generation and relevant conditions |
+|---|---|
+| Neow | Two positive options and one curse option, with fixed exclusion pairs and unlock/player-count restrictions. Pools are fixed in the fully unlocked solo scope. |
+| Darv | Shuffles one choice from each eligible relic group; offers three, or two plus Dusty Tome with 50% probability. Ectoplasm and Sozu are Act 2 only. |
+| Orobas | One choice from each of three pools. Sea Glass's featured character uses event RNG. The third pool checks for the starter relic (Touch of Orobas) and supported starter card (Archaic Tooth), with a locked option if both are absent. |
+| Pael | One choice from each of three pools. Claw needs ≥3 Goopy-eligible cards; Tooth needs ≥5 removable cards; Legion requires no event pet. Growth has half the weight of each other eligible second-pool option. |
+| Tezcatara | One choice from each of three pools; Nutritious Soup joins the first while a Basic Strike remains. |
+| Tanx | Three choices from a shuffled pool; Tri-Boomerang joins with ≥3 Instinct-eligible cards. |
+| Vakuu | One choice from each of three fixed pools. |
+| Nonupeipe | Three choices from a shuffled pool; Beautiful Bracelet joins with ≥4 Swift-eligible cards. |
+
+**Scope of consistency:** the menu RNG does not isolate every granted effect. Neow's Bones shuffles its relic candidates with shared `Rewards` RNG. Dusty Tome also calls `Rewards`, but its eligible pool contains exactly one card per character in this version: Corruption, Wraith Form, The Sealed Throne, Forbidden Grimoire or Biased Cognition. Its payload is therefore fixed by character despite consuming a draw.
+
+**Fur Coat:** selects marked normal-fight/elite map nodes with its own run-seed + player-slot + relic-ID RNG and saves their coordinates. Matching maps reproduce the marks independently of earlier RNG consumption.
 
 #### Event condition classes
 
@@ -1139,6 +1173,8 @@ Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: 
 ### Catfood addressing and combat rewards
 
 **Room addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides. Combat entry re-seeds shared `Rewards` using run seed and cumulative combat-category count, with different multipliers for normal fights and elites; gold ranges and rounding are unchanged. Chests have no ordinal: entry re-seeds `Rewards` with the normal-fight count for gold. Silver Crucible's suppression is unchanged.
+
+**Ancient option pools:** with `MassAuditionMode` enabled, Catfood removes Winged Boots from Neow's positive pool and Fur Coat from Nonupeipe's pool. The menu RNG retains vanilla addressing.
 
 **Shops:** track shop ordinal and use the separate card-rarity state below. Card identities/prices and relic bags/rarity rolls retain vanilla generators; potion batches use the factory addressing below.
 
