@@ -17,13 +17,11 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 **Remaining work roadmap:**
 
 1. [Deterministic Card Processing Order](#deterministic-card-processing-order): fine-tune the preliminarily settled ranking.
-2. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
+2. [Combat randomness](#combat-randomness).
 
 **Stakeholder input — 二硫键:** perceived slightly more combat Rares in Catfood, especially early in Act 1, against expected code behavior; considered this acceptable because both competitors were affected. Shop Rare rates were unobserved.
 
 ## Encounter
-
-Ancient combat effects remain in their shared decision units below.
 
 ### Item-selection priorities
 
@@ -33,27 +31,27 @@ Ancient combat effects remain in their shared decision units below.
 
 ### Combat randomness
 
-#### Shuffles
+#### Opening shuffle
 
-**Decision needed:** opening-shuffle addressing, sharing with later shuffles, and advancement rules.
+#### Later shuffles
 
-**Candidate:** act-local opening-shuffle ordinals, matching encounter setup.
+#### Random pile insertion
 
-**Shared constraints:** [deck-order independence](DESIGN.md#deterministic-card-processing-order) and [run-seed derivation](DESIGN.md#rng-derivation-and-addressing), including boss-shuffle initialization.
+#### Monster HP
 
-**Ancient sources:** Blessed Antler inserts Dazed cards at random draw-pile positions before the opening draw; Biiig Hug inserts Soot after shuffles. Both use the shared `Shuffle` RNG through `CardPileCmd`.
+#### Monster AI
 
 #### Generated cards
 
-**Decision needed:** sharing and addressing for remaining combat card-generation sources by pool/type: own-character Attack/Skill/Power, colorless and other characters; include special-relic interactions. [Potion-generated cards](DESIGN.md#settled-policy-potion-generated-cards) are settled.
+#### Combat transformations
 
-**Ancient sources:** Crossbow generates an own-character Attack each turn; Choices Paradox generates five own-character choices on turn one. Both use `CombatCardGeneration`.
+#### Random card selection
 
-#### Other combat randomness
+#### Random creature targets
 
-**Backlog:** monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations. During investigation, decide source/effect sharing and special-relic interactions; split decision units only where useful.
+#### Random cost values
 
-**Ancient sources:** Jeweled Mask selects a Power from the opening draw pile with `CombatCardSelection`, preferring non-Innate candidates; Snecko Eye applies Confused's `CombatEnergyCosts` rolls. Whispering Earring's card selection and enemy targeting follow fixed order in solo play; its random ally targeting is multiplayer-only.
+#### Random orb types
 
 ## Implementation verification
 

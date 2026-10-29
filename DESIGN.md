@@ -260,7 +260,7 @@ Identical cards remain tied regardless of selection state, acquisition order or 
 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
 
-Shuffle outcomes must be independent of original deck sequence; the [shuffle addressing and advancement policy remains unresolved](WORKING.md#shuffles).
+Shuffle outcomes must be independent of original deck sequence; the [shuffle addressing and advancement policy remains unresolved](WORKING.md#combat-randomness).
 
 #### Card occurrence initialization
 
