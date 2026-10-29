@@ -1,6 +1,8 @@
-# Canonical card order
+# Deterministic Card Processing Order
 
-Settled ranking for the [canonical processing contract](DESIGN.md#canonical-card-order). Source-specific projections, including identity-only transformations, retain that contract.
+**Status:** preliminarily settled — ready for use, with fine-tuning remaining.
+
+Detailed ranking for the [Deterministic Card Processing Order contract](DESIGN.md#deterministic-card-processing-order). Source-specific projections, including identity-only transformations, retain that contract.
 
 ## Property scope
 

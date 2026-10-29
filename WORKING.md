@@ -14,7 +14,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Remaining work roadmap:**
 
-1. [Item-selection priorities](#item-selection-priorities): complete canonical card ranking.
+1. [Deterministic Card Processing Order](#deterministic-card-processing-order): fine-tune the preliminarily settled ranking.
 2. [Combat randomness](#combat-randomness): settle opening/later shuffles and remaining card generation; investigate monster HP/AI, random targets/costs/orbs, temporary upgrades/downgrades and combat transformations.
 
 **Stakeholder input:** use answers to [Questions for 二硫键](Questions.md) about perceived Act 1/shop Rare rates and potentially fixable same-seed divergence to inform calibration and remaining investigation.
@@ -25,9 +25,9 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ### Item-selection priorities
 
-#### Canonical card order
+#### Deterministic Card Processing Order
 
-**Decisions needed:** complete the [canonical ranking](DESIGN.md#canonical-card-order) for identities, upgrades, enchantments and persistent progress. Starting point: Curse < Strike < Defend < other Basic < Common.
+**Known:** the [Deterministic Card Processing Order](DESIGN.md#deterministic-card-processing-order) is preliminarily settled and ready for use. Fine-tune the rankings later.
 
 ### Combat randomness
 
@@ -37,7 +37,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 **Candidate:** act-local opening-shuffle ordinals, matching encounter setup.
 
-**Shared constraints:** [deck-order independence](DESIGN.md#canonical-card-order) and [run-seed derivation](DESIGN.md#rng-derivation-and-addressing), including boss-shuffle initialization.
+**Shared constraints:** [deck-order independence](DESIGN.md#deterministic-card-processing-order) and [run-seed derivation](DESIGN.md#rng-derivation-and-addressing), including boss-shuffle initialization.
 
 **Ancient sources:** Blessed Antler inserts Dazed cards at random draw-pile positions before the opening draw; Biiig Hug inserts Soot after shuffles. Both use the shared `Shuffle` RNG through `CardPileCmd`.
 
