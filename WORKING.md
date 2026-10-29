@@ -12,6 +12,8 @@ Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [arch
 
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
+**Out-of-combat status:** all settled. The [Deterministic Card Processing Order](DESIGN.md#deterministic-card-processing-order) is ready for use but may require fine-tuning. Event selection may need a reconsideration.
+
 **Remaining work roadmap:**
 
 1. [Deterministic Card Processing Order](#deterministic-card-processing-order): fine-tune the preliminarily settled ranking.
@@ -21,7 +23,7 @@ Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-a
 
 ## Encounter
 
-**Known:** ordinary events, forced events and Ancients' out-of-combat randomness is settled. Ancient combat effects remain in their shared decision units below.
+Ancient combat effects remain in their shared decision units below.
 
 ### Item-selection priorities
 
