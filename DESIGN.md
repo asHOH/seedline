@@ -488,29 +488,36 @@ Baseline: [gold ranges and exceptions](#combat-gold) and [Catfood addressing](#c
 
 **Grouping:** group card rewards by pool, then rarity request, eligibility filter and draw grouping. Upgrade rules and the number of cards taken do not split identity groups.
 
-### Rerolls
+### Offer sources and sequences
 
-A reachable reroll consumes a fresh offer from its pool/request/filter group, including expanded pools, with ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects. Shared-luck offers also apply luck and deferral rules; other sources remain outside that system. Fixed-rarity rerolls retain their group's sequence structure: triple-backed offers consume fresh triples; Power and other-character offers consume the required individual entries from their respective sequences. They do not consume the random-rarity group's rare-bearing sequence.
+The first three rows share luck, thresholds and two random-rarity triple sequences. Other rows use separate supplies; shops follow their [stock policy](#stock-and-prices).
 
-Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
+| Offer group | Sources / rarity rule | Identity supply and consumption |
+|---|---|---|
+| Own-character random rarity: normal-fight rule | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights; three-card offers. | Shared random-rarity triples. |
+| Own-character random rarity: elite rule | Elites and The Hunt in elite combats; three-card offers. | Shared random-rarity triples. |
+| Own-character random rarity: fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. | Shared random-rarity triples; Brain Leech uses [supplementary cards](#supplementary-cards). |
+| Own-character fixed Rare | Non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. | Separate Rare triple sequence; one triple per offer. |
+| Own-character fixed Common | Glass Eye, Crystal Sphere's Common offer, Room Full of Cheese and Scroll Boxes. | Separate Common triple sequence; Glass Eye consumes two triples, Crystal Sphere one. [Room Full of Cheese](#supplementary-cards) and [Scroll Boxes](#scroll-boxes) have local rules. |
+| Own-character fixed Uncommon | Glass Eye and Crystal Sphere's Uncommon offer. | Separate Uncommon triple sequence; Glass Eye consumes two triples, Crystal Sphere one. |
+| Own-character Power | Lasting Candy and The Future of Potions' Power choices; rarity rules below. | Shared Uncommon and Rare Power identity sequences, separate from the triple sequences. |
+| Other The Future of Potions choices | Attack and Skill offers at the specified rarity. | Event RNG addressed by rarity and type, independently of the other potion options. |
+| Colorless | Lead Paperweight and Brain Leech's Rip; existing Uncommon/Rare odds of **98.51% / 1.49%**. | One shared reward sequence. |
+| Other-character | Kaleidoscope uses event RNG for character and rarity selection; Colorful Philosophers and Sea Glass request fixed rarities. | **12 shared identity sequences: four other characters × Common/Uncommon/Rare**. |
 
-Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the normal-run scope.
+**Power rarity:** Lasting Candy uses independent normal-fight and elite rarity-roll sequences. Advance the relevant sequence once per triggered additional card, preserving source base rarity odds and unavailable-rarity fallback. Boss triggers request Rare directly. The Future of Potions requests its specified rarity.
 
-### Own-character random-rarity offers
+**Crystal Sphere:** does not reset the combat rarity offset.
+
+Colorless and other-character rewards share across batch sizes because their few sources have varying offer sizes.
+
+### Rare occurrence
+
+**Scope:** the three own-character random-rarity groups above.
 
 **Intent:** separate when a Rare appears from the complete choice offered. Align corresponding rare-bearing and non-Rare opportunities while preserving source-dependent Rare chances; matching combat-room ordinals need not consume matching offer entries.
 
-| Rarity rule | Sources / offer structure |
-|---|---|
-| Normal-fight rule | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights; three-card offers. |
-| Elite rule | Elites and The Hunt in elite combats; three-card offers. |
-| Fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. |
-
-All three source groups share luck, thresholds and two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple. Shops, fixed-rarity offers, Lasting Candy's additional Power and other card groups retain their separate policies.
-
-#### Rare occurrence
-
-##### Luck and rarity offset
+#### Luck and rarity offset
 
 Maintain luck `L`, initially zero, and a threshold `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal. Advance it only when a Rare is delivered into a generated offer.
 
@@ -526,7 +533,7 @@ Luck, the current threshold and sequence state carry across acts; the combat off
 
 **Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. Rare delivery resets luck and advances the threshold, ending this timing guarantee.
 
-##### A7+: one Rare per offer and deferral
+#### A7+: one Rare per offer and deferral
 
 Cap each covered offer at one Rare. If a later slot reaches the next threshold, suppress its Rare and keep the reached threshold pending: do not reset luck or advance the threshold. Treat suppressed slots as non-Rare for applicable offset updates. Continue accumulating luck, but create no further pending occurrences until delivery.
 
@@ -536,13 +543,15 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 **Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Frequency:** rare — approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
-##### A0–6: Rare delivery
+#### A0–6: Rare delivery
 
 Deliver every threshold crossing immediately under the shared luck and source-offset rules, without a per-offer cap or deferral.
 
-#### Offer construction
+### Offer construction
 
-##### Offer sequences
+#### Offer sequences
+
+Own-character random-rarity offers use two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
 
 A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
 
@@ -554,13 +563,15 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 
 The first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate two opening Act 1 normal fights without elite intervention and follow ordinary shared consumption, including by other covered sources. This exception occurs only once per run. Account for common normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
 
-##### Supplementary cards
+#### Supplementary cards
 
 **Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
 
-##### A0–6: multiple Rares
+**Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
 
-Maintain one additional Rare-only identity sequence per character, shared by the three covered source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
+#### A0–6: multiple Rares
+
+For own-character random-rarity offers, maintain one additional Rare-only identity sequence per character, shared by the three source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
 
 Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
@@ -568,22 +579,9 @@ Before presentation swaps, replace the first Common in canonical generation orde
 
 **Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Frequency:** rare — at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
 
-##### Presentation
+#### Presentation
 
-After supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
-
-### Own-character fixed-rarity offers
-
-Use separate Common, Uncommon and Rare triple sequences.
-
-| Sequence | Sources and consumption |
-|---|---|
-| Rare | One triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. |
-| Common | Glass Eye consumes two triples; Crystal Sphere's Common offer consumes one. Room Full of Cheese and Scroll Boxes follow the rules below. |
-| Uncommon | Glass Eye consumes two triples; Crystal Sphere's Uncommon offer consumes one. |
-
-- **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
-- **Crystal Sphere:** does not reset the combat rarity offset.
+For own-character random-rarity offers, after supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
 #### Scroll Boxes
 
@@ -592,25 +590,13 @@ Resolve Defect's two independent 1% triple-Claw substitution checks with event R
 - **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
 - **Triple-Claw exception:** if either bundle is replaced, bypass the shared Common sequence without inspecting its head. Each substituted bundle contains three fixed Claws; generate any remaining ordinary bundle entirely with event RNG. If both bundles are substituted, generate no unused ordinary-bundle cards.
 
-### Own-character Power offers
+### Rerolls
 
-Lasting Candy and The Future of Potions' Power choices share separate Uncommon and Rare Power identity sequences, independent of the triple sequences above.
+A reachable reroll consumes a fresh offer from its pool/request/filter group, including expanded pools, with ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects. Shared-luck offers also apply luck and deferral rules; other sources remain outside that system. Fixed-rarity rerolls retain their group's sequence structure: triple-backed offers consume fresh triples; Power and other-character offers consume the required individual entries from their respective sequences. They do not consume the random-rarity group's rare-bearing sequence.
 
-Lasting Candy uses independent normal-fight and elite rarity-roll sequences. Advance the relevant sequence once per triggered additional card, preserving source base rarity odds and unavailable-rarity fallback. Boss triggers request Rare directly. The Future of Potions requests its specified rarity.
+Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
 
-### Other The Future of Potions choices
-
-Attack and Skill offers use event RNG addressed by rarity and type, independently of the other potion options.
-
-### Colorless offers
-
-Lead Paperweight and Brain Leech's Rip share one reward sequence with the existing Uncommon/Rare odds: **98.51% / 1.49%**.
-
-### Other-character offers
-
-Kaleidoscope, Colorful Philosophers and Sea Glass share **12 identity sequences: four other characters × Common/Uncommon/Rare**. Kaleidoscope uses event RNG for character and rarity selection; the other sources request fixed rarities.
-
-Colorless and other-character rewards share across batch sizes because their few sources have varying offer sizes.
+Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the normal-run scope.
 
 ### Prismatic Gem and Dingy Rug
 
@@ -725,7 +711,7 @@ Baseline selection: [potion event mechanics](#potions).
 
 **Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
 
-Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow the [Power](#own-character-power-offers) and [Attack/Skill](#other-the-future-of-potions-choices) policies.
+Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow their [offer sources and sequences](#offer-sources-and-sequences).
 
 - Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
 - Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order, independently of occurrence addresses. Priorities are independent of the type sequences.
