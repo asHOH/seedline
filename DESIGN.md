@@ -108,44 +108,26 @@ Different stages of one source—such as occurrence, rarity, identity and attrib
 
 Consumption is a shared [invariant](#opportunity-consumption).
 
-These tables summarize settled mechanisms. [Shared contracts](#shared-strategies) are omitted unless a mechanism differs.
+Use [shared strategies](#shared-strategies) for common contracts and [generation routing](#settled-policy-generation-routing) to compare rarity and identity sharing. The guide below links to source policies.
 
 ### Rewards
 
-| System / randomized outcome | Sharing and addressing | Form |
-|---|---|---|
-| [Relic rarity and identity](#allocation) | Generic rewards, shop and Courier are separate; rarity-roll and per-rarity identity sequences advance independently. | Rarity-roll streams and finite shuffled allocations. |
-| [Chest gold](#rewards-and-consumption) | Non-empty chest ordinal. | Ordinal-addressed draw. |
-| [Chest relic marker lifetime](#relic-advancement) | Rarity + non-empty chest ordinal. | Shared uniform fraction scaled by remaining generic and original shop/Courier shared stock. |
-| [Potion generation and drops](#acquisition-and-sequences) | Generation uses four source groups; generic rarity modes share per-rarity identity sequences. Ordinary drop checks share a combat-wide check index and changing probability. | Rarity/identity streams and indexed drop checks. |
-| [Shop stock, sale slot and base prices](#stock-and-prices) | Initial cards and sale use shop ordinal; restocks use source-specific sequences; prices use stable entry addresses. | Ordinal-addressed draws, item sequences and entry-derived price rolls. |
-| [Combat gold](#settled-policy-combat-gold) | Separate normal-fight and elite gold-reward ordinals. | Independent ordinal-addressed draws. |
-| [Own-character random-rarity offers: Rare occurrence](#luck-and-rarity-offset) | Luck and the threshold sequence are shared; the combat offset applies only to its source groups. | Exponential-threshold stream with pending delivery. |
-| [Card-offer identities and rarity mixes](#settled-policy-card-reward-offers) | Separate sequences by pool/request/offer group, independent of shared Rare-occurrence state. | Triple sequences, other identity/rarity streams and event-RNG draws. |
-| [Card upgrades](#inherent-card-rolls) | Each generated card occurrence has an independently addressed upgrade roll. | Entry-derived roll. |
-| [Permanent transformation / direct-addition results](#selection-and-consumption) | Identity sequences are shared by pool; transformations and additions use separate rarity-roll sequences, with a source exception. | Identity and rarity-roll streams; event RNG for the exception. |
-| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event-local draws. | Event RNG outside shared reward sequences. |
+| Decision area | Policies |
+|---|---|
+| Relics and shops | [Relic allocation and borrowing](#settled-policy-relics); [chest rewards and advancement](#settled-policy-chests); [shops, Wongos and Courier](#settled-policy-shops-wongos-and-courier). |
+| Potions | [Generation and drops](#settled-policy-potions). |
+| Cards | [Reward offers and Rare occurrence](#settled-policy-card-reward-offers); [generated upgrades](#inherent-card-rolls); [permanent transformations and direct additions](#settled-policy-permanent-transformations-and-direct-card-additions). |
+| Other rewards | [Combat gold](#settled-policy-combat-gold); [event-specific rewards](#settled-policy-event-specific-rewards). |
 
 ### Encounter
 
-| System / randomized outcome | Sharing and addressing | Form |
-|---|---|---|
-| [Wing Charm selection](#settled-policy-wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
-| [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries a clock within its selection scope. | Residual exponential clocks. |
-| [Tooth and Bracelet selection](#fixed-priority-card-selection) | Separate purpose-specific selection keys with [reward aliases](#card-reward-selection-keys). | Fixed priority order. |
-| [Slippery Bridge selection](#settled-policy-persistent-selection) | Bridge-only per-occurrence clocks and renewal counts with [reward aliases](#card-reward-selection-keys). | Residual clocks over vanilla candidates, including fallback. |
-| [Owned-potion selection](#settled-policy-persistent-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
-| [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
-| [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice) | Event ID + relic identity, independent of Relic Trader | Opportunity-specific selection priorities |
-| [Relic Trader replacement generation](#settled-policy-generation-routing) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
-| [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
-| [Endless Conveyor dishes](#settled-policy-endless-conveyor) | Event-local dish-selection sequence with a persistent position. | Weighted candidate stream with rejection of ineligible entries. |
-| [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
-| [Unknown-room type](#addressing-and-room-type-chances) | Act-local visited-`?` ordinal, interpreted using the current stored room-type chances. | Ordinal-addressed draw through changing probability intervals. |
-| [Ancient offerings](#settled-policy-ancient-offerings) | Ancient ID + option-pool ID + stable option identity for conditional pools; fixed pools retain vanilla. | Stable selection priorities, with vanilla weights. |
-| [Ordinary-event identity](#settled-policy-ordinary-event-selection) | Act 1: act + condition key; Acts 2–3: act-local event ordinal + condition key. ID order carries across acts. | Fixed Act 1 schedule; refreshed Acts 2–3 priorities; sorted insertion. |
-| [Encounter setup](#settled-policy-encounter-setup) | Ordinary combats use act-local combat-category ordinals plus encounter identity; event-created battles use event-local battle ordinals. | Purpose-separated addressed RNG. |
-| [Monster HP](#settled-policy-monster-hp) | Per-monster HP opportunity; integer HP keys. | Opportunity-specific selection priorities. |
+| Decision area | Policies |
+|---|---|
+| Card and potion selection | [Wing Charm](#settled-policy-wing-charm); [persistent selection](#settled-policy-persistent-selection). |
+| Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
+| Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
+| Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [monster HP](#settled-policy-monster-hp). |
 
 ## Shared strategies
 
