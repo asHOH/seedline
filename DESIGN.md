@@ -652,9 +652,14 @@ Resolve [A0–6 Rare replacements](#a06-multiple-rares) before reward enchantmen
 
 **Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [canonical triple](#settled-policy-card-reward-offers) precedes presentation swaps.
 
-- **Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
-- **Rare-bearing Brain Leech:** let `x` count eligible cards across all five and `y` eligible cards in the two supplementary positions. Select the supplementary group when an event-RNG uniform `[0,1)` value `u < y/x`; otherwise use the triple's priorities. If both supplementary cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose, so eligibility-dependent branches do not shift draws for corresponding selections. This gives each eligible card probability `1/x`, including replacement Rares; matching eligible extras retain the same target whenever both runs select that group.
-- **Lasting Candy:** if its added Power is eligible, use an independent uniform `[0,1)` value derived from that Power sequence entry and the Wing Charm purpose; select it when the value is below `1/x`, where `x` counts all eligible cards including the Power. Otherwise use the triple's priorities. Qualifying combat offers have three base cards, so this rule excludes no supplementary candidates.
+**Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
+
+**Weighted extra-group selection:** for rare-bearing Brain Leech and Lasting Candy, let `x` count all eligible cards and `y` eligible extra cards. Select the extra group when the source's independent uniform `[0,1)` roll is below `y/x`; otherwise use the triple's priorities. This gives each eligible card probability `1/x`, including replacement Rares.
+
+| Source / extra group | Group-selection roll | Selection within the extra group |
+|---|---|---|
+| Rare-bearing Brain Leech: two supplementary positions | Event RNG. | If both cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose. Matching eligible extras retain the same target whenever both runs select the group. |
+| Lasting Candy: added Power | Power sequence entry + Wing Charm purpose, evaluated only if the Power is eligible; otherwise use the triple directly. | Select the Power. Qualifying combat offers have three base cards, so there are no other supplementary candidates. |
 
 **Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
 
