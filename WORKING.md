@@ -39,4 +39,4 @@ Open topics; develop each into a decision unit as choices and evidence emerge:
 
 **Deferred:** check each implemented policy against DESIGN. Use targeted state assertions and paired same-seed runs; log random operations where outcomes hide incorrect advancement.
 
-**Monster HP:** grade SL impact; verify priority sampling, spawn ordering and Tough Egg's hatch.
+**Monster HP:** grade remaining SL eligibility impact; verify shared roll consumption, priority sampling and Tough Egg's hatch.

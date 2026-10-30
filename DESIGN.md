@@ -161,6 +161,14 @@ Event-created battles outside ordinary encounter lists use event-local battle or
 
 Combat-local purposes derive from this address + purpose and reset each combat. Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [global consumption](#opportunity-consumption).
 
+#### Monster occurrence identity
+
+For combat policies addressing individual monsters, monster address = source-local spawn opportunity + creation index, stable for the monster's lifetime.
+
+Initial enemies use the [combat address](#combat-addresses) as their source; summons/replacements use the summoning/replaced occurrence.
+
+One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
+
 #### Opportunity consumption
 
 **Invariant — opportunity consumption:** an operation's random state, including selection clocks, stays unchanged until its random result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
@@ -847,19 +855,11 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 ## Settled policy: monster HP
 
-**Intent:** align HP rolls for initial enemies, summons, replacements and Tough Egg's hatch.
+**Intent:** align combat HP sequences independently of earlier rooms while retaining within-combat draw-order manipulation.
 
-### Monster occurrence identity
+For every covered HP roll, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with `k = 1`: opportunity = [combat address](#combat-addresses) + combat-local HP-roll ordinal; candidate key = integer HP value; purpose = monster HP.
 
-Monster address = source-local spawn opportunity + creation index, stable for the monster's lifetime.
-
-Initial enemies use this combat's encounter setup as their source; summons/replacements use the summoning/replaced occurrence.
-
-One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
-
-### HP rolls
-
-For every covered HP roll, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with `k = 1`: opportunity = [monster occurrence](#monster-occurrence-identity) + purpose-local roll ordinal; candidate key = integer HP value; purpose = initial HP or hatch. Hatch retains the egg's occurrence.
+Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
 
 Preserve vanilla eligibility and full-range fallback, conditional probabilities, fixed values, range modifiers, subsequent HP changes, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#settled-policy-encounter-setup).
 
