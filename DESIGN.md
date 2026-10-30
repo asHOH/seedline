@@ -252,6 +252,22 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers).
 
 ### Selection
 
+#### Logical-occurrence lifetime
+
+**Scope:** settled card and owned-potion selection policies. Each card or acquired potion copy has a distinct logical occurrence; new cards use [card occurrence initialization](#card-occurrence-initialization). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules.
+
+| Operation | Occurrence and selection state |
+|---|---|
+| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
+| Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
+| Change status or eligibility | Retain the occurrence and unused clocks through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
+| Copy a card | Create a fresh occurrence from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
+| Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
+| Permanently transform a card | Retire the original. Apply [source-specific gameplay inheritance](#permanent-transformations-and-direct-additions), then initialize fresh replacement selection state. |
+| [Route equivalent copies](#representative-routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
+
+**Related reward-entry exception:** [Wing Charm's A0–6 replacement priorities](#settled-policy-wing-charm).
+
 #### Equivalent-card selections
 
 **Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; selection state and presentation position do not distinguish the class.
@@ -264,9 +280,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 |---|---|
 | Upgrade | Player-chosen upgrades, including Pael's Tooth's initial selection. |
 | Enchant | All player-chosen enchantments, across enchantment types and amounts. |
-| Permanent removal | Removal, transformation and Amalgamator's combining: each retires the selected logical inputs, so sharing aligns the surviving originals. |
-
-Copying leaves the original card's selection state unchanged and consumes no routing clocks. Initialize the new copy from the granting source through [card occurrence initialization](#card-occurrence-initialization).
+| Permanent removal | Removal, transformation and Amalgamator's combining; sharing aligns surviving originals after [input retirement](#logical-occurrence-lifetime). |
 
 #### Deterministic Card Processing Order
 
@@ -286,7 +300,7 @@ Shuffle outcomes must be independent of original deck sequence; the [shuffle add
 
 Each new logical card occurrence gets one stable address from its source and selection keys under the [shared addressing contract](#rng-derivation-and-addressing). Initialization preserves generated attributes and presentation order.
 
-Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Acquisition preserves each card's address and selection keys, regardless of which other offered cards are taken.
+Cards with generation entries use their [stable entry addresses](#stable-entry-addresses).
 
 For sources without generation entries, use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
@@ -304,7 +318,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 Where renewal uses a per-occurrence count, derive each independent draw from selection key + selection scope/purpose + renewal count.
 
-**Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A new occurrence receives its own fresh inherent clock; a selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution. Mere eligibility loss/re-entry does not consume an unused clock.
+**Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution.
 
 **Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
@@ -318,15 +332,13 @@ A player-directed choice does not advance a gameplay selector's clocks merely be
 
 **Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#potion-departure-routing), including combat departures. These policies define equivalence and operation sharing.
 
-Retain one logical occurrence per copy, keeping its selection state together under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities). An already randomly selected logical target bypasses representative routing.
+Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities). An already randomly selected logical target bypasses representative routing.
 
-**Presentation boundary:** routing permutes associations between logical occurrences and physical copies. Apply effects to the clicked copies; preserve display order.
+**Presentation boundary:** apply effects to the clicked copies; preserve display order.
 
 **Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. Apply effects after all representatives are selected.
 
 Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Player-selected singleton and whole-class choices follow this same rule.
-
-Status changes retain logical occurrences and unused clocks through class splits and merges; eligibility determines participation.
 
 **Coupling limit:** shared independent priorities on matched nested occurrence cohorts give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
 
@@ -632,8 +644,7 @@ Lasting Candy retains its source rarity-roll sequence position and fallback rule
 
 Use the permanent-card routes for seven pools: the five characters, colorless and curse.
 
-- **Transformations:** retain [vanilla target pools and eligibility](#permanent-transformations-and-direct-additions).
-- **Occurrence lifetime:** each transformation retires the original logical occurrence. After applying source-specific gameplay inheritance, initialize fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization).
+- **[Transformations](#logical-occurrence-lifetime):** retain [vanilla target pools, eligibility and gameplay inheritance](#permanent-transformations-and-direct-additions).
 - **Unordered transformation batches:** process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 - **Direct additions:** use the granting source's pool and restrictions; Infested Automaton's rarity exception is specified in [generation routing](#settled-policy-generation-routing).
 
@@ -673,7 +684,7 @@ Resolve [A0–6 Rare replacements](#a06-multiple-rares) before reward enchantmen
 
 **Intent:** align affected cards across sources, decks and reward choices, and potion sacrifice offers independently of inventory order.
 
-Use [corrected persistent clocks or their fixed-cohort shortcut](#corrected-persistent-selection-priorities) as specified below. Each card or acquired potion copy remains a distinct logical occurrence. Preserve source access, triggers, counts, eligibility, costs, rewards and effect order, subject to local rules.
+Use [corrected persistent clocks or their fixed-cohort shortcut](#corrected-persistent-selection-priorities). Preserve source access, triggers, counts, eligibility, costs, rewards and effect order, subject to local rules.
 
 | Selection / candidates | Strategy and sharing | Local clock rules |
 |---|---|---|
@@ -698,12 +709,12 @@ Target selection stops advancing event or Niche RNG to isolate unrelated outcome
 
 ### Fixed-priority card selection
 
-- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving gameplay properties and logical selection state through storage and physical-object recreation. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
+- **Pael's Tooth:** [temporarily store](#logical-occurrence-lifetime) five player-selected unupgraded cards outside the deck, preserving gameplay properties. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 
 ### Potion departure routing
 
-For player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the selected logical occurrence; slot-dependent offers and trade payoffs stay with the clicked option.
+For [player-chosen use, discard and trade](#logical-occurrence-lifetime), treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Slot-dependent offers and trade payoffs stay with the clicked option.
 
 Baseline selection: [potion event mechanics](#potions).
 
