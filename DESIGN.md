@@ -106,8 +106,6 @@ Each controlled random operation has five descriptive dimensions: **outcome** (w
 
 Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
 
-Consumption is a shared [invariant](#opportunity-consumption).
-
 Use [shared strategies](#shared-strategies) for common contracts and [generation routing](#settled-policy-generation-routing) to compare rarity and identity sharing. The guide below links to source policies.
 
 ### Rewards
@@ -322,13 +320,11 @@ Commit the association permutation and shared clock update with the action. Rene
 
 Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
 
-This opt-in mechanism applies to sources such as The Future of Potions. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
-
 ## Settled policy: generation routing
 
-**Routing** specifies the random state supplying each generation stage. The tables separate rarity and identity sharing for the covered requests.
+**Routing** specifies the random state supplying each generation stage.
 
-Supplies are independent except where sharing is stated. Apply the [shared generation strategies](#generation); source policies retain eligibility, construction and consumption details.
+Apply the [shared generation strategies](#generation); source policies retain eligibility, construction and consumption details.
 
 ### Relics, potions and event-specific rewards
 
