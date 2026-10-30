@@ -94,7 +94,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Filter:** the eligibility conditions for a draw.
 - **Ordinal:** an opportunity's position within its category, counted across the run unless a scope is stated; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
-- **Event RNG:** an event's own generator, addressed by run seed + event ID in single-player, independently of event ordinals.
+- **Event RNG:** an event's own generator.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
 - **Occurrence address:** the stable source identifier of a logical occurrence, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
@@ -145,7 +145,15 @@ In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local 
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the candidate keys already used to generate them, in ascending order.
 
-#### Stable entry addresses
+#### Occurrence identities
+
+Authoritative address reference. Policies choose which identities and purposes supply their randomness.
+
+##### Event addresses
+
+Events use event ID. Event RNG uses run seed + event ID in single-player, independently of event ordinals.
+
+##### Stable entry addresses
 
 **Invariant — stable addresses:** entries retain their original addresses through movement, filtered advancement, borrowing, removal and return.
 
@@ -153,7 +161,7 @@ In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local 
 
 An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
 
-#### Combat addresses
+##### Combat addresses
 
 Ordinary combats use combat category + act-local combat ordinal + encounter identity, with separate normal-fight, elite and boss counters.
 
@@ -161,13 +169,21 @@ Event-created battles outside ordinary encounter lists use event-local battle or
 
 Combat-local purposes derive from this address + purpose and reset each combat. Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [global consumption](#opportunity-consumption).
 
-#### Monster occurrence identity
+##### Monster occurrence identity
 
 For combat policies addressing individual monsters, monster address = source-local spawn opportunity + creation index, stable for the monster's lifetime.
 
 Initial enemies use the [combat address](#combat-addresses) as their source; summons/replacements use the summoning/replaced occurrence.
 
 One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
+
+##### Card and potion occurrence addresses
+
+Each card or acquired potion copy has a distinct logical occurrence with a stable source address; apply the [lifetime rules](#logical-occurrence-lifetime).
+
+Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
+
+Card initialization preserves generated attributes and presentation order; derive selection keys under the [shared addressing contract](#rng-derivation-and-addressing).
 
 #### Opportunity consumption
 
@@ -234,7 +250,7 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers).
 
 #### Logical-occurrence lifetime
 
-**Scope:** settled card and owned-potion selection policies. Each card or acquired potion copy has a distinct logical occurrence; new cards use [card occurrence initialization](#card-occurrence-initialization). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules.
+**Scope:** settled card and owned-potion selection policies, using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules.
 
 | Operation | Occurrence and selection state |
 |---|---|
@@ -264,7 +280,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 
 #### Deterministic Card Processing Order
 
-**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-occurrence-initialization), permanent transformations and planned combat shuffling.
+**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent transformations and planned combat shuffling.
 
 **Status:** preliminarily settled — ready for use, with fine-tuning remaining. The [detailed ranking and state comparisons](CARD_ORDER.md) form part of this specification.
 
@@ -275,14 +291,6 @@ Identical cards remain tied regardless of selection state, acquisition order or 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
 
 Shuffle outcomes must be independent of original deck sequence; the [shuffle addressing and advancement policy remains unresolved](WORKING.md#combat-randomness).
-
-#### Card occurrence initialization
-
-Each new logical card occurrence gets one stable address from its source and selection keys under the [shared addressing contract](#rng-derivation-and-addressing). Initialization preserves generated attributes and presentation order.
-
-Cards with generation entries use their [stable entry addresses](#stable-entry-addresses).
-
-For sources without generation entries, use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
 #### Card reward selection keys
 
