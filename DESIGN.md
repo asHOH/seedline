@@ -137,7 +137,7 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 | [Owned-potion selection](#settled-policy-persistent-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
 | [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice) | Event ID + relic identity, independent of Relic Trader | Opportunity-specific selection priorities |
-| [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
+| [Relic Trader replacement generation](#settled-policy-generation-routing) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
 | [Relic Trader outgoing assignment](#outgoing-relic-assignment) | Event ID + outgoing relic identity + fixed reward slot. | Pair-priority minima select the shortlist; the same priorities assign its trades. |
 | [Endless Conveyor dishes](#settled-policy-endless-conveyor) | Event-local dish-selection sequence with a persistent position. | Weighted candidate stream with rejection of ineligible entries. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Separate card-generation ordinals per potion type. | Ordinal-addressed batches. |
@@ -213,7 +213,7 @@ At each checkpoint, save sequence contents and positions, including original ent
 
 **Scope:** relics, potions, cards, permanent transformations and covered direct additions.
 
-With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions.
+With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. [Generation routing](#settled-policy-generation-routing) specifies sharing and RNG exceptions.
 
 **Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool divisions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
@@ -338,13 +338,48 @@ Derive priorities from the source's selection-opportunity address + candidate's 
 
 This opt-in mechanism applies to sources such as The Future of Potions. It does not override the corrected persistent strategy for permanent-card selection or settle its source/effect sharing.
 
+## Settled policy: generation routing
+
+**Routing** specifies the random state supplying each generation stage. The table separates rarity and identity sharing for the covered requests.
+
+Supplies are independent except where sharing is stated. Apply the [shared generation strategies](#generation); source policies retain eligibility, construction and consumption details.
+
+For card reward offers, group identities by pool, rarity request, eligibility filter and draw grouping. Upgrade rules and the number of cards taken leave grouping unchanged. The expanded-pool row modifies the applicable offer route.
+
+For own-character random-rarity offers, luck controls Rare delivery; triple sequences supply the base Common/Uncommon composition.
+
+| Request / source | Rarity state or rule | Identity supply | Grouping / exceptions |
+|---|---|---|---|
+| Ordinary relics: generic rewards, shop and Courier | One rarity-roll sequence per source. | Disjoint finite [allocations](#allocation): independently advancing, shuffled Common/Uncommon/Rare sequences per source; shop also has all Shop-rarity identities in one shuffled sequence. | Individual draws; [source classification](#source-classification-and-consumption), [chest advancement](#relic-advancement) and [Wongos](#stock-and-prices) apply. |
+| Relic Trader replacements | Ordinary relic rarity, addressed by event ID + reward slot. | Last eligible Courier entry of the rolled rarity. | Slots 1–3 in generation order; no added filters. |
+| Generic potion rewards | Separate sequences for [standard weights](#potions) and uniform-identity selection; uniform mode weights rarities by eligible identity counts. | Both modes share generic Common/Uncommon/Rare identity sequences over the full eligible pool. | Individual potions. |
+| Potions: shop / Courier / potion-generating effects | One standard-weight rarity sequence per source. | Separate Common/Uncommon/Rare identity sequences per source, each using the full eligible potion pool. | Individual potions; [source membership](#acquisition-and-sequences). |
+| Initial shop cards | Shop-ordinal generation using [shop odds](#stock-and-prices). | Shop-ordinal generation. | — |
+| Courier cards | Separate Attack/Skill/Power rarity sequences using shop odds; colorless requests fixed Uncommon or Rare. | Per-type, per-rarity sequences for Attack/Skill/Power; one sequence each for Uncommon and Rare colorless. | Individual restocks. |
+| Own-character random-rarity offers: normal-fight rule | Shared [luck, thresholds and combat offset](#luck-and-rarity-offset); normal-fight Rare chance. | Shared [non-Rare and rare-bearing triples](#offer-sequences), plus [A0–6 extra Rares](#a06-multiple-rares), across all three random-rarity groups. | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights: three-card offers. |
+| Own-character random-rarity offers: elite rule | Same luck, thresholds and combat offset; elite Rare chance. | Same supplies. | Elites and The Hunt in elite combats: three-card offers. |
+| Own-character random-rarity offers: fixed base odds | Same luck and thresholds; base Rare odds without the combat offset. | Same supplies. | Orrery: five three-card offers; Lost Coffer: one; Trial's Nondescript Guilty: two. Brain Leech's Share Knowledge: choose one of five, using [supplementary cards](#supplementary-cards). |
+| Own-character fixed-Rare offers | Fixed Rare. | Separate Rare triple sequence. | One triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. |
+| Own-character fixed-Common offers | Fixed Common. | Separate Common triple sequence. | Glass Eye: two triples; Crystal Sphere: one. [Room Full of Cheese](#supplementary-cards) and [Scroll Boxes](#scroll-boxes) have local rules. |
+| Own-character fixed-Uncommon offers | Fixed Uncommon. | Separate Uncommon triple sequence. | Glass Eye: two triples; Crystal Sphere: one. |
+| Own-character Power: Lasting Candy / The Future of Potions | Candy: separate normal-fight and elite rarity sequences using source base odds and unavailable-rarity fallback, one roll per triggered card; boss triggers request Rare. Future of Potions requests its specified rarity. | Shared Uncommon and Rare Power identity sequences. | Individual entries. |
+| The Future of Potions: Attack / Skill offers | Specified rarity. | Event RNG addressed by rarity and type, independently of the other potion options. | — |
+| Colorless offers: Lead Paperweight / Brain Leech's Rip | Existing Uncommon/Rare odds: **98.51% / 1.49%**. | One shared reward sequence. | Individual entries across batch sizes. |
+| Other-character offers | Kaleidoscope: event RNG for character and rarity. Colorful Philosophers / Sea Glass: fixed rarities. | **12 shared identity sequences: four other characters × Common/Uncommon/Rare**. | Individual entries across batch sizes. |
+| Prismatic Gem / Dingy Rug: eligible expanded-pool offers | Retain the source's rarity state and rules. | Independent sequences for the effective expanded pool; reuse the existing group when the complete request's eligible pool is unchanged. | Preserve source grouping; apply to whole requests. Candy uses the inherited pool's Power sequences. [Expansion rules](#prismatic-gem-and-dingy-rug). |
+| Permanent transformations / [covered direct additions](#settled-policy-permanent-transformations-and-direct-card-additions): own-character and colorless pools | Separate transformation/addition rarity sequences per pool. Transformations weight by current eligible identity counts per rarity, excluding the original; additions use vanilla base odds and unavailable-rarity fallback. | Shared Common/Uncommon/Rare identity sequences per pool. | Individual entries; separate from combat transformations. |
+| Infested Automaton: Study / Touch Core | Event RNG; leaves the addition rarity sequence unchanged. | Same permanent own-character identity sequences as the preceding row. | — |
+| Permanent transformations / [covered direct additions](#settled-policy-permanent-transformations-and-direct-card-additions): other-character and curse pools | Direct identity draws. | One sequence per pool: four other characters and curse. | Individual entries; separate from combat transformations. |
+| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event RNG where rarity is random. | Event RNG. | — |
+| [Potion-generated cards](#settled-policy-potion-generated-cards) | Uniform eligible identities, without a separate rarity roll. | Complete batch addressed by potion type + that type's card-generation ordinal. | Separate from other combat card generation. |
+
 ## Settled policy: relics
 
 **Intent:** isolate normal-play relic supplies for shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
 
 ### Allocation
 
-Construct three disjoint relic allocations once: generic rewards, shop and Courier. Each source has its own rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards, shop and Courier respectively. Shop also owns a shuffled sequence of all Shop-rarity identities.
+Construct the three [routed allocations](#settled-policy-generation-routing) once. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards, shop and Courier respectively.
 
 Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
 
@@ -419,10 +454,9 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 
 ### Acquisition and sequences
 
-- Keep independent sequences for four **sources: generic rewards, shop, Courier and potion-generating effects**. Generic rewards combines random combat rewards, events and other grants without paid/free or per-event separation. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
-- Each source uses the full eligible potion pool with independent Common/Uncommon/Rare identity sequences.
-- Generic rewards use separate rarity-roll sequences for **[standard weights](#potions)** and **uniform-identity selection**. Uniform mode weights each rarity by its share of eligible identities. Both modes consume the same per-rarity identity sequences. Other sources use one standard-weight rarity-roll sequence each.
-- Preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
+Use [generation routing](#settled-policy-generation-routing) for four sources. **Generic rewards** combines random combat rewards, events and other grants without paid/free or per-event separation; **shop** and **Courier** are separate. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
+
+Preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
 
 **Example — batch boundaries:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
 
@@ -441,12 +475,11 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 ### Stock and prices
 
 - Initial shop stock depends only on shop ordinal, except for Wongos, relic floor cutoffs and [borrowing](#borrowing).
-- **Initial cards:** use shop-ordinal generation for rarity and identity. Preserve slot order, duplicate exclusion and unavailable-rarity fallback.
-- **Relics and potions:** initial stock and Courier use their respective sources under [relic allocation](#allocation) and [potion sequences](#acquisition-and-sequences).
+- **Initial cards:** follow [generation routing](#settled-policy-generation-routing); preserve slot order, duplicate exclusion and unavailable-rarity fallback.
 - **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
-- **Courier cards:** use dedicated sequences, independent of initial stock and other card sources. Attack, Skill and Power each have a rarity-roll sequence using the shop odds above and per-rarity identity sequences; Uncommon and Rare colorless each have one fixed-rarity identity sequence. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
+- **Courier cards:** follow generation routing; preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
 
 **Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
@@ -484,28 +517,7 @@ Baseline: [gold ranges and exceptions](#combat-gold) and [Catfood addressing](#c
 
 **Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation and reachable rerolls for the groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
-
-**Grouping:** group card rewards by pool, then rarity request, eligibility filter and draw grouping. Upgrade rules and the number of cards taken do not split identity groups.
-
-### Offer sources and sequences
-
-The first three rows share luck, thresholds and two random-rarity triple sequences. Other rows use separate supplies; shops follow their [stock policy](#stock-and-prices).
-
-| Offer group | Sources / rarity rule | Identity supply and consumption |
-|---|---|---|
-| Own-character random rarity: normal-fight rule | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights; three-card offers. | Shared random-rarity triples. |
-| Own-character random rarity: elite rule | Elites and The Hunt in elite combats; three-card offers. | Shared random-rarity triples. |
-| Own-character random rarity: fixed base odds | Orrery: five three-card offers; Lost Coffer: one; Brain Leech's Share Knowledge: choose one of five; Trial's Nondescript Guilty: two three-card offers. | Shared random-rarity triples; Brain Leech uses [supplementary cards](#supplementary-cards). |
-| Own-character fixed Rare | Non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. | Separate Rare triple sequence; one triple per offer. |
-| Own-character fixed Common | Glass Eye, Crystal Sphere's Common offer, Room Full of Cheese and Scroll Boxes. | Separate Common triple sequence; Glass Eye consumes two triples, Crystal Sphere one. [Room Full of Cheese](#supplementary-cards) and [Scroll Boxes](#scroll-boxes) have local rules. |
-| Own-character fixed Uncommon | Glass Eye and Crystal Sphere's Uncommon offer. | Separate Uncommon triple sequence; Glass Eye consumes two triples, Crystal Sphere one. |
-| Own-character Power | Lasting Candy and The Future of Potions' Power choices; rarity rules below. | Shared Uncommon and Rare Power identity sequences, separate from the triple sequences. |
-| Other The Future of Potions choices | Attack and Skill offers at the specified rarity. | Event RNG addressed by rarity and type, independently of the other potion options. |
-| Colorless | Lead Paperweight and Brain Leech's Rip; existing Uncommon/Rare odds of **98.51% / 1.49%**. | One shared reward sequence. |
-| Other-character | Kaleidoscope uses event RNG for character and rarity selection; Colorful Philosophers and Sea Glass request fixed rarities. | **12 shared identity sequences: four other characters × Common/Uncommon/Rare**. |
-
-**Power rarity:** Lasting Candy uses independent normal-fight and elite rarity-roll sequences. Advance the relevant sequence once per triggered additional card, preserving source base rarity odds and unavailable-rarity fallback. Boss triggers request Rare directly. The Future of Potions requests its specified rarity.
+**Scope:** initial generation and reachable rerolls for the offer groups in [generation routing](#settled-policy-generation-routing). Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
 
 **Crystal Sphere:** does not reset the combat rarity offset.
 
@@ -513,7 +525,7 @@ Colorless and other-character rewards share across batch sizes because their few
 
 ### Rare occurrence
 
-**Scope:** the three own-character random-rarity groups above.
+**Scope:** the three own-character random-rarity groups in [generation routing](#settled-policy-generation-routing).
 
 **Intent:** separate when a Rare appears from the complete choice offered. Align corresponding rare-bearing and non-Rare opportunities while preserving source-dependent Rare chances; matching combat-room ordinals need not consume matching offer entries.
 
@@ -602,13 +614,11 @@ Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the nor
 
 **Intent:** align rewards from the same expanded pool.
 
-Preserve the [existing pool-modification boundaries](#card-reward-offers). Generate identities directly from the effective expanded pool using independent identity sequences under the card policy's pool/request/filter/draw-grouping rules. All results, including own-character cards, consume only that expanded group; ordinary identity sequences and triple boundaries remain unchanged.
-
-Reuse the existing identity group when expansion leaves the complete request's eligible pool unchanged, such as Rug's fixed-Common or already-colorless offers. Apply this to whole requests, not individual slots in mixed-rarity offers.
+Preserve the [existing pool-modification boundaries](#card-reward-offers) and apply the expanded-pool route. All results, including own-character cards, consume only that group; ordinary identity sequences and triple boundaries remain unchanged. Rug's fixed-Common or already-colorless offers reuse their existing group because their complete eligible pool is unchanged.
 
 Retain source rarity rules, eligible-card sampling weights, offer sizes, duplicate exclusions, luck rules and upgrade rules. Neither relic resets luck state or restarts opening-only rarity exceptions.
 
-Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll sequence position and fallback rules.
+Lasting Candy retains its source rarity-roll sequence position and fallback rules when its inherited pool changes.
 
 **Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
@@ -620,13 +630,12 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 ### Selection and consumption
 
-- Keep sequences for seven pools: the five characters, colorless and curse. The player's character and colorless each use separate Common/Uncommon/Rare identity sequences, shared by transformations and covered direct additions, plus independent transformation and addition rarity-roll sequences. Other-character pools and curses retain one identity sequence each. Isolate all of these from card reward offers and combat transformations.
-- **Transformations:** retain [vanilla target pools and eligibility](#permanent-transformations-and-direct-additions). For per-rarity identity sequences, interpret the transformation rarity roll using current eligible identity counts per rarity, excluding the original card.
+Use the permanent-card routes for seven pools: the five characters, colorless and curse.
+
+- **Transformations:** retain [vanilla target pools and eligibility](#permanent-transformations-and-direct-additions).
 - **Occurrence lifetime:** each transformation retires the original logical occurrence. After applying source-specific gameplay inheritance, initialize fresh replacement selection state through [card occurrence initialization](#card-occurrence-initialization).
 - **Unordered transformation batches:** process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
-- **Direct additions:** use the granting source's pool and restrictions. Interpret the addition rarity roll using vanilla base odds and unavailable-rarity fallback.
-
-**Infested Automaton:** Study and Touch Core use its event RNG for rarity without advancing the addition rarity sequence. Identities still use the shared character sequences.
+- **Direct additions:** use the granting source's pool and restrictions; Infested Automaton's rarity exception is specified in [generation routing](#settled-policy-generation-routing).
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
@@ -636,11 +645,11 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 ## Settled policy: event-specific rewards
 
-Trash Heap, Doll Room and event choices granting otherwise unobtainable rewards use the event RNG, independently of shared reward sequences. Preserve existing choices, costs and eligibility.
+The event-specific route covers Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock. Preserve existing choices, costs and eligibility.
 
 Neow's Bones' Ancient relic pair follows this policy; its curse follows [direct additions](#settled-policy-permanent-transformations-and-direct-card-additions).
 
-Fake Merchant uses event RNG for stock and price rolls, keeping its shop fixed for the same seed.
+Fake Merchant's price rolls also use event RNG, keeping its shop fixed for the same seed.
 
 ## Settled policy: Wing Charm
 
@@ -702,7 +711,7 @@ Baseline selection: [potion event mechanics](#potions).
 
 **Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
 
-Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow their [offer sources and sequences](#offer-sources-and-sequences).
+Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow [generation routing](#settled-policy-generation-routing).
 
 - Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
 - Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order, independently of occurrence addresses. Priorities are independent of the type sequences.
@@ -716,11 +725,7 @@ To align Ranwid's relic sacrifice, use [opportunity-specific selection prioritie
 
 ## Settled policy: Relic Trader
 
-**Intent:** align replacement relics; prioritize outgoing-relic overlap over trade matching.
-
-### Replacement generation
-
-For fixed slots 1–3 in generation order, roll the ordinary relic rarity using event ID + slot, then draw the last eligible identity from Courier's sequence of that rarity. Draws add no filters.
+**Intent:** align [replacement relics](#settled-policy-generation-routing); prioritize outgoing-relic overlap over trade matching.
 
 ### Outgoing relic assignment
 
@@ -747,7 +752,7 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 **Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
 
-Determine each complete card batch by potion type + that type's card-generation ordinal. A committed use, discard or trade consumes one ordinal: use generates that batch; discard or trade skips it. Acquisition leaves this ordinal unchanged. Counters advance independently of other potion types and other combat card generation.
+A committed use, discard or trade consumes one card-generation ordinal of that potion type: use generates the [routed batch](#settled-policy-generation-routing); discard or trade skips it. Acquisition leaves this ordinal unchanged.
 
 **Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal. Count each skipped reward once.
 
