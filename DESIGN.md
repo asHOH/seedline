@@ -863,9 +863,9 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 ## Settled policy: monster HP
 
-**Intent:** align combat HP sequences independently of earlier rooms while retaining within-combat draw-order manipulation.
+**Intent:** align combat HP sequences independently of earlier rooms, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
 
-For every covered HP roll, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with `k = 1`: opportunity = [combat address](#combat-addresses) + combat-local HP-roll ordinal; candidate key = integer HP value; purpose = monster HP.
+Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + combat-local HP-roll ordinal + monster HP purpose; select zero-based index `floor(u × count)` from ascending eligible HP values.
 
 Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
 
