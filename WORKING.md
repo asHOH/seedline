@@ -27,7 +27,6 @@ Open topics; develop each into a decision unit as choices and evidence emerge:
 - [ ] Opening shuffle
 - [ ] Later shuffles
 - [ ] Random pile insertion
-- [ ] Monster AI
 - [ ] Generated cards
 - [ ] Combat transformations
 - [ ] Random card selection

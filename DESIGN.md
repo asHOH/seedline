@@ -51,6 +51,8 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 **Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
 
+**Numerical scope:** exclude negligible probability differences caused solely by rounding or exact boundary hits in random sampling, game-wide.
+
 **Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies apply without Scarcity using the corresponding probabilities.
 
 **Discussion boundary:** describe base random outcomes and preserve existing modifiers, including eggs, Fresnel Lens and fixed discounts. Discuss modifier interactions when they affect random operations.
@@ -125,7 +127,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [monster HP](#settled-policy-monster-hp). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai). |
 
 ## Shared strategies
 
@@ -335,6 +337,8 @@ Commit the association permutation and shared clock update with the action. Rene
 **Main idea:** for sources adopting uniform selection without replacement, give each eligible candidate an independent priority and select the `k` candidates with lowest priorities. Removing an unselected candidate cannot change the selected set.
 
 Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
+
+**Weighted single choice:** for each positive-weight candidate, use priority `-ln(U) / weight`, with independent candidate-addressed uniform `U ∈ (0, 1)`; select the lowest. This gives probability `weight / total weight`. Removing candidates preserves survivors' ranking when their relative weights stay fixed.
 
 ## Settled policy: generation routing
 
@@ -795,7 +799,7 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 
 Use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) for Orobas's third pool, Pael's second and third pools, Tezcatara's first pool, and Tanx's and Nonupeipe's three-choice pools. The opportunity address is Ancient ID + option-pool ID; each candidate uses its stable option identity. Select the lowest-priority eligible option, or the three lowest for Tanx and Nonupeipe. Retain surviving entries' relative display order.
 
-**Pael's second pool:** use weighted priorities `-ln(U) / weight`, with independent candidate-addressed uniform `U ∈ (0, 1)` and vanilla weights: Growth 1; each other option 2.
+**Pael's second pool:** use the shared weighted single-choice rule with vanilla weights: Growth 1; each other option 2.
 
 Retain vanilla generation and RNG positions for other menu components.
 
@@ -872,6 +876,41 @@ Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal.
 Preserve vanilla eligibility and full-range fallback, conditional probabilities, fixed values, range modifiers, subsequent HP changes, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#settled-policy-encounter-setup).
 
 Baseline: [monster HP mechanics](#monster-hp).
+
+## Settled policy: monster AI
+
+**Intent and scope:** align corresponding random-intent selections across eligibility and death histories while preserving vanilla probabilities and reactions to player decisions. Matching a survivor's personal selection takes priority over matching equivalent survivors at different counts. SL preservation is secondary. Encounter-assigned starting moves remain under [encounter setup](#settled-policy-encounter-setup); random starting intents belong here.
+
+### Intent sharing and selection
+
+**Personal selection number `n`:** the monster's first, second, etc. random-branch selection, including singleton and all-zero branches. Deterministic transitions, temporary states and resuming an existing intent consume zero selections. Apply [opportunity consumption](#opportunity-consumption); an available intent consumes its selection even if later interrupted. Revival retains the personal count; a new occurrence begins at its first selection.
+
+**Sharing:** each monster type and personal selection number has a shared sequence. Copies' first selections consume successive entries from the first-selection sequence; second selections use a separate sequence, and so on. Summoned copies join existing sequences. Consume entries in vanilla selection order. Type means monster model identity; history, eligibility and branch-state identity stay outside the sharing address.
+
+The selection-opportunity address is [combat address](#combat-addresses) + monster type + personal selection number `n` + entry ordinal within that sequence + intent purpose. Use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities), keyed by move identity, with vanilla effective weights. Preserve vanilla cooldowns, repetition limits, teammate conditions, state transitions and history updates. Every selection uses fresh priorities; living copies receive distinct entries.
+
+**All-zero fallback:** choose the first branch in vanilla order. This retains Flyconid's [baseline behavior](#monster-ai).
+
+**Decimillipede exception:** front, middle and back share one revival-selection sequence, addressed by combat + Decimillipede revival purpose + shared revival ordinal. Personal selection numbers and segment identities do not subdivide it. Keep the same weighted selection and consumption rules.
+
+**Alignment example:** remove the middle Inklet in both plays. Outer A dies before its first random selection in one play and after it in the other; B reaches its second selection alone in both. B receives entry 1 of the second-selection sequence in both, versus overall entry 2 or 3 under continuous type-wide sharing. Jab restores the same two eligible choices, so B's intent matches. Recovery requires matching positions within that numbered sequence; selections at other personal numbers cannot shift it.
+
+### Fabricator bot identities
+
+Use [ordinal-addressed generation](#randomness-and-addressing): Fabricator occurrence + bot-selection ordinal + a separate bot-generation purpose. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in stable model-identity order; singleton choices also consume an ordinal. Preserve spawn order and keep this state separate from intent selection.
+
+### Behavior preservation
+
+Fresh independent draws at vanilla weight ratios, with preserved transitions and sequential eligibility, preserve the intended joint NoSL distribution.
+
+**Vanilla deviation — SL 4A(↓):** fewer ways to reroll a surviving enemy's intent by changing which other enemy dies or when it dies (small slimes/Twig M; Inklets), or by enabling rat Summon to switch ordinary attacks. Summon itself remains a possible response.
+
+**Vanilla deviation — SL 4A, effects in both directions:** choosing which enemy survives changes the alternatives available across replays. Accepted as a borderline tradeoff for alignment of corresponding enemy choices across plays:
+
+- **Reduced favorable alternatives:** in the baseline Flyconid/Twig M example, the two vanilla kill choices always include one zero-immediate-damage next intent; the policy also permits two attacks or two zero-immediate-damage alternatives.
+- **Added favorable alternatives:** an original and summoned Two-Tailed Rat can give the same next Bite/Screech result under either vanilla kill choice. The policy can give different results, increasing SL's chance of finding Screech from 50% to 75% in the [baseline example](#monster-ai). Each individual survivor retains its 50/50 odds.
+
+Baseline: [monster AI mechanics](#monster-ai).
 
 ## Reference
 
@@ -1032,6 +1071,26 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 **Special cases:** Tough Egg's hatch samples its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter-setup RNG.
 
 **Summons:** ordinary sampling covers Fabricator's bots, Two-Tailed Rats, Ovicopter's eggs and Phrog Parasite's four sequential Wrigglers. Eye with Teeth (6), Parafright (21) and Gas Bomb (7/8 by ascension) have fixed HP. Gremlin Merc creates Fat, creates/adds Sneaky, then adds Fat: each rolls before the other joins the enemy list (`SurprisePower.AfterDeath`).
+
+#### Monster AI
+
+**Randomness and selection:** vanilla uses the run-wide `RunRngSet.MonsterAi` for `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, draws `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still consume a draw. Deterministic transitions consume none. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
+
+**All-zero fallback:** all-zero branches always choose the first listed move. Flyconid can reach `Smash → Vulnerable Spores → Frail Spores → Smash`, making all effective weights zero; it then selects Vulnerable Spores.
+
+**History and interruption:** `MonsterMoveStateMachine` follows branches until reaching a move and retains its state log for weight checks. Ordinary stun returns to the stored move; Thieving Hopper's Flutter depletion uses a deterministic follow-up. Decimillipede normally cycles `Writhe → Constrict → Bulk`; death leads through `Dead → Reattach → random attack`. After Reattach, the three attacks have equal weights. Revival draws share vanilla's AI stream across segments.`DecimillipedeSegment.GenerateMoveStateMachine`.
+
+**Same-type death timing:** outer Inklets start with Jab, then choose equally between Piercing Gaze and Whirlwind; either attack returns through Jab. The middle starts with Whirlwind. Remove the middle before it makes a random selection. Compare killing outer A before its first random selection with killing it after exactly one. Once outer B is alone in both plays, its corresponding random selections (second, third, etc.) use AI-stream positions one draw apart, even when its eligible moves match.
+
+**Eligibility changes:** Two-Tailed Rats permit Summon only after their timer, shared summon limit, space and teammate-intent checks pass. With Screech on cooldown and both ordinary attacks eligible, attack probabilities are `1/2, 1/2` without Summon; with Summon, attack/attack/Summon probabilities are `1/11, 1/11, 9/11`, using ideal weight ratios. At the same AI-stream position, enabling Summon can switch the selected ordinary attack because the weighted intervals change. After `Screech → Scratch`, blocking Summon can leave Disease Bite as the sole eligible move; selecting it still consumes an AI draw.
+
+**Cross-type draw consumption:** in the lineup `Leaf Slime S → Twig Slime M → Twig Slime S`, killing either small slime removes different numbers of later AI draws: Leaf S selects through random branches even during forced alternation; Twig S has a fixed attack. This can change Twig M's next draw.
+
+**Survivor-choice alternatives:** in a Flyconid/Twig Slime M encounter after opening with `Smash → Frail Spores` and `Sticky Shot → attack`, respectively, suppose either kill is feasible before the next intent selection. Either sole survivor uses the same next AI draw: the lower half of its range selects Flyconid's Vulnerable Spores or Twig's attack; the upper half selects Flyconid's Smash or Twig's Sticky Shot. Exactly one kill choice therefore leaves a zero-immediate-damage next intent. Choosing a survivor before seeing its next intent gives a 50% zero-immediate-damage chance; reloading to try both kills reveals which choice achieves it.
+
+**Same-type survivor alternatives:** clear the other original Two-Tailed Rats while one follows `Scratch → Disease Bite → Summon → Scratch`; its summoned copy opens with Scratch. At this point, the original has made three random selections and the copy one. Kill either before Scratch executes. Afterwards, either survivor chooses equally between Disease Bite (7 damage at A7+) and Screech (Frail, zero damage): the original has used its summon, while the copy's summon timer remains positive. Vanilla gives both kill alternatives the same next draw and result.
+
+**Fabricator:** Fabricate selects a defensive bot (Guardbot/Noisebot), then an offensive bot (Zapbot/Stabbot); Fabricating Strike selects only an offensive bot. Each draw excludes the immediately preceding bot identity across both pools. An intervening defensive bot therefore permits the previous offensive identity again. Full capacity forces deterministic Disintegrate; its bots use fixed moves. In the standard single-player encounter, kill/stun timing changes when selections occur while preserving their order and the sequence of summoned bot identities.
 
 ### Relics, shops and chests
 
