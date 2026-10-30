@@ -132,9 +132,9 @@ These tables summarize settled mechanisms. [Shared contracts](#shared-strategies
 |---|---|---|
 | [Wing Charm selection](#settled-policy-wing-charm) | Shared reward entries retain selection priorities; Candy uses its Power entry and supplementary event cards use event RNG. | Entry-derived priorities and weighted group selection. |
 | [Persistent card selection](#corrected-persistent-selection-priorities) | Each logical card occurrence carries a clock within its selection scope. | Residual exponential clocks. |
-| [Tooth and Bracelet selection](#settled-policy-fixed-priority-card-selection) | Separate purpose-specific selection keys with [reward aliases](#card-reward-selection-keys). | Fixed priority order. |
-| [Slippery Bridge selection](#settled-policy-slippery-bridge) | Bridge-only per-occurrence clocks and renewal counts with [reward aliases](#card-reward-selection-keys). | Residual clocks over vanilla candidates, including fallback. |
-| [Owned-potion selection](#settled-policy-owned-potion-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
+| [Tooth and Bracelet selection](#fixed-priority-card-selection) | Separate purpose-specific selection keys with [reward aliases](#card-reward-selection-keys). | Fixed priority order. |
+| [Slippery Bridge selection](#settled-policy-persistent-selection) | Bridge-only per-occurrence clocks and renewal counts with [reward aliases](#card-reward-selection-keys). | Residual clocks over vanilla candidates, including fallback. |
+| [Owned-potion selection](#settled-policy-persistent-selection) | Ranwid and Stone of All Time share per-occurrence clocks and renewal counts. | Residual exponential clocks. |
 | [The Future of Potions: card types](#settled-policy-the-future-of-potions-card-type-assignment) | Event-local type sequences by reward rarity; potion-keyed priorities assign their entries. | Independent type draws and fixed ordering priorities. |
 | [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice) | Event ID + relic identity, independent of Relic Trader | Opportunity-specific selection priorities |
 | [Relic Trader replacement generation](#replacement-generation) | Event ID + reward slot for rarity; Courier allocation for identities. | Independent rarity draws and Courier-tail pulls. |
@@ -298,7 +298,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Corrected persistent selection priorities
 
-**Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. Source policies define sharing for [upgrades/downgrades](#settled-policy-permanent-upgrades-and-downgrades), [fixed-priority card selection](#settled-policy-fixed-priority-card-selection), [Slippery Bridge](#settled-policy-slippery-bridge) and [owned-potion selection](#settled-policy-owned-potion-selection).
+**Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. [Source settings](#settled-policy-persistent-selection) specify strategy, sharing and local clock rules.
 
 **Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose.
 
@@ -316,7 +316,7 @@ A player-directed choice does not advance a gameplay selector's clocks merely be
 
 #### Representative routing
 
-**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#settled-policy-owned-potion-selection), including combat departures. These policies define equivalence and operation sharing.
+**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#potion-departure-routing), including combat departures. These policies define equivalence and operation sharing.
 
 Retain one logical occurrence per copy, keeping its selection state together under the existing source policies. Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities). An already randomly selected logical target bypasses representative routing.
 
@@ -660,50 +660,41 @@ Resolve [A0–6 Rare replacements](#a06-multiple-rares) before reward enchantmen
 
 **Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
 
-## Settled policy: permanent upgrades and downgrades
+## Settled policy: persistent selection
 
-**Intent:** align random permanent upgrade and downgrade targets across sources.
+**Intent:** align affected cards across sources, decks and reward choices, and potion sacrifice offers independently of inventory order.
 
-Use the [shared clock strategy](#corrected-persistent-selection-priorities). All random upgrades of existing deck cards share one scope; random downgrades share another. Source filters do not create separate clocks.
+Use [corrected persistent clocks or their fixed-cohort shortcut](#corrected-persistent-selection-priorities) as specified below. Each card or acquired potion copy remains a distinct logical occurrence. Preserve source access, triggers, counts, eligibility, costs, rewards and effect order, subject to local rules.
+
+| Selection / candidates | Strategy and sharing | Local clock rules |
+|---|---|---|
+| Random permanent upgrades / downgrades of existing deck cards | Corrected clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
+| Pael's Tooth / Beautiful Bracelet | Fixed cohort; separate purpose-specific priorities with [reward aliases](#card-reward-selection-keys). | Shared fixed-cohort consumption; cohorts and effects below. |
+| Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-keys). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
+| Ranwid the Elder / Stone of All Time: owned potions | Corrected clocks; one shared run-wide scope. | Singleton: leave its clock unchanged. Otherwise renew the offered occurrence's clock once when the offer becomes available, using its per-occurrence renewal count. Declined potions remain selectable. |
+
+### Permanent upgrades and downgrades
+
 **Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, and Reflections.
 **Downgrade sources:** Wongos and Reflections.
-
-Consumed clocks are marked zero.
 
 - **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise take the next value from one dedicated run-wide refill sequence, shared only by Wongos and Reflections. This sequence is consumed at most three times per run.
 - **Downgrade-clock refill:** Wongos refreshes the downgraded card's downgrade clock using event RNG. Reflections leaves consumed downgrade clocks at zero; no later permanent downgrade source can use them.
 
-Preserve triggers, counts, eligibility and effect order. Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
-Shared clocks align successive opportunities while preserving uniform selection odds. Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
+Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
+
+Target selection stops advancing event or Niche RNG to isolate unrelated outcomes.
 
 **Vanilla deviation — SL 4A(↓):** reordering random upgrades, such as Whetstone and War Paint, with candidate addition/removal or another disjoint random upgrade no longer rerolls their targets.
 
-## Settled policy: fixed-priority card selection
-
-**Intent:** align affected cards across decks and reward choices.
-
-For Pael's Tooth and Beautiful Bracelet, use separate purpose-specific priorities and the [fixed-cohort shortcut](#corrected-persistent-selection-priorities). Apply [card reward selection keys](#card-reward-selection-keys). Preserve existing costs and triggers.
+### Fixed-priority card selection
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck, preserving gameplay properties and logical selection state through storage and physical-object recreation. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 
-## Settled policy: Slippery Bridge
+### Potion departure routing
 
-**Intent:** align removal offers across decks; preserve vanilla eligibility, uniform per-copy selection, costs and triggers.
-
-Use the [shared corrected-clock strategy](#corrected-persistent-selection-priorities) in a Bridge-only scope over [vanilla's candidate set](#slippery-bridge-selection), including fallback. Retain [card reward selection keys](#card-reward-selection-keys).
-
-Apply the shared clock update once when the event shows a newly selected card. If declined, renew that copy's clock once before the next selection, using its per-occurrence renewal count.
-
-## Settled policy: owned-potion selection
-
-**Intent:** align potions offered for sacrifice across events, independently of inventory order.
-
-Ranwid the Elder and Stone of All Time share one run-wide scope using the [shared clock strategy](#corrected-persistent-selection-priorities), offering the lowest-clock owned potion. Each acquired copy remains a distinct logical occurrence.
-
-With one owned potion, leave its clock unchanged. Otherwise, renew the offered occurrence's clock once when the sacrifice offer becomes available, using its per-occurrence renewal count. Declined potions remain selectable. Preserve event access, costs and rewards.
-
-**Departure routing:** for player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the selected logical occurrence; slot-dependent offers and trade payoffs stay with the clicked option.
+For player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the selected logical occurrence; slot-dependent offers and trade payoffs stay with the clicked option.
 
 Baseline selection: [potion event mechanics](#potions).
 
