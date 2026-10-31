@@ -879,9 +879,7 @@ Baseline: [monster HP mechanics](#monster-hp).
 
 ## Settled policy: monster AI
 
-**Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize vanilla SL alternatives over uniform agreement. Encounter-assigned starting moves remain under [encounter setup](#settled-policy-encounter-setup).
-
-Only the [rat non-Summon strategy](WORKING.md#monster-ai-rat-non-summon-strategy) remains open.
+**Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#settled-policy-encounter-setup).
 
 **Shared rules:** isolate monster model identities except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order under [opportunity consumption](#opportunity-consumption). Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
@@ -900,9 +898,22 @@ Only the [rat non-Summon strategy](WORKING.md#monster-ai-rat-non-summon-strategy
 
 ### Rat sampling
 
-**Summon:** one continuous combat-local percentile sequence shared by all rats, including summoned copies. Advance whenever Summon has positive effective weight, whether it wins or loses; otherwise retain the position. Choose Summon with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
+**Intent:** realign ordinary choices at matching rounds, selection positions and eligibility; align summoned openings independently of birth timing.
 
-**Non-Summon boundary:** keep ordinary randomness independent of Summon, preserving vanilla declaration-order intervals and conditional probabilities. Its sharing and advancement remain open. Marker-filtered move identities change the [history-dependent survivor alternatives](#monster-ai), contrary to the SL priority.
+**Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
+
+**Ordinary sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move identity, independently of Summon. Both scopes below use the shared combat address and separate purposes.
+
+| Ordinary opportunity | Address and consumption |
+|---|---|
+| Summoned opening | Combat-local summoned-rat ordinal in vanilla creation order, independent of birth round or summoner. Consume once at its first random intent selection. |
+| Later choice, any rat | Current combat round + round-local selection ordinal, shared by all rats in vanilla selection order, including after deaths. Advance only for ordinary choices with at least two positive-weight moves; openings stay separate. |
+
+Use `CombatState.RoundNumber` at selection; extra player turns stay in the same round. Reset the later-choice ordinal each round.
+
+**Limit:** different selection counts can still shift choices within a round.
+
+**Rejected alternatives:** percentiles align poorly across eligibility changes; pair sequences lose cross-pair relationships and retain count differences; markers retain filter-history differences after eligibility converges.
 
 ### Fabricator bot identities
 
@@ -914,7 +925,7 @@ Fresh independent draws at vanilla conditional probabilities, with preserved seq
 
 **Vanilla deviation — SL 4A(↓):** scope isolation and effective-decision consumption remove rerolls through unrelated or forced draws.
 
-**Vanilla deviation — SL 4A:** type isolation changes cross-type survivor alternatives. In the Flyconid/Twig M example, vanilla guarantees a zero-immediate-damage alternative; independent type streams also permit two attacking alternatives. Accepted as an alignment tradeoff.
+**Vanilla deviation — SL 4A:** type isolation and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
 
 Baseline: [monster AI mechanics](#monster-ai).
 
