@@ -127,7 +127,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random orb types](#settled-policy-random-orb-types). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random orb types](#settled-policy-random-orb-types). |
 
 ## Shared strategies
 
@@ -282,7 +282,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 
 #### Deterministic Card Processing Order
 
-**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent transformations and planned combat shuffling.
+**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent transformations and [combat shuffling](#settled-policy-card-shuffling).
 
 **Status:** preliminarily settled — ready for use, with fine-tuning remaining. The [detailed ranking and state comparisons](CARD_ORDER.md) form part of this specification.
 
@@ -292,7 +292,7 @@ Identical cards remain tied regardless of selection state, acquisition order or 
 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
 
-Shuffle outcomes must be independent of original deck sequence; the [shuffle addressing and advancement policy remains unresolved](WORKING.md#combat-randomness).
+Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#settled-policy-card-shuffling).
 
 #### Card reward selection keys
 
@@ -864,6 +864,41 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 Use the shared [combat address](#combat-addresses) + setup purpose.
 
 Preserve encounter identity selection and setup sampling; reward ordinals and AI retain their own policies.
+
+## Settled policy: card shuffling
+
+**Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
+
+**Scope:** opening and later shuffles share the assignment strategy below. Combat equivalence and state handling remain deferred.
+
+Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply existing opening-hand and shuffle modifiers.
+
+Address opening shuffles by [combat address](#combat-addresses) + opening purpose; later shuffles by combat address + later purpose + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
+
+### Priority assignment
+
+The opening Innate subgroup uses [Processing Order](#deterministic-card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
+
+| Cards | Acts 1–2 | Act 3 |
+|---|---|---|
+| Defend and earlier Processing Order categories | First sequence, least useful first. | Same. |
+| Other starting Basics; eligible rewards/direct additions | Source-based priorities below. | Second sequence, most useful first. |
+| Remaining cards | Second sequence: earliest acquisition floor first, then ascending Processing Order. | Both rows combined, most useful first. |
+
+Opening shuffles retain removed entries only during priority assignment, then omit them. This protects deletion alignment; additions and reordered states can still shift sequential assignments.
+
+### Source-based assignment — Acts 1–2
+
+Use [generation routing](#settled-policy-generation-routing) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-and-potion-occurrence-addresses).
+
+- **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
+- **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered or transformation-filter-only generation.
+- **Triple representative:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + assignment purpose + card identity. Freeze the representative at acquisition; the others enter the remaining group.
+- **Transformations:** treat as deletion plus direct addition.
+- **Copies and event-local supplementary cards:** enter the remaining group.
+- **A0–6 extra-Rare replacements:** retain the replaced slot's membership.
+
+These are shuffle-specific assignments; existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
 
 ## Settled policy: monster HP
 
