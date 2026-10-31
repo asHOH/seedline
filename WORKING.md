@@ -22,6 +22,18 @@ The [card-processing ranking](CARD_ORDER.md) is preliminarily settled. Fine-tuni
 
 ## Combat randomness
 
+### Monster AI: rat non-Summon strategy
+
+**Settled boundary:** [DESIGN's rat sampling contract](DESIGN.md#rat-sampling) owns Summon and the ordinary sampler's probability/SL constraints. Only ordinary-move sharing and advancement remain open.
+
+**Candidate:** one continuous combat-local percentile sequence shared by all rats, including summons. Advance when an ordinary move is selected from at least two eligible moves; Summon and forced ordinary outcomes retain its position.
+
+**Alternative:** round-local ordinary sequences limit earlier-round consumption interference, but a different birth round can change a summoned rat's opening intent.
+
+**Decision needed:** choose the ordinary sequence scope and advancement. Continuous sharing preserves consumption-based SL alternatives; round sharing prioritizes later realignment.
+
+### Other combat randomness
+
 Open topics; develop each into a decision unit as choices and evidence emerge:
 
 - [ ] Opening shuffle
