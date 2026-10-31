@@ -43,6 +43,10 @@ Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` w
 
 Rare deviations are appended with a **Frequency:** field.
 
+#### Shared isolation impact
+
+**Vanilla deviation — SL 5(↓):** where isolation removes the ability to strategically steer future outcomes by changing earlier consumption of shared randomness, particularly between combats. It simplifies SL exploration by removing future-planning decisions. This is an opportunity-alignment tradeoff. For example, [combat-local random orbs](#settled-policy-random-orb-types) remove the ability to engineer a favored orb sequence for the next battle.
+
 ## Scope
 
 Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
@@ -960,7 +964,7 @@ Use Fabricator occurrence + bot-selection ordinal + a separate bot-generation pu
 
 Fresh independent draws at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
 
-**Vanilla deviation — SL 4A(↓):** scope isolation and effective-decision consumption remove rerolls through unrelated or forced draws.
+**Vanilla deviation — SL 4A(↓):** within-combat scope isolation and effective-decision consumption remove rerolls through unrelated or forced draws.
 
 **Vanilla deviation — SL 4A:** type isolation and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
 
