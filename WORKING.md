@@ -26,10 +26,6 @@ The [card-processing ranking](CARD_ORDER.md) is preliminarily settled. Fine-tuni
 
 **Decisions needed — deferred:** extend equivalent-copy handling to combat, including state changes and their effects on [shuffle assignment](DESIGN.md#settled-policy-card-shuffling). Consider alongside random card selection.
 
-### Shuffle behavior assessment
-
-**Validation:** assess the [settled shuffle policy](DESIGN.md#settled-policy-card-shuffling)'s changed correlations and NoSL/SL consequences against [behavior preservation](DESIGN.md#goals-and-principles); grade distinct deviations separately.
-
 ### Other combat randomness
 
 Open topics; develop each into a decision unit as choices and evidence emerge:

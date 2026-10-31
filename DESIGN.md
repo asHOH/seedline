@@ -875,6 +875,8 @@ Assign independent uniform priorities on a common scale, sort all participating 
 
 Address opening shuffles by [combat address](#combat-addresses) + opening purpose; later shuffles by combat address + later purpose + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
 
+**Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
+
 ### Priority assignment
 
 The opening Innate subgroup uses [Processing Order](#deterministic-card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
