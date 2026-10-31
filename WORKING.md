@@ -34,7 +34,6 @@ Open topics; develop each into a decision unit as choices and evidence emerge:
 - [ ] Random card selection
 - [ ] Random creature targets
 - [ ] Random cost values
-- [ ] Random orb types
 
 ## Implementation verification
 

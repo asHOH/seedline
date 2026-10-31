@@ -127,7 +127,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random orb types](#settled-policy-random-orb-types). |
 
 ## Shared strategies
 
@@ -928,6 +928,14 @@ Fresh independent draws at vanilla conditional probabilities, with preserved seq
 **Vanilla deviation — SL 4A:** type isolation and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
 
 Baseline: [monster AI mechanics](#monster-ai).
+
+## Settled policy: random orb types
+
+Use one sequence shared by all random-orb sources, derived from [combat address](#combat-addresses) + orb-type purpose, preserving vanilla's uniform sampling.
+
+Apply [shared consumption](#opportunity-consumption): failed channeling consumes zero.
+
+**Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
 
 ## Reference
 
