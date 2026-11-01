@@ -586,13 +586,19 @@ Own-character random-rarity offers use two deterministic triple sequences indepe
 
 A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
 
-**Uncommon probabilities:** use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
+**Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently.
 
-**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates.
+#### Uncommon probabilities
 
-**Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
+Use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
 
-The first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**: conditioning matters because the second normal offer can contain a Rare. They approximate two opening Act 1 normal fights without elite intervention and follow ordinary shared consumption, including by other covered sources. This exception occurs only once per run. Account for common normal-fight openings in Acts 2/3 and other post-Rare reductions through average calibration rather than special entries. Do not recalculate entries using the live offset or vanilla's shared RNG.
+**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
+
+**Opening triples:** the first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
+
+This exception occurs only once per run. The triples follow ordinary shared consumption, including by other covered sources.
+
+**Rationale:** these entries approximate two opening Act 1 normal fights without elite intervention. Normal-fight openings in Acts 2/3 are accounted for through average calibration rather than special entries.
 
 #### Supplementary cards
 
@@ -623,7 +629,11 @@ Resolve Defect's two independent 1% triple-Claw substitution checks with event R
 
 ### Rerolls
 
-A reachable reroll consumes a fresh offer from its pool/request/filter group, including expanded pools, with ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects. Shared-luck offers also apply luck and deferral rules; other sources remain outside that system. Fixed-rarity rerolls retain their group's sequence structure: triple-backed offers consume fresh triples; Power and other-character offers consume the required individual entries from their respective sequences. They do not consume the random-rarity group's rare-bearing sequence.
+A reachable reroll consumes a fresh offer from its pool/request/filter group, including expanded pools, with ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects.
+
+**Shared-luck offers:** apply luck and deferral rules; other sources remain outside that system.
+
+**Fixed-rarity rerolls:** retain their group's sequence structure. Triple-backed offers consume fresh triples; Power and other-character offers consume the required individual entries from their respective sequences. They do not consume the random-rarity group's rare-bearing sequence.
 
 Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
 
