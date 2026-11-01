@@ -131,7 +131,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random orb types](#settled-policy-random-orb-types). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types). |
 
 ## Shared strategies
 
@@ -970,6 +970,33 @@ Fresh independent draws at vanilla conditional probabilities, with preserved seq
 
 Baseline: [monster AI mechanics](#monster-ai).
 
+## Settled policy: random creature targets
+
+**Intent:** align random enemy targets across changing eligible sets.
+
+Use four independent sequences, reset each combat and addressed by [combat address](#combat-addresses) + sharing group + targeting purpose:
+
+| Sharing group | Sources |
+|---|---|
+| Forgotten Soul | All Forgotten Soul selections. |
+| Lightning | All Lightning copies, passive activations and evokes. |
+| Direct damage | Remaining plays that inherently cause damage, poison, or immediate HP loss; includes Knife Trap. |
+| Other | Mainly includes automatically played debuffs. |
+
+Zero damage preserves classification.
+
+Apply [shared consumption](#opportunity-consumption): With fewer than two eligible targets, advance nothing.
+
+Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
+
+Revivals retain occurrence identity; summons and replacements receive fresh identities.
+
+Combat resets inherit [shared isolation impact](#shared-isolation-impact), **SL 5(↓)**.
+
+**Within-combat deviation — SL 4A(↓):** group isolation removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
+
+Baseline: [random creature targeting](#random-creature-targeting).
+
 ## Settled policy: random orb types
 
 Use one sequence shared by all random-orb sources, derived from [combat address](#combat-addresses) + orb-type purpose, preserving vanilla's uniform sampling.
@@ -1163,6 +1190,10 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 **Same-type survivor alternatives:** clear the other original Two-Tailed Rats while one follows `Scratch → Disease Bite → Summon → Scratch`; its summoned copy opens with Scratch. At this point, the original has made three random selections and the copy one. Kill either before Scratch executes. Afterwards, either survivor chooses equally between Disease Bite (7 damage at A7+) and Screech (Frail, zero damage): the original has used its summon, while the copy's summon timer remains positive. Vanilla gives both kill alternatives the same next draw and result.
 
 **Fabricator:** Fabricate selects a defensive bot (Guardbot/Noisebot), then an offensive bot (Zapbot/Stabbot); Fabricating Strike selects only an offensive bot. Each draw excludes the immediately preceding bot identity across both pools. An intervening defensive bot therefore permits the previous offensive identity again. Full capacity forces deterministic Disintegrate; its bots use fixed moves. In the standard single-player encounter, kill/stun timing changes when selections occur while preserving their order and the sequence of summoned bot identities.
+
+#### Random creature targeting
+
+Direct random effects and automatic enemy targeting share one run-wide random stream, sampling uniformly among eligible enemies. A singleton selection consumes a draw; an empty set consumes none. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
 
 ### Relics, shops and chests
 
