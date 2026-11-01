@@ -598,6 +598,16 @@ Baseline: [gold ranges and exceptions](#combat-gold) and [Catfood addressing](#c
 
 Colorless and other-character rewards share across batch sizes because their few sources have varying offer sizes.
 
+### Offer procedure
+
+Follow [generation routing](#settled-policy-generation-routing). For own-character random-rarity offers, including reachable [rerolls](#rerolls):
+
+1. Simulate three slots (all five for Brain Leech's Share Knowledge) under [Rare occurrence](#rare-occurrence).
+2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple.
+3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
+
+Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve source-specific upgrade timing and modifier order.
+
 ### Rare occurrence
 
 **Scope:** the three own-character random-rarity groups in [generation routing](#settled-policy-generation-routing).
@@ -655,7 +665,7 @@ Deliver every threshold crossing immediately under the shared luck and source-of
 
 Own-character random-rarity offers use two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
 
-A generated offer consumes the next non-Rare triple or, if a Rare is delivered, the next rare-bearing triple. A suppressed occurrence reserves no additional triple.
+A suppressed occurrence reserves no additional triple.
 
 **Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently.
 
@@ -680,7 +690,7 @@ This exception occurs only once per run. The triples follow ordinary shared cons
 
 #### Supplementary cards
 
-**Brain Leech — Share Knowledge:** simulate all five slots first under the applicable difficulty rules. Consume one triple under the ordinary delivery rule. Generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability. Append them before any A0–6 replacements and presentation swaps.
+**Brain Leech — Share Knowledge:** generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability.
 
 **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
 
@@ -688,7 +698,7 @@ This exception occurs only once per run. The triples follow ordinary shared cons
 
 For own-character random-rarity offers, maintain one additional Rare-only identity sequence per character, shared by the three source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
 
-Before presentation swaps, replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
+Replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
 **Accepted tradeoff:** extra-Rare sequence state depends on prior Rare counts; companion replacements depend on offer composition. These A0–6 alignment and distribution tradeoffs are accepted because the design primarily targets A7+.
 
@@ -696,7 +706,7 @@ Before presentation swaps, replace the first Common in canonical generation orde
 
 #### Presentation
 
-For own-character random-rarity offers, after supplementary generation and any A0–6 replacements, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
+For own-character random-rarity offers, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
 #### Scroll Boxes
 
@@ -761,7 +771,7 @@ Fake Merchant's price rolls also use event RNG, keeping its shop fixed for the s
 
 **Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
-Resolve [A0–6 Rare replacements](#a06-multiple-rares) before reward enchantments. Each replacement retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
+Each [A0–6 Rare replacement](#a06-multiple-rares) retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Follow the [offer procedure](#offer-procedure) for replacement ordering. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
 **Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [canonical triple](#settled-policy-card-reward-offers) precedes presentation swaps.
 
