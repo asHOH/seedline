@@ -26,14 +26,16 @@ The [card-processing ranking](CARD_ORDER.md) is preliminarily settled. Fine-tuni
 
 **Decisions needed — deferred:** extend equivalent-copy handling to combat, including state changes and their effects on [shuffle assignment](DESIGN.md#settled-policy-card-shuffling). Consider alongside random card selection.
 
+### Random card selection
+
+**Constraints:** remove Aggression and Drain Power's discard-order dependence. Preserve All for One's discard-order return.
+
 ### Other combat randomness
 
 Open topics; develop each into a decision unit as choices and evidence emerge:
 
-- [ ] Random pile insertion
 - [ ] Generated cards
 - [ ] Combat transformations
-- [ ] Random card selection
 - [ ] Random cost values
 
 ## Implementation verification

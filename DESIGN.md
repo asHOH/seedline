@@ -53,7 +53,7 @@ Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
 
 Compare single-player runs with matching seeds, versions and rules, with all content unlocked (including relic, card and event pools).
 
-**Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), and custom-run modifiers.
+**Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, and content removed by game updates.
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact boundary hits in random sampling, game-wide.
 
@@ -131,7 +131,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [random pile insertion](#settled-policy-random-pile-insertion); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types). |
 
 ## Shared strategies
 
@@ -908,6 +908,31 @@ Use [generation routing](#settled-policy-generation-routing) to identify shared 
 
 These are shuffle-specific assignments; existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
 
+## Settled policy: random pile insertion
+
+**Intent:** align relative insertion depth across changing pile sizes while isolating unrelated sources and shuffles. Neighboring card identities may differ.
+
+Address independent sequences by [combat address](#combat-addresses) + sharing group + target pile + insertion purpose. Reset each combat; source copies share their group.
+
+| Sharing group | Coverage |
+|---|---|
+| Soul | Capture Spirit, Dirge, Grave Warden, Reave, Severance and Funerary Mask. |
+| Metamorphosis | Generated attacks. |
+| Dazed | Blessed Antler, Tea of Discourtesy, Noisebot and Entomancer's Personal Hive. |
+| Biiig Hug | Soot. |
+| Soul Fysh | Beckon. |
+| The Insatiable | Frantic Escape. |
+
+For each insertion, take the next uniform `u ∈ [0,1)` and choose zero-based gap `floor(u × (n + 1))`, where `n` is the target pile's current size. This preserves vanilla's conditional gap probabilities.
+
+Insert cards one at a time into the evolving pile, preserving vanilla generation order, intervening hooks and existing-card order.
+
+Advance once per inserted card, including into an empty pile; failed insertions consume zero under [shared consumption](#opportunity-consumption).
+
+**Within-combat deviation — SL 4A(↓):** group, target-pile and shuffle isolation remove cross-sequence rerolls.
+
+Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
+
 ## Settled policy: monster HP
 
 **Intent:** align combat HP sequences independently of earlier rooms, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
@@ -1160,6 +1185,8 @@ Encounter setup uses floor-based addressing. Shuffle RNG persists across combats
 **Shuffle baseline:** opening shuffles clone cards in deck order (`Player.PopulateCombatState`), then apply Fisher–Yates directly (`CardPile.RandomizeOrderInternal` → `UnstableShuffle`). Later `CardPileCmd.Shuffle` combines discard and remaining draw cards, then uses `StableShuffle`: `List.Sort` followed by Fisher–Yates. Both apply existing shuffle modifiers afterward. `CardModel.CompareTo` compares only model identity and upgrade level, leaving enchantments, persistent progress and combat state tied; tied-copy order can still affect same-seed results.
 
 **Discard-pile order:** affects which cards fit when `AllForOne` returns cards to a nearly full hand; `AggressionPower` and `DrainPower` also sample through order-sensitive shuffles. `FranticEscape.OnPlay` adds 1 cost for the combat, so the shuffle ties above can include copies with different costs, allowing discard order to affect which cost is drawn earlier.
+
+**Random insertion:** `CardPileCmd.Add` uses `Shuffle.NextInt(n + 1)`; `MegaRandom.NextInner` scales a uniform double, matching percentile gap sampling. Lifecycle guards skip insertions before rolling a position.
 
 #### Monster HP
 
