@@ -173,7 +173,9 @@ Ordinary combats use combat category + act-local combat ordinal + encounter iden
 
 Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter identity, leaving ordinary combat counters unchanged.
 
-Combat-local purposes derive from this address + purpose and reset each combat. Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [global consumption](#opportunity-consumption).
+Combat-local purposes derive from this address + purpose and reset each combat. Apply [shared isolation impact](#shared-isolation-impact) where this removes cross-combat outcome steering; source policies retain their within-combat deviation assessments.
+
+Preserve settled scopes, including [potion-generated cards](#settled-policy-potion-generated-cards); use [shared consumption timing](#opportunity-consumption-timing).
 
 ##### Monster occurrence identity
 
@@ -191,9 +193,8 @@ Cards with generation entries use their [stable entry addresses](#stable-entry-a
 
 Card initialization preserves generated attributes and presentation order; derive selection keys under the [shared addressing contract](#rng-derivation-and-addressing).
 
-#### Opportunity consumption
-
-**Invariant — opportunity consumption:** an operation's random state, including selection clocks, stays unchanged until its random result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
+#### Opportunity consumption timing
+**Invariant — consumption timing:** for an operation that consumes an opportunity, its random state, including selection clocks, stays unchanged until its result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
 
 Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
@@ -443,7 +444,7 @@ Relic generation consumes the rarity roll, chest opportunity and lifetime draw, 
 Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption).
+- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption-timing).
 
 Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
 
@@ -912,7 +913,7 @@ These are shuffle-specific assignments; existing [card reward selection keys](#c
 
 **Intent:** align relative insertion depth across changing pile sizes while isolating unrelated sources and shuffles. Neighboring card identities may differ.
 
-Address independent sequences by [combat address](#combat-addresses) + sharing group + target pile + insertion purpose. Reset each combat; source copies share their group.
+Address independent sequences by [combat address](#combat-addresses) + sharing group + target pile + insertion purpose. Source copies share their group.
 
 | Sharing group | Coverage |
 |---|---|
@@ -927,7 +928,7 @@ For each insertion, take the next uniform `u ∈ [0,1)` and choose zero-based ga
 
 Insert cards one at a time into the evolving pile, preserving vanilla generation order, intervening hooks and existing-card order.
 
-Advance once per inserted card, including into an empty pile; failed insertions consume zero under [shared consumption](#opportunity-consumption).
+Advance once per inserted card, including into an empty pile; failed insertions consume zero.
 
 **Within-combat deviation — SL 4A(↓):** group, target-pile and shuffle isolation remove cross-sequence rerolls.
 
@@ -949,7 +950,7 @@ Baseline: [monster HP mechanics](#monster-hp).
 
 **Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#settled-policy-encounter-setup).
 
-**Shared rules:** isolate monster model identities except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order under [opportunity consumption](#opportunity-consumption). Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
+**Shared rules:** isolate monster model identities except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
 **Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
 
@@ -1001,7 +1002,7 @@ Baseline: [monster AI mechanics](#monster-ai).
 
 **Intent:** align random enemy targets across changing eligible sets.
 
-Use four independent sequences, reset each combat and addressed by [combat address](#combat-addresses) + sharing group + targeting purpose:
+Use four independent sequences addressed by [combat address](#combat-addresses) + sharing group + targeting purpose:
 
 | Sharing group | Sources |
 |---|---|
@@ -1012,13 +1013,11 @@ Use four independent sequences, reset each combat and addressed by [combat addre
 
 Zero damage preserves classification.
 
-Apply [shared consumption](#opportunity-consumption): With fewer than two eligible targets, advance nothing.
+With fewer than two eligible targets, advance nothing.
 
 Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
 
 Revivals retain occurrence identity; summons and replacements receive fresh identities.
-
-Combat resets inherit [shared isolation impact](#shared-isolation-impact), **SL 5(↓)**.
 
 **Within-combat deviation — SL 4A(↓):** group isolation removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
 
@@ -1028,7 +1027,7 @@ Baseline: [random creature targeting](#random-creature-targeting).
 
 Use one sequence shared by all random-orb sources, derived from [combat address](#combat-addresses) + orb-type purpose, preserving vanilla's uniform sampling.
 
-Apply [shared consumption](#opportunity-consumption): failed channeling consumes zero.
+Failed channeling consumes zero.
 
 **Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
 
