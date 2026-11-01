@@ -881,6 +881,8 @@ Address opening shuffles by [combat address](#combat-addresses) + opening purpos
 
 **Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
 
+**Vanilla deviation — SL 4A(↓):** state-aware [Processing Order](#deterministic-card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
+
 ### Priority assignment
 
 The opening Innate subgroup uses [Processing Order](#deterministic-card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
@@ -1153,9 +1155,11 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 
 #### Combat setup and shuffles
 
-Encounter setup uses floor-based addressing. Shuffle RNG persists across combats; extra reshuffles advance the same generator used for later opening hands.
+Encounter setup uses floor-based addressing. Shuffle RNG persists across combats; reshuffles and random pile insertions advance the same generator used for later opening hands.
 
-**Shuffle input order:** `Player.PopulateCombatState` clones cards in deck order; `CardPile.RandomizeOrderInternal` applies `UnstableShuffle` directly. Later `CardPileCmd.Shuffle` calls `StableShuffle`, which sorts before shuffling. `CardModel.CompareTo` compares model identity and upgrade level; enchantment and persistent progress remain tied.
+**Shuffle baseline:** opening shuffles clone cards in deck order (`Player.PopulateCombatState`), then apply Fisher–Yates directly (`CardPile.RandomizeOrderInternal` → `UnstableShuffle`). Later `CardPileCmd.Shuffle` combines discard and remaining draw cards, then uses `StableShuffle`: `List.Sort` followed by Fisher–Yates. Both apply existing shuffle modifiers afterward. `CardModel.CompareTo` compares only model identity and upgrade level, leaving enchantments, persistent progress and combat state tied; tied-copy order can still affect same-seed results.
+
+**Discard-pile order:** affects which cards fit when `AllForOne` returns cards to a nearly full hand; `AggressionPower` and `DrainPower` also sample through order-sensitive shuffles. `FranticEscape.OnPlay` adds 1 cost for the combat, so the shuffle ties above can include copies with different costs, allowing discard order to affect which cost is drawn earlier.
 
 #### Monster HP
 
