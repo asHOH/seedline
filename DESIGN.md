@@ -1,8 +1,14 @@
 # Deterministic seed mod — design
 
-This evolving specification records settled decisions, rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Unspecified systems retain existing behavior.
+This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Unspecified systems retain existing behavior.
 
-**Reading convention:** in the main body, unlabeled design statements are normative. Labeled baselines and references describe existing mechanics; deviation notes, rationale, tradeoffs, examples and rejected alternatives are explanatory. The Reference and Appendix sections are descriptive only.
+**Reading guide:**
+
+- Start with [goals](#goals-and-principles), [scope](#scope) and [terms](#concepts-and-terms).
+- Find a source in the [policy guide](#architecture-overview), or compare generation sources in [generation routing](#settled-policy-generation-routing). Policies link to the [shared strategies](#shared-strategies) they use.
+- Use [Reference](#reference) for calibration and [Appendix](#appendix-existing-mechanics) for existing mechanics.
+
+**Reading convention:** unlabeled design statements in the main body define required behavior. Labeled baselines and references describe existing mechanics. Deviation notes, rationale, tradeoffs, examples and rejected alternatives explain the design. Reference and Appendix are descriptive only.
 
 ## Goals and principles
 
@@ -37,7 +43,10 @@ For gameplay changes, noticeability and strategic impact take precedence over ex
 
 **Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones, and no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe in-room exploration at any grade: `5(↓)` alters meaningful strategy while simplifying exploration.
 
-**Play modes:** **NoSL** assumes no save/loading and covers in-room and upper-level strategy. **SL** explores every available action sequence from the current save before committing to the next saved state. Assess its best attainable room outcomes and upper-level decisions, or future-planning in-room decisions such as which potions to carry onward.
+**Play modes:**
+
+- **NoSL:** assumes no save/loading; covers in-room and upper-level strategy.
+- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and in-room future planning, such as which potions to carry onward.
 
 Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
 
@@ -108,7 +117,15 @@ Category and RNG ownership are separate: a reward can use event RNG.
 
 ## Architecture overview
 
-Each controlled random operation has five descriptive dimensions: **outcome** (what is randomized), **sharing scope** (which operations share randomness), **address** (identifying corresponding opportunities or entries), **form** (addressed draw, stream, finite allocation or another coupling mechanism), and **state** (what changes, resets and must survive save/load).
+Each controlled random operation has five descriptive dimensions:
+
+| Dimension | Describes |
+|---|---|
+| Outcome | What is randomized. |
+| Sharing scope | Which operations share randomness. |
+| Address | How corresponding opportunities or entries are identified. |
+| Form | Addressed draw, stream, finite allocation or another coupling mechanism. |
+| State | What changes, resets and must survive save/load. |
 
 Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
 
@@ -194,6 +211,7 @@ Cards with generation entries use their [stable entry addresses](#stable-entry-a
 Card initialization preserves generated attributes and presentation order; derive selection keys under the [shared addressing contract](#rng-derivation-and-addressing).
 
 #### Opportunity consumption timing
+
 **Invariant — consumption timing:** for an operation that consumes an opportunity, its random state, including selection clocks, stays unchanged until its result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
 
 Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
@@ -204,7 +222,14 @@ Deferred rewards consume at the payoff opportunity, not acquisition of the effec
 
 **Scope:** [potion-generated cards](#settled-policy-potion-generated-cards) and [Snecko Oil costs](#settled-policy-random-cost-values).
 
-Each covered potion type has its own run-wide effect ordinal. A committed use consumes one ordinal for its effect batch, including an empty batch; discard or trade skips one batch. Permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal, once per skipped reward. Acquisition leaves the ordinal unchanged.
+Each covered potion type has its own run-wide effect ordinal:
+
+| Action | Effect ordinal |
+|---|---|
+| Committed use, including an empty effect batch | Consume one ordinal for the batch. |
+| Discard or trade | Skip one batch. |
+| Permanently skip an unclaimed covered potion reward on the reward screen | Consume one ordinal, once per skipped reward. |
+| Acquire | Leave unchanged. |
 
 **Cauldron exception:** leaving a Cauldron reward unclaimed or discarding an acquired Cauldron potion before entering the next room leaves the ordinal unchanged. After entering the next room, acquired Cauldron potions follow the ordinary rule.
 
@@ -214,7 +239,12 @@ Each covered potion type has its own run-wide effect ordinal. A committed use co
 
 Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
 
-At each checkpoint, save sequence contents and positions, including original entry addresses, consumption, marker positions, conditions, remaining lifetimes and carried entries, plus opportunity counters and RNG state. Also preserve chest-offer history and pending acquisition/skip decisions, selection state, logical-to-physical occurrence associations and pending fixed-cohort selections wherever used.
+At each checkpoint, save the following wherever used:
+
+- **Sequences:** contents, positions, original entry addresses and consumption.
+- **Markers:** positions, conditions, remaining lifetimes and carried entries.
+- **Opportunities:** counters and RNG state; chest-offer history and pending acquisition/skip decisions.
+- **Selection:** selection state, logical-to-physical occurrence associations and pending fixed-cohort selections.
 
 ### Generation
 
@@ -234,9 +264,15 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 **Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
-**Advancement:** generalize fixed-rarity draws. Viewing per-rarity identity sequences and rarity rolls together as a mixed sequence, later entries of that rarity fill earlier positions of the same rarity. For any filter, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, advance `B` to 2, `C` to 6, and so on. Ineligible positions remain unchanged, preserving the sequence's shape.
+**Advancement:** return the first eligible entry, then move each later eligible entry to the preceding eligible position. Ineligible positions remain unchanged. For example, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, move `B` to 2, `C` to 6, and so on.
 
-**Method — deferred advancement:** a filtered draw returns the first eligible entry, replacing it with a marker for its filter. Resolve a marker by moving the next eligible entry after it into the marker's position, leaving the same filter's marker at the supplying position. An ordinary draw resolves any front marker, then returns the entry and removes the drawn position. This performs the same advancement on demand for infinite sequences and finite relic allocations.
+This generalizes fixed-rarity draws: viewing per-rarity identity sequences and rarity rolls as one mixed sequence, later entries of a rarity fill earlier positions of that rarity.
+
+**Method — deferred advancement:** perform the advancement on demand for infinite sequences and finite relic allocations:
+
+- **Filtered draw:** return the first eligible entry and replace it with a marker for its filter.
+- **Marker resolution:** move the next eligible entry after it into the marker's position. Leave the same filter's marker at the supplying position.
+- **Ordinary draw:** resolve any front marker, then return the entry and remove the drawn position.
 
 **Marker collisions:** when a draw using filter `Y` encounters a marker for filter `X`, resolve that marker first.
 
@@ -323,7 +359,12 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 Where renewal uses a per-occurrence count, derive each independent draw from selection key + selection scope/purpose + renewal count.
 
-**Selection and update:** take the eligible occurrence with the smallest clock, `m`. On committing the selection, subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal. A selected occurrence consumes its clock. Source policies define when and how to renew consumed clocks from the same distribution.
+**Selection and update:**
+
+1. Select the eligible occurrence with the smallest clock, `m`.
+2. On commitment, consume its clock and subtract `m` from every unselected eligible survivor. Ineligible occurrences retain their clocks without subtraction or renewal.
+
+Source policies define when and how to renew consumed clocks from the same distribution.
 
 **Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
@@ -373,17 +414,22 @@ Apply the [shared generation strategies](#generation); source policies retain el
 
 ### Card offers and shop cards
 
-For card reward offers, group identities by pool, rarity request, eligibility filter and draw grouping. Upgrade rules and the number of cards taken leave grouping unchanged. The expanded-pool row modifies the applicable offer route.
+For card reward offers, group identities by pool, rarity request, eligibility filter and draw grouping. Upgrade rules and the number of cards taken leave grouping unchanged.
 
-For own-character random-rarity offers, luck controls Rare delivery; triple sequences supply the base Common/Uncommon composition.
+**Own-character random-rarity offers** share [luck and thresholds](#luck-and-rarity-offset), [non-Rare and rare-bearing triples](#offer-sequences), and [A0–6 extra Rares](#a06-multiple-rares). Luck controls Rare delivery; triples supply the base Common/Uncommon composition. The three groups differ in Rare odds and offer size:
+
+| Group | Rare odds | Sources and offer size |
+|---|---|---|
+| Normal-fight rule | Normal-fight chance with the shared combat offset. | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights: three-card offers. |
+| Elite rule | Elite chance with the same combat offset. | Elites and The Hunt in elite combats: three-card offers. |
+| Fixed base odds | Base Rare odds without the combat offset. | Orrery: five three-card offers; Lost Coffer: one; Trial's Nondescript Guilty: two. Brain Leech's Share Knowledge: choose one of five, using [supplementary cards](#supplementary-cards). |
+
+**Other offers and shop cards:** the expanded-pool row also applies to the random-rarity groups above.
 
 | Request / source | Rarity state or rule | Identity supply | Grouping / exceptions |
 |---|---|---|---|
 | Initial shop cards | Shop-ordinal generation using [shop odds](#stock-and-prices). | Shop-ordinal generation. | — |
 | Courier cards | Separate Attack/Skill/Power rarity sequences using shop odds; colorless requests fixed Uncommon or Rare. | Per-type, per-rarity sequences for Attack/Skill/Power; one sequence each for Uncommon and Rare colorless. | Individual restocks. |
-| Own-character random-rarity offers: normal-fight rule | Shared [luck, thresholds and combat offset](#luck-and-rarity-offset); normal-fight Rare chance. | Shared [non-Rare and rare-bearing triples](#offer-sequences), plus [A0–6 extra Rares](#a06-multiple-rares), across all three random-rarity groups. | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights: three-card offers. |
-| Own-character random-rarity offers: elite rule | Same luck, thresholds and combat offset; elite Rare chance. | Same supplies. | Elites and The Hunt in elite combats: three-card offers. |
-| Own-character random-rarity offers: fixed base odds | Same luck and thresholds; base Rare odds without the combat offset. | Same supplies. | Orrery: five three-card offers; Lost Coffer: one; Trial's Nondescript Guilty: two. Brain Leech's Share Knowledge: choose one of five, using [supplementary cards](#supplementary-cards). |
 | Own-character fixed-Rare offers | Fixed Rare. | Separate Rare triple sequence. | One triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye's Rare offer and Crystal Sphere's Rare offer. |
 | Own-character fixed-Common offers | Fixed Common. | Separate Common triple sequence. | Glass Eye: two triples; Crystal Sphere: one. [Room Full of Cheese](#supplementary-cards) and [Scroll Boxes](#scroll-boxes) have local rules. |
 | Own-character fixed-Uncommon offers | Fixed Uncommon. | Separate Uncommon triple sequence. | Glass Eye: two triples; Crystal Sphere: one. |
@@ -560,15 +606,23 @@ Colorless and other-character rewards share across batch sizes because their few
 
 #### Luck and rarity offset
 
-Maintain luck `L`, initially zero, and a threshold `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal. Advance it only when a Rare is delivered into a generated offer.
+**State:** luck `L` starts at zero; the combat offset `o` starts at `-0.05`. The threshold is `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal, advancing only when a Rare is delivered into a generated offer.
 
-Process card slots in order. Each slot adds `-ln(1 - p)` to luck, where `p` is its Rare probability. Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with one shared combat offset `o`; fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
+**Per slot:** process card slots in order. Each adds `-ln(1 - p)` to luck, where `p` is its Rare probability:
 
-The combat offset starts at `-0.05`. Normal-fight-rule and elite non-Rare slots add `0.005` (`0.01` without Scarcity), capped at `0.40`; a delivered Rare in either group resets it to `-0.05`. Zero-probability slots add no luck but still grow the offset. Retain boss-reward offset resets, without advancing luck or these offer sequences.
+- Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with the shared combat offset.
+- Fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
 
-Subject to the difficulty-specific cap below, when a slot reaches the threshold, resolve that slot as Rare, reset luck to zero and advance to the next threshold. Discard the overshoot. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
+**Rare delivery:** subject to the difficulty-specific cap below, a slot reaching the threshold becomes Rare. Reset luck to zero, discard the overshoot and advance to the next threshold. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
 
-Luck, the current threshold and sequence state carry across acts; the combat offset resets to `-0.05` between acts. Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
+**Combat offset updates:**
+
+- Normal-fight-rule and elite non-Rare slots add `0.005` (`0.01` without Scarcity), capped at `0.40`. Zero-probability slots still grow the offset while adding no luck.
+- A delivered Rare in either group resets the offset to `-0.05`.
+- Retain boss-reward offset resets, without advancing luck or these offer sequences.
+- Between acts, reset the offset to `-0.05`; carry luck, the current threshold and sequence state forward.
+
+Save this state under the [shared saved-state contract](#saved-state), including an already-reached threshold awaiting delivery.
 
 **Rationale:** before deferral, `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`. Exponential thresholds preserve the supplied waiting probabilities without fitting a route-dependent luck distribution. This does not make the capped, deferred reward system identical to vanilla.
 
@@ -576,9 +630,16 @@ Luck, the current threshold and sequence state carry across acts; the combat off
 
 #### A7+: one Rare per offer and deferral
 
-Cap each covered offer at one Rare. If a later slot reaches the next threshold, suppress its Rare and keep the reached threshold pending: do not reset luck or advance the threshold. Treat suppressed slots as non-Rare for applicable offset updates. Continue accumulating luck, but create no further pending occurrences until delivery.
+Cap each covered offer at one Rare. If a later slot reaches the next threshold:
 
-A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery. At the next such offer, deliver the pending Rare in its first simulated slot instead of performing that slot's ordinary check; reset luck, clear pending and advance the threshold once, applying the delivery source's offset rule. Process its remaining slots normally. Ineligible offers leave the pending threshold intact and apply normal non-Rare offset growth.
+- Suppress that Rare and keep the reached threshold pending, retaining luck and the current threshold.
+- Treat suppressed slots as non-Rare for applicable offset updates.
+- Continue accumulating luck; only one occurrence can be pending until delivery.
+
+A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery.
+
+- **Next eligible offer:** deliver the pending Rare in its first simulated slot instead of that slot's ordinary check. Reset luck, clear pending and advance the threshold once, applying the delivery source's offset rule. Process remaining slots normally.
+- **Ineligible offer:** retain the pending threshold and apply normal non-Rare offset growth.
 
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
@@ -600,7 +661,14 @@ A generated offer consumes the next non-Rare triple or, if a Rare is delivered, 
 
 #### Uncommon probabilities
 
-Use **38% ordinary / 39% rare-bearing companions** at A7+, and **40% / 40.5%** at A0–6, except for the opening entries below. These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply to these probabilities.
+Use these Uncommon probabilities, except for the opening entries below:
+
+| Difficulty | Non-Rare offers | Rare-bearing companions |
+|---|---|---|
+| A7+ | 38% | 39% |
+| A0–6 | 40% | 40.5% |
+
+These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply.
 
 **Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
 
@@ -1057,9 +1125,17 @@ Failed channeling consumes zero.
 
 **Card categories:** starter Strikes; starter Defends; Other Basic 1; Other Basic 2; Others. Other Basic slots follow each character's original starting-deck identity order and remain fixed through removals. Classify by current identity: upgrades and copies retain its category; transformations use the replacement's category. Other Strike-tagged attacks belong to Others.
 
-Consume one entry per eligible cost roll. Confused's X cards and Slither draws that have left hand consume zero. When both effects apply to the same draw, Slither reuses that draw's Confused value at Slither's usual timing, retaining its hand check and leaving its own sequence unchanged. Keep the enchantment; its own sequence resumes when Confused is absent. Reapplication preserves late overwrites such as Kingly Kick's draw discount.
+**Consumption:** consume one entry per eligible cost roll. Confused's X cards and Slither draws that have left hand consume zero.
 
-**Oil assignment:** after Oil finishes drawing, order eligible cards within each category by latest successful entry into hand, earliest first. Draws, retrievals and generation receive entry positions; retained cards keep theirs, and leaving then returning refreshes them. Unordered entry batches share one entry ordinal, with internal ascending [Processing Order](#deterministic-card-processing-order) frozen at entry. Sequential draws and explicitly ordered returns, including All for One, preserve source order. Combat-equivalent-copy handling remains deferred alongside shuffling.
+**Confused + Slither:** when both apply to the same draw, Slither reuses that draw's Confused value at Slither's usual timing, retaining its hand check and leaving its own sequence unchanged. Keep the enchantment; its sequence resumes when Confused is absent. Reapplication preserves late overwrites such as Kingly Kick's draw discount.
+
+**Oil assignment:** after Oil finishes drawing, order eligible cards within each category by latest successful entry into hand, earliest first:
+
+- Draws, retrievals and generation receive entry positions. Retained cards keep theirs; leaving then returning refreshes them.
+- Unordered entry batches share one entry ordinal, with internal ascending [Processing Order](#deterministic-card-processing-order) frozen at entry.
+- Sequential draws and explicitly ordered returns, including All for One, preserve source order.
+
+Combat-equivalent-copy handling remains deferred alongside shuffling.
 
 Oil's opportunity ordinal persists across combats. [Shared isolation impact](#shared-isolation-impact) applies to removing cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
 
