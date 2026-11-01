@@ -36,7 +36,6 @@ Open topics; develop each into a decision unit as choices and evidence emerge:
 
 - [ ] Generated cards
 - [ ] Combat transformations
-- [ ] Random cost values
 
 ## Implementation verification
 

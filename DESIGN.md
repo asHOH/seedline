@@ -129,9 +129,9 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 |---|---|
 | Card and potion selection | [Wing Charm](#settled-policy-wing-charm); [persistent selection](#settled-policy-persistent-selection). |
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
-| Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards). |
+| Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards); [Snecko Oil costs](#settled-policy-random-cost-values). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [random pile insertion](#settled-policy-random-pile-insertion); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [random pile insertion](#settled-policy-random-pile-insertion); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types); [random cost values](#settled-policy-random-cost-values). |
 
 ## Shared strategies
 
@@ -198,7 +198,17 @@ Card initialization preserves generated attributes and presentation order; deriv
 
 Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
-**Exception:** [potion-generated cards](#settled-policy-potion-generated-cards) also consume opportunities on discard, trade and covered reward skips.
+**Exception:** [potion effect opportunities](#potion-effect-opportunities) also advance on discard, trade and covered reward skips.
+
+#### Potion effect opportunities
+
+**Scope:** [potion-generated cards](#settled-policy-potion-generated-cards) and [Snecko Oil costs](#settled-policy-random-cost-values).
+
+Each covered potion type has its own run-wide effect ordinal. A committed use consumes one ordinal for its effect batch, including an empty batch; discard or trade skips one batch. Permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal, once per skipped reward. Acquisition leaves the ordinal unchanged.
+
+**Cauldron exception:** leaving a Cauldron reward unclaimed or discarding an acquired Cauldron potion before entering the next room leaves the ordinal unchanged. After entering the next room, acquired Cauldron potions follow the ordinary rule.
+
+**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch.
 
 #### Saved state
 
@@ -390,7 +400,7 @@ For own-character random-rarity offers, luck controls Rare delivery; triple sequ
 | Permanent transformations / [covered direct additions](#settled-policy-permanent-transformations-and-direct-card-additions): own-character and colorless pools | Separate transformation/addition rarity sequences per pool. Transformations weight by current eligible identity counts per rarity, excluding the original; additions use vanilla base odds and unavailable-rarity fallback. | Shared Common/Uncommon/Rare identity sequences per pool. | Individual entries; separate from combat transformations. |
 | Infested Automaton: Study / Touch Core | Event RNG; leaves the addition rarity sequence unchanged. | Same permanent own-character identity sequences as the preceding row. | — |
 | Permanent transformations / [covered direct additions](#settled-policy-permanent-transformations-and-direct-card-additions): other-character and curse pools | Direct identity draws. | One sequence per pool: four other characters and curse. | Individual entries; separate from combat transformations. |
-| [Potion-generated cards](#settled-policy-potion-generated-cards) | Uniform eligible identities, without a separate rarity roll. | Complete batch addressed by potion type + that type's card-generation ordinal. | Separate from other combat card generation. |
+| [Potion-generated cards](#settled-policy-potion-generated-cards) | Uniform eligible identities, without a separate rarity roll. | Complete batch addressed by potion type + its [effect ordinal](#potion-effect-opportunities). | Separate from other combat card generation. |
 
 ## Settled policy: relics
 
@@ -785,17 +795,11 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 **Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
 
-A committed use, discard or trade consumes one card-generation ordinal of that potion type: use generates the [routed batch](#settled-policy-generation-routing); discard or trade skips it. Acquisition leaves this ordinal unchanged.
-
-**Reward skips:** permanently skipping an unclaimed covered potion reward on the reward screen also consumes one ordinal. Count each skipped reward once.
-
-**Cauldron exception:** leaving a Cauldron reward unclaimed or discarding an acquired Cauldron potion before entering the next room leaves the card-generation ordinal unchanged. After entering the next room, acquired Cauldron potions follow the ordinary use/discard/trade rule.
+Use [potion effect opportunities](#potion-effect-opportunities); each use generates the [routed batch](#settled-policy-generation-routing).
 
 Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
 
 **Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
-
-**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type card batch.
 
 ## Settled policy: unknown-room resolution
 
@@ -1040,6 +1044,28 @@ Use one sequence shared by all random-orb sources, derived from [combat address]
 Failed channeling consumes zero.
 
 **Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
+
+## Settled policy: random cost values
+
+**Intent:** align cost rolls within card categories while separating combat draws from persistent potion opportunities. Cost rolls remain uniform over 0–3.
+
+| Independent group | Sequence address | Assignment |
+|---|---|---|
+| Confused — Snecko Eye and Fake Snecko Eye | [Combat address](#combat-addresses) + Confused cost purpose + card category | Five sequences, each following draw order. |
+| Slither | Combat address + Slither cost purpose | One sequence shared by all enchanted copies, following draw order. |
+| Snecko Oil | Oil cost purpose + [potion effect ordinal](#potion-effect-opportunities) + card category | Five fresh sequences per opportunity, using hand-entry order below. |
+
+**Card categories:** starter Strikes; starter Defends; Other Basic 1; Other Basic 2; Others. Other Basic slots follow each character's original starting-deck identity order and remain fixed through removals. Classify by current identity: upgrades and copies retain its category; transformations use the replacement's category. Other Strike-tagged attacks belong to Others.
+
+Consume one entry per eligible cost roll. Confused's X cards and Slither draws that have left hand consume zero. When both effects apply to the same draw, Slither reuses that draw's Confused value at Slither's usual timing, retaining its hand check and leaving its own sequence unchanged. Keep the enchantment; its own sequence resumes when Confused is absent. Reapplication preserves late overwrites such as Kingly Kick's draw discount.
+
+**Oil assignment:** after Oil finishes drawing, order eligible cards within each category by latest successful entry into hand, earliest first. Draws, retrievals and generation receive entry positions; retained cards keep theirs, and leaving then returning refreshes them. Unordered entry batches share one entry ordinal, with internal ascending [Processing Order](#deterministic-card-processing-order) frozen at entry. Sequential draws and explicitly ordered returns, including All for One, preserve source order. Combat-equivalent-copy handling remains deferred alongside shuffling.
+
+Oil's opportunity ordinal persists across combats. [Shared isolation impact](#shared-isolation-impact) applies to removing cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
+
+**Within-combat deviation — SL 4A(↓):** group/category isolation, X skipping and overlap reuse remove consumption-based rerolls; Processing Order within unordered entry batches removes click/enumeration-order Oil rerolls.
+
+Baseline: [random energy costs](#random-energy-costs).
 
 ## Reference
 
@@ -1309,6 +1335,18 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 **Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
 
 **Pael's Tooth:** The player selects and removes five unupgraded cards. Each subsequent combat returns one random remaining stored card, upgraded; all five return after five combats. Returned records leave the cohort. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner.
+
+#### Random energy costs
+
+Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide `CombatEnergyCosts` RNG; combat entry preserves its position. Without intervening Confused/Slither rolls, the next Oil continues the unused stream. Their on-draw rolls, including during Oil's own draw, shift its starting position; shuffles, targeting and other RNG streams leave it unchanged. Catfood adds no cost-specific patch.
+
+| Source | Vanilla mechanics |
+|---|---|
+| Confused | Applied by Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant). Each owned card drawn with nonnegative canonical energy cost receives a combat-long cost modifier. X cards have canonical cost zero, so they consume a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
+| Slither | Wood Carvings' Snake enchantment. Rerolls its card on draw only while it remains in hand, with a combat-long modifier. Enchanting excludes X and Unplayable cards. |
+| Snecko Oil | Draws seven, then iterates the resulting hand in hand order. Rerolls non-X cards with nonnegative unmodified energy cost until turn end or next play, whichever comes first. |
+
+Draw hooks resolve powers before cards and their enchantments: Confused rolls first, Kingly Kick applies its −1 draw discount, then Slither overwrites it with a separate roll. Hellraiser's earlier draw hook can play a drawn Strike before Slither checks hand presence.
 
 #### Slippery Bridge selection
 
