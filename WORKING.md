@@ -1,4 +1,4 @@
-# Deterministic seed mod — working document
+# Same-Seed Consistency Mod — working document
 
 Unresolved work and supporting evidence, evaluated against [DESIGN's goals and fairness principle](DESIGN.md#goals-and-principles). [DESIGN.md](DESIGN.md) owns settled policies and reusable mechanics references.
 

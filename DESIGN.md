@@ -1,4 +1,4 @@
-# Deterministic seed mod — design
+# Same-Seed Consistency Mod — design
 
 This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Unspecified systems retain existing behavior.
 
@@ -12,13 +12,13 @@ This specification records settled policies, their rationale and existing-mechan
 
 ## Goals and principles
 
-**Goal:** make same-seed runs offer comparable choices and combat challenges across different routes and decisions. Compare corresponding ordinal opportunities—for example, each run's first shop or third normal-fight reward—even on different floors.
+**Goal:** keep choices and combat challenges comparable across same-seed runs with different routes and decisions. Compare corresponding opportunities—such as each run's first shop or third normal-fight reward—even on different floors.
 
-**Fairness principle — opportunity isolation:** preserve meaningful consequences while minimizing unrelated future gameplay changes. For example, room visits or reward choices should not shift unrelated later randomness.
+**Fairness principle — opportunity isolation:** preserve meaningful consequences while minimizing unrelated future gameplay changes. For example, room visits and reward choices should leave unrelated later randomness unchanged.
 
 **Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or fixes to unintended vanilla behavior. Fixes to unintended behavior still receive impact grades; currently classified: [forced-event bypass](#settled-policy-forced-events).
 
-**Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that undermine same-seed consistency, often early or mid-game. Differences caused only by consuming different numbers of opportunities within intentionally shared sequences are benign, even when they produce late-game divergence.
+**Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that undermine comparable opportunities, often early or mid-game. Differences caused solely by unequal consumption of intentionally shared sequences are benign, including late-game divergence.
 
 **Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent random state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
 
