@@ -437,7 +437,7 @@ For card reward offers, group identities by pool, rarity request, eligibility fi
 | The Future of Potions: Attack / Skill offers | Specified rarity. | Event RNG addressed by rarity and type, independently of the other potion options. | — |
 | Colorless offers: Lead Paperweight / Brain Leech's Rip | Existing Uncommon/Rare odds: **98.51% / 1.49%**. | One shared reward sequence. | Individual entries across batch sizes. |
 | Other-character offers | Kaleidoscope: event RNG for character and rarity. Colorful Philosophers / Sea Glass: fixed rarities. | **12 shared identity sequences: four other characters × Common/Uncommon/Rare**. | Individual entries across batch sizes. |
-| Prismatic Gem / Dingy Rug: eligible expanded-pool offers | Retain the source's rarity state and rules. | Independent sequences for the effective expanded pool; reuse the existing group when the complete request's eligible pool is unchanged. | Preserve source grouping; apply to whole requests. Candy uses the inherited pool's Power sequences. [Expansion rules](#prismatic-gem-and-dingy-rug). |
+| Prismatic Gem / Dingy Rug: eligible expanded-pool offers | Source rarity state and rules. | [Expanded-pool identity sequences](#prismatic-gem-and-dingy-rug). | Source draw grouping. |
 
 ### Other card generation
 
@@ -719,11 +719,7 @@ Resolve Defect's two independent 1% triple-Claw substitution checks with event R
 
 ### Rerolls
 
-A reachable reroll consumes a fresh offer from its pool/request/filter group, including expanded pools, with ordinary offer structure and duplicate rules. Preserve source-specific rarity and offset effects.
-
-**Shared-luck offers:** apply luck and deferral rules; other sources remain outside that system.
-
-**Fixed-rarity rerolls:** retain their group's sequence structure. Triple-backed offers consume fresh triples; Power and other-character offers consume the required individual entries from their respective sequences. They do not consume the random-rarity group's rare-bearing sequence.
+A reachable reroll follows its source's [generation route](#settled-policy-generation-routing) and, where applicable, the [offer procedure](#offer-procedure), consuming fresh entries from its pool/request/filter group, including expanded pools. Preserve source-specific rarity and offset effects, offer structure and duplicate rules.
 
 Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
 
@@ -733,11 +729,14 @@ Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the nor
 
 **Intent:** align rewards from the same expanded pool.
 
-Preserve the [existing pool-modification boundaries](#card-reward-offers) and apply the expanded-pool route. All results, including own-character cards, consume only that group; ordinary identity sequences and triple boundaries remain unchanged. Rug's fixed-Common or already-colorless offers reuse their existing group because their complete eligible pool is unchanged.
+Preserve the [existing pool-modification boundaries](#card-reward-offers). Select the identity group for the complete request:
 
-Retain source rarity rules, eligible-card sampling weights, offer sizes, duplicate exclusions, luck rules and upgrade rules. Neither relic resets luck state or restarts opening-only rarity exceptions.
+- **Unchanged eligible pool:** reuse its existing group, including Rug's fixed-Common or already-colorless offers.
+- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume this group; ordinary identity sequences and triple boundaries remain unchanged.
 
-Lasting Candy retains its source rarity-roll sequence position and fallback rules when its inherited pool changes.
+Retain source rarity, luck and upgrade rules, eligible-card sampling weights, offer sizes and duplicate exclusions. Neither relic resets luck state or restarts opening-only rarity exceptions.
+
+Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll sequence position and fallback rules.
 
 **Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
