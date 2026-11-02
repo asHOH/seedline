@@ -210,6 +210,28 @@ Cards with generation entries use their [stable entry addresses](#stable-entry-a
 
 Card initialization preserves generated attributes and presentation order; derive selection keys under the [shared addressing contract](#rng-derivation-and-addressing).
 
+#### Card reward selection keys
+
+When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet and Slippery Bridge. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
+
+Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
+
+#### Logical-occurrence lifetime
+
+**Scope:** settled card and owned-potion selection policies, using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules.
+
+| Operation | Occurrence and selection state |
+|---|---|
+| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
+| Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
+| Change status or eligibility | Retain the occurrence and unused clocks through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
+| Copy a card | Create a fresh occurrence from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
+| Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
+| Permanently transform a card | Retire the original. Apply [source-specific gameplay inheritance](#permanent-transformations-and-direct-additions), then initialize fresh replacement selection state. |
+| [Route equivalent copies](#representative-routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
+
+**Related reward-entry exception:** [A0–6 replacement state](#a06-multiple-rares).
+
 #### Opportunity consumption timing
 
 **Invariant — consumption timing:** for an operation that consumes an opportunity, its random state, including selection clocks, stays unchanged until its result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
@@ -301,22 +323,6 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers).
 
 ### Selection
 
-#### Logical-occurrence lifetime
-
-**Scope:** settled card and owned-potion selection policies, using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules.
-
-| Operation | Occurrence and selection state |
-|---|---|
-| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
-| Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
-| Change status or eligibility | Retain the occurrence and unused clocks through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
-| Copy a card | Create a fresh occurrence from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
-| Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
-| Permanently transform a card | Retire the original. Apply [source-specific gameplay inheritance](#permanent-transformations-and-direct-additions), then initialize fresh replacement selection state. |
-| [Route equivalent copies](#representative-routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
-
-**Related reward-entry exception:** [Wing Charm's A0–6 replacement priorities](#settled-policy-wing-charm).
-
 #### Equivalent-card selections
 
 **Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; selection state and presentation position do not distinguish the class.
@@ -344,12 +350,6 @@ Identical cards remain tied regardless of selection state, acquisition order or 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
 
 Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#settled-policy-card-shuffling).
-
-#### Card reward selection keys
-
-When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet and Slippery Bridge. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
-
-Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
 
 #### Corrected persistent selection priorities
 
@@ -700,6 +700,8 @@ For own-character random-rarity offers, maintain one additional Rare-only identi
 
 Replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
+**Replacement state:** identity and inherent upgrade roll come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership, and its [Acts 1–2 shuffle membership](#source-based-assignment--acts-12).
+
 **Accepted tradeoff:** extra-Rare sequence state depends on prior Rare counts; companion replacements depend on offer composition. These A0–6 alignment and distribution tradeoffs are accepted because the design primarily targets A7+.
 
 **Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Frequency:** rare — at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
@@ -771,7 +773,7 @@ Fake Merchant's price rolls also use event RNG, keeping its shop fixed for the s
 
 **Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
-Each [A0–6 Rare replacement](#a06-multiple-rares) retains the replaced slot's Wing Charm priority or supplementary-card membership; its identity and inherent upgrade roll come from its own entry. Follow the [offer procedure](#offer-procedure) for replacement ordering. Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
+Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering](#offer-procedure). Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
 **Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [canonical triple](#settled-policy-card-reward-offers) precedes presentation swaps.
 
@@ -997,7 +999,7 @@ Use [generation routing](#settled-policy-generation-routing) to identify shared 
 - **Triple representative:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + assignment purpose + card identity. Freeze the representative at acquisition; the others enter the remaining group.
 - **Transformations:** treat as deletion plus direct addition.
 - **Copies and event-local supplementary cards:** enter the remaining group.
-- **A0–6 extra-Rare replacements:** retain the replaced slot's membership.
+- **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
 These are shuffle-specific assignments; existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
 
