@@ -351,6 +351,10 @@ Source policies specify applicable parts of this order. It controls random-opera
 
 Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#settled-policy-card-shuffling).
 
+#### Unordered transformation batches
+
+Process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
+
 #### Corrected persistent selection priorities
 
 **Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. [Source settings](#settled-policy-persistent-selection) specify strategy, sharing and local clock rules.
@@ -752,7 +756,7 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 Use the permanent-card routes for seven pools: the five characters, colorless and curse.
 
 - **[Transformations](#logical-occurrence-lifetime):** retain [vanilla target pools, eligibility and gameplay inheritance](#permanent-transformations-and-direct-additions).
-- **Unordered transformation batches:** process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
+- **Unordered transformation batches:** use [shared allocation](#unordered-transformation-batches).
 - **Direct additions:** use the granting source's pool and restrictions; Infested Automaton's rarity exception is specified in [generation routing](#settled-policy-generation-routing).
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
@@ -1142,7 +1146,7 @@ Classify cost treatment by the generating source's free effect; natural costs, u
 
 Use [filtered draws](#filtered-draws), preserving source eligibility, batch duplicate rules, counts and generated attributes. Consume one entry per generated identity, including every offered alternative, under [shared consumption timing](#opportunity-consumption-timing).
 
-For Entropy's unordered selections, allocate replacements in identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order), then apply them in the existing gameplay execution order.
+For Entropy's unordered selections, use [shared transformation allocation](#unordered-transformation-batches), then apply replacements in the existing gameplay execution order.
 
 **Within-combat deviation — SL 4A(↓):** pool/cost-treatment isolation and shared generation–Entropy identity supply change source interactions and remove cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
 
