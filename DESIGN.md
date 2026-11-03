@@ -148,7 +148,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards); [Snecko Oil costs](#settled-policy-random-cost-values). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
-| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [random pile insertion](#settled-policy-random-pile-insertion); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types); [random cost values](#settled-policy-random-cost-values). |
+| Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [random pile insertion](#settled-policy-random-pile-insertion); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types); [card generation and transformations](#settled-policy-combat-card-generation-and-transformations); [random cost values](#settled-policy-random-cost-values). |
 
 ## Shared strategies
 
@@ -339,7 +339,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 
 #### Deterministic Card Processing Order
 
-**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent transformations and [combat shuffling](#settled-policy-card-shuffling).
+**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent and combat transformations and [combat shuffling](#settled-policy-card-shuffling).
 
 **Status:** preliminarily settled — ready for use, with fine-tuning remaining. The [detailed ranking and state comparisons](CARD_ORDER.md) form part of this specification.
 
@@ -447,6 +447,7 @@ For card reward offers, group identities by pool, rarity request, eligibility fi
 | Infested Automaton: Study / Touch Core | Event RNG; leaves the addition rarity sequence unchanged. | Same permanent own-character identity sequences as the preceding row. | — |
 | Permanent transformations / [covered direct additions](#settled-policy-permanent-transformations-and-direct-card-additions): other-character and curse pools | Direct identity draws. | One sequence per pool: four other characters and curse. | Individual entries; separate from combat transformations. |
 | [Potion-generated cards](#settled-policy-potion-generated-cards) | Uniform eligible identities, without a separate rarity roll. | Complete batch addressed by potion type + its [effect ordinal](#potion-effect-opportunities). | Separate from other combat card generation. |
+| [Combat card generation and Entropy](#settled-policy-combat-card-generation-and-transformations) | Uniform eligible identities, without a separate rarity roll. | Combat-local identity sequences by pool and source cost treatment; dedicated Metamorphosis and Splash sequences. | Individual entries; preserve source batch uniqueness. |
 
 ## Settled policy: relics
 
@@ -1124,6 +1125,31 @@ Failed channeling consumes zero.
 
 **Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
 
+## Settled policy: combat card generation and transformations
+
+**Intent and scope:** align random identities from combat card, power and relic generators and Entropy. [Potion-generated cards](#settled-policy-potion-generated-cards) retain their settled scope.
+
+Use independent sequences addressed by [combat address](#combat-addresses) + card-generation purpose + group + pool below. All copies and triggers sharing a group and pool use the same sequence.
+
+| Group | Identity supply and consumers |
+|---|---|
+| Ordinary costs | One sequence per pool: own character, colorless, each other character, curse and status. Share ordinary-cost generation and Entropy; Jackpot uses the own-character sequence. |
+| Free this turn | One own-character sequence shared by generators applying this effect. |
+| Free this combat | One own-character Attack sequence for Metamorphosis. |
+| Splash | One dedicated sequence over the combined eligible other-character Attacks, uniform across identities. |
+
+Classify cost treatment by the generating source's free effect; natural costs, upgrades and later modifiers leave classification unchanged. Entropy follows the original card's transformation pool regardless of its acquisition source.
+
+Use [filtered draws](#filtered-draws), preserving source eligibility, batch duplicate rules, counts and generated attributes. Consume one entry per generated identity, including every offered alternative, under [shared consumption timing](#opportunity-consumption-timing).
+
+For Entropy's unordered selections, allocate replacements in identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order), then apply them in the existing gameplay execution order.
+
+**Within-combat deviation — SL 4A(↓):** pool/cost-treatment isolation and shared generation–Entropy identity supply change source interactions and remove cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
+
+**Within-combat deviation — SL 4A(↓):** canonical Entropy allocation removes selection-order rerolls for the same selected batch.
+
+Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations).
+
 ## Settled policy: random cost values
 
 **Intent:** align cost rolls within card categories while separating combat draws from persistent potion opportunities. Cost rolls remain uniform over 0–3.
@@ -1422,6 +1448,27 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 **Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
 
 **Pael's Tooth:** The player selects and removes five unupgraded cards. Each subsequent combat returns one random remaining stored card, upgraded; all five return after five combats. Returned records leave the cohort. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner.
+
+#### Combat card generation and transformations
+
+The following generators use the same factories and run-wide `CombatCardGeneration` RNG as [potion card generation](#potion-card-generation), with its eligibility and uniform identity sampling.
+
+| Pool / filter | Ordinary costs | Free this turn |
+|---|---|---|
+| Own character | Stoke, Call of the Void, Choices Paradox | Discovery, Mad Science's Chaos effect, Vexing Puzzlebox |
+| Own-character Attack | Calamity | Infernal Blade, Crossbow |
+| Own-character Skill | — | Distraction |
+| Own-character Power | Creative AI | Abundance, White Noise |
+| Own-character Common | Hello World | — |
+| Own-character zero-cost non-X | Jackpot | — |
+| Own-character Ethereal | Big Hat | — |
+| Colorless | Bundle of Joy, Jack of All Trades, Manifest Authority, Quasar, Spectrum Shift, Orange Dough, Toolbox | — |
+
+Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; its chosen card is free this turn. Jack of All Trades excludes itself.
+
+Stoke, Jackpot, Metamorphosis and Calamity allow duplicate identities. Creative AI and Call of the Void make separate single-card draws, allowing repeats across them. Other multi-card factory batches require distinct identities. Thieving Hopper's theft and random affliction selection also consume `CombatCardGeneration`.
+
+Entropy is the sole random combat transformation source. It transforms selected hand cards in selection order using `CombatCardSelection`, with the [default transformation pool and exclusions](#permanent-transformations-and-direct-additions). Different selected originals can have different eligible lists, making results depend on selection order. Fixed-result transformations and Largesse's multiplayer generation fall outside this policy's scope.
 
 #### Random energy costs
 
