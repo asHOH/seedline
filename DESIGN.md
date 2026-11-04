@@ -212,13 +212,13 @@ Card initialization preserves generated attributes and presentation order; deriv
 
 #### Card reward selection keys
 
-When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet and Slippery Bridge. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
+When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet, Slippery Bridge and Thieving Hopper. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
 
 Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
 
 #### Logical-occurrence lifetime
 
-**Scope:** settled card and owned-potion selection policies, using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules.
+**Scope:** [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules. Extension to combat-card state remains open.
 
 | Operation | Occurrence and selection state |
 |---|---|
@@ -806,6 +806,7 @@ Use [corrected persistent clocks or their fixed-cohort shortcut](#corrected-pers
 |---|---|---|
 | Random permanent upgrades / downgrades of existing deck cards | Corrected clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
 | Pael's Tooth / Beautiful Bracelet | Fixed cohort; separate purpose-specific priorities with [reward aliases](#card-reward-selection-keys). | Shared fixed-cohort consumption; cohorts and effects below. |
+| Thieving Hopper / eligible deck occurrences | Theft-only acquisition clocks with [reward aliases](#card-reward-selection-keys). | [Card theft](#card-theft); one selection in the supported run scope. |
 | Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-keys). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
 | Ranwid the Elder / Stone of All Time: owned potions | Corrected clocks; one shared run-wide scope. | Singleton: leave its clock unchanged. Otherwise renew the offered occurrence's clock once when the offer becomes available, using its per-occurrence renewal count. Declined potions remain selectable. |
 
@@ -825,6 +826,10 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 - **Pael's Tooth:** [temporarily store](#logical-occurrence-lifetime) five player-selected unupgraded cards outside the deck, preserving gameplay properties. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
+
+### Card theft
+
+Initialize theft clocks at acquisition. Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, then steal the copy whose `DeckVersion` occurrence has the lowest theft clock. Use [shared lifetime rules](#logical-occurrence-lifetime) for storage, return and permanent loss. The single theft requires no additional sharing or renewal rule.
 
 ### Potion departure routing
 
@@ -1450,6 +1455,8 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 **Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
 
 **Mad Science:** after combat, permanently upgrades random eligible deck cards without replacement, one per power stack, using `CombatCardSelection`.
+
+**Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death restores that same object (`SwipePower`).
 
 **Pael's Tooth:** The player selects and removes five unupgraded cards. Each subsequent combat returns one random remaining stored card, upgraded; all five return after five combats. Returned records leave the cohort. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner.
 
