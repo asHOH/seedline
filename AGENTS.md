@@ -6,7 +6,7 @@
 ## Design documentation
 
 - Conciseness over precision.
-- Use established terms. If new terms is necessary, define them before your response.
+- Use established terms. Introduce a separate name only for a distinct, reusable concept; define before use.
 - Mention edge cases, but don't expand on them except when they materially affect the design.
 - `DESIGN.md` owns settled policies and reusable reference facts; `WORKING.md` holds unresolved work and supporting evidence. Settled behavior must not depend on `WORKING.md`.
 - Split policies or problems into decoupled units if possible. Extract as a shared strategy if two or more policy overlap strongly.

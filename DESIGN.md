@@ -113,7 +113,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
 - **Occurrence address:** the stable source identifier of a logical occurrence, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
-- **Selection state:** an occurrence's address, selection keys and aliases, priorities or residual clocks, and renewal counts.
+- **Selection state:** an occurrence's address, selection keys and aliases, residual clocks, and renewal counts.
 
 ## Architecture overview
 
@@ -224,7 +224,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 |---|---|
 | Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
-| Change status or eligibility | Retain the occurrence and its priorities or residual clocks through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
+| Change status or eligibility | Retain the occurrence and its selection state through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
 | Copy a card | Create a fresh occurrence from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
 | Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
 | Permanently transform a card | Retire the original. Apply [source-specific gameplay inheritance](#permanent-transformations-and-direct-additions), then initialize fresh replacement selection state. |
@@ -266,7 +266,7 @@ At each checkpoint, save the following wherever used:
 - **Sequences:** contents, positions, original entry addresses and consumption.
 - **Markers:** positions, conditions, remaining lifetimes and carried entries.
 - **Opportunities:** counters and RNG state; chest-offer history and pending acquisition/skip decisions.
-- **Selection:** selection state, logical-to-physical occurrence associations and pending fixed-cohort selections.
+- **Selection:** selection state, logical-to-physical occurrence associations and pending selection records.
 
 ### Generation
 
@@ -359,7 +359,7 @@ Process the selected originals in the identity-only [Deterministic Card Processi
 
 **Scope:** a single choice or effective batch, at most once per run.
 
-Each candidate is given an independent uniform priority `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose. Select the lowest eligible priorities.
+Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at the selection opportunity, from its selection key + selection scope/purpose. Select the lowest eligible priorities. Save the inputs needed to reproduce priorities; omit priority values.
 
 **Weighted single choice:** use priority `-ln(U_i) / w_i` for weight `w_i`; select the lowest. Selection probability is `w_i / Σw`. Fixed relative weights preserve survivors' ranking when candidates are removed.
 
@@ -396,7 +396,7 @@ Choose representatives within each equivalence class using [corrected persistent
 
 Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
-**Coupling limit:** shared independent priorities on matched nested occurrence cohorts give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
+**Coupling limit:** shared independent priorities on matched nested occurrence sets give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
 
 #### Opportunity-specific selection priorities
 
@@ -825,9 +825,9 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 ### Fixed-priority card selection
 
-- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [equivalent-card routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle cohort records.
+- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [equivalent-card routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
-- **Thieving Hopper:** assign priorities at acquisition. Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
+- **Thieving Hopper:** apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
 ### Potion departure routing
 
@@ -857,7 +857,7 @@ To align sacrificed relics, offer one tradable owned relic using [fixed prioriti
 
 ### Outgoing relic assignment
 
-1. For each tradable owned relic and reward slot, derive an independent uniform pair priority from event ID + relic identity + slot.
+1. For each tradable owned relic and reward slot, use [fixed-priority derivation](#fixed-selection-priorities) keyed by event ID + relic identity + slot.
 2. Freeze the three relics with the lowest minimum of its three pair priorities.
 3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
 
@@ -1456,7 +1456,7 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 **Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death restores that same object (`SwipePower`).
 
-**Pael's Tooth:** The player selects and removes five unupgraded cards. Each subsequent combat returns one random remaining stored card, upgraded; all five return after five combats. Returned records leave the cohort. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner.
+**Pael's Tooth:** The player selects and removes five unupgraded cards. Each subsequent combat returns one random remaining stored card, upgraded; all five return after five combats. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner.
 
 #### Combat card generation and transformations
 
