@@ -224,7 +224,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 |---|---|
 | Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
-| Change status or eligibility | Retain the occurrence and unused clocks through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
+| Change status or eligibility | Retain the occurrence and its priorities or residual clocks through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
 | Copy a card | Create a fresh occurrence from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
 | Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
 | Permanently transform a card | Retire the original. Apply [source-specific gameplay inheritance](#permanent-transformations-and-direct-additions), then initialize fresh replacement selection state. |
@@ -355,9 +355,17 @@ Shuffle outcomes must be independent of original deck sequence; use the [card-sh
 
 Process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 
-#### Corrected persistent selection priorities
+#### Fixed selection priorities
 
-**Main idea:** for uniform occurrence selection, retain purpose-specific priorities across opportunities while correcting the survivors after each random selection. Use residual exponential clocks, not fresh priorities for every opportunity. [Source settings](#settled-policy-persistent-selection) specify strategy, sharing and local clock rules.
+**Scope:** a single choice or effective batch, at most once per run.
+
+Each candidate is given an independent uniform priority `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose. Select the lowest eligible priorities.
+
+**Weighted single choice:** use priority `-ln(U_i) / w_i` for weight `w_i`; select the lowest. Selection probability is `w_i / Σw`. Fixed relative weights preserve survivors' ranking when candidates are removed.
+
+#### Corrected persistent clocks
+
+**Main idea:** for uniform occurrence selection across opportunities, retain residual exponential clocks and correct eligible survivors after each random selection. [Source settings](#settled-policy-persistent-selection) specify sharing and local clock rules.
 
 **Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose.
 
@@ -372,8 +380,6 @@ Source policies define when and how to renew consumed clocks from the same distr
 
 **Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
-**Fixed-cohort shortcut:** if all members remain eligible until selected and each leaves permanently, sort their initial clocks once. Consume that order without subtraction or renewal.
-
 A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks.
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
@@ -382,7 +388,7 @@ A player-directed choice does not advance a gameplay selector's clocks merely be
 
 **Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#potion-departure-routing), including combat departures. These policies define equivalence and operation sharing.
 
-Choose representatives within each equivalence class using the [corrected persistent-clock strategy](#corrected-persistent-selection-priorities). An already randomly selected logical target bypasses representative routing.
+Choose representatives within each equivalence class using [corrected persistent clocks](#corrected-persistent-clocks). An already randomly selected logical target bypasses representative routing.
 
 **Presentation boundary:** apply effects to the clicked copies; preserve display order.
 
@@ -394,11 +400,7 @@ Commit the association permutation and shared clock update with the action. Rene
 
 #### Opportunity-specific selection priorities
 
-**Main idea:** for sources adopting uniform selection without replacement, give each eligible candidate an independent priority and select the `k` candidates with lowest priorities. Removing an unselected candidate cannot change the selected set.
-
-Derive priorities from the source's selection-opportunity address + candidate's stable key + selection purpose, excluding current candidate collection and list positions. Each opportunity uses fresh priorities; sources define sharing scopes and opportunity counting. Unique owned relics use relic identity as candidate key.
-
-**Weighted single choice:** for each positive-weight candidate, use priority `-ln(U) / weight`, with independent candidate-addressed uniform `U ∈ (0, 1)`; select the lowest. This gives probability `weight / total weight`. Removing candidates preserves survivors' ranking when their relative weights stay fixed.
+Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportunity. Derive priorities from opportunity address + candidate key + purpose, excluding candidate sets and list positions. Sources define keys, sharing and opportunity counting.
 
 ## Settled policy: generation routing
 
@@ -800,13 +802,12 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 
 **Intent:** align affected cards across sources, decks and reward choices, and potion sacrifice offers independently of inventory order.
 
-Use [corrected persistent clocks or their fixed-cohort shortcut](#corrected-persistent-selection-priorities). Preserve source access, triggers, counts, eligibility, costs, rewards and effect order, subject to local rules.
+Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clocks](#corrected-persistent-clocks) as specified below. Preserve source access, triggers, counts, eligibility, costs, rewards and effect order, subject to local rules.
 
-| Selection / candidates | Strategy and sharing | Local clock rules |
+| Selection / candidates | Strategy and sharing | Local selection rules |
 |---|---|---|
 | Random permanent upgrades / downgrades of existing deck cards | Corrected clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
-| Pael's Tooth / Beautiful Bracelet | Fixed cohort; separate purpose-specific priorities with [reward aliases](#card-reward-selection-keys). | Shared fixed-cohort consumption; cohorts and effects below. |
-| Thieving Hopper / eligible deck occurrences | Theft-only acquisition clocks with [reward aliases](#card-reward-selection-keys). | [Card theft](#card-theft); one selection in the supported run scope. |
+| Pael's Tooth / Beautiful Bracelet / Thieving Hopper | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-keys). | [Source rules](#fixed-priority-card-selection) below. |
 | Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-keys). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
 | Ranwid the Elder / Stone of All Time: owned potions | Corrected clocks; one shared run-wide scope. | Singleton: leave its clock unchanged. Otherwise renew the offered occurrence's clock once when the offer becomes available, using its per-occurrence renewal count. Declined potions remain selectable. |
 
@@ -824,12 +825,9 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 ### Fixed-priority card selection
 
-- **Pael's Tooth:** [temporarily store](#logical-occurrence-lifetime) five player-selected unupgraded cards outside the deck, preserving gameplay properties. Initial selection follows [equivalent-card routing](#equivalent-card-selections). At each subsequent combat trigger, return the next card upgraded and retire only its return-order record. Later removals never add or recycle cohort records.
+- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [equivalent-card routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle cohort records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
-
-### Card theft
-
-Initialize theft clocks at acquisition. Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, then steal the copy whose `DeckVersion` occurrence has the lowest theft clock. Use [shared lifetime rules](#logical-occurrence-lifetime) for storage, return and permanent loss. The single theft requires no additional sharing or renewal rule.
+- **Thieving Hopper:** assign priorities at acquisition. Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
 ### Potion departure routing
 
@@ -844,14 +842,14 @@ Baseline selection: [potion event mechanics](#potions).
 Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers); generated cards follow [generation routing](#settled-policy-generation-routing).
 
 - Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Give offered potions [opportunity-specific priorities](#opportunity-specific-selection-priorities), using event ID as the opportunity address, a separate ordering purpose, and stable potion model ID + duplicate number as the candidate key. Number identical copies locally from 1 in offered slot order, independently of occurrence addresses. Priorities are independent of the type sequences.
-- Within each reward rarity, assign successive sequence entries to potions in ascending priority order. Consume only for offered options, at most three entries total. Keep assignments fixed for the current event.
+- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + ordering purpose + potion model ID + duplicate number. Number identical offered copies from 1 in slot order.
+- Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
 
 **Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
 
 ## Settled policy: Ranwid relic sacrifice
 
-To align Ranwid's relic sacrifice, use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities), with event ID as the opportunity address, independently of Relic Trader. Offer the lowest-priority tradable owned relic, preserving existing eligibility, costs and rewards.
+To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic identity. Preserve existing eligibility, costs and rewards.
 
 ## Settled policy: Relic Trader
 
@@ -903,9 +901,9 @@ Preserve vanilla eligibility, identity sampling and batch rules; see [potion car
 
 **Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla option pools, weights, prerequisites and menu structure. Granted effects follow their policies separately.
 
-Use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) for Orobas's third pool, Pael's second and third pools, Tezcatara's first pool, and Tanx's and Nonupeipe's three-choice pools. The opportunity address is Ancient ID + option-pool ID; each candidate uses its stable option identity. Select the lowest-priority eligible option, or the three lowest for Tanx and Nonupeipe. Retain surviving entries' relative display order.
+Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option identity: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
 
-**Pael's second pool:** use the shared weighted single-choice rule with vanilla weights: Growth 1; each other option 2.
+**Pael's second pool:** use vanilla weights: Growth 1; each other option 2.
 
 Retain vanilla generation and RNG positions for other menu components.
 
