@@ -144,7 +144,7 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 
 | Decision area | Policies |
 |---|---|
-| Card and potion selection | [Wing Charm](#settled-policy-wing-charm); [persistent selection](#settled-policy-persistent-selection). |
+| Card and potion selection | [Wing Charm](#settled-policy-wing-charm); [persistent selection](#settled-policy-persistent-selection); [random combat card selection](#settled-policy-random-combat-card-selection). |
 | Event selections and trades | [The Future of Potions](#settled-policy-the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#settled-policy-ranwid-relic-sacrifice); [Relic Trader](#settled-policy-relic-trader); [Endless Conveyor](#settled-policy-endless-conveyor). |
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards); [Snecko Oil costs](#settled-policy-random-cost-values). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
@@ -204,7 +204,7 @@ One spawn opportunity covers the initial lineup or one summon/replacement trigge
 
 ##### Card and potion occurrence addresses
 
-Each card or acquired potion copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#logical-occurrence-lifetime).
+Each card or acquired potion copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#logical-occurrence-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
@@ -218,7 +218,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Logical-occurrence lifetime
 
-**Scope:** out-of-combat operations for [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. See [potion departures](#potion-departure-routing) for retirement during combat.
+**Scope:** out-of-combat operations for [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment); [potion departures](#potion-departure-routing) define retirement during combat.
 
 | Operation | Occurrence and selection state |
 |---|---|
@@ -325,7 +325,7 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers).
 
 #### Equivalent-card selections
 
-**Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; selection state and presentation position do not distinguish the class.
+**Invariant — equivalent copies:** clicking any member of the same class has equivalent identity/status-level consequences apart from the effects of the clicked position. Where [representative routing](#representative-routing) applies, each such click selects the same logical representative. Equivalence requires the same identity and gameplay-relevant status within the eligible context. Hidden selection state and pile position do not split the class.
 
 **Out-of-combat equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
@@ -386,13 +386,13 @@ A player-directed choice does not advance a gameplay selector's clocks merely be
 
 #### Representative routing
 
-**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen potion departures](#potion-departure-routing), including combat departures. These policies define equivalence and operation sharing.
+**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections), [player-chosen combat card selections](#combat-card-equivalence-and-routing), and [player-chosen potion departures](#potion-departure-routing), including combat departures. These policies define equivalence and operation sharing.
 
 Choose representatives within each equivalence class using [corrected persistent clocks](#corrected-persistent-clocks). An already randomly selected logical target bypasses representative routing.
 
-**Presentation boundary:** apply effects to the clicked copies; preserve display order.
+**Routing boundary:** routing assigns hidden state to the clicked copies and preserves display order. Apply effects at their actual pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
 
-**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Within each equivalence class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order; pair remaining occurrences in stable occurrence-address order with unclicked copies in that order. Apply effects after all representatives are selected.
+**Batch association:** use the shared clock strategy's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order. Assign that class's remaining logical occurrences in stable address order to its unclicked copies in frozen presentation order. This last pairing consumes no random draw. Apply effects after all representatives are selected.
 
 Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
@@ -973,7 +973,7 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 **Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
 
-**Scope:** opening and later shuffles share the assignment strategy below. Combat equivalence and state handling remain deferred.
+**Scope:** opening and later shuffles share the assignment strategy below. Use the cards’ current logical associations.
 
 Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply existing opening-hand and shuffle modifiers.
 
@@ -984,6 +984,8 @@ Address opening shuffles by [combat address](#combat-addresses) + opening purpos
 **Vanilla deviation — SL 4A(↓):** state-aware [Processing Order](#deterministic-card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
 
 ### Priority assignment
+
+The **shuffle ordering key** identifies the assignment below: a source-based key, or priority-sequence identity + assigned position. It is distinct from the random priority value and the card's final pile position.
 
 The opening Innate subgroup uses [Processing Order](#deterministic-card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
 
@@ -1006,7 +1008,7 @@ Use [generation routing](#settled-policy-generation-routing) to identify shared 
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
-These are shuffle-specific assignments; existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
+These assignments also initialize [combat selection clocks](#settled-policy-random-combat-card-selection). Existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
 
 ## Settled policy: random pile insertion
 
@@ -1122,6 +1124,63 @@ Revivals retain occurrence identity; summons and replacements receive fresh iden
 
 Baseline: [random creature targeting](#random-creature-targeting).
 
+## Settled policy: random combat card selection
+
+**Scope:** align random selection of existing combat cards and route player choices among equivalent copies, including combat-start effects and sampled choice offers. Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows [fixed-priority selection](#fixed-priority-card-selection).
+
+Use combat-local [corrected clocks](#corrected-persistent-clocks) under [combat addressing and resets](#combat-addresses). Preserve source eligibility, preference/fallback tiers, counts, triggers, effect timing, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
+
+| Shared clock scope | Sources |
+|---|---|
+| Exhaust | Cinder, unupgraded True Grit |
+| Upgrade | Drain Power, Stone Cracker |
+| Return | Anointed, Jeweled Mask, Power Cell |
+| Attack auto-play | Beat Down, Uproar, Stampede |
+
+Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker Strike. Copies of a source share its scope.
+
+**Consumption exceptions:** empty and forced-singleton selections leave clocks and renewal counts unchanged. So do whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell; hand returns require space for every selected card.
+
+**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by stable logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + incidental-shuffle purpose. Advance only for these shuffles.
+
+**Seeker Strike:** when sampling, use clocks only to choose the offered cards. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
+
+Combat-local assignment has the [shared isolation impact](#shared-isolation-impact), SL 5(↓). Under NoSL, selection retains uniform odds among eligible copies.
+
+**Within-combat deviation — SL 4A(↓):** scope isolation and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
+
+### Combat-card clock assignment
+
+Freeze one assignment key per combat occurrence. Derive initial [corrected clocks](#corrected-persistent-clocks) from combat address + selection or routing scope + assignment key. For each renewal, also use that occurrence’s renewal count within that scope.
+
+**At combat start:** before selection effects, use each card’s [shuffle ordering key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling. Clock draws are independent of shuffle priorities.
+
+**During combat:** take the first applicable key for a fresh occurrence:
+
+| Card source | Assignment key |
+|---|---|
+| Identity drawn from a generation sequence | Original [sequence entry address](#stable-entry-addresses). |
+| Fixed token creation | Token identity + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
+| Other grants | Granting-source identity + committed grant ordinal within that source identity for this combat + copy index. Copies of the source share its count. Assign batch indices in [Processing Order](#deterministic-card-processing-order). |
+
+Pile movement and status or eligibility changes retain keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above. Preserve gameplay inheritance.
+
+### Combat-card equivalence and routing
+
+Use [representative routing](#representative-routing) whenever a player chooses among existing combat cards. Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the granting source and choice purpose as their scope, including Hand Trick's Sly choice and Thinking Ahead's return to the top of the draw pile. All routing clocks are combat-local and per card identity.
+
+Route once per committed player choice, before effects, among the copies the player can actually choose. For Seeker Strike this means the offered subset. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
+
+Within the same owner and eligible selection context, compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Processing Order](#deterministic-card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
+
+**Permanent-deck correspondence:** for Genetic Algorithm, The Scythe and Goopy cards, play can grow the linked permanent card. While Thieving Hopper’s steal is pending, the rule applies to every card identity: theft checks deck links in draw and discard, and player choices can move cards there from hand. In these cases, group combat copies by the exact permanent-deck occurrence they link to, with a separate group for combat-only copies. Each physical card keeps its link through routing, including after a shuffle.
+
+Within each equivalence class, route the logical occurrence as a unit, including its selection state, shuffle assignment, [Oil hand-entry assignment](#settled-policy-random-cost-values), copy relationships and any deck link outside the protected cases above. Keep live references with their logical targets.
+
+**Vanilla deviation — SL 4A(↓):** within a routed class, trying different clicks on reload selects the same hidden state for later combat selection, shuffles and Oil costs. Position-dependent outcomes and the choice between different consequential deck links remain available, even after a shuffle.
+
+Baseline: selection uses `CombatCardSelection`, except auto-play uses `Shuffle`. `NextItem` consumes a draw for singletons; batch selectors shuffle the full input before taking their count. `StableShuffle` sorts identity/upgrade first.
+
 ## Settled policy: random orb types
 
 Use one sequence shared by all random-orb sources, derived from [combat address](#combat-addresses) + orb-type purpose, preserving vanilla's uniform sampling.
@@ -1177,7 +1236,7 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 - Unordered entry batches share one entry ordinal, with internal ascending [Processing Order](#deterministic-card-processing-order) frozen at entry.
 - Sequential draws and explicitly ordered returns, including All for One, preserve source order.
 
-Combat-equivalent-copy handling remains deferred alongside shuffling.
+Apply [combat-card routing](#combat-card-equivalence-and-routing) to Oil’s hand-entry assignment.
 
 Oil's opportunity ordinal persists across combats. [Shared isolation impact](#shared-isolation-impact) applies to removing cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
 

@@ -8,27 +8,15 @@ Unresolved work and supporting evidence, evaluated against [DESIGN's goals and f
 
 Use the [Rewards / Encounter categories](DESIGN.md#concepts-and-terms) and [architecture dimensions](DESIGN.md#architecture-overview); distinguish contexts only where rules differ.
 
-**Candidate defaults:** ordinals for Rewards; act-local ordinals for Encounter, subject to each unresolved source's sharing/addressing decision.
-
 Baseline: [Catfood addressing and combat rewards](DESIGN.md#catfood-addressing-and-combat-rewards).
 
-**Out-of-combat status:** policies are settled.
+**Policy status:** all settled, with further refinement needed for [random combat card selection](DESIGN.md#settled-policy-random-combat-card-selection).
 
 **Stakeholder input — 二硫键:** perceived slightly more combat Rares in Catfood, especially early in Act 1, against expected code behavior; considered this acceptable because both competitors were affected. Shop Rare rates were unobserved.
 
 ## Deterministic Card Processing Order
 
 The [card-processing ranking](CARD_ORDER.md) is preliminarily settled. Fine-tuning remains.
-
-## Combat randomness
-
-### Combat-card equivalence and state
-
-**Decisions needed — deferred:** extend equivalent-copy handling and occurrence/selection-state lifetime rules to combat, including transformations, state changes and their effects on [shuffle assignment](DESIGN.md#settled-policy-card-shuffling). Consider alongside random card selection.
-
-### Random card selection
-
-**Constraints:** remove Aggression and Drain Power's discard-order dependence. Preserve All for One's discard-order return.
 
 ## Implementation verification
 
