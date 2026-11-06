@@ -204,7 +204,7 @@ One spawn opportunity covers the initial lineup or one summon/replacement trigge
 
 ##### Card and potion occurrence addresses
 
-Each card or acquired potion copy has a distinct logical occurrence with a stable source address; apply the [lifetime rules](#logical-occurrence-lifetime).
+Each card or acquired potion copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#logical-occurrence-lifetime).
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
@@ -218,16 +218,16 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Logical-occurrence lifetime
 
-**Scope:** [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply the action's [selection and renewal updates](#settled-policy-persistent-selection) alongside these lifetime rules. Extension to combat-card state remains open.
+**Scope:** out-of-combat operations for [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. See [potion departures](#potion-departure-routing) for retirement during combat.
 
 | Operation | Occurrence and selection state |
 |---|---|
 | Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
 | Change status or eligibility | Retain the occurrence and its selection state through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
-| Copy a card | Create a fresh occurrence from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
+| Copy a card | Create a fresh occurrence and selection state from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
 | Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
-| Permanently transform a card | Retire the original. Apply [source-specific gameplay inheritance](#permanent-transformations-and-direct-additions), then initialize fresh replacement selection state. |
+| Transform a card | Retire the original and initialize fresh replacement selection state. Preserve source-specific gameplay inheritance; see [permanent transformations](#permanent-transformations-and-direct-additions). |
 | [Route equivalent copies](#representative-routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
 
 **Related reward-entry exception:** [A0–6 replacement state](#a06-multiple-rares).
@@ -327,7 +327,7 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers).
 
 **Invariant — equivalent copies:** for every card identity, choosing any physical member of a gameplay-equivalent class has the same subsequent identity/status-level consequences. Hidden selection state remains equivalent up to association with physical copies. Equivalence requires the same identity and gameplay-relevant status; selection state and presentation position do not distinguish the class.
 
-**Within-run equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
+**Out-of-combat equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
 All out-of-combat player-selected sources share [routing clocks](#representative-routing) by operation, separately for each card identity:
 
@@ -831,7 +831,7 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 ### Potion departure routing
 
-For [player-chosen use, discard and trade](#logical-occurrence-lifetime), treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Slot-dependent offers and trade payoffs stay with the clicked option.
+For player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the routed logical potion on departure, including during combat. Slot-dependent offers and trade payoffs stay with the clicked option.
 
 Baseline selection: [potion event mechanics](#potions).
 
