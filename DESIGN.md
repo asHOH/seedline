@@ -5,8 +5,8 @@ This specification records settled policies, their rationale and existing-mechan
 **Reading guide:**
 
 - Start with [goals](#goals-and-principles), [scope](#scope) and [terms](#concepts-and-terms).
-- Find a source in the [policy guide](#architecture-overview), or compare generation sources in [generation routing](#settled-policy-generation-routing). Policies link to the [shared strategies](#shared-strategies) they use.
-- Use [Reference](#reference) for calibration and [Appendix](#appendix-existing-mechanics) for existing mechanics.
+- Find a source in the [policy guide](#architecture-overview), or compare generation sources in [generation routing](#generation-routing). Policies link to the [shared strategies](#shared-strategies) they use.
+- Use [Reference](#reference) for calibration and rejected alternatives, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
 
 **Reading convention:** unlabeled design statements in the main body define required behavior. Labeled baselines and references describe existing mechanics. Deviation notes, rationale, tradeoffs, examples and rejected alternatives explain the design. Reference and Appendix are descriptive only.
 
@@ -129,7 +129,7 @@ Each controlled random operation has five descriptive dimensions:
 
 Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
 
-Use [shared strategies](#shared-strategies) for common contracts and [generation routing](#settled-policy-generation-routing) to compare rarity and identity sharing. The guide below links to source policies.
+The guide below links to source policies; [generation routing](#generation-routing) compares their rarity and identity sharing. Common contracts follow in [shared strategies](#shared-strategies).
 
 ### Rewards
 
@@ -149,6 +149,38 @@ Use [shared strategies](#shared-strategies) for common contracts and [generation
 | Potion effects | [Potion-generated cards](#settled-policy-potion-generated-cards); [Snecko Oil costs](#settled-policy-random-cost-values). |
 | Rooms and events | [Unknown rooms](#settled-policy-unknown-room-resolution); [Ancient offerings](#settled-policy-ancient-offerings); [ordinary events](#settled-policy-ordinary-event-selection); [forced events](#settled-policy-forced-events). |
 | Combat | [Encounter setup](#settled-policy-encounter-setup); [card shuffling](#settled-policy-card-shuffling); [random pile insertion](#settled-policy-random-pile-insertion); [monster HP](#settled-policy-monster-hp); [monster AI](#settled-policy-monster-ai); [random creature targets](#settled-policy-random-creature-targets); [random orb types](#settled-policy-random-orb-types); [card generation and transformations](#settled-policy-combat-card-generation-and-transformations); [random cost values](#settled-policy-random-cost-values). |
+
+### Generation routing
+
+Summary of generation sharing. Source policies own addressing, eligibility, construction and consumption rules under the [shared generation strategies](#generation).
+
+#### Relics, potions and event-specific rewards
+
+| Sources | Rarity state | Identity supply |
+|---|---|---|
+| [Ordinary relics](#allocation): generic rewards / shop / Courier | Separate source sequences. | Disjoint finite allocations. |
+| [Relic Trader](#replacement-relics) | Event-slot addressing. | Courier allocation. |
+| [Potions](#acquisition-and-sequences): generic rewards / shop / Courier / generating effects | Per-source sequences. | Per-source, per-rarity sequences; generic modes share identities. |
+| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event RNG. | Event RNG. |
+
+#### Card offers and shop cards
+
+| Sources | Rarity state | Identity supply |
+|---|---|---|
+| [Initial shop / Courier cards](#stock-and-prices) | Shop ordinal / type sequences or fixed rarity. | Shop ordinal / type-and-rarity sequences. |
+| [Own-character random-rarity offers](#offer-groups) | Shared luck; source Rare odds. | Non-Rare and rare-bearing triples; A0–6 extra Rares. |
+| [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity, with local exceptions. |
+| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy source sequences / specified rarity. | Shared Power sequences; event-local Attack/Skill generation. |
+| [Colorless / other-character offers](#other-offer-groups) | Source odds or fixed rarity. | Shared colorless sequence / per-character, per-rarity sequences. |
+| [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Expanded-pool sequences. |
+
+#### Other card generation
+
+| Sources | Rarity state | Identity supply |
+|---|---|---|
+| [Permanent transformations / direct additions](#selection-and-consumption) | Separate rarity sequences where used; Automaton uses event RNG. | Shared permanent-card sequences by pool. |
+| [Potion-generated cards](#settled-policy-potion-generated-cards) | Uniform identities. | Potion-type effect batches. |
+| [Combat generation / Entropy](#settled-policy-combat-card-generation-and-transformations) | Uniform identities. | Combat-local sequences by group and pool. |
 
 ## Shared strategies
 
@@ -278,7 +310,7 @@ At each checkpoint, save the following wherever used:
 
 **Scope:** relics, potions, cards, permanent transformations and covered direct additions.
 
-With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation routing](#settled-policy-generation-routing) summarizes them.
+With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered draw strategy](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation routing](#generation-routing) summarizes them.
 
 **Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool divisions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
@@ -400,38 +432,6 @@ Commit the association permutation and shared clock update with the action. Rene
 
 Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportunity. Derive priorities from opportunity address + candidate key + purpose, excluding candidate sets and list positions. Sources define keys, sharing and opportunity counting.
 
-## Settled policy: generation routing
-
-Overview of generation sharing. Source policies own addressing, eligibility, construction and consumption rules under the [shared generation strategies](#generation).
-
-### Relics, potions and event-specific rewards
-
-| Sources | Rarity state | Identity supply |
-|---|---|---|
-| [Ordinary relics](#allocation): generic rewards / shop / Courier | Separate source sequences. | Disjoint finite allocations. |
-| [Relic Trader](#replacement-relics) | Event-slot addressing. | Courier allocation. |
-| [Potions](#acquisition-and-sequences): generic rewards / shop / Courier / generating effects | Per-source sequences. | Per-source, per-rarity sequences; generic modes share identities. |
-| [Event-specific rewards](#settled-policy-event-specific-rewards) | Event RNG. | Event RNG. |
-
-### Card offers and shop cards
-
-| Sources | Rarity state | Identity supply |
-|---|---|---|
-| [Initial shop / Courier cards](#stock-and-prices) | Shop ordinal / type sequences or fixed rarity. | Shop ordinal / type-and-rarity sequences. |
-| [Own-character random-rarity offers](#offer-groups) | Shared luck; source Rare odds. | Non-Rare and rare-bearing triples; A0–6 extra Rares. |
-| [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity, with local exceptions. |
-| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy source sequences / specified rarity. | Shared Power sequences; event-local Attack/Skill generation. |
-| [Colorless / other-character offers](#other-offer-groups) | Source odds or fixed rarity. | Shared colorless sequence / per-character, per-rarity sequences. |
-| [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Expanded-pool sequences. |
-
-### Other card generation
-
-| Sources | Rarity state | Identity supply |
-|---|---|---|
-| [Permanent transformations / direct additions](#selection-and-consumption) | Separate rarity sequences where used; Automaton uses event RNG. | Shared permanent-card sequences by pool. |
-| [Potion-generated cards](#settled-policy-potion-generated-cards) | Uniform identities. | Potion-type effect batches. |
-| [Combat generation / Entropy](#settled-policy-combat-card-generation-and-transformations) | Uniform identities. | Combat-local sequences by group and pool. |
-
 ## Settled policy: relics
 
 **Intent:** isolate normal-play relic supplies for shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
@@ -486,7 +486,7 @@ Draw the next eligible shared identity from the generic rarity sequence and repl
 
 Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
 
-**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
+[Rejected alternative](#chest-allocation-alternatives).
 
 #### Finite-lifetime chest markers
 
@@ -567,12 +567,7 @@ Baseline: [shop mechanics](#shop-and-courier-rng) and [Catfood addressing](#catf
 
 Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
 
-**Rationale and tradeoff:** an extra elite leaves later normal-fight gold unchanged, and vice versa. Reordering unreduced rewards with matching category counts preserves individual base payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward can change total base gold by 11–26 at A3+, rather than a nearly fixed premium.
-
-### Rejected alternatives
-
-- **Shared rolls with independent compensation:** share ordinal for normal-fight and elite rewards. A3+ normal gold preserves expectation but becomes nonuniform (**Vanilla deviation — NoSL 2**); Bowler Hat can change the received total by 1. [Derivation](#rejected-combat-gold-coupling).
-- **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
+**Rationale and tradeoff:** an extra elite leaves later normal-fight gold unchanged, and vice versa. Reordering unreduced rewards with matching category counts preserves individual base payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward changes total base gold by 11–26 at A3+. [Rejected alternatives](#combat-gold-alternatives).
 
 Baseline: [gold ranges and exceptions](#combat-gold) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -684,7 +679,7 @@ Own-character random-rarity offers use two deterministic triple sequences indepe
 
 A suppressed occurrence reserves no additional triple.
 
-**Rationale:** sharing preserves both triples when a Rare moves between sources; separate normal/elite sequences would advance differently.
+**Rationale:** sharing preserves both triples when a Rare moves between sources. [Rejected alternative](#card-offer-sequence-alternatives).
 
 #### Uncommon probabilities
 
@@ -884,12 +879,7 @@ Generate slots 1–3 in order. For each, roll [ordinary relic rarity](#relic-bag
 2. Freeze the three relics with the lowest minimum of its three pair priorities.
 3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
 
-**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap.
-
-### Rejected alternatives
-
-- **Independent candidate priorities:** lower trade agreement than the settled rule, with the same outgoing overlap.
-- **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
+**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap. [Rejected alternatives](#relic-trader-alternatives).
 
 Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
@@ -946,7 +936,7 @@ At run start, independently shuffle each condition's IDs using condition key + I
 
 **Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
 
-**Alignment tradeoff:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable.
+**Alignment tradeoff:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable. [Rejected alternatives](#event-selection-alternatives).
 
 Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
 
@@ -963,18 +953,13 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 **Fallback — empty eligible pool:** Relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
 
+**Fallback impact:** staged relaxation can offer an out-of-act event where vanilla returns the cursor's event. **Frequency:** rare (qualitative judgment).
+
 **Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
 **Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
 
-### Rejected alternatives
-
-- **Fixed scheduling in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
-- **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more Act 1 shared-order reversals.
-- **Cross-act insertion — shared position priorities:** reserve incoming positions using the lowest shared output-position priorities, then fill both sequences in order. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
-- **Cross-act insertion — weighted merging:** use shared output-position draws to choose old or incoming in proportion to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order in tests that consumed different numbers of leading events.
-
-Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and rare checks](#event-condition-classes).
+Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and rare checks](#event-eligibility).
 
 ## Settled policy: forced events
 
@@ -1110,7 +1095,7 @@ Use `CombatState.RoundNumber` at selection; extra player turns stay in the same 
 
 **Limit:** different selection counts can still shift choices within a round.
 
-**Rejected alternatives:** percentiles align poorly across eligibility changes; pair sequences lose cross-pair relationships and retain count differences; markers retain filter-history differences after eligibility converges.
+[Rejected alternatives](#ordinary-rat-sampling-alternatives).
 
 ### Fabricator bot identities
 
@@ -1290,9 +1275,18 @@ Shop offsets approximate the mean Rare count across five character-card slots, e
 
 These are route-average choices: elite frequency and extra-offer sources shift the fitted rates. The [earlier A7+ study](outputs/reward-calibration-results.json) and A0–6 results retain sensitivity cases, assumptions and checks. The model approximates player-state eligibility, event outcomes and non-rarity item effects.
 
-### Rejected combat-gold coupling
+### Rejected alternatives
 
-The [compensated shared-roll alternative](#rejected-alternatives) used one normal-fight/elite gold ordinal to supply uniform `u ∈ [0,1)`:
+#### Chest allocation alternatives
+
+- **Separate chest allocation:** adds unfairness between reward sources.
+
+#### Combat-gold alternatives
+
+- **Shared rolls with independent compensation:** share ordinal for normal-fight and elite rewards. A3+ normal gold preserves expectation but becomes nonuniform (**Vanilla deviation — NoSL 2**); Bowler Hat can change the received total by 1.
+- **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
+
+The compensated shared-roll alternative used one normal-fight/elite gold ordinal to supply uniform `u ∈ [0,1)`:
 
 | Difficulty | Shared draw | Normal-fight gold | Elite gold |
 |---|---|---|---|
@@ -1301,30 +1295,37 @@ The [compensated shared-roll alternative](#rejected-alternatives) used one norma
 
 At A3+, `b` was a fair bit addressed by the cumulative unreduced normal-gold index, independently of `u` and other bits. Normal gold's endpoints 7 and 15 each had probability 1/16; 8–14 each had 1/8.
 
+#### Card offer sequence alternatives
+
+- **Separate normal/elite sequences:** advance differently when a Rare moves between sources, losing shared-triple alignment.
+
+#### Relic Trader alternatives
+
+- **Independent candidate priorities:** lower trade agreement than the settled rule, with the same outgoing overlap.
+- **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
+
+#### Event-selection alternatives
+
+- **Fixed scheduling in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
+- **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more Act 1 shared-order reversals.
+- **Cross-act insertion — shared position priorities:** reserve incoming positions using the lowest shared output-position priorities, then fill both sequences in order. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
+- **Cross-act insertion — weighted merging:** use shared output-position draws to choose old or incoming in proportion to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order in tests that consumed different numbers of leading events.
+
+#### Ordinary rat sampling alternatives
+
+- **Percentiles:** align poorly across eligibility changes.
+- **Pair sequences:** lose cross-pair relationships and retain count differences.
+- **Markers:** retain filter-history differences after eligibility converges.
+
 ## Appendix: existing mechanics
 
 Existing mechanics for comparison: vanilla by default, [Catfood differences](#catfood-addressing-and-combat-rewards) explicitly labeled. Settled policies belong in the main design sections.
-
-| Mechanism | Baseline and interference |
-|---|---|
-| [Unknown room types](#room-resolution) | Changing odds and RNG state make `?` resolution route-dependent. Catfood leaves this unchanged. |
-| [Event / encounter identities](#event-and-encounter-identities) | Eligibility and room visits affect list cursors. |
-| [Shops and events](#shop-and-courier-rng) | Visits and restocks can shift later stock, prices and rewards. |
-| [Combat](#combat-setup-and-shuffles) | Earlier rooms and reshuffles affect later setup and opening hands. |
-| [Combat gold](#combat-gold) | Other reward draws can shift later gold. |
-| [Card rarity](#card-reward-offers) | Combat reward history affects later combat and shop rarities. |
-| [Ancient options](#ancient-offerings) | Options are independent of event counts; current eligibility can change the menu. |
-| [Chests](#shops-chests-and-relic-events) | Other rewards can shift chest contents. |
-| [Relic pools](#relic-bags) | Finite stock couples sources; depletion can change delivered rarity. |
-| [Potion drops](#potions) | Earlier checks affect later drop probability. |
-| [Potion generation](#potions) | Failed grants can still shift later results. |
-| [Transformations / direct additions](#permanent-transformations-and-direct-additions) | Results depend on the source and its other RNG consumption. |
 
 ### Rooms, events and combat
 
 #### Room resolution
 
-**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG state persists across acts.
+**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG state persists across acts. Catfood leaves this unchanged.
 
 **Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
 
