@@ -10,7 +10,7 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 **Goal:** keep choices and combat challenges comparable across same-seed runs with different routes and decisions. Compare corresponding opportunities—such as each run's first shop or third normal-fight reward—even on different floors.
 
-**Fairness principle — opportunity isolation:** preserve meaningful consequences while minimizing unrelated future gameplay changes.
+**Fairness principle:** preserve meaningful consequences while minimizing unrelated future gameplay changes.
 
 **Preservation:** retain vanilla gameplay except for deliberate alignment tradeoffs or corrections to unintended behavior.
 
@@ -20,13 +20,11 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 ### Vanilla deviations
 
-Consistency fixes that only remove same-seed inconsistency, with no gameplay impact, are outside deviation grading.
+Consistency fixes with no gameplay impact are ungraded.
 
-**Unnoticeable:** imperceptible across ordinary runs, considering frequency and effect size. Roughly 500 runs is a soft calibration scale; the A7+ one-Rare cap is the reference example. Association with victory supplies supporting evidence.
+**Unnoticeable:** imperceptible across ordinary runs, considering frequency and effect size; effects on win chance provide supporting evidence. Use 500 runs as a rough benchmark, with the [A7+ one-Rare cap](#a7-one-rare-per-offer-and-deferral) as the reference.
 
 **Neutral:** an informed player would make no meaningful change to strategy.
-
-For gameplay changes, noticeability and strategic impact take precedence over expectation.
 
 | Grade | Impact |
 |---|---|
@@ -37,20 +35,22 @@ For gameplay changes, noticeability and strategic impact take precedence over ex
 | **4B** | Unnoticeable and non-neutral. |
 | **5** | Noticeable and non-neutral. |
 
-**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones, and no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe in-room exploration at any grade: `5(↓)` alters meaningful strategy while simplifying exploration.
-
 **Play modes:**
 
-- **NoSL:** assumes no save/loading; covers in-room and upper-level strategy.
-- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and in-room future planning, such as which potions to carry onward.
+- **NoSL:** no save/loading; assess in-room and upper-level strategy.
+- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and in-room choices affecting later rooms, such as which potions to carry.
 
-Grade each mode independently: write `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
+Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
 
-Rare deviations are appended with a **Frequency:** field.
+**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe in-room exploration at any grade: `5(↓)` changes strategy while simplifying exploration.
 
-#### Shared isolation impact
+Rare deviations include a **Frequency:** field.
 
-**Vanilla deviation — SL 5(↓):** where isolation removes the ability to strategically steer future outcomes by changing earlier consumption of shared randomness, particularly between combats. It simplifies SL exploration by removing future-planning decisions. This is an opportunity-alignment tradeoff. For example, [combat-local random orbs](#random-orb-types) remove the ability to engineer a favored orb sequence for the next battle.
+#### Loss of future outcome steering
+
+This deviation is shared across policies.
+
+**Vanilla deviation — SL 5↓(↓):** applies when changes remove planning decisions based on steering later outcomes through earlier consumption of shared randomness. This alignment tradeoff simplifies SL exploration. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favored orb sequence for the next battle.
 
 ## Scope
 
@@ -403,7 +403,7 @@ Freeze one assignment key per combat occurrence. Derive initial [corrected clock
 
 Pile movement and status or eligibility changes retain keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above. Preserve gameplay inheritance.
 
-Combat-local assignment has the [shared isolation impact](#shared-isolation-impact), SL 5(↓). Under NoSL, selection retains uniform odds among eligible copies.
+Combat-local assignment has the [shared isolation impact](#shared-isolation-impact), SL 5↓(↓). Under NoSL, selection retains uniform odds among eligible copies.
 
 #### Potion effect opportunities
 
