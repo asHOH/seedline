@@ -494,7 +494,7 @@ Draw the next eligible shared identity from the generic rarity sequence and repl
 
 Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
 
-[Rejected alternative](#chest-allocation-alternatives).
+**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
 
 #### Finite-lifetime chest markers
 
@@ -687,7 +687,7 @@ Own-character random-rarity offers use two deterministic triple sequences indepe
 
 A suppressed occurrence reserves no additional triple.
 
-**Rationale:** sharing preserves both triples when a Rare moves between sources. [Rejected alternative](#card-offer-sequence-alternatives).
+**Rationale:** shared sequences preserve triple alignment when a Rare moves between sources; separate normal/elite sequences advance differently.
 
 #### Uncommon probabilities
 
@@ -887,7 +887,9 @@ Generate slots 1–3 in order. For each, roll [ordinary relic rarity](#relic-bag
 2. Freeze the three relics with the lowest minimum of its three pair priorities.
 3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
 
-**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap. [Rejected alternatives](#relic-trader-alternatives).
+**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap.
+
+**Rejected alternatives:** independent candidate priorities give lower trade agreement with the same outgoing overlap; direct pairing over all eligible relics gives higher trade agreement but can change two outgoing relics after one inventory substitution.
 
 Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
@@ -1103,7 +1105,7 @@ Use `CombatState.RoundNumber` at selection; extra player turns stay in the same 
 
 **Limit:** different selection counts can still shift choices within a round.
 
-[Rejected alternatives](#ordinary-rat-sampling-alternatives).
+**Rejected alternatives:** percentiles align poorly across eligibility changes; pair sequences lose cross-pair relationships and retain count differences; markers retain filter-history differences after eligibility converges.
 
 ### Fabricator bot identities
 
@@ -1285,45 +1287,17 @@ These are route-average choices: elite frequency and extra-offer sources shift t
 
 ### Rejected alternatives
 
-#### Chest allocation alternatives
-
-- **Separate chest allocation:** adds unfairness between reward sources.
-
 #### Combat-gold alternatives
 
-- **Shared rolls with independent compensation:** share ordinal for normal-fight and elite rewards. A3+ normal gold preserves expectation but becomes nonuniform (**Vanilla deviation — NoSL 2**); Bowler Hat can change the received total by 1.
+- **Shared rolls with independent compensation:** preserves A3+ normal-gold expectation but makes its distribution nonuniform (**Vanilla deviation — NoSL 2**); Bowler Hat can change the received total by 1.
 - **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
-
-The compensated shared-roll alternative used one normal-fight/elite gold ordinal to supply uniform `u ∈ [0,1)`:
-
-| Difficulty | Shared draw | Normal-fight gold | Elite gold |
-|---|---|---|---|
-| A0–2 | `X = floor(11u)` | `10 + X` | `35 + X` |
-| A3+ | `X = floor(8u)` | `7 + X + b` | `26 + X` |
-
-At A3+, `b` was a fair bit addressed by the cumulative unreduced normal-gold index, independently of `u` and other bits. Normal gold's endpoints 7 and 15 each had probability 1/16; 8–14 each had 1/8.
-
-#### Card offer sequence alternatives
-
-- **Separate normal/elite sequences:** advance differently when a Rare moves between sources, losing shared-triple alignment.
-
-#### Relic Trader alternatives
-
-- **Independent candidate priorities:** lower trade agreement than the settled rule, with the same outgoing overlap.
-- **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
 
 #### Event-selection alternatives
 
 - **Fixed scheduling in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
 - **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more Act 1 shared-order reversals.
-- **Cross-act insertion — shared position priorities:** reserve incoming positions using the lowest shared output-position priorities, then fill both sequences in order. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
-- **Cross-act insertion — weighted merging:** use shared output-position draws to choose old or incoming in proportion to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order in tests that consumed different numbers of leading events.
-
-#### Ordinary rat sampling alternatives
-
-- **Percentiles:** align poorly across eligibility changes.
-- **Pair sequences:** lose cross-pair relationships and retain count differences.
-- **Markers:** retain filter-history differences after eligibility converges.
+- **Cross-act insertion — shared position priorities:** reserve incoming positions by shared output-position priority. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
+- **Cross-act insertion — weighted merging:** use shared draws to choose old or incoming entries proportionally to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order when tests varied prior event consumption.
 
 ## Appendix: existing mechanics
 
