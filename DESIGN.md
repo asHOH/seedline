@@ -76,7 +76,7 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 Two top-level categories classify random operations within effects:
 
-- **Rewards:** generated reward identities and amounts, including permanent transformation results and otherwise-unspecified random rewards that are not event-exclusive.
+- **Rewards:** generated reward identities and amounts, including permanent transformation results.
 - **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
 
 Relic Trader's outgoing selection and replacement targets are handled together under Encounter.
