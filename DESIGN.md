@@ -242,6 +242,8 @@ Initial enemies use the [combat address](#combat-addresses) as their source; sum
 
 One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
 
+Revivals retain occurrence identity; summons and replacements receive fresh identities.
+
 ##### Card occurrence addresses
 
 Each card copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#logical-occurrence-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
@@ -928,8 +930,6 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option identity: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
 
-**Pael's second pool:** use vanilla weights: Growth 1; each other option 2.
-
 Retain vanilla generation and RNG positions for other menu components.
 
 Baseline: [Ancient offerings](#ancient-offerings).
@@ -1140,8 +1140,6 @@ With fewer than two eligible targets, advance nothing.
 
 Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
 
-Revivals retain occurrence identity; summons and replacements receive fresh identities.
-
 **Within-combat deviation — SL 4A(↓):** group isolation removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
 
 Baseline: [random creature targeting](#random-creature-targeting).
@@ -1338,7 +1336,7 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 | Neow | Two positive options and one curse option, with fixed exclusion pairs and unlock/player-count restrictions. Pools are fixed in the fully unlocked solo scope. |
 | Darv | Shuffles one choice from each eligible relic group; offers three, or two plus Dusty Tome with 50% probability. Ectoplasm and Sozu are Act 2 only. |
 | Orobas | One choice from each of three pools. Sea Glass's featured character uses event RNG. The third pool checks for the starter relic (Touch of Orobas) and supported starter card (Archaic Tooth), with a locked option if both are absent. |
-| Pael | One choice from each of three pools. Claw needs ≥3 Goopy-eligible cards; Tooth needs ≥5 removable cards; Legion requires no event pet. Growth has half the weight of each other eligible second-pool option. |
+| Pael | One choice from each of three pools. Claw needs ≥3 Goopy-eligible cards; Tooth needs ≥5 removable cards; Legion requires no event pet. Second-pool weights: Growth 1; each other eligible option 2. |
 | Tezcatara | One choice from each of three pools; Nutritious Soup joins the first while a Basic Strike remains. |
 | Tanx | Three choices from a shuffled pool; Tri-Boomerang joins with ≥3 Instinct-eligible cards. |
 | Vakuu | One choice from each of three fixed pools. |
@@ -1350,7 +1348,7 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 
 #### Event eligibility
 
-**Scope:** vanilla entry predicates for **56 ordinary events** in solo ordinary runs with permanent unlocks satisfied; Ancients are separate. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout. [Ordinary-event selection](#settled-policy-ordinary-event-selection) groups rows with equivalent non-act predicates into one scheduling condition, excluding rare checks.
+**Scope:** vanilla entry predicates for **56 ordinary events** in solo ordinary runs with permanent unlocks satisfied; Ancients are separate. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout.
 
 Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
@@ -1548,7 +1546,7 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 #### Combat card generation and transformations
 
-The following generators use the same factories and run-wide `CombatCardGeneration` RNG as [potion card generation](#potion-card-generation), with its eligibility and uniform identity sampling.
+The following generators and the six card-generating potions use shared factories and run-wide `CombatCardGeneration` RNG, sampling uniformly over eligible identities without a separate rarity roll. These factories exclude Basic/Ancient/Event rarities and cards with `CanBeGeneratedInCombat == false`, retaining unlock and player-count restrictions.
 
 | Pool / filter | Ordinary costs | Free this turn |
 |---|---|---|
@@ -1662,7 +1660,7 @@ Attack/Skill/Power Potions offer three distinct eligible own-character cards of 
 
 These six potions and Snecko Oil are combat-only.
 
-All six use shared `CombatCardGeneration` RNG and sample uniformly over eligible identities, without a separate rarity roll. Combat generation excludes Basic/Ancient/Event rarities and cards with `CanBeGeneratedInCombat == false`, retaining unlock and player-count restrictions. Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools, matching vanilla.
+All six use the [combat-card factory mechanics](#combat-card-generation-and-transformations). Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools, matching vanilla.
 
 ### Combat gold
 
