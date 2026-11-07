@@ -1,6 +1,6 @@
 # Same-Seed Consistency Mod — design
 
-This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Unspecified systems retain existing behavior.
+This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Policies inherit the [preservation defaults](#preservation-defaults).
 
 **Reading guide:**
 
@@ -186,6 +186,14 @@ Summary of generation sharing. Source policies own addressing, eligibility, cons
 
 The [fairness principle](#goals-and-principles) and labeled invariants are shared constraints. All contracts below apply to covered policies; source policies add sharing scopes, local rules and exceptions.
 
+### Preservation defaults
+
+Unless a policy specifies a change, preserve existing behavior, including:
+
+- Source access, pools, eligibility, choices, costs and rewards.
+- Offer sizes, selection counts, batch boundaries, duplicate rules, generated attributes and upgrade rules.
+- Triggers, effect timing/order, modifiers and presentation.
+
 ### Addressing and state
 
 #### RNG derivation and addressing
@@ -339,7 +347,7 @@ Markers freeze eligibility conditions at the original draw, including batch excl
 
 Ordinary markers are permanent; chests use the [finite-lifetime extension](#finite-lifetime-chest-markers).
 
-Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Preserve existing source eligibility and batch uniqueness; skipped entries remain available to eligible draws and borrowing.
+Apply the filtered draw strategy to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences reject duplicate candidates while generating each triple. Other card sequences use filtered draws to exclude duplicates.
 
@@ -538,7 +546,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 ### Stock and prices
 
 - Initial shop stock depends only on shop ordinal, except for Wongos, relic floor cutoffs and [borrowing](#borrowing).
-- **Initial cards:** generate rarity and identities by shop ordinal; preserve slot order, duplicate exclusion and unavailable-rarity fallback.
+- **Initial cards:** generate rarity and identities by shop ordinal; preserve unavailable-rarity fallback.
 - **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
@@ -575,7 +583,7 @@ Baseline: [gold ranges and exceptions](#combat-gold) and [Catfood addressing](#c
 
 **Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
 
-**Scope:** initial generation and reachable rerolls for the offer groups below. Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
+**Scope:** initial generation and reachable rerolls for the offer groups below.
 
 **Crystal Sphere:** does not reset the combat rarity offset.
 
@@ -779,7 +787,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 ## Settled policy: event-specific rewards
 
-**Scope:** Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock. Preserve existing choices, costs and eligibility.
+**Scope:** Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock.
 
 Neow's Bones' Ancient relic pair follows this policy; its curse follows [direct additions](#settled-policy-permanent-transformations-and-direct-card-additions).
 
@@ -812,7 +820,7 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 
 **Intent:** align affected cards across sources, decks and reward choices, and potion sacrifice offers independently of inventory order.
 
-Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clocks](#corrected-persistent-clocks) as specified below. Preserve source access, triggers, counts, eligibility, costs, rewards and effect order, subject to local rules.
+Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clocks](#corrected-persistent-clocks) as specified below.
 
 | Selection / candidates | Strategy and sharing | Local selection rules |
 |---|---|---|
@@ -863,7 +871,7 @@ Offer the first three owned potions in slot order, preserving display order. Use
 
 ## Settled policy: Ranwid relic sacrifice
 
-To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic identity. Preserve existing eligibility, costs and rewards.
+To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic identity.
 
 ## Settled policy: Relic Trader
 
@@ -895,7 +903,7 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 Address each complete batch by potion type + its [effect ordinal](#potion-effect-opportunities), separately from other combat generation.
 
-Preserve vanilla eligibility, uniform identity sampling without a separate rarity roll, and batch rules.
+Sample uniformly over eligible identities without a separate rarity roll.
 
 **Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
 
@@ -914,7 +922,7 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Settled policy: Ancient offerings
 
-**Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla option pools, weights, prerequisites and menu structure. Granted effects follow their policies separately.
+**Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure. Granted effects follow their policies separately.
 
 Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option identity: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
 
@@ -1055,7 +1063,7 @@ Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [
 
 Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
 
-Preserve vanilla eligibility and full-range fallback, conditional probabilities, fixed values, range modifiers, subsequent HP changes, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#settled-policy-encounter-setup).
+Preserve vanilla full-range fallback, conditional probabilities, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#settled-policy-encounter-setup).
 
 Baseline: [monster HP mechanics](#monster-hp).
 
@@ -1140,7 +1148,7 @@ Baseline: [random creature targeting](#random-creature-targeting).
 
 **Scope:** align random selection of existing combat cards and route player choices among equivalent copies, including combat-start effects and sampled choice offers. Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows [fixed-priority selection](#fixed-priority-card-selection).
 
-Use combat-local [corrected clocks](#corrected-persistent-clocks) under [combat addressing and resets](#combat-addresses). Preserve source eligibility, preference/fallback tiers, counts, triggers, effect timing, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
+Use combat-local [corrected clocks](#corrected-persistent-clocks) under [combat addressing and resets](#combat-addresses). Preserve preference/fallback tiers, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
 
 | Shared clock scope | Sources |
 |---|---|
@@ -1218,7 +1226,7 @@ Use independent sequences addressed by [combat address](#combat-addresses) + car
 
 Classify cost treatment by the generating source's free effect; natural costs, upgrades and later modifiers leave classification unchanged. Entropy follows the original card's transformation pool regardless of its acquisition source.
 
-Use [filtered draws](#filtered-draws) with uniform eligible identities and no separate rarity roll, preserving source eligibility, batch duplicate rules, counts and generated attributes. Consume one entry per generated identity, including every offered alternative, under [shared consumption timing](#opportunity-consumption-timing).
+Use [filtered draws](#filtered-draws) with uniform eligible identities and no separate rarity roll. Consume one entry per generated identity, including every offered alternative, under [shared consumption timing](#opportunity-consumption-timing).
 
 For Entropy's unordered selections, use [shared transformation allocation](#unordered-transformation-batches), then apply replacements in the existing gameplay execution order.
 
