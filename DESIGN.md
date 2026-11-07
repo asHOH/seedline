@@ -1365,45 +1365,45 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 
 **Fur Coat:** selects marked normal-fight/elite map nodes with its own run-seed + player-slot + relic-ID RNG and saves their coordinates. Matching maps reproduce the marks independently of earlier RNG consumption.
 
-#### Event condition classes
+#### Event eligibility
 
-**Scope:** vanilla entry predicates for solo ordinary runs with permanent unlocks satisfied; Ancients are separate. These **31 reference classes cover 56 ordinary events**. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout. [Ordinary-event selection](#settled-policy-ordinary-event-selection) groups rows with equivalent non-act predicates into one scheduling condition.
+**Scope:** vanilla entry predicates for **56 ordinary events** in solo ordinary runs with permanent unlocks satisfied; Ancients are separate. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout. [Ordinary-event selection](#settled-policy-ordinary-event-selection) groups rows with equivalent non-act predicates into one scheduling condition, excluding rare checks.
 
-**Reference labels:** `CX-Y` identifies one table row. `X` gives eligible acts: `1O` = Overgrowth, `1U` = Underdocks, `1` = either Act 1, `2` = Hive, `3` = Glory; `12`, `23`, `123` combine acts. `Y` gives a descriptive family and consecutive index starting at 1 within each act/family prefix: `N` = no additional condition, `G` = gold, `H` = HP, `D` = deck, `F` = floor, `P` = potions, `R` = relics, `M` = mixed predicates. Rare checks stay outside the grouping predicate.
+Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
-| Class | Scheduling condition beyond act | Count | Events |
+| Acts | Condition beyond act | Count | Events |
 |---|---|---:|---|
-| C1O-N | None | 8 | Aroma of Chaos; Byrdonis’ Nest; Dense Vegetation; Jungle Maze Adventure; Sapphire Seed; Tablet of Truth; Wellspring; Wood Carvings |
-| C1O-G1 | Gold ≥ 44 | 1 | Whispering Hollow |
-| C1O-G2 | Gold ≥ 100 | 1 | Morphic Grove |
-| C1O-G3 | Gold ≥ 149 | 1 | Luminous Choir |
-| C1O-H1 | HP ≤ 70% of maximum | 1 | Unrest Site |
-| C1U-N | None | 5 | Abyssal Baths; Doors of Light and Dark; Drowning Beacon; Spiraling Whirlpool; Sunken Treasury |
-| C1U-G1 | Gold ≥ 55 | 1 | Waterlogged Scriptorium |
-| C1U-G2 | Gold ≥ 120 | 1 | Endless Conveyor |
-| C1U-H1 | HP > 5 | 1 | Trash Heap |
-| C1U-F1 | Total floor ≥ 6 | 1 | Punch-Off |
-| C1-N | None | 1 | Sunken Statue |
-| C1-H1 | HP ≥ 10 | 1 | The Legends Were True |
-| C2-N | None | 8 | Bugslayer; Colorful Philosophers; Doll Room; Field of Man-Sized Holes; Infested Automaton; Lost Wisp; Spirit Grafter; The Lantern Key |
-| C2-G1 | Gold ≥ 100 | 1 | Welcome to Wongos |
-| C2-G2 | Gold ≥ 125 | 1 | Zen Weaver |
-| C2-H1 | HP ≥ 19 | 1 | Colossal Flower |
-| C2-D1 | ≥ 2 removable Basic Strikes and ≥ 2 removable Basic Defends | 1 | Amalgamator |
-| C2-P1 | ≥ 1 potion | 1 | Stone of All Time |
-| C3-N | None | 5 | Battleworn Dummy; Hungry for Mushrooms; Reflections; Tinker Time; Trial |
-| C3-H1 | HP ≥ 12 | 1 | Round Tea Party |
-| C3-D1 | A card eligible for Soul’s Power | 1 | Grave of the Forgotten |
-| C12-N | None | 2 | Brain Leech; Room Full of Cheese |
-| C12-G1 | Gold ≥ 150 | 1 | Tea Master |
-| C23-N | None | 2 | Potion Courier; Symbiote |
-| C23-G1 | Gold ≥ 100 | 1 | Crystal Sphere |
-| C23-M1 | Gold ≥ 100 or holding Foul Potion | 1 | Fake Merchant |
-| C23-M2 | Gold ≥ 100, ≥ 1 potion and ≥ 1 tradable relic | 1 | Ranwid the Elder |
-| C23-R1 | ≥ 5 tradable relics | 1 | Relic Trader |
-| C123-N | None | 2 | Self Help Book; This Or That |
-| C123-F1 | Total floor > 6 | 1 | Slippery Bridge |
-| C123-P1 | ≥ 2 potions | 1 | The Future of Potions |
+| 1 (Overgrowth) | None | 8 | Aroma of Chaos; Byrdonis’ Nest; Dense Vegetation; Jungle Maze Adventure; Sapphire Seed; Tablet of Truth; Wellspring; Wood Carvings |
+| 1 (Overgrowth) | Gold ≥ 44 | 1 | Whispering Hollow |
+| 1 (Overgrowth) | Gold ≥ 100 | 1 | Morphic Grove |
+| 1 (Overgrowth) | Gold ≥ 149 | 1 | Luminous Choir |
+| 1 (Overgrowth) | HP ≤ 70% of maximum | 1 | Unrest Site |
+| 1 (Underdocks) | None | 5 | Abyssal Baths; Doors of Light and Dark; Drowning Beacon; Spiraling Whirlpool; Sunken Treasury |
+| 1 (Underdocks) | Gold ≥ 55 | 1 | Waterlogged Scriptorium |
+| 1 (Underdocks) | Gold ≥ 120 | 1 | Endless Conveyor |
+| 1 (Underdocks) | HP > 5 | 1 | Trash Heap |
+| 1 (Underdocks) | Total floor ≥ 6 | 1 | Punch-Off |
+| 1 | None | 1 | Sunken Statue |
+| 1 | HP ≥ 10 | 1 | The Legends Were True |
+| 2 | None | 8 | Bugslayer; Colorful Philosophers; Doll Room; Field of Man-Sized Holes; Infested Automaton; Lost Wisp; Spirit Grafter; The Lantern Key |
+| 2 | Gold ≥ 100 | 1 | Welcome to Wongos |
+| 2 | Gold ≥ 125 | 1 | Zen Weaver |
+| 2 | HP ≥ 19 | 1 | Colossal Flower |
+| 2 | ≥ 2 removable Basic Strikes and ≥ 2 removable Basic Defends | 1 | Amalgamator |
+| 2 | ≥ 1 potion | 1 | Stone of All Time |
+| 3 | None | 5 | Battleworn Dummy; Hungry for Mushrooms; Reflections; Tinker Time; Trial |
+| 3 | HP ≥ 12 | 1 | Round Tea Party |
+| 3 | A card eligible for Soul’s Power | 1 | Grave of the Forgotten |
+| 1–2 | None | 2 | Brain Leech; Room Full of Cheese |
+| 1–2 | Gold ≥ 150 | 1 | Tea Master |
+| 2–3 | None | 2 | Potion Courier; Symbiote |
+| 2–3 | Gold ≥ 100 | 1 | Crystal Sphere |
+| 2–3 | Gold ≥ 100 or holding Foul Potion | 1 | Fake Merchant |
+| 2–3 | Gold ≥ 100, ≥ 1 potion and ≥ 1 tradable relic | 1 | Ranwid the Elder |
+| 2–3 | ≥ 5 tradable relics | 1 | Relic Trader |
+| 1–3 | None | 2 | Self Help Book; This Or That |
+| 1–3 | Total floor > 6 | 1 | Slippery Bridge |
+| 1–3 | ≥ 2 potions | 1 | The Future of Potions |
 
 **Rare checks on selected IDs:**
 
@@ -1417,7 +1417,7 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 | Field of Man-Sized Holes | a card eligible for Perfect Fit |
 | Slippery Bridge | A removable card |
 
-**Forced event:** War Historian Repy adds one event outside these classes: Lantern Key inserts it in Act 3; ordinary `IsAllowed` is always false.
+**Forced event:** War Historian Repy adds one event outside this table: Lantern Key inserts it in Act 3; ordinary `IsAllowed` is always false.
 
 #### Combat setup and shuffles
 
