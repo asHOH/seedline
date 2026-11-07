@@ -10,13 +10,13 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 **Goal:** keep choices and combat challenges comparable across same-seed runs with different routes and decisions. Compare corresponding opportunities—such as each run's first shop or third normal-fight reward—even on different floors.
 
-**Fairness principle — opportunity isolation:** preserve meaningful consequences while minimizing unrelated future gameplay changes. For example, room visits and reward choices should leave unrelated later randomness unchanged.
+**Fairness principle — opportunity isolation:** preserve meaningful consequences while minimizing unrelated future gameplay changes.
 
-**Behavior preservation:** all behavioral changes from vanilla, including probability changes, must be deliberate alignment tradeoffs, consistency fixes with no gameplay impact, or fixes to unintended vanilla behavior. Fixes to unintended behavior still receive impact grades; currently classified: [forced-event bypass](#forced-events).
+**Preservation:** retain vanilla gameplay except for deliberate alignment tradeoffs or corrections to unintended behavior.
 
 **Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that undermine comparable opportunities, often early or mid-game. Differences caused solely by unequal consumption of intentionally shared sequences are benign, including late-game divergence.
 
-**Batch-order neutrality:** selecting the same batch in a different click or enumeration order must not change which identities or statuses are affected or subsequent random state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
+**Batch-order neutrality:** changing click or enumeration order for the same batch must preserve which identities or statuses are affected and the subsequent random state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
 
 ### Vanilla deviations
 
