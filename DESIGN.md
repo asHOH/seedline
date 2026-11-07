@@ -109,6 +109,8 @@ Source policies follow applicable shared policies and may use mechanisms directl
 ### Randomness and addressing
 
 - **RNG / random state:** an RNG (random number generator) supplies random values. Random state includes RNG state and relevant context, including sequence contents and positions, opportunity counters, and stored rolls or selection priorities.
+- **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may draw from overlapping candidate pools.
+- **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned draws or streams unchanged.
 - **Roll:** a random draw for a named purpose, such as rarity or upgrading.
 - **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries. **Per-rarity identity sequences** provide one stream per rarity.
 - **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
@@ -343,7 +345,7 @@ Ordinary combats use combat category + act-local combat ordinal + encounter iden
 
 Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter identity, leaving ordinary combat counters unchanged.
 
-Combat-local purposes derive from this address + purpose and reset each combat. Apply [shared isolation impact](#shared-isolation-impact) where this removes cross-combat outcome steering; source policies retain their within-combat deviation assessments.
+Combat-local purposes derive from this address + purpose and reset each combat, providing isolation between combats. The [shared deviation](#loss-of-future-outcome-steering) applies where this removes cross-combat outcome steering; source policies retain their within-combat deviation assessments.
 
 Preserve settled scopes, including [potion-generated cards](#potion-generated-cards); use [shared consumption timing](#opportunity-consumption-timing).
 
@@ -403,7 +405,7 @@ Freeze one assignment key per combat occurrence. Derive initial [corrected clock
 
 Pile movement and status or eligibility changes retain keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above. Preserve gameplay inheritance.
 
-Combat-local assignment has the [shared isolation impact](#shared-isolation-impact), SL 5↓(↓). Under NoSL, selection retains uniform odds among eligible copies.
+Combat-local assignment removes cross-combat steering ([shared deviation](#loss-of-future-outcome-steering)). Under NoSL, selection retains uniform odds among eligible copies.
 
 #### Potion effect opportunities
 
@@ -428,13 +430,13 @@ Each covered potion type has its own run-wide effect ordinal:
 
 **Main idea:** share rarity rolls and identity order across related rewards, with independent sharing scopes and sequence state.
 
-**Sharing rationale:** generic rewards represent successive opportunities for the same kind of item, regardless of route. Shop isolation preserves corresponding inventories; isolating Courier and potion-generating effects prevents repeated use from displacing ordinary rewards. Transformations and direct additions share identity order because both generate permanent cards from a pool; separate rarity rolls preserve their different odds.
+**Sharing rationale:** generic rewards represent successive opportunities for the same kind of item, regardless of route. Partitioning shop state preserves corresponding inventories; partitions for Courier and potion-generating effects prevent repeated use from displacing ordinary rewards. Transformations and direct additions share identity order because both generate permanent cards from a pool; separate rarity rolls preserve their different odds.
 
 **Scope:** relics, potions, cards, permanent transformations and covered direct additions.
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered-draw mechanism](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation sharing](#generation-sharing) summarizes them.
 
-**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool divisions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
+**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
 Apply the filtered-draw mechanism to all covered relic, potion, card, transformation and direct-addition identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Skipped entries remain available to eligible draws and borrowing.
 
@@ -502,7 +504,7 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 #### Relics
 
-**Intent:** isolate normal-play relic supplies for shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
+**Intent:** partition normal-play relic supplies among shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
 
 ##### Allocation
 
@@ -520,7 +522,7 @@ Hidden random relic rewards from combat, chests, events and rest sites, includin
 
 ##### Borrowing
 
-**Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion uses the settled chest-refill and final-fallback rules below, which require no alignment. Ordinary isolation analysis excludes borrowing's rare tail effects and cross-sequence interactions.
+**Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion uses the settled chest-refill and final-fallback rules below, which require no alignment. Evaluate source partitioning excluding borrowing's rare tail effects and cross-sequence interactions.
 
 On source exhaustion, borrow the **last eligible remaining identity** of the requested rarity from another sequence. Priority: Courier sequence borrows from generic rewards first; Others borrow from Courier first.
 
@@ -534,7 +536,7 @@ Baseline pool sizes and draw rules: [relic bags](#relic-bags); Catfood's roll li
 
 #### Chests
 
-**Intent:** isolate chest gold from normal-fight counts and later chest rewards from Silver Crucible's empty chest.
+**Intent:** chest gold is independent of normal-fight counts; Silver Crucible's empty chest consumes no chest opportunity.
 
 ##### Rewards and consumption
 
@@ -577,7 +579,7 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 
 #### Potions
 
-**Intent:** isolate potions across rewards, shops, Courier and potion-generating effects; preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
+**Intent:** partition potion sequences by source (rewards, shops, Courier and potion-generating effects); preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
 
 Potion copies carry no persistent selection state. Player-chosen use, discard and trade affect the clicked copy, preserving slot-dependent offers and trade payoffs.
 
@@ -621,7 +623,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
-**Vanilla deviation — SL 4A(↓):** independent restock streams remove restock manipulation through interleaved purchase categories and effects.
+**Vanilla deviation — SL 4A(↓):** partitioned restock streams remove restock manipulation through interleaved purchase categories and effects.
 
 **Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
 
@@ -812,7 +814,7 @@ Baseline: [card reward mechanics](#card-reward-offers-1) and [Catfood addressing
 
 #### Permanent transformations and direct card additions
 
-**Intent:** align same-pool transformations and covered direct additions, preserving source rarity odds and isolating them from card reward offers and combat transformations.
+**Intent:** align same-pool transformations and covered direct additions, preserve source rarity odds, and partition their sequences from card reward offers and combat transformations.
 
 **Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
@@ -835,7 +837,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 #### Combat gold
 
-**Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
+**Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions; partition their draws from other rewards.
 
 **Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
 
@@ -1013,7 +1015,7 @@ For owned count `w > 0`, select the lowest `E/w = m` and subtract `w × m` from 
 
 Choose uniformly among winning-type copies in slot order, using type + copy-selection purpose + the type's pre-renewal count.
 
-Uniform copy-selection odds match [vanilla](#potions-1); removing sacrifice rerolls through same-type replacement has the [shared isolation impact](#shared-isolation-impact).
+Uniform copy-selection odds match [vanilla](#potions-1); removing sacrifice rerolls through same-type replacement causes the [shared deviation](#loss-of-future-outcome-steering).
 
 ###### Permanent upgrades and downgrades
 
@@ -1044,7 +1046,7 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 ##### Monster HP
 
-**Intent:** align combat HP sequences independently of earlier rooms, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
+**Intent:** isolate HP sequences by combat, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
 
 Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + combat-local HP-roll ordinal + monster HP purpose; select zero-based index `floor(u × count)` from ascending eligible HP values.
 
@@ -1058,7 +1060,7 @@ Baseline: [monster HP mechanics](#monster-hp-1).
 
 **Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
 
-**Shared rules:** isolate monster model identities except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
+**Shared rules:** partition sequences by monster model identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
 **Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
 
@@ -1100,9 +1102,9 @@ Use Fabricator occurrence + bot-selection ordinal + a separate bot-generation pu
 
 Fresh independent draws at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
 
-**Vanilla deviation — SL 4A(↓):** within-combat scope isolation and effective-decision consumption remove rerolls through unrelated or forced draws.
+**Vanilla deviation — SL 4A(↓):** partitioning AI sequences within combat and effective-decision consumption remove rerolls through unrelated or forced draws.
 
-**Vanilla deviation — SL 4A:** type isolation and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
+**Vanilla deviation — SL 4A:** partitioning by monster model and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
 
 Baseline: [monster AI mechanics](#monster-ai-1).
 
@@ -1151,7 +1153,7 @@ These assignments also initialize [combat selection clocks](#combat-card-clock-a
 
 ##### Random pile insertion
 
-**Intent:** align relative insertion depth across changing pile sizes while isolating unrelated sources and shuffles. Neighboring card identities may differ.
+**Intent:** align relative insertion depth across changing pile sizes, with separate randomness for unrelated source groups and shuffles. Neighboring card identities may differ.
 
 Address independent sequences by [combat address](#combat-addresses) + sharing group + target pile + insertion purpose. Source copies share their group.
 
@@ -1170,7 +1172,7 @@ Insert cards one at a time into the evolving pile, preserving vanilla generation
 
 Advance once per inserted card, including into an empty pile; failed insertions consume zero.
 
-**Within-combat deviation — SL 4A(↓):** group, target-pile and shuffle isolation remove cross-sequence rerolls.
+**Within-combat deviation — SL 4A(↓):** partitioning by insertion group and target pile, with a separate shuffle partition, removes cross-sequence rerolls.
 
 Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
@@ -1195,7 +1197,7 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 **Seeker Strike:** when sampling, use clocks only to choose the offered cards. Apply routing to the player's choice within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
 
-**Within-combat deviation — SL 4A(↓):** scope isolation and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
+**Within-combat deviation — SL 4A(↓):** clock partitioning and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
 
 Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#combat-setup-and-shuffles).
 
@@ -1222,7 +1224,7 @@ With fewer than two eligible targets, advance nothing.
 
 Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
 
-**Within-combat deviation — SL 4A(↓):** group isolation removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
+**Within-combat deviation — SL 4A(↓):** group partitioning removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
 
 Baseline: [random creature targeting](#random-creature-targeting).
 
@@ -1245,7 +1247,7 @@ Use [filtered draws](#filtered-draws) with uniform eligible identities and no se
 
 For Entropy's unordered selections, use [shared transformation batch rules](#unordered-transformation-batches), then apply replacements in the existing gameplay execution order.
 
-**Within-combat deviation — SL 4A(↓):** pool/cost-treatment isolation and shared generation–Entropy identity supply change source interactions and remove cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
+**Within-combat deviation — SL 4A(↓):** partitioning sequences by pool and cost treatment, while sharing identity supply between generation and Entropy, changes source interactions and removes cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
 
 **Within-combat deviation — SL 4A(↓):** canonical Entropy batch processing removes selection-order rerolls for the same selected batch.
 
@@ -1255,7 +1257,7 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 
 **Intent:** align cost rolls within card categories while separating combat draws from persistent potion opportunities. Cost rolls remain uniform over 0–3.
 
-| Independent group | Sequence address | Assignment |
+| Partition | Sequence address | Assignment |
 |---|---|---|
 | Confused — Snecko Eye and Fake Snecko Eye | [Combat address](#combat-addresses) + Confused cost purpose + card category | Five sequences, each following draw order. |
 | Slither | Combat address + Slither cost purpose | One sequence shared by all enchanted copies, following draw order. |
@@ -1275,9 +1277,9 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 
 Apply [combat-card routing](#combat-card-routing) to Oil’s hand-entry assignment.
 
-Oil's opportunity ordinal persists across combats. [Shared isolation impact](#shared-isolation-impact) applies to removing cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
+Oil batches are isolated by effect opportunity; the ordinal persists across combats. The [shared deviation](#loss-of-future-outcome-steering) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
 
-**Within-combat deviation — SL 4A(↓):** group/category isolation, X skipping and overlap reuse remove consumption-based rerolls; processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
+**Within-combat deviation — SL 4A(↓):** group partitioning, card-category partitions for Confused and Oil, X skipping and overlap reuse remove consumption-based rerolls; processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
 
 Baseline: [random energy costs](#random-energy-costs-1).
 
@@ -1295,7 +1297,7 @@ Failed channeling consumes zero.
 
 **Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
 
-Address each complete batch by potion type + its [effect ordinal](#potion-effect-opportunities), separately from other combat generation.
+Partition generation state by potion type, separately from other combat generation; isolate each complete batch by addressing it with potion type + its [effect ordinal](#potion-effect-opportunities).
 
 Sample uniformly over eligible identities without a separate rarity roll.
 
@@ -1362,7 +1364,7 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 **Event skipping and probability:** assume a uniform hidden shuffle, fixed other eligibility and no wrapping. While condition K is false, skipping passes hidden K entries alongside encountered non-K entries; their exchangeable positions preserve K's odds when it becomes true. With two K events and three others, zero, one or two non-K encounters leave the next K chance at `2/5`. Encounters while K is true have the usual without-replacement effect. Individual-seed outcomes can differ; changing other eligibility can change the odds.
 
-**Ancient identity:** selected during upfront room generation, using `UpFront` RNG. Shared Ancients are partitioned between later acts before each act selects its Ancient. Earlier room visits leave these selections unchanged. Evidence: `RunManager.GenerateRooms`, `ActModel.GenerateRooms`.
+**Ancient identity:** selected during upfront room generation, using `UpFront` RNG. Shared Ancients are divided between later acts before each act selects its Ancient. Earlier room visits leave these selections unchanged. Evidence: `RunManager.GenerateRooms`, `ActModel.GenerateRooms`.
 
 #### Ancient offerings
 
@@ -1379,7 +1381,7 @@ All eight Ancients select their menus with event RNG seeded by run seed + event 
 | Vakuu | One choice from each of three fixed pools. |
 | Nonupeipe | Three choices from a shuffled pool; Beautiful Bracelet joins with ≥4 Swift-eligible cards. |
 
-**Scope of consistency:** the menu RNG does not isolate every granted effect. Neow's Bones shuffles its relic candidates with shared `Rewards` RNG. Dusty Tome also calls `Rewards`, but its eligible pool contains exactly one card per character in this version: Corruption, Wraith Form, The Sealed Throne, Forbidden Grimoire or Biased Cognition. Its payload is therefore fixed by character despite consuming a draw.
+**Scope of consistency:** some granted effects consume shared RNGs. Neow's Bones shuffles its relic candidates with shared `Rewards` RNG. Dusty Tome also calls `Rewards`, but its eligible pool contains exactly one card per character in this version: Corruption, Wraith Form, The Sealed Throne, Forbidden Grimoire or Biased Cognition. Its payload is therefore fixed by character despite consuming a draw.
 
 **Fur Coat:** selects marked normal-fight/elite map nodes with its own run-seed + player-slot + relic-ID RNG and saves their coordinates. Matching maps reproduce the marks independently of earlier RNG consumption.
 
