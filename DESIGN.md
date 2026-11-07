@@ -1,14 +1,14 @@
 # Same-Seed Consistency Mod — design
 
-This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and supporting evidence. Policies inherit the [preservation defaults](#preservation-defaults).
+This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and their supporting evidence. All policies follow the [preservation defaults](#preservation-defaults).
 
 **Reading guide:**
 
 - Start with [goals](#goals-and-principles), [scope](#scope) and [terms](#concepts-and-terms).
-- Find a source in the [policy guide](#architecture-overview), or compare generation sources in [generation sharing](#generation-sharing). Policies follow [global rules](#global-rules), use [reusable mechanisms](#reusable-mechanisms) and inherit applicable [shared policies](#shared-policies).
+- Find source policies in the [Architecture overview](#architecture-overview); compare generation sources' randomness sharing in [Generation sharing](#generation-sharing). See [Document hierarchy](#document-hierarchy) for how the policy layers relate.
 - Use [Reference](#reference) for calibration and rejected alternatives, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
 
-**Reading convention:** unlabeled design statements in the main body define required behavior. Labeled baselines and references describe existing mechanics. Deviation notes, rationale, tradeoffs, examples and rejected alternatives explain the design. Reference and Appendix are descriptive only.
+**Reading convention:** policy text from [Goals and principles](#goals-and-principles) through [Source policies](#source-policies) defines required behavior, whether labeled or unlabeled. Baseline notes describe existing mechanics. Deviation notes, rationale, tradeoffs, examples and rejected alternatives explain the design; any requirements they discuss must also appear in policy text. [Reference](#reference) and [Appendix](#appendix-existing-mechanics) are descriptive only.
 
 ## Goals and principles
 
@@ -880,11 +880,13 @@ Use event RNG for reward identities, random rarities and Fake Merchant's price r
 
 ###### Act entry and carryover
 
+**Alignment:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable.
+
 At run start, independently shuffle each condition's IDs using condition key + ID-order purpose. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
 
 **Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
 
-**Alignment tradeoff:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable. [Rejected alternatives](#event-selection-alternatives).
+[Rejected alternatives](#event-selection-alternatives).
 
 Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
 
