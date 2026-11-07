@@ -5,15 +5,14 @@
 
 ## Design documentation
 
-- Conciseness over precision.
-- Use established terms. Introduce a separate name only for a distinct, reusable concept; define before use.
-- Mention edge cases, but don't expand on them except when they materially affect the design.
-- `DESIGN.md` owns settled policies and reusable reference facts; `WORKING.md` holds unresolved work and supporting evidence. Settled behavior must not depend on `WORKING.md`.
-- Split policies or problems into decoupled units if possible. Extract repeated algorithms as reusable mechanisms and repeated cross-source requirements as shared policies.
-- Organize `WORKING.md` by decision unit: split work only when choices can settle independently or require different evidence.
-- Keep `DESIGN.md` layered from goals/concepts → global rules → reusable mechanisms → shared policies → source policies → reference/appendix. Use the definitions in [Document hierarchy](DESIGN.md#document-hierarchy). Define existing-mechanics references once, using vanilla by default and labeling Catfood differences.
-- Define shared invariants, boundaries, consumption rules and rationale once; source policies add only local rules and exceptions.
-- Reference global rules, reusable mechanisms and shared policies instead of repeating them.
-- Within settled policies, put intent/scope before operative rules, baseline context last, and rationale beside the rule it explains; use architecture dimensions only where informative.
+- Conciseness over precision. Test every sentence for reader value: remove obvious, implied or repeated information. Keep distinctions only when they affect interpretation or use.
+- Write for implementers and design reviewers. Keep authoring instructions here; reading guides serve navigation and interpretation.
+- Use established terms; define new names before use, only for distinct, reusable concepts. Mention edge cases; expand only when material.
+- `DESIGN.md` owns settled policies and reusable reference facts independently of `WORKING.md`, which holds unresolved work and supporting evidence.
+- Split independent decisions. Organize `WORKING.md` by choices that can settle independently or require different evidence.
+- Follow [Document hierarchy](DESIGN.md#document-hierarchy): goals/concepts → global rules → mechanisms → shared policies → source policies → reference/appendix.
+- Extract repeated algorithms into mechanisms and cross-source requirements into shared policies. Define shared invariants, boundaries, consumption rules and rationale once; source policies add local rules and exceptions.
+- State requirements in policy text; notes explain them. Put intent/scope first, baseline context last, and rationale beside its rule. Use architecture dimensions only when informative.
+- Define existing mechanics once: vanilla by default, Catfood differences labeled. Prefer baseline links; explain labels only when needed for interpretation.
 - Review behavioral changes against the [behavior-preservation principle](DESIGN.md#goals-and-principles). Separate distinct deviations. For non-neutral grades (4B/5), illustrate when and how the strategy changes.
 - Report conflicting policies explicitly; do not silently settle them.
