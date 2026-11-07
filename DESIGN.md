@@ -995,7 +995,7 @@ The opening Innate subgroup uses [Processing Order](#deterministic-card-processi
 | Other starting Basics; eligible rewards/direct additions | Source-based priorities below. | Second sequence, most useful first. |
 | Remaining cards | Second sequence: earliest acquisition floor first, then ascending Processing Order. | Both rows combined, most useful first. |
 
-Opening shuffles retain removed entries only during priority assignment, then omit them. This protects deletion alignment; additions and reordered states can still shift sequential assignments.
+Freeze the card’s ordering properties at permanent removal and retain them through run end across [checkpoints](#saved-state). Include the entry in opening priority assignment, then omit it. Additions and reordered states can still shift sequential assignments.
 
 ### Source-based assignment — Acts 1–2
 
