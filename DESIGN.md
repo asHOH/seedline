@@ -110,7 +110,7 @@ Category and RNG ownership are separate: a reward can use event RNG.
 - **Ordinal:** an opportunity's position within its category, counted across the run unless a scope is stated; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator.
-- **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card or potion object currently associated with it.
+- **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card object currently associated with it.
 - **Occurrence address:** the stable source identifier of a logical occurrence, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **Selection state:** an occurrence's address, selection keys and aliases, residual clocks, and renewal counts.
@@ -202,9 +202,9 @@ Initial enemies use the [combat address](#combat-addresses) as their source; sum
 
 One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
 
-##### Card and potion occurrence addresses
+##### Card occurrence addresses
 
-Each card or acquired potion copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#logical-occurrence-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
+Each card copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#logical-occurrence-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
@@ -218,7 +218,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Logical-occurrence lifetime
 
-**Scope:** out-of-combat operations for [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-and-potion-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment); [potion departures](#potion-departure-routing) define retirement during combat.
+**Scope:** out-of-combat card operations for [persistent selection](#settled-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment).
 
 | Operation | Occurrence and selection state |
 |---|---|
@@ -226,7 +226,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
 | Change status or eligibility | Retain the occurrence and its selection state through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
 | Copy a card | Create a fresh occurrence and selection state from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
-| Permanently remove or combine cards; player-chosen [potion use, discard or trade](#potion-departure-routing) | Retire the selected logical inputs. |
+| Permanently remove or combine cards | Retire the selected logical inputs. |
 | Transform a card | Retire the original and initialize fresh replacement selection state. Preserve source-specific gameplay inheritance; see [permanent transformations](#permanent-transformations-and-direct-additions). |
 | [Route equivalent copies](#representative-routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
 
@@ -253,7 +253,7 @@ Each covered potion type has its own run-wide effect ordinal:
 | Permanently skip an unclaimed covered potion reward on the reward screen | Consume one ordinal, once per skipped reward. |
 | Acquire | Leave unchanged. |
 
-**Cauldron exception:** leaving a Cauldron reward unclaimed or discarding an acquired Cauldron potion before entering the next room leaves the ordinal unchanged. After entering the next room, acquired Cauldron potions follow the ordinary rule.
+**Cauldron exception:** for each covered type, acquired Cauldron potions grant one discard exemption each; consume one available exemption per same-type discard, regardless of clicked slot. Unclaimed Cauldron rewards, exempt discards and expiry of unused exemptions at next-room entry leave ordinals unchanged.
 
 **Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch.
 
@@ -266,7 +266,7 @@ At each checkpoint, save the following wherever used:
 - **Sequences:** contents, positions, original entry addresses and consumption.
 - **Markers:** positions, conditions, remaining lifetimes and carried entries.
 - **Opportunities:** counters and RNG state; chest-offer history and pending acquisition/skip decisions.
-- **Selection:** selection state, logical-to-physical occurrence associations and pending selection records.
+- **Selection:** selection state, potion type clocks and their renewal counts, logical-to-physical occurrence associations and pending selection records.
 
 ### Generation
 
@@ -339,7 +339,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 
 #### Deterministic Card Processing Order
 
-**Intent:** process unordered batches by usefulness for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#settled-policy-card-shuffling).
+**Intent:** process unordered batches by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#settled-policy-card-shuffling).
 
 Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
 
@@ -384,7 +384,7 @@ A player-directed choice does not advance a gameplay selector's clocks merely be
 
 #### Representative routing
 
-**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections), [player-chosen combat card selections](#combat-card-equivalence-and-routing), and [player-chosen potion departures](#potion-departure-routing), including combat departures. These policies define equivalence and operation sharing.
+**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen combat card selections](#combat-card-equivalence-and-routing). These policies define equivalence and operation sharing.
 
 Choose representatives within each equivalence class using [corrected persistent clocks](#corrected-persistent-clocks). An already randomly selected logical target bypasses representative routing.
 
@@ -531,6 +531,8 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 ## Settled policy: potions
 
 **Intent:** isolate potions across rewards, shops, Courier and potion-generating effects; preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
+
+Potion copies carry no persistent selection state. Player-chosen use, discard and trade affect the clicked copy, preserving slot-dependent offers and trade payoffs.
 
 ### Acquisition and sequences
 
@@ -807,7 +809,17 @@ Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clo
 | Random permanent upgrades / downgrades of existing deck cards | Corrected clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
 | Pael's Tooth / Beautiful Bracelet / Thieving Hopper | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-keys). | [Source rules](#fixed-priority-card-selection) below. |
 | Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-keys). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
-| Ranwid the Elder / Stone of All Time: owned potions | Corrected clocks; one shared run-wide scope. | Singleton: leave its clock unchanged. Otherwise renew the offered occurrence's clock once when the offer becomes available, using its per-occurrence renewal count. Declined potions remain selectable. |
+| Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); one shared run-wide scope. | With one owned potion, leave its clock unchanged. Otherwise renew the selected clock once when the offer becomes available. Declined potions remain selectable. |
+
+### Weighted potion sacrifice clocks
+
+Each potion type has one clock `E`, keyed by type + sacrifice purpose; use [shared initialization and renewal](#corrected-persistent-clocks). Ordinary use, discard, grants and absence preserve clocks and renewal counts.
+
+For owned count `w > 0`, select the lowest `E/w = m` and subtract `w × m` from other participating clocks. The table specifies renewal timing and the singleton exception.
+
+Choose uniformly among winning-type copies in slot order, using type + copy-selection purpose + the type's pre-renewal count.
+
+Uniform copy-selection odds match [vanilla](#potions); removing sacrifice rerolls through same-type replacement has the [shared isolation impact](#shared-isolation-impact).
 
 ### Permanent upgrades and downgrades
 
@@ -826,12 +838,6 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [equivalent-card routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 - **Thieving Hopper:** apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
-
-### Potion departure routing
-
-For player-chosen use, discard and trade, treat same-type owned potion copies as equivalent, including copies with different displayed trade payoffs. All such sources use [representative routing](#representative-routing) in one scope per potion type, separate from sacrifice-offer selection. Retire the routed logical potion on departure, including during combat. Slot-dependent offers and trade payoffs stay with the clicked option.
-
-Baseline selection: [potion event mechanics](#potions).
 
 ## Settled policy: The Future of Potions: card-type assignment
 
@@ -997,7 +1003,7 @@ Freeze the card’s ordering properties at permanent removal and retain them thr
 
 ### Source-based assignment — Acts 1–2
 
-Use [generation routing](#settled-policy-generation-routing) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-and-potion-occurrence-addresses).
+Use [generation routing](#settled-policy-generation-routing) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
 
 - **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
 - **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered or transformation-filter-only generation.
@@ -1628,6 +1634,8 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 #### Potion card generation
 
 Attack/Skill/Power Potions offer three distinct eligible own-character cards of the specified type; Colorless Potion offers three distinct eligible colorless cards. The player may skip or choose one, which becomes free this turn. Cosmic Concoction adds three distinct upgraded colorless cards; Orobic Acid adds one own-character Attack, Skill and Power, each free this turn.
+
+These six potions and Snecko Oil are combat-only.
 
 All six use shared `CombatCardGeneration` RNG and sample uniformly over eligible identities, without a separate rarity roll. Combat generation excludes Basic/Ancient/Event rarities and cards with `CanBeGeneratedInCombat == false`, retaining unlock and player-count restrictions. Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools, matching vanilla.
 
