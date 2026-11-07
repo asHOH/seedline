@@ -58,7 +58,7 @@ Rare deviations are appended with a **Frequency:** field.
 
 ## Scope
 
-Version: StS2 v0.111.0 and Catfood Mod v1.1.2.
+Standalone StS2 v0.111.0 mod for everyday play, also suited to competition. Catfood comparisons use v1.1.2.
 
 Compare single-player runs with matching seeds, versions and rules, with all content unlocked (including relic, card and event pools).
 
