@@ -473,15 +473,15 @@ Hidden random relic rewards from combat, chests, events and rest sites, includin
 
 ### Borrowing
 
-**Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion is outside discussion scope; fallback and chest refilling are implementation details. Ordinary isolation analysis excludes borrowing's rare tail effects and cross-sequence interactions.
+**Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion uses the settled chest-refill and final-fallback rules below, which require no alignment. Ordinary isolation analysis excludes borrowing's rare tail effects and cross-sequence interactions.
 
 On source exhaustion, borrow the **last eligible remaining identity** of the requested rarity from another sequence. Priority: Courier sequence borrows from generic rewards first; Others borrow from Courier first.
 
 Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
 
-**Implementation details — chest refilling:** when same-rarity borrowing fails, retain the normal generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, using one additional generic relic rarity RNG draw. Reusing this RNG advances later generic rarity rolls, accepted only in this out-of-scope case. Without a refill candidate, use the final fallback.
+**Fallback — chest refilling:** when same-rarity borrowing fails, retain the normal generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, using one additional generic relic rarity RNG draw. This also advances later generic rarity rolls. Without a refill candidate, use the final fallback.
 
-**Implementation details — final fallback:** starting at the requested rarity, try local entries and same-rarity borrowing before advancing through Shop → Common → Uncommon → Rare, without wrapping or another rarity roll; otherwise return Circlet.
+**Final fallback:** starting at the requested rarity, try local entries and same-rarity borrowing before advancing through Shop → Common → Uncommon → Rare, without wrapping or another rarity roll; otherwise return Circlet.
 
 Baseline pool sizes and draw rules: [relic bags](#relic-bags); Catfood's roll limit: [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -597,7 +597,7 @@ Baseline: [gold ranges and exceptions](#combat-gold) and [Catfood addressing](#c
 
 ## Settled policy: card reward offers
 
-**Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources; Catfood separates normal fights and elites. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
+**Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
 
 **Scope:** initial generation and reachable rerolls for the offer groups in [generation routing](#settled-policy-generation-routing). Preserve source eligibility, offer sizes, selection rules and upgrade behavior.
 
@@ -747,6 +747,8 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 **Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
+Baseline: [card reward mechanics](#card-reward-offers) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+
 ## Settled policy: permanent transformations and direct card additions
 
 **Intent:** align same-pool transformations and covered direct additions, preserving source rarity odds and isolating them from card reward offers and combat transformations.
@@ -831,7 +833,7 @@ Uniform copy-selection odds match [vanilla](#potions); removing sacrifice reroll
 
 Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
 
-**Vanilla deviation — SL 4A(↓):** reordering random upgrades, such as Whetstone and War Paint, with candidate addition/removal or another disjoint random upgrade no longer rerolls their targets.
+**Vanilla deviation — SL 4A(↓):** random upgrades, such as Whetstone and War Paint, lose target rerolls caused by unrelated RNG consumption. Eligibility histories can change survivor rankings under the [shared clock contract](#corrected-persistent-clocks).
 
 ### Fixed-priority card selection
 
@@ -942,7 +944,7 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 **Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
-**Implementation detail — empty eligible pool:** outside this policy's scope; relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
+**Fallback — empty eligible pool:** Relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
 
 **Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
 
@@ -1183,7 +1185,7 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 **Vanilla deviation — SL 4A(↓):** within a routed class, trying different clicks on reload selects the same hidden state for later combat selection, shuffles and Oil costs. Position-dependent outcomes and the choice between different consequential deck links remain available, even after a shuffle.
 
-Baseline: selection uses `CombatCardSelection`, except auto-play uses `Shuffle`. `NextItem` consumes a draw for singletons; batch selectors shuffle the full input before taking their count. `StableShuffle` sorts identity/upgrade first.
+Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#combat-setup-and-shuffles).
 
 ## Settled policy: random orb types
 
@@ -1509,6 +1511,8 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 #### Card state and selection
 
+**Combat card selection:** selection uses `CombatCardSelection`, except auto-play uses `Shuffle`. `NextItem` consumes a draw for singletons; batch selectors shuffle the full input before taking their count. See [shuffle mechanics](#combat-setup-and-shuffles) for `StableShuffle` ordering.
+
 **Out-of-combat player card batches:** batch selections are unordered. Deck selectors and reward grids collect the full selection before effects. Enumeration can affect acquisition order (e.g. Sea Glass).
 
 **Player-selected deck operations:** the inspected deck-selection callers cover upgrading (Smith), enchanting (Gnarled Hammer), permanent removal (Empty Cage), transformation (Astrolabe, Claws, Wood Carvings), combining removals with a new addition (Amalgamator), temporary storage for return (Pael's Tooth), and copying (Dolly's Mirror). Wongos and Reflections downgrade randomly. Reward selections acquire new occurrences. Catfood's inspected patches add no operation category.
@@ -1671,7 +1675,7 @@ Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: 
 
 **Potions:** drop checks use `player seed` + `cumulative check index`, starting at 0, with vanilla's changing probability. Forced drops also advance this index. Potion factories seed each batch with a shared call index.
 
-**Combat card generation:** identities/upgrades use room type, count and offer position. Rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-stream bug, not a wrong ordinal; gameplay impact has not been reproduced.
+**Combat card generation:** identities/upgrades use room type, count and offer position, separating normal-fight and elite offers. Rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-stream bug, not a wrong ordinal; gameplay impact has not been reproduced.
 
 **Card rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`. The separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets. Combat rerolls update their room type's rarity state, potentially shifting later offers; non-Rare rerolls raise the offset, as in vanilla.
 

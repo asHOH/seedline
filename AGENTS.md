@@ -15,5 +15,5 @@
 - Define shared invariants, boundaries, consumption rules and rationale once; source policies add only local rules and exceptions.
 - Reference shared contracts instead of repeating them.
 - Within settled policies, put intent/scope before operative rules, baseline context last, and rationale beside the rule it explains; use architecture dimensions only where informative.
-- Review behavioral changes against the [behavior-preservation principle](DESIGN.md#goals-and-principles). Separate distinct deviations.
+- Review behavioral changes against the [behavior-preservation principle](DESIGN.md#goals-and-principles). Separate distinct deviations. For non-neutral grades (4B/5), illustrate when and how the strategy changes.
 - Report conflicting policies explicitly; do not silently settle them.
