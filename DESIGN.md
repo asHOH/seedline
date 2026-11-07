@@ -111,6 +111,7 @@ Source policies follow applicable shared policies and may use mechanisms directl
 - **RNG / random state:** an RNG (random number generator) supplies random values. Random state includes RNG state and relevant context, including sequence contents and positions, opportunity counters, and stored rolls or selection priorities.
 - **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may draw from overlapping candidate pools.
 - **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned draws or streams unchanged.
+- **Purpose:** the role of a random draw or stream, such as selection, ordering or upgrading.
 - **Roll:** a random draw for a named purpose, such as rarity or upgrading.
 - **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries. **Per-rarity identity sequences** provide one stream per rarity.
 - **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
@@ -132,7 +133,7 @@ Each controlled random operation has five descriptive dimensions:
 | Dimension | Describes |
 |---|---|
 | Outcome | What is randomized. |
-| Sharing scope | Which operations share randomness. |
+| Sharing scope | Which operations share randomness for a given purpose. |
 | Address | How corresponding opportunities or entries are identified. |
 | Form | Addressed draw, stream, finite allocation or another coupling mechanism. |
 | State | What changes, resets and must survive save/load. |
@@ -216,9 +217,9 @@ Unless a policy specifies a change, preserve existing behavior, including:
 
 ### RNG derivation and addressing
 
-**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable sharing-scope and purpose identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
+**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable purpose and sharing-scope identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
-Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
+Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
 
 In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
@@ -284,7 +285,7 @@ Ordinary markers are permanent; chests use the [finite-lifetime extension](#fini
 
 **Scope:** a single choice or effective batch, at most once per run.
 
-Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at the selection opportunity, from its selection key + selection scope/purpose. Select the lowest eligible priorities. Save the inputs needed to reproduce priorities; omit priority values.
+Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at the selection opportunity, from purpose + sharing scope + selection key. Select the lowest eligible priorities. Save the inputs needed to reproduce priorities; omit priority values.
 
 **Weighted single choice:** use priority `-ln(U_i) / w_i` for weight `w_i`; select the lowest. Selection probability is `w_i / Σw`. Fixed relative weights preserve survivors' ranking when candidates are removed.
 
@@ -292,9 +293,9 @@ Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at
 
 **Main idea:** for uniform occurrence selection across opportunities, retain residual exponential clocks and correct eligible survivors after each random selection. The [persistent-selection](#persistent-selection), [combat-selection](#random-combat-card-selection) and [combat-card routing](#combat-card-routing) policies specify sharing and local clock rules.
 
-**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose.
+**Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from purpose + sharing scope + selection key.
 
-Where renewal uses a per-occurrence count, derive each independent draw from selection key + selection scope/purpose + renewal count.
+Where renewal uses a per-occurrence count, derive each independent draw from purpose + sharing scope + selection key + renewal count.
 
 **Selection and update:**
 
@@ -325,7 +326,7 @@ Commit the association permutation and shared clock update with the action. Rene
 
 ### Opportunity-specific selection priorities
 
-Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportunity. Derive priorities from opportunity address + candidate key + purpose, excluding candidate sets and list positions. Sources define keys, sharing and opportunity counting.
+Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportunity. Derive priorities from opportunity address + purpose + candidate key, excluding candidate sets and list positions. Sources define keys, sharing and opportunity counting.
 
 ## Shared policies
 
@@ -486,7 +487,7 @@ Process the selected originals in the identity-only [card processing order](#car
 
 #### Combat-card routing
 
-Use [routing](#routing) whenever a player chooses among existing combat cards. Initialize routing clocks under [combat-card clock assignment](#combat-card-clock-assignment). Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the granting source and choice purpose as their scope, including Hand Trick's Sly choice and Thinking Ahead's return to the top of the draw pile. All routing clocks are combat-local and per card identity.
+Use [routing](#routing) whenever a player chooses among existing combat cards. Initialize routing clocks under [combat-card clock assignment](#combat-card-clock-assignment). Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the choice purpose and granting source as their scope, including Hand Trick's Sly choice and Thinking Ahead's return to the top of the draw pile. All routing clocks are combat-local and per card identity.
 
 Apply routing once per committed player choice, before effects, among the copies the player can actually choose. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
 
@@ -562,7 +563,7 @@ Resolve the choice before expiry, including `x = 0`; permanent ineligibility or 
 
 Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry.
 
-**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by rarity + non-empty chest ordinal + marker-lifetime purpose. Corresponding chests share `u`; successive chests draw independently.
+**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal. Corresponding chests share `u`; successive chests draw independently.
 
 Before recording the offer, `S` counts chest-eligible shared identities of that rarity, excluding previous chest offers, in:
 
@@ -839,7 +840,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 **Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions; partition their draws from other rewards.
 
-**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
+**Generation and addressing:** derive each draw from `purpose = gold reward` + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
 
 Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
 
@@ -880,9 +881,9 @@ Use event RNG for reward identities, random rarities and Fake Merchant's price r
 
 **Alignment:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable.
 
-At run start, independently shuffle each condition's IDs using condition key + ID-order purpose. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
+At run start, independently shuffle each condition's IDs using `purpose = ID order` + condition key. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + `purpose = insertion` + condition key + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
 
 [Rejected alternatives](#event-selection-alternatives).
 
@@ -935,8 +936,8 @@ Baseline: [Ancient offerings](#ancient-offerings-1).
 
 Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers-1); generated cards follow [type-specific offers](#type-specific-offers).
 
-- Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + ordering purpose + potion model ID + duplicate number. Number identical offered copies from 1 in slot order.
+- Use three independent event-local type sequences, addressed by event ID + `purpose = type assignment` + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
+- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + `purpose = ordering` + potion model ID + duplicate number. Number identical offered copies from 1 in slot order.
 - Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
 
 **Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
@@ -986,7 +987,7 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 | Source / extra group | Group-selection roll | Selection within the extra group |
 |---|---|---|
 | Rare-bearing Brain Leech: two supplementary positions | Event RNG. | If both cards are eligible, choose uniformly with an independent event-RNG draw under a separate purpose. Matching eligible extras retain the same target whenever both runs select the group. |
-| Lasting Candy: added Power | Power sequence entry + Wing Charm purpose, evaluated only if the Power is eligible; otherwise use the triple directly. | Select the Power. Qualifying combat offers have three base cards, so there are no other supplementary candidates. |
+| Lasting Candy: added Power | Power sequence entry + `purpose = Wing Charm`, evaluated only if the Power is eligible; otherwise use the triple directly. | Select the Power. Qualifying combat offers have three base cards, so there are no other supplementary candidates. |
 
 **Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
 
@@ -1009,11 +1010,11 @@ Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clo
 
 ###### Weighted potion sacrifice clocks
 
-Each potion type has one clock `E`, keyed by type + sacrifice purpose; use [shared initialization and renewal](#corrected-persistent-clocks). Ordinary use, discard, grants and absence preserve clocks and renewal counts.
+Each potion type has one clock `E`, keyed by `purpose = sacrifice` + type; use [shared initialization and renewal](#corrected-persistent-clocks). Ordinary use, discard, grants and absence preserve clocks and renewal counts.
 
 For owned count `w > 0`, select the lowest `E/w = m` and subtract `w × m` from other participating clocks. The table specifies renewal timing and the singleton exception.
 
-Choose uniformly among winning-type copies in slot order, using type + copy-selection purpose + the type's pre-renewal count.
+Choose uniformly among winning-type copies in slot order, using `purpose = copy selection` + type + the type's pre-renewal count.
 
 Uniform copy-selection odds match [vanilla](#potions-1); removing sacrifice rerolls through same-type replacement causes the [shared deviation](#loss-of-future-outcome-steering).
 
@@ -1040,7 +1041,7 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 **Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
 
-Use the shared [combat address](#combat-addresses) + setup purpose.
+Use the shared [combat address](#combat-addresses) + `purpose = setup`.
 
 Preserve encounter identity selection and setup sampling; reward ordinals and AI retain their own policies.
 
@@ -1048,7 +1049,7 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 **Intent:** isolate HP sequences by combat, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
 
-Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + combat-local HP-roll ordinal + monster HP purpose; select zero-based index `floor(u × count)` from ascending eligible HP values.
+Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + `purpose = monster HP` + combat-local HP-roll ordinal; select zero-based index `floor(u × count)` from ascending eligible HP values.
 
 Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
 
@@ -1060,7 +1061,7 @@ Baseline: [monster HP mechanics](#monster-hp-1).
 
 **Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
 
-**Shared rules:** partition sequences by monster model identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
+**Shared rules:** partition sequences by monster model identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + purpose + sharing scope; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
 **Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
 
@@ -1096,7 +1097,7 @@ Use `CombatState.RoundNumber` at selection; extra player turns stay in the same 
 
 ###### Fabricator bot identities
 
-Use Fabricator occurrence + bot-selection ordinal + a separate bot-generation purpose. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in stable model-identity order. Singleton choices consume an ordinal. Preserve spawn order.
+Use Fabricator occurrence + `purpose = bot generation` + bot-selection ordinal. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in stable model-identity order. Singleton choices consume an ordinal. Preserve spawn order.
 
 ###### Behavior preservation
 
@@ -1116,7 +1117,7 @@ Baseline: [monster AI mechanics](#monster-ai-1).
 
 Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply existing opening-hand and shuffle modifiers.
 
-Address opening shuffles by [combat address](#combat-addresses) + opening purpose; later shuffles by combat address + later purpose + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
+Address opening shuffles by [combat address](#combat-addresses) + `purpose = opening shuffle`; later shuffles by combat address + `purpose = later shuffle` + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
 
 ###### Priority assignment
 
@@ -1138,7 +1139,7 @@ Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-
 
 - **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
 - **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered or transformation-filter-only generation.
-- **Triple key assignment:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + assignment purpose + card identity. Freeze that choice at acquisition; the others enter the remaining group.
+- **Triple key assignment:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + `purpose = assignment` + card identity. Freeze that choice at acquisition; the others enter the remaining group.
 - **Transformations:** treat as deletion plus direct addition.
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
@@ -1155,7 +1156,7 @@ These assignments also initialize [combat selection clocks](#combat-card-clock-a
 
 **Intent:** align relative insertion depth across changing pile sizes, with separate randomness for unrelated source groups and shuffles. Neighboring card identities may differ.
 
-Address independent sequences by [combat address](#combat-addresses) + sharing group + target pile + insertion purpose. Source copies share their group.
+Address independent sequences by [combat address](#combat-addresses) + `purpose = insertion` + sharing group + target pile. Source copies share their group.
 
 | Sharing group | Coverage |
 |---|---|
@@ -1193,7 +1194,7 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 **Consumption exceptions:** empty and forced-singleton selections leave clocks and renewal counts unchanged. So do whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell; hand returns require space for every selected card.
 
-**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by stable logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + incidental-shuffle purpose. Advance only for these shuffles.
+**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by stable logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + `purpose = incidental shuffle`. Advance only for these shuffles.
 
 **Seeker Strike:** when sampling, use clocks only to choose the offered cards. Apply routing to the player's choice within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
 
@@ -1209,7 +1210,7 @@ Use [fixed priorities](#fixed-selection-priorities) with a separate purpose and 
 
 **Intent:** align random enemy targets across changing eligible sets.
 
-Use four independent sequences addressed by [combat address](#combat-addresses) + sharing group + targeting purpose:
+Use four independent sequences addressed by [combat address](#combat-addresses) + `purpose = targeting` + sharing group:
 
 | Sharing group | Sources |
 |---|---|
@@ -1232,7 +1233,7 @@ Baseline: [random creature targeting](#random-creature-targeting).
 
 **Intent and scope:** align random identities from combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their settled scope.
 
-Use independent sequences addressed by [combat address](#combat-addresses) + card-generation purpose + group + pool below. All copies and triggers sharing a group and pool use the same sequence.
+Use independent sequences addressed by [combat address](#combat-addresses) + `purpose = card generation` + group + pool below. All copies and triggers sharing a group and pool use the same sequence.
 
 | Group | Identity supply and consumers |
 |---|---|
@@ -1259,9 +1260,9 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 
 | Partition | Sequence address | Assignment |
 |---|---|---|
-| Confused — Snecko Eye and Fake Snecko Eye | [Combat address](#combat-addresses) + Confused cost purpose + card category | Five sequences, each following draw order. |
-| Slither | Combat address + Slither cost purpose | One sequence shared by all enchanted copies, following draw order. |
-| Snecko Oil | Oil cost purpose + [potion effect ordinal](#potion-effect-opportunities) + card category | Five fresh sequences per opportunity, using hand-entry order below. |
+| Confused — Snecko Eye and Fake Snecko Eye | [Combat address](#combat-addresses) + `purpose = Confused cost` + card category | Five sequences, each following draw order. |
+| Slither | Combat address + `purpose = Slither cost` | One sequence shared by all enchanted copies, following draw order. |
+| Snecko Oil | `purpose = Oil cost` + [potion effect ordinal](#potion-effect-opportunities) + card category | Five fresh sequences per opportunity, using hand-entry order below. |
 
 **Card categories:** starter Strikes; starter Defends; Other Basic 1; Other Basic 2; Others. Other Basic slots follow each character's original starting-deck identity order and remain fixed through removals. Classify by current identity: upgrades and copies retain its category; transformations use the replacement's category. Other Strike-tagged attacks belong to Others.
 
@@ -1287,7 +1288,7 @@ Baseline: [random energy costs](#random-energy-costs-1).
 
 **Intent:** isolate random-orb generation by combat; preserve uniform sampling.
 
-All sources share one sequence addressed by [combat address](#combat-addresses) + orb-type purpose.
+All sources share one sequence addressed by [combat address](#combat-addresses) + `purpose = orb type`.
 
 Failed channeling consumes zero.
 

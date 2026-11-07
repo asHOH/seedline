@@ -8,6 +8,7 @@
 - Conciseness over precision. Test every sentence for reader value: remove obvious, implied or repeated information. Keep distinctions only when they affect interpretation or use.
 - Write for implementers and design reviewers. Keep authoring instructions here; reading guides serve navigation and interpretation.
 - Use established terms; define new names before use, only for distinct, reusable concepts. Mention edge cases; expand only when material.
+- In address expressions, place purpose before sharing scope for logical coherence.
 - `DESIGN.md` owns settled policies and reusable reference facts independently of `WORKING.md`, which holds unresolved work and supporting evidence.
 - Split independent decisions. Organize `WORKING.md` by choices that can settle independently or require different evidence.
 - Follow [Document hierarchy](DESIGN.md#document-hierarchy): goals/concepts → global rules → mechanisms → shared policies → source policies → reference/appendix.
