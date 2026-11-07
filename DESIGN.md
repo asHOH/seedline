@@ -339,11 +339,9 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 
 #### Deterministic Card Processing Order
 
-**Intent:** give unordered card batches a common usefulness-based processing order for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent and combat transformations and [combat shuffling](#settled-policy-card-shuffling).
+**Intent:** process unordered batches by usefulness for [new occurrence addresses](#card-and-potion-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#settled-policy-card-shuffling).
 
-**Status:** preliminarily settled — ready for use, with fine-tuning remaining. The [detailed ranking and state comparisons](CARD_ORDER.md) form part of this specification.
-
-Use a fixed, authored usefulness ranking of card identities and their gameplay-relevant statuses. Identify cards by stable model IDs.
+Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
 
 Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
 
