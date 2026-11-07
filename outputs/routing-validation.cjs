@@ -209,7 +209,7 @@ function lifecycle(clickLast, reload) {
   const replacement = card(5, 'transform/0', 'Bash'); cards.push(replacement);
   assert.deepEqual(replacement.logical, occurrence('transform/0'));
   logs.push(clone(logicalView(cards)));
-  // An already selected random target never passes through representative routing.
+  // An already selected random target never passes through routing.
   const randomTarget = [...cards].sort((a, b) => priority('randomUpgrade')(a.logical, b.logical))[0];
   const beforeRandom = clone(cards.map(c => c.logical));
   randomTarget.game.upgrade++;
@@ -273,8 +273,8 @@ const fixedChoiceLaw = {}, routedChoiceLaw = {};
 for (const downstream of permutations(['a', 'b', 'c'])) {
   const outcome = chosen => downstream[0] === 'c' ? 'Defend' : downstream[0] === chosen ? 'Strike+' : 'Strike';
   fixedChoiceLaw[outcome('a')] = (fixedChoiceLaw[outcome('a')] ?? 0) + 1;
-  for (const representative of ['a', 'b']) {
-    const label = outcome(representative);
+  for (const selectedOccurrence of ['a', 'b']) {
+    const label = outcome(selectedOccurrence);
     routedChoiceLaw[label] = (routedChoiceLaw[label] ?? 0) + 1;
   }
 }

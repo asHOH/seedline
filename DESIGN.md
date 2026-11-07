@@ -5,7 +5,7 @@ This specification records settled policies, their rationale and existing-mechan
 **Reading guide:**
 
 - Start with [goals](#goals-and-principles), [scope](#scope) and [terms](#concepts-and-terms).
-- Find a source in the [policy guide](#architecture-overview), or compare generation sources in [generation routing](#generation-routing). Policies follow [global rules](#global-rules), use [reusable mechanisms](#reusable-mechanisms) and inherit applicable [shared policies](#shared-policies).
+- Find a source in the [policy guide](#architecture-overview), or compare generation sources in [generation sharing](#generation-sharing). Policies follow [global rules](#global-rules), use [reusable mechanisms](#reusable-mechanisms) and inherit applicable [shared policies](#shared-policies).
 - Use [Reference](#reference) for calibration and rejected alternatives, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
 
 **Reading convention:** unlabeled design statements in the main body define required behavior. Labeled baselines and references describe existing mechanics. Deviation notes, rationale, tradeoffs, examples and rejected alternatives explain the design. Reference and Appendix are descriptive only.
@@ -70,7 +70,7 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 **Discussion boundary:** describe base random outcomes and preserve existing modifiers, including eggs, Fresnel Lens and fixed discounts. Discuss modifier interactions when they affect random operations.
 
-**Fixed identities and selections:** predetermined card, relic and potion identities, player choices and fixed selections are outside scope, except for equivalent-copy routing. Fixed-rarity requests with random identities remain in scope.
+**Fixed identities and selections:** predetermined card, relic and potion identities, player choices and fixed selections are outside scope, except for [routing](#routing). Fixed-rarity requests with random identities remain in scope.
 
 ## Concepts and terms
 
@@ -122,6 +122,7 @@ Source policies follow applicable shared policies and may use mechanisms directl
 - **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
 - **Event RNG:** an event's own generator.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card object currently associated with it.
+- **Routing:** selection of logical occurrences within an equivalence class and their association with the physical copies chosen by the player.
 - **Occurrence address:** the stable source identifier of a logical occurrence, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **Selection state:** an occurrence's address, selection keys and aliases, residual clocks, and renewal counts.
@@ -140,7 +141,7 @@ Each controlled random operation has five descriptive dimensions:
 
 Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
 
-The guide below links to [source policies](#source-policies); [generation routing](#generation-routing) compares their rarity and identity sharing. The [document hierarchy](#document-hierarchy) separates global rules, mechanisms and shared policies.
+The guide below links to [source policies](#source-policies); [generation sharing](#generation-sharing) compares their rarity and identity sharing. The [document hierarchy](#document-hierarchy) separates global rules, mechanisms and shared policies.
 
 ### Rewards
 
@@ -161,7 +162,7 @@ The guide below links to [source policies](#source-policies); [generation routin
 | Rooms and events | [Unknown rooms](#source-policy-unknown-room-resolution); [Ancient offerings](#source-policy-ancient-offerings); [ordinary events](#source-policy-ordinary-event-selection); [forced events](#source-policy-forced-events). |
 | Combat | [Encounter setup](#source-policy-encounter-setup); [card shuffling](#source-policy-card-shuffling); [random pile insertion](#source-policy-random-pile-insertion); [monster HP](#source-policy-monster-hp); [monster AI](#source-policy-monster-ai); [random creature targets](#source-policy-random-creature-targets); [random orb types](#source-policy-random-orb-types); [card generation and transformations](#source-policy-combat-card-generation-and-transformations); [random cost values](#source-policy-random-cost-values). |
 
-### Generation routing
+### Generation sharing
 
 Summary of generation sharing. Source policies own addressing, eligibility, construction and consumption rules under the [shared generation policies](#generation).
 
@@ -281,7 +282,7 @@ Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at
 
 ### Corrected persistent clocks
 
-**Main idea:** for uniform occurrence selection across opportunities, retain residual exponential clocks and correct eligible survivors after each random selection. The [persistent-selection](#source-policy-persistent-selection), [combat-selection](#source-policy-random-combat-card-selection) and [combat-routing](#combat-card-equivalence-and-routing) policies specify sharing and local clock rules.
+**Main idea:** for uniform occurrence selection across opportunities, retain residual exponential clocks and correct eligible survivors after each random selection. The [persistent-selection](#source-policy-persistent-selection), [combat-selection](#source-policy-random-combat-card-selection) and [combat-card routing](#combat-card-routing) policies specify sharing and local clock rules.
 
 **Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from its selection key + selection scope/purpose.
 
@@ -296,23 +297,23 @@ Policies define when and how to renew consumed clocks from the same distribution
 
 **Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
-A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; any hidden equivalent-copy routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks.
+A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks.
 
 **Rationale and limit:** the exponential memoryless property preserves uniform selection probabilities while retaining the relative order of jointly participating survivors. This does not preserve one global ranking across different eligibility histories. For example, let `A`, `B`, `C` have clocks `0.5`, `0.6`, `0.7`: if only `A` and `C` participate and `A` is selected, the surviving `C` now outranks the inactive `B`.
 
-### Representative routing
+### Routing
 
-**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen combat card selections](#combat-card-equivalence-and-routing). These shared policies define equivalence and operation sharing.
+**Scope:** out-of-combat [player-selected cards](#equivalent-card-selections) and [player-chosen combat card selections](#combat-card-routing). These shared policies define equivalence and operation sharing.
 
-Choose representatives within each equivalence class using [corrected persistent clocks](#corrected-persistent-clocks). An already randomly selected logical target bypasses representative routing.
+Use [corrected persistent clocks](#corrected-persistent-clocks) for selection. An already randomly selected logical target bypasses routing.
 
-**Routing boundary:** routing assigns hidden state to the clicked copies and preserves display order. Apply effects at their actual pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
+**Routing boundary:** preserve display order. Apply effects at the clicked copies' actual pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
 
-**Batch association:** use the shared clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order. Assign that class's remaining logical occurrences in stable address order to its unclicked copies in frozen presentation order. This last pairing consumes no random draw. Apply effects after all representatives are selected.
+**Batch association:** use the shared clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order. Assign that class's remaining logical occurrences in stable address order to its unclicked copies in frozen presentation order. This last pairing consumes no random draw. Apply effects after selection is complete.
 
 Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
-**Coupling limit:** shared independent priorities on matched nested occurrence sets give two-versus-three representative agreement of `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
+**Coupling limit:** for matched nested sets of two and three occurrences, shared independent priorities select matching logical occurrences with probability `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
 
 ### Opportunity-specific selection priorities
 
@@ -366,7 +367,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Logical-occurrence lifetime
 
-**Scope:** out-of-combat card operations for [persistent selection](#source-policy-persistent-selection) and [representative routing](#representative-routing), using the [occurrence address reference](#card-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment).
+**Scope:** out-of-combat card operations for [persistent selection](#source-policy-persistent-selection) and [routing](#routing), using the [occurrence address reference](#card-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment).
 
 | Operation | Occurrence and selection state |
 |---|---|
@@ -376,7 +377,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 | Copy a card | Create a fresh occurrence and selection state from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
 | Permanently remove or combine cards | Retire the selected logical inputs. |
 | Transform a card | Retire the original and initialize fresh replacement selection state. Preserve source-specific gameplay inheritance; see [permanent transformations](#permanent-transformations-and-direct-additions). |
-| [Route equivalent copies](#representative-routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
+| Apply [routing](#routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
 
 **Related reward-entry exception:** [A0–6 replacement state](#a06-multiple-rares).
 
@@ -425,7 +426,7 @@ Each covered potion type has its own run-wide effect ordinal:
 
 **Scope:** relics, potions, cards, permanent transformations and covered direct additions.
 
-With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered-draw mechanism](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation routing](#generation-routing) summarizes them.
+With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered-draw mechanism](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation sharing](#generation-sharing) summarizes them.
 
 **Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool divisions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
 
@@ -447,11 +448,11 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers).
 
 #### Equivalent-card selections
 
-**Invariant — equivalent copies:** clicking any member of the same class has equivalent identity/status-level consequences apart from the effects of the clicked position. Where [representative routing](#representative-routing) applies, each such click selects the same logical representative. Equivalence requires the same identity and gameplay-relevant status within the eligible context. Hidden selection state and pile position do not split the class.
+**Invariant — equivalent copies:** clicking any member of the same class has equivalent identity/status-level consequences apart from the effects of the clicked position. Where [routing](#routing) applies, each such click selects the same logical occurrence. Equivalence requires the same identity and gameplay-relevant status within the eligible context. Hidden selection state and pile position do not split the class.
 
 **Out-of-combat equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
-All out-of-combat player-selected sources share [routing clocks](#representative-routing) by operation, separately for each card identity:
+All out-of-combat player-selected sources share [routing clocks](#routing) by operation, separately for each card identity:
 
 | Routing scope | Operations |
 |---|---|
@@ -465,7 +466,7 @@ All out-of-combat player-selected sources share [routing clocks](#representative
 
 Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
 
-Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or its routing.
+Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or routing.
 
 Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
 
@@ -475,11 +476,11 @@ Shuffle outcomes must be independent of original deck sequence; use the [card-sh
 
 Process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 
-#### Combat-card equivalence and routing
+#### Combat-card routing
 
-Use [representative routing](#representative-routing) whenever a player chooses among existing combat cards. Initialize routing clocks under [combat-card clock assignment](#combat-card-clock-assignment). Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the granting source and choice purpose as their scope, including Hand Trick's Sly choice and Thinking Ahead's return to the top of the draw pile. All routing clocks are combat-local and per card identity.
+Use [routing](#routing) whenever a player chooses among existing combat cards. Initialize routing clocks under [combat-card clock assignment](#combat-card-clock-assignment). Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the granting source and choice purpose as their scope, including Hand Trick's Sly choice and Thinking Ahead's return to the top of the draw pile. All routing clocks are combat-local and per card identity.
 
-Route once per committed player choice, before effects, among the copies the player can actually choose. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
+Apply routing once per committed player choice, before effects, among the copies the player can actually choose. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
 
 Within the same owner and eligible selection context, compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Processing Order](#deterministic-card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
 
@@ -904,7 +905,7 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 #### Fixed-priority card selection
 
-- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [equivalent-card routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
+- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 - **Thieving Hopper:** apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
@@ -1195,7 +1196,7 @@ Baseline: [random creature targeting](#random-creature-targeting).
 
 ### Source policy: random combat card selection
 
-**Scope:** align random selection of existing combat cards, including combat-start effects and sampled choice offers. Player choices follow [combat-card routing](#combat-card-equivalence-and-routing). Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows [fixed-priority selection](#fixed-priority-card-selection).
+**Scope:** align random selection of existing combat cards, including combat-start effects and sampled choice offers. Player choices follow [combat-card routing](#combat-card-routing). Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows [fixed-priority selection](#fixed-priority-card-selection).
 
 Use combat-local [corrected clocks](#corrected-persistent-clocks) with [shared assignment](#combat-card-clock-assignment) and [combat addressing and resets](#combat-addresses). Preserve preference/fallback tiers, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
 
@@ -1212,7 +1213,7 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 **Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by stable logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + incidental-shuffle purpose. Advance only for these shuffles.
 
-**Seeker Strike:** when sampling, use clocks only to choose the offered cards. Route the player's choice within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
+**Seeker Strike:** when sampling, use clocks only to choose the offered cards. Apply routing to the player's choice within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
 
 **Within-combat deviation — SL 4A(↓):** scope isolation and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
 
@@ -1275,7 +1276,7 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 - Unordered entry batches share one entry ordinal, with internal ascending [Processing Order](#deterministic-card-processing-order) frozen at entry.
 - Sequential draws and explicitly ordered returns, including All for One, preserve source order.
 
-Apply [combat-card routing](#combat-card-equivalence-and-routing) to Oil’s hand-entry assignment.
+Apply [combat-card routing](#combat-card-routing) to Oil’s hand-entry assignment.
 
 Oil's opportunity ordinal persists across combats. [Shared isolation impact](#shared-isolation-impact) applies to removing cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
 
