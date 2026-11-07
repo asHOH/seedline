@@ -1,8 +1,8 @@
-# Deterministic Card Processing Order
+# Card processing order
 
 **Status:** preliminarily settled — ready for use, with fine-tuning remaining.
 
-Detailed ranking for the [Deterministic Card Processing Order contract](DESIGN.md#deterministic-card-processing-order). Source-specific projections, including identity-only transformations, retain that contract.
+Detailed ranking for the [card processing order contract](DESIGN.md#card-processing-order). Source-specific projections, including identity-only transformations, retain that contract.
 
 ## Property scope
 
@@ -10,7 +10,7 @@ Detailed ranking for the [Deterministic Card Processing Order contract](DESIGN.m
 
 **Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stage 4 gives Bound, card-specific availability and temporary keywords their own rows; its turn-effect block compares presence and temporary costs. Until-played effects that survive turn boundaries, including Pounce's next-Skill discount, leave that block unchanged. Stage 6's state tie-breakers also include turn-limited state. Other property comparisons use lasting properties. Apply the [scope exclusions](#scope-exclusions) throughout.
 
-## Comparison sequence
+## Comparison order
 
 Evaluate stages 1–7 in order. Within a stage, compare its rows from top to bottom. The first strict difference decides; later stages cannot override it. Identical copies remain tied.
 
@@ -51,8 +51,8 @@ Replay counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted s
 | 3 | Enchantment rank | Authored enchantment order below. |
 | 4 | Enchantment amount | Lower < higher. |
 | 5 | Momentum's carried bonus | Within either Momentum rank, lower accumulated damage < higher, including inherited bonus on copies. |
-| 6 | Upgrade state | `originally unupgraded < originally upgraded < upgraded`; definitions below. |
-| 7 | Late counters | Guilty: fewer combats completed < more. Ignore Dowsing's room progress. |
+| 6 | Upgrade state | `unupgraded < temporarily downgraded < upgraded`; definitions below. |
+| 7 | Guilty combat count | Guilty: fewer combats completed < more. Ignore Dowsing's room progress. |
 | 8 | Ethereal | `none < Ethereal`. |
 | 9 | Sly | `none < Sly`. |
 | 10 | Fetch / pending-return availability | Fetch: draw spent < draw available. Bolas / Thrumming Hatchet: no pending return < pending return. These card-specific comparisons share one row. |
@@ -63,7 +63,7 @@ Replay counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted s
 
 Carried values include Genetic Algorithm's Block and damage accumulated by The Scythe, Sovereign Blade, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
-**Upgrade state:** originally unupgraded = currently unupgraded with no restoration pending; originally upgraded = currently downgraded with restoration pending; upgraded = currently upgraded. This includes Dampen's stored restoration. Exact current upgrade level breaks ties within the upgraded tier.
+**Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending; upgraded = currently upgraded. This includes Dampen's stored restoration. Exact current upgrade level breaks ties within the upgraded tier.
 
 **Availability:** Fetch tracks its first-play draw for this turn. Bolas and Thrumming Hatchet track their return at the next hand draw. Their identities make these comparisons independent.
 
@@ -71,15 +71,15 @@ Rows 11b–11c add turn-limited cost modifiers to the lasting cost calculation a
 
 Example: with all earlier rows tied, two cards that cost 0 and 1 this turn sort `0 < 1`. A difference in upgrade level has already decided their order before this comparison is reached.
 
-### 5. Deferred equality groups
+### 5. Deferred tie-breaks
 
 `=` defers a distinction until all comparisons in stages 1–4 tie. Then revisit declared equality groups from the latest layer backward, treating their written order as `<`. Within the expired-enchantment member, use the original active enchantment order. Slash-separated entries simply share a tier and continue to later layers.
 
 For example, `none = Spiral` lets upgrade level and later copy-state rows decide first; only a remaining tie uses the written `none < Spiral` fallback.
 
-### 6. Remaining state
+### 6. State tie-breaks
 
-After deferred equalities, use these deterministic tie-breakers in order:
+After deferred tie-breaks, use these deterministic tie-breakers in order:
 
 | Order | Property | Ascending rule |
 |---|---|---|
@@ -93,7 +93,7 @@ Equal current costs can diverge as their modifiers expire. Slither stores its ro
 
 ### 7. Origin
 
-`combat copy < material`. A combat copy exists only for the combat; material is a permanent card or its linked combat instance. This is the final comparison, after remaining state.
+Combat-only cards rank before permanent cards and their linked combat instances. This is the final comparison, after state tie-breaks.
 
 ## Identity and rarity ranks
 

@@ -355,7 +355,7 @@ Revivals retain occurrence identity; summons and replacements receive fresh iden
 
 Each card copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
 
-Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [Deterministic Card Processing Order](#deterministic-card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
+Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [card processing order](#card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
 Card initialization preserves generated attributes and presentation order; derive selection keys under the [shared addressing contract](#rng-derivation-and-addressing).
 
@@ -393,7 +393,7 @@ Freeze one assignment key per combat occurrence. Derive initial [corrected clock
 |---|---|
 | Identity drawn from a generation sequence | Original [sequence entry address](#stable-entry-addresses). |
 | Fixed token creation | Token identity + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
-| Other grants | Granting-source identity + committed grant ordinal within that source identity for this combat + copy index. Copies of the source share its count. Assign batch indices in [Processing Order](#deterministic-card-processing-order). |
+| Other grants | Granting-source identity + committed grant ordinal within that source identity for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
 
 Pile movement and status or eligibility changes retain keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above. Preserve gameplay inheritance.
 
@@ -460,9 +460,9 @@ All out-of-combat player-selected sources share [routing clocks](#routing) by op
 | Enchant | All player-chosen enchantments, across enchantment types and amounts. |
 | Permanent removal | Removal, transformation and Amalgamator's combining; sharing aligns surviving originals after [input retirement](#out-of-combat-card-lifetime). |
 
-#### Deterministic Card Processing Order
+#### Card processing order
 
-**Intent:** process unordered batches by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
+**Intent:** process unordered batches deterministically by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
 
 Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
 
@@ -474,7 +474,7 @@ Shuffle outcomes must be independent of original deck sequence; use the [card-sh
 
 #### Unordered transformation batches
 
-Process the selected originals in the identity-only [Deterministic Card Processing Order](#deterministic-card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
+Process the selected originals in the identity-only [card processing order](#card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 
 #### Combat-card routing
 
@@ -482,7 +482,7 @@ Use [routing](#routing) whenever a player chooses among existing combat cards. I
 
 Apply routing once per committed player choice, before effects, among the copies the player can actually choose. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
 
-Within the same owner and eligible selection context, compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Processing Order](#deterministic-card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
+Within the same owner and eligible selection context, compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Card processing order](#card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
 
 **Permanent-deck correspondence:** for Genetic Algorithm, The Scythe and Goopy cards, play can grow the linked permanent card. While Thieving Hopper’s steal is pending, the rule applies to every card identity: theft checks deck links in draw and discard, and player choices can move cards there from hand. In these cases, group combat copies by the exact permanent-deck occurrence they link to, with a separate group for combat-only copies. Each physical card keeps its link through routing, including after a shuffle.
 
@@ -1053,13 +1053,13 @@ Address opening shuffles by [combat address](#combat-addresses) + opening purpos
 
 The **shuffle key** identifies the assignment below: a source-based key, or priority-sequence identity + assigned position. It is distinct from the random priority value and the card's final pile position.
 
-The opening Innate subgroup uses [Processing Order](#deterministic-card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
+The opening Innate subgroup uses [processing order](#card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
 
 | Cards | Acts 1–2 | Act 3 |
 |---|---|---|
-| Defend and earlier Processing Order categories | First sequence, least useful first. | Same. |
+| Defend and earlier processing order categories | First sequence, least useful first. | Same. |
 | Other starting Basics; eligible rewards/direct additions | Source-based priorities below. | Second sequence, most useful first. |
-| Remaining cards | Second sequence: earliest acquisition floor first, then ascending Processing Order. | Both rows combined, most useful first. |
+| Remaining cards | Second sequence: earliest acquisition floor first, then ascending processing order. | Both rows combined, most useful first. |
 
 Freeze the card’s ordering properties at permanent removal and retain them through run end across [checkpoints](#saved-state). Include the entry in opening priority assignment, then omit it. Additions and reordered states can still shift sequential assignments.
 
@@ -1080,7 +1080,7 @@ These assignments also initialize [combat selection clocks](#combat-card-clock-a
 
 **Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
 
-**Vanilla deviation — SL 4A(↓):** state-aware [Processing Order](#deterministic-card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
+**Vanilla deviation — SL 4A(↓):** state-aware [processing order](#card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
 
 ### Random pile insertion
 
@@ -1273,14 +1273,14 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 **Oil assignment:** after Oil finishes drawing, order eligible cards within each category by latest successful entry into hand, earliest first:
 
 - Draws, retrievals and generation receive entry positions. Retained cards keep theirs; leaving then returning refreshes them.
-- Unordered entry batches share one entry ordinal, with internal ascending [Processing Order](#deterministic-card-processing-order) frozen at entry.
+- Unordered entry batches share one entry ordinal, with internal ascending [processing order](#card-processing-order) frozen at entry.
 - Sequential draws and explicitly ordered returns, including All for One, preserve source order.
 
 Apply [combat-card routing](#combat-card-routing) to Oil’s hand-entry assignment.
 
 Oil's opportunity ordinal persists across combats. [Shared isolation impact](#shared-isolation-impact) applies to removing cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
 
-**Within-combat deviation — SL 4A(↓):** group/category isolation, X skipping and overlap reuse remove consumption-based rerolls; Processing Order within unordered entry batches removes click/enumeration-order Oil rerolls.
+**Within-combat deviation — SL 4A(↓):** group/category isolation, X skipping and overlap reuse remove consumption-based rerolls; processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
 
 Baseline: [random energy costs](#random-energy-costs-1).
 
