@@ -1,14 +1,10 @@
 # Same-Seed Consistency Mod — design
 
-This specification records settled policies, their rationale and existing-mechanics references. [WORKING.md](WORKING.md) holds unresolved choices and their supporting evidence. All policies follow the [preservation defaults](#preservation-defaults).
-
 **Reading guide:**
 
-- Start with [goals](#goals-and-principles), [scope](#scope) and [terms](#concepts-and-terms).
-- Find source policies in the [Architecture overview](#architecture-overview); compare generation sources' randomness sharing in [Generation sharing](#generation-sharing). See [Document hierarchy](#document-hierarchy) for how the policy layers relate.
-- Use [Reference](#reference) for calibration and rejected alternatives, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
+Find source policies in the [Architecture overview](#architecture-overview); compare rarity and identity sharing in [Generation sharing](#generation-sharing).
 
-**Reading convention:** policy text from [Goals and principles](#goals-and-principles) through [Source policies](#source-policies) defines required behavior, whether labeled or unlabeled. Baseline notes describe existing mechanics. Deviation notes, rationale, tradeoffs, examples and rejected alternatives explain the design; any requirements they discuss must also appear in policy text. [Reference](#reference) and [Appendix](#appendix-existing-mechanics) are descriptive only.
+For descriptive background, see [Reference](#reference) for calibration and rejected alternatives, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
 
 ## Goals and principles
 
