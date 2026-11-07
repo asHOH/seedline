@@ -489,8 +489,6 @@ Baseline pool sizes and draw rules: [relic bags](#relic-bags); Catfood's roll li
 
 **Intent:** isolate chest gold from normal-fight counts and later chest rewards from Silver Crucible's empty chest.
 
-**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
-
 ### Rewards and consumption
 
 - Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
@@ -508,6 +506,8 @@ Draw the next eligible shared identity from the generic rarity sequence and repl
 - **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption-timing).
 
 Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
+
+**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
 
 #### Finite-lifetime chest markers
 
@@ -566,6 +566,8 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 
 **Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
 
+**Boundary — relic floor cutoffs (see [appendix](#relic-bags)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
+
 **Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
@@ -573,8 +575,6 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 **Vanilla deviation — SL 4A(↓):** independent restock streams remove restock manipulation through interleaved purchase categories and effects.
 
 **Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
-
-**Boundary — relic floor cutoffs (see [appendix](#relic-bags)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
 
 Baseline: [shop mechanics](#shop-and-courier-rng) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -687,13 +687,13 @@ Use these Uncommon probabilities, except for the opening entries below:
 
 These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply.
 
-**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
-
 **Opening triples:** the first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
 
 This exception occurs only once per run. The triples follow ordinary shared consumption, including by other covered sources.
 
 **Rationale:** these entries approximate two opening Act 1 normal fights without elite intervention. Normal-fight openings in Acts 2/3 are accounted for through average calibration rather than special entries.
+
+**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
 
 #### Supplementary cards
 
@@ -771,7 +771,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 ## Settled policy: event-specific rewards
 
-The event-specific route covers Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock. Preserve existing choices, costs and eligibility.
+**Scope:** Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock. Preserve existing choices, costs and eligibility.
 
 Neow's Bones' Ancient relic pair follows this policy; its curse follows [direct additions](#settled-policy-permanent-transformations-and-direct-card-additions).
 
@@ -888,9 +888,11 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 Use [potion effect opportunities](#potion-effect-opportunities); each use generates the [routed batch](#settled-policy-generation-routing).
 
-Preserve vanilla eligibility, identity sampling and batch rules; see [potion card-generation mechanics](#potion-card-generation).
+Preserve vanilla eligibility, identity sampling and batch rules.
 
 **Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
+
+Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Settled policy: unknown-room resolution
 
@@ -942,9 +944,9 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 **Wrapping:** on exhaustion, restore passed entries and restart priorities, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
 
-**Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
-
 **Fallback — empty eligible pool:** Relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
+
+**Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
 **Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing rare checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
 
@@ -979,15 +981,11 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 **Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
 
-**Scope:** opening and later shuffles share the assignment strategy below. Use the cards’ current logical associations.
+**Scope:** opening and later shuffles use the assignment below and cards’ current logical associations.
 
 Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply existing opening-hand and shuffle modifiers.
 
 Address opening shuffles by [combat address](#combat-addresses) + opening purpose; later shuffles by combat address + later purpose + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
-
-**Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
-
-**Vanilla deviation — SL 4A(↓):** state-aware [Processing Order](#deterministic-card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
 
 ### Priority assignment
 
@@ -1015,6 +1013,12 @@ Use [generation routing](#settled-policy-generation-routing) to identify shared 
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
 These assignments also initialize [combat selection clocks](#settled-policy-random-combat-card-selection). Existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
+
+### Shuffle deviations
+
+**Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
+
+**Vanilla deviation — SL 4A(↓):** state-aware [Processing Order](#deterministic-card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
 
 ## Settled policy: random pile insertion
 
@@ -1151,10 +1155,6 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 **Seeker Strike:** when sampling, use clocks only to choose the offered cards. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
 
-Combat-local assignment has the [shared isolation impact](#shared-isolation-impact), SL 5(↓). Under NoSL, selection retains uniform odds among eligible copies.
-
-**Within-combat deviation — SL 4A(↓):** scope isolation and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
-
 ### Combat-card clock assignment
 
 Freeze one assignment key per combat occurrence. Derive initial [corrected clocks](#corrected-persistent-clocks) from combat address + selection or routing scope + assignment key. For each renewal, also use that occurrence’s renewal count within that scope.
@@ -1170,6 +1170,10 @@ Freeze one assignment key per combat occurrence. Derive initial [corrected clock
 | Other grants | Granting-source identity + committed grant ordinal within that source identity for this combat + copy index. Copies of the source share its count. Assign batch indices in [Processing Order](#deterministic-card-processing-order). |
 
 Pile movement and status or eligibility changes retain keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above. Preserve gameplay inheritance.
+
+Combat-local assignment has the [shared isolation impact](#shared-isolation-impact), SL 5(↓). Under NoSL, selection retains uniform odds among eligible copies.
+
+**Within-combat deviation — SL 4A(↓):** scope isolation and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
 
 ### Combat-card equivalence and routing
 
@@ -1189,7 +1193,9 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 ## Settled policy: random orb types
 
-Use one sequence shared by all random-orb sources, derived from [combat address](#combat-addresses) + orb-type purpose, preserving vanilla's uniform sampling.
+**Intent:** isolate random-orb generation by combat; preserve uniform sampling.
+
+All sources share one sequence addressed by [combat address](#combat-addresses) + orb-type purpose.
 
 Failed channeling consumes zero.
 
