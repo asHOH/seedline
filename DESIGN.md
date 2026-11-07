@@ -74,14 +74,14 @@ Compare single-player runs with matching seeds, versions and rules, with all con
 
 ## Concepts and terms
 
-Two top-level categories classify random operations within effects:
+Two top-level policy categories classify random operations within effects:
 
 - **Rewards:** generated reward identities and amounts, including permanent transformation results.
-- **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness.
+- **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness. It is divided into **Non-combat** and **Combat** subcategories.
 
 Relic Trader's outgoing selection and replacement targets are handled together under Encounter.
 
-Category and RNG ownership are separate: a reward can use event RNG.
+Policy category and RNG ownership are separate: a reward can use event RNG.
 
 ### Document hierarchy
 
@@ -141,26 +141,36 @@ Each controlled random operation has five descriptive dimensions:
 
 Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
 
-The guide below links to [source policies](#source-policies); [generation sharing](#generation-sharing) compares their rarity and identity sharing. The [document hierarchy](#document-hierarchy) separates global rules, mechanisms and shared policies.
+The guide below follows the [source-policy order](#source-policies); [generation sharing](#generation-sharing) compares their rarity and identity sharing. The [document hierarchy](#document-hierarchy) separates global rules, mechanisms and shared policies.
 
 ### Rewards
 
 | Decision area | Policies |
 |---|---|
-| Relics and shops | [Relic allocation and borrowing](#relics); [chest rewards and advancement](#chests); [shops, Wongos and Courier](#shops-wongos-and-courier). |
+| Relics and chests | [Relic allocation and borrowing](#relics); [chest rewards and advancement](#chests). |
 | Potions | [Generation and drops](#potions). |
-| Cards | [Reward offers and Rare occurrence](#card-reward-offers); [generated upgrades](#inherent-card-rolls); [permanent transformations and direct additions](#permanent-transformations-and-direct-card-additions). |
+| Shops | [Shops, Wongos and Courier](#shops-wongos-and-courier). |
+| Cards | [Reward offers and Rare occurrence](#card-reward-offers); [permanent transformations and direct additions](#permanent-transformations-and-direct-card-additions). Both use [inherent card rolls](#inherent-card-rolls). |
 | Other rewards | [Combat gold](#combat-gold); [event-specific rewards](#event-specific-rewards). |
 
 ### Encounter
 
+#### Non-combat
+
 | Decision area | Policies |
 |---|---|
-| Card and potion selection | [Wing Charm](#wing-charm); [persistent selection](#persistent-selection); [random combat card selection](#random-combat-card-selection). |
+| Rooms and events | [Unknown rooms](#unknown-room-resolution); [ordinary events](#ordinary-event-selection); [forced events](#forced-events); [Ancient offerings](#ancient-offerings). |
 | Event selections and trades | [The Future of Potions](#the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#ranwid-relic-sacrifice); [Relic Trader](#relic-trader); [Endless Conveyor](#endless-conveyor). |
-| Potion effects | [Potion-generated cards](#potion-generated-cards); [Snecko Oil costs](#random-energy-costs). |
-| Rooms and events | [Unknown rooms](#unknown-room-resolution); [Ancient offerings](#ancient-offerings); [ordinary events](#ordinary-event-selection); [forced events](#forced-events). |
-| Combat | [Encounter setup](#encounter-setup); [card shuffling](#card-shuffling); [random pile insertion](#random-pile-insertion); [monster HP](#monster-hp); [monster AI](#monster-ai); [random creature targets](#random-creature-targets); [random orb types](#random-orb-types); [card generation and transformations](#combat-card-generation-and-transformations); [random energy costs](#random-energy-costs). |
+| Card and potion selection | [Wing Charm](#wing-charm); [persistent selection](#persistent-selection). |
+
+#### Combat
+
+| Decision area | Policies |
+|---|---|
+| Setup and monsters | [Encounter setup](#encounter-setup); [monster HP](#monster-hp); [monster AI](#monster-ai). |
+| Card piles | [Card shuffling](#card-shuffling); [random pile insertion](#random-pile-insertion). |
+| Random selection | [Combat cards](#random-combat-card-selection); [Thieving Hopper](#thieving-hopper); [creature targets](#random-creature-targets). |
+| Generation and effects | [Card generation and transformations](#combat-card-generation-and-transformations); [random energy costs](#random-energy-costs); [random orb types](#random-orb-types); [potion-generated cards](#potion-generated-cards). |
 
 ### Generation sharing
 
@@ -492,11 +502,13 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 ## Source policies
 
-### Relics
+### Rewards
+
+#### Relics
 
 **Intent:** isolate normal-play relic supplies for shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
 
-#### Allocation
+##### Allocation
 
 Construct disjoint generic-reward, shop and Courier allocations once. Each source has one rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences; shop also has all Shop-rarity identities in one shuffled sequence. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards, shop and Courier respectively.
 
@@ -506,11 +518,11 @@ Mix shop-ineligible relics into allocations normally.
 
 **Generic opportunity coverage:** advancing ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the stated exhaustion/borrowing boundary. An outside multi-choice offer must not retire unchosen generic entries before those opportunities.
 
-#### Source classification and consumption
+##### Source classification and consumption
 
 Hidden random relic rewards from combat, chests, events and rest sites, including relic-triggered grants in any room, use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box), subject to explicit source exceptions. Classify deferred payoffs separately from their granting relic.
 
-#### Borrowing
+##### Borrowing
 
 **Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion uses the settled chest-refill and final-fallback rules below, which require no alignment. Ordinary isolation analysis excludes borrowing's rare tail effects and cross-sequence interactions.
 
@@ -524,18 +536,18 @@ Marker resolution follows the same borrowing and marker placement rules as a fil
 
 Baseline pool sizes and draw rules: [relic bags](#relic-bags); Catfood's roll limit: [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
-### Chests
+#### Chests
 
 **Intent:** isolate chest gold from normal-fight counts and later chest rewards from Silver Crucible's empty chest.
 
-#### Rewards and consumption
+##### Rewards and consumption
 
 - Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
 
 Relic generation consumes the rarity roll, chest opportunity and lifetime draw, and exhausts the identity for future chests.
 
-#### Relic advancement
+##### Relic advancement
 
 **Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
 
@@ -548,7 +560,7 @@ Resolve the choice before expiry, including `x = 0`; permanent ineligibility or 
 
 **Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
 
-##### Finite-lifetime chest markers
+###### Finite-lifetime chest markers
 
 Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry.
 
@@ -567,13 +579,13 @@ Apply current run-state eligibility throughout; shop eligibility adds no restric
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
-### Potions
+#### Potions
 
 **Intent:** isolate potions across rewards, shops, Courier and potion-generating effects; preserve comparable results across batch sizes. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
 
 Potion copies carry no persistent selection state. Player-chosen use, discard and trade affect the clicked copy, preserving slot-dependent offers and trade payoffs.
 
-#### Acquisition and sequences
+##### Acquisition and sequences
 
 **Generic rewards** combines random combat rewards, events and other grants without paid/free or per-event separation; **shop** and **Courier** are separate. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
 
@@ -585,17 +597,17 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 
 **Vanilla deviation — SL 5(↓):** failed grants no longer let players advance to a different later potion outcome.
 
-#### Drop occurrence
+##### Drop occurrence
 
 - Retain [Catfood addressing](#catfood-addressing-and-combat-rewards) and [vanilla's shared changing probability](#potions-1) across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
 - **White Beast Statue:** forced drops freeze the occurrence index and stored probability; the potion still consumes a reward identity.
 - Save the occurrence index and probability.
 
-### Shops, Wongos and Courier
+#### Shops, Wongos and Courier
 
 **Intent:** Extra rewards and Courier restocks no longer scramble later shops. Corresponding shops keep the same sale slot; relocated offers keep their base prices. Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
 
-#### Stock and prices
+##### Stock and prices
 
 - Initial shop stock depends only on shop ordinal, except for Wongos, relic floor cutoffs and [borrowing](#borrowing).
 - **Initial cards:** generate rarity and identities by shop ordinal; preserve unavailable-rarity fallback.
@@ -619,19 +631,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 
 Baseline: [shop mechanics](#shop-and-courier-rng) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
-### Combat gold
-
-**Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
-
-**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
-
-Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
-
-**Rationale and tradeoff:** an extra elite leaves later normal-fight gold unchanged, and vice versa. Reordering unreduced rewards with matching category counts preserves individual base payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward changes total base gold by 11–26 at A3+. [Rejected alternatives](#combat-gold-alternatives).
-
-Baseline: [gold ranges and exceptions](#combat-gold-1) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
-
-### Card reward offers
+#### Card reward offers
 
 **Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
 
@@ -641,7 +641,7 @@ Baseline: [gold ranges and exceptions](#combat-gold-1) and [Catfood addressing](
 
 Colorless and other-character rewards share across batch sizes because their few sources have varying offer sizes.
 
-#### Offer groups
+##### Offer groups
 
 Group identities by pool, rarity request, eligibility filter and draw grouping. Upgrade rules and the number taken leave grouping unchanged.
 
@@ -653,7 +653,7 @@ Own-character random-rarity offers share [luck and thresholds](#luck-and-rarity-
 | Elite rule | Elite chance with the same combat offset. | Elites and The Hunt in elite combats: three-card offers. |
 | Fixed base odds | Base Rare odds without the combat offset. | Orrery: five three-card offers; Lost Coffer: one; Trial's Nondescript Guilty: two. Brain Leech's Share Knowledge: choose one of five, using [supplementary cards](#supplementary-cards). |
 
-##### Other offer groups
+###### Other offer groups
 
 | Offers | Rarity and identity supply |
 |---|---|
@@ -664,13 +664,13 @@ Own-character random-rarity offers share [luck and thresholds](#luck-and-rarity-
 
 [Expanded pools](#prismatic-gem-and-dingy-rug) retain source rarity rules and draw grouping.
 
-##### Type-specific offers
+###### Type-specific offers
 
 Lasting Candy and The Future of Potions share own-character Uncommon and Rare Power identity sequences, consuming individual entries. Candy uses separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback and one roll per triggered card; boss triggers request Rare. Future of Potions requests its specified rarity.
 
 Future of Potions Attack/Skill identities use event RNG addressed by rarity and type, independently of other potion options, at the specified rarity.
 
-#### Offer procedure
+##### Offer procedure
 
 For own-character random-rarity offers, including reachable [rerolls](#rerolls):
 
@@ -680,13 +680,13 @@ For own-character random-rarity offers, including reachable [rerolls](#rerolls):
 
 Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve source-specific upgrade timing and modifier order.
 
-#### Rare occurrence
+##### Rare occurrence
 
 **Scope:** the three own-character random-rarity [offer groups](#offer-groups).
 
 **Intent:** separate when a Rare appears from the complete choice offered. Align corresponding rare-bearing and non-Rare opportunities while preserving source-dependent Rare chances; matching combat-room ordinals need not consume matching offer entries.
 
-##### Luck and rarity offset
+###### Luck and rarity offset
 
 **State:** luck `L` starts at zero; the combat offset `o` starts at `-0.05`. The threshold is `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal, advancing only when a Rare is delivered into a generated offer.
 
@@ -710,7 +710,7 @@ Save this state under the [shared saved-state contract](#saved-state), including
 
 **Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. Rare delivery resets luck and advances the threshold, ending this timing guarantee.
 
-##### A7+: one Rare per offer and deferral
+###### A7+: one Rare per offer and deferral
 
 Cap each covered offer at one Rare. If a later slot reaches the next threshold:
 
@@ -727,13 +727,13 @@ This naturally excludes the first two three-card normal-rule offers after an off
 
 **Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Frequency:** rare — approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
-##### A0–6: Rare delivery
+###### A0–6: Rare delivery
 
 Deliver every threshold crossing immediately under the shared luck and source-offset rules, without a per-offer cap or deferral.
 
-#### Offer construction
+##### Offer construction
 
-##### Offer sequences
+###### Offer sequences
 
 Own-character random-rarity offers use two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
 
@@ -741,7 +741,7 @@ A suppressed occurrence reserves no additional triple.
 
 **Rationale:** shared sequences preserve triple alignment when a Rare moves between sources; separate normal/elite sequences advance differently.
 
-##### Uncommon probabilities
+###### Uncommon probabilities
 
 Use these Uncommon probabilities, except for the opening entries below:
 
@@ -760,13 +760,13 @@ This exception occurs only once per run. The triples follow ordinary shared cons
 
 **Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
 
-##### Supplementary cards
+###### Supplementary cards
 
 **Brain Leech — Share Knowledge:** generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability.
 
 **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
 
-##### A0–6: multiple Rares
+###### A0–6: multiple Rares
 
 For own-character random-rarity offers, maintain one additional Rare-only identity sequence per character, shared by the three source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
 
@@ -778,18 +778,18 @@ Replace the first Common in canonical generation order, or the first Uncommon if
 
 **Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Frequency:** rare — at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
 
-##### Presentation
+###### Presentation
 
 For own-character random-rarity offers, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
-##### Scroll Boxes
+###### Scroll Boxes
 
 Resolve Defect's two independent 1% triple-Claw substitution checks with event RNG before requesting Common sequence entries. Non-Defect offers follow the no-substitution branch.
 
 - **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
 - **Triple-Claw exception:** if either bundle is replaced, bypass the shared Common sequence without inspecting its head. Each substituted bundle contains three fixed Claws; generate any remaining ordinary bundle entirely with event RNG. If both bundles are substituted, generate no unused ordinary-bundle cards.
 
-#### Rerolls
+##### Rerolls
 
 A reachable reroll follows its source's [offer group](#offer-groups) and, where applicable, the [offer procedure](#offer-procedure), consuming fresh entries from its pool/request/filter group, including expanded pools. Preserve source-specific rarity and offset effects, offer structure and duplicate rules.
 
@@ -797,7 +797,7 @@ Event-generated supplementary cards use fresh local generation without restartin
 
 Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the normal-run scope.
 
-#### Prismatic Gem and Dingy Rug
+##### Prismatic Gem and Dingy Rug
 
 **Intent:** align rewards from the same expanded pool.
 
@@ -814,13 +814,13 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 Baseline: [card reward mechanics](#card-reward-offers-1) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
-### Permanent transformations and direct card additions
+#### Permanent transformations and direct card additions
 
 **Intent:** align same-pool transformations and covered direct additions, preserving source rarity odds and isolating them from card reward offers and combat transformations.
 
 **Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
-#### Selection and consumption
+##### Selection and consumption
 
 Use seven pools: the five characters, colorless and curse, separate from combat transformations. Consume individual identity entries:
 
@@ -837,7 +837,19 @@ Use seven pools: the five characters, colorless and curse, separate from combat 
 
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
-### Event-specific rewards
+#### Combat gold
+
+**Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions and isolating them from other rewards.
+
+**Generation and addressing:** derive each draw from gold purpose + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Draw uniformly from the existing inclusive gold range, preserving endpoint adjustments and payout modifiers.
+
+Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
+
+**Rationale and tradeoff:** an extra elite leaves later normal-fight gold unchanged, and vice versa. Reordering unreduced rewards with matching category counts preserves individual base payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward changes total base gold by 11–26 at A3+. [Rejected alternatives](#combat-gold-alternatives).
+
+Baseline: [gold ranges and exceptions](#combat-gold-1) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+
+#### Event-specific rewards
 
 **Scope:** Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock.
 
@@ -845,7 +857,121 @@ Neow's Bones' Ancient relic pair follows this policy; its curse follows [direct 
 
 Use event RNG for reward identities, random rarities and Fake Merchant's price rolls, keeping its shop fixed for the same seed.
 
-### Wing Charm
+### Encounter
+
+#### Non-combat
+
+##### Unknown-room resolution
+
+**Intent:** align draws within each act and minimize movement of each room type's probability interval, limiting interference from earlier acts and other room types' changing chances.
+
+###### Addressing and room-type chances
+
+- **Addressing:** room-type RNG uses the act-local ordinal of visited `?` nodes.
+- **Shop chance:** when the vanilla shop-exclusion rule excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
+- **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
+- **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
+
+##### Ordinary-event selection
+
+**Intent and scope:** improve same-seed event matching within and across acts, prioritizing agreement before the first mismatch. Ancients remain separate; [forced events](#forced-events) bypass ordinary selection.
+
+**Conditions and state:** group IDs by equivalent eligibility predicates, excluding act availability and late eligibility checks, with one stable key per condition. Act availability determines participating IDs; evaluate late eligibility checks at ID selection to keep grouping compact. Follow the global [addressing](#rng-derivation-and-addressing), [consumption](#opportunity-consumption-timing) and [saved-state](#saved-state) rules.
+
+###### Act entry and carryover
+
+At run start, independently shuffle each condition's IDs using condition key + ID-order purpose. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
+
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
+
+**Alignment tradeoff:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable. [Rejected alternatives](#event-selection-alternatives).
+
+Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
+
+###### Within-act selection
+
+**Schedule:** fixed in Act 1 for shared-event order; refreshed in Acts 2–3 for prefix agreement with differing pools.
+
+1. Initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries: once at Act 1 entry, at each resolution in Acts 2–3. Independent uniform `U ∈ (0, 1)` draws use condition key + per-condition draw index, plus act in Act 1 or act-local event ordinal in Acts 2–3.
+2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a failed late eligibility check passes that ID too.
+3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
+4. On success, advance the ID sequence and commit the visit and all passing. In Act 1, update the winning priority as in step 3 and retain priorities and draw indices; Acts 2–3 refresh at the next resolution.
+
+**Wrapping:** on exhaustion, restore passed entries and restart priorities, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
+
+**Fallback — empty eligible pool:** Relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
+
+**Fallback impact:** staged relaxation can offer an out-of-act event where vanilla returns the cursor's event. **Frequency:** rare (qualitative judgment).
+
+**Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
+
+**Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
+
+Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and late eligibility checks](#event-eligibility).
+
+##### Forced events
+
+**Intent:** inserting a forced event must not affect later ordinary-event availability.
+
+Resolve room type under the [unknown-room policy](#unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its existing event RNG; it needs no special ordinary-event ordinal.
+
+Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its act-local visited-node ordinal; preserve the existing forced room type and frozen non-event chances.
+
+**Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
+
+##### Ancient offerings
+
+**Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure. Granted effects follow their policies separately.
+
+Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option identity: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
+
+Retain vanilla generation and RNG positions for other menu components.
+
+Baseline: [Ancient offerings](#ancient-offerings-1).
+
+##### The Future of Potions: card-type assignment
+
+**Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
+
+Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers-1); generated cards follow [type-specific offers](#type-specific-offers).
+
+- Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
+- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + ordering purpose + potion model ID + duplicate number. Number identical offered copies from 1 in slot order.
+- Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
+
+**Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
+
+##### Ranwid relic sacrifice
+
+To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic identity.
+
+##### Relic Trader
+
+**Intent:** align replacement relics; prioritize outgoing-relic overlap over trade matching.
+
+###### Replacement relics
+
+Generate slots 1–3 in order. For each, roll [ordinary relic rarity](#relic-bags) addressed by event ID + reward slot, then take the last eligible Courier entry of that rarity, with no added filters.
+
+###### Outgoing relic assignment
+
+1. For each tradable owned relic and reward slot, use [fixed-priority derivation](#fixed-selection-priorities) keyed by event ID + relic identity + slot.
+2. Freeze the three relics with the lowest minimum of its three pair priorities.
+3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
+
+**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap.
+
+**Rejected alternatives:** independent candidate priorities give lower trade agreement with the same outgoing overlap; direct pairing over all eligible relics gives higher trade agreement but can change two outgoing relics after one inventory substitution.
+
+Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
+
+##### Endless Conveyor
+
+**Intent:** preserve shared dish order across runs.
+
+Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dedicated dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries—including the previous displayed dish—until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
+
+##### Wing Charm
 
 **Intent and scope:** align Swift targets across corresponding generated rewards, preserving existing generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
@@ -868,7 +994,7 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 
 **Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
 
-### Persistent selection
+##### Persistent selection
 
 **Intent:** align affected cards across sources, decks and reward choices, and potion sacrifice offers independently of inventory order.
 
@@ -877,11 +1003,11 @@ Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clo
 | Selection / candidates | Mechanism and sharing | Local selection rules |
 |---|---|---|
 | Random permanent upgrades / downgrades of existing deck cards | Corrected clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
-| Pael's Tooth / Beautiful Bracelet / Thieving Hopper | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-keys). | [Source rules](#fixed-priority-card-selection) below. |
+| Pael's Tooth / Beautiful Bracelet | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-keys). | [Source rules](#fixed-priority-card-selection) below. |
 | Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-keys). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
 | Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); one shared run-wide scope. | With one owned potion, leave its clock unchanged. Otherwise renew the selected clock once when the offer becomes available. Declined potions remain selectable. |
 
-#### Weighted potion sacrifice clocks
+###### Weighted potion sacrifice clocks
 
 Each potion type has one clock `E`, keyed by type + sacrifice purpose; use [shared initialization and renewal](#corrected-persistent-clocks). Ordinary use, discard, grants and absence preserve clocks and renewal counts.
 
@@ -891,7 +1017,7 @@ Choose uniformly among winning-type copies in slot order, using type + copy-sele
 
 Uniform copy-selection odds match [vanilla](#potions-1); removing sacrifice rerolls through same-type replacement has the [shared isolation impact](#shared-isolation-impact).
 
-#### Permanent upgrades and downgrades
+###### Permanent upgrades and downgrades
 
 **Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement (shared clocks replace `CombatCardSelection`).
 **Downgrade sources:** Wongos and Reflections.
@@ -903,135 +1029,14 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 **Vanilla deviation — SL 4A(↓):** random upgrades, such as Whetstone and War Paint, lose target rerolls caused by unrelated RNG consumption. Eligibility histories can change survivor rankings under the [shared clock contract](#corrected-persistent-clocks).
 
-#### Fixed-priority card selection
+###### Fixed-priority card selection
 
 - **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
-- **Thieving Hopper:** apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
-### The Future of Potions: card-type assignment
+#### Combat
 
-**Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
-
-Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers-1); generated cards follow [type-specific offers](#type-specific-offers).
-
-- Use three independent event-local type sequences, addressed by event ID + type-assignment purpose + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + ordering purpose + potion model ID + duplicate number. Number identical offered copies from 1 in slot order.
-- Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
-
-**Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
-
-### Ranwid relic sacrifice
-
-To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic identity.
-
-### Relic Trader
-
-**Intent:** align replacement relics; prioritize outgoing-relic overlap over trade matching.
-
-#### Replacement relics
-
-Generate slots 1–3 in order. For each, roll [ordinary relic rarity](#relic-bags) addressed by event ID + reward slot, then take the last eligible Courier entry of that rarity, with no added filters.
-
-#### Outgoing relic assignment
-
-1. For each tradable owned relic and reward slot, use [fixed-priority derivation](#fixed-selection-priorities) keyed by event ID + relic identity + slot.
-2. Freeze the three relics with the lowest minimum of its three pair priorities.
-3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
-
-**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap.
-
-**Rejected alternatives:** independent candidate priorities give lower trade agreement with the same outgoing overlap; direct pairing over all eligible relics gives higher trade agreement but can change two outgoing relics after one inventory substitution.
-
-Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
-
-### Endless Conveyor
-
-**Intent:** preserve shared dish order across runs.
-
-Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dedicated dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries—including the previous displayed dish—until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
-
-### Potion-generated cards
-
-**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
-
-Address each complete batch by potion type + its [effect ordinal](#potion-effect-opportunities), separately from other combat generation.
-
-Sample uniformly over eligible identities without a separate rarity roll.
-
-**Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
-
-Baseline: [potion card-generation mechanics](#potion-card-generation).
-
-### Unknown-room resolution
-
-**Intent:** align draws within each act and minimize movement of each room type's probability interval, limiting interference from earlier acts and other room types' changing chances.
-
-#### Addressing and room-type chances
-
-- **Addressing:** room-type RNG uses the act-local ordinal of visited `?` nodes.
-- **Shop chance:** when the vanilla shop-exclusion rule excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve existing Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
-- **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
-- **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
-
-### Ancient offerings
-
-**Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure. Granted effects follow their policies separately.
-
-Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option identity: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
-
-Retain vanilla generation and RNG positions for other menu components.
-
-Baseline: [Ancient offerings](#ancient-offerings-1).
-
-### Ordinary-event selection
-
-**Intent and scope:** improve same-seed event matching within and across acts, prioritizing agreement before the first mismatch. Ancients remain separate; [forced events](#forced-events) bypass ordinary selection.
-
-**Conditions and state:** group IDs by equivalent eligibility predicates, excluding act availability and late eligibility checks, with one stable key per condition. Act availability determines participating IDs; evaluate late eligibility checks at ID selection to keep grouping compact. Follow the global [addressing](#rng-derivation-and-addressing), [consumption](#opportunity-consumption-timing) and [saved-state](#saved-state) rules.
-
-#### Act entry and carryover
-
-At run start, independently shuffle each condition's IDs using condition key + ID-order purpose. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
-
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + condition key + insertion purpose + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
-
-**Alignment tradeoff:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable. [Rejected alternatives](#event-selection-alternatives).
-
-Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
-
-#### Within-act selection
-
-**Schedule:** fixed in Act 1 for shared-event order; refreshed in Acts 2–3 for prefix agreement with differing pools.
-
-1. Initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries: once at Act 1 entry, at each resolution in Acts 2–3. Independent uniform `U ∈ (0, 1)` draws use condition key + per-condition draw index, plus act in Act 1 or act-local event ordinal in Acts 2–3.
-2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a failed late eligibility check passes that ID too.
-3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
-4. On success, advance the ID sequence and commit the visit and all passing. In Act 1, update the winning priority as in step 3 and retain priorities and draw indices; Acts 2–3 refresh at the next resolution.
-
-**Wrapping:** on exhaustion, restore passed entries and restart priorities, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
-
-**Fallback — empty eligible pool:** Relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
-
-**Fallback impact:** staged relaxation can offer an out-of-act event where vanilla returns the cursor's event. **Frequency:** rare (qualitative judgment).
-
-**Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
-
-**Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
-
-Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and late eligibility checks](#event-eligibility).
-
-### Forced events
-
-**Intent:** inserting a forced event must not affect later ordinary-event availability.
-
-Resolve room type under the [unknown-room policy](#unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its existing event RNG; it needs no special ordinary-event ordinal.
-
-Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its act-local visited-node ordinal; preserve the existing forced room type and frozen non-event chances.
-
-**Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
-
-### Encounter setup
+##### Encounter setup
 
 **Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
 
@@ -1039,7 +1044,71 @@ Use the shared [combat address](#combat-addresses) + setup purpose.
 
 Preserve encounter identity selection and setup sampling; reward ordinals and AI retain their own policies.
 
-### Card shuffling
+##### Monster HP
+
+**Intent:** align combat HP sequences independently of earlier rooms, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
+
+Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + combat-local HP-roll ordinal + monster HP purpose; select zero-based index `floor(u × count)` from ascending eligible HP values.
+
+Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
+
+Preserve vanilla full-range fallback, conditional probabilities, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#encounter-setup).
+
+Baseline: [monster HP mechanics](#monster-hp-1).
+
+##### Monster AI
+
+**Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
+
+**Shared rules:** isolate monster model identities except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
+
+**Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
+
+###### Intent sequences
+
+| Source | Local rules |
+|---|---|
+| Types limited to one occurrence in the combat, including Fabricator | Personal random-branch count, including singleton/all-zero branches; use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) with move identity keys. Deterministic transitions consume zero. |
+| Inklets | Two continuous effective-decision sequences: one for the middle, one shared by both outers. Sample in vanilla declaration order; retain these scopes after deaths. |
+| Exoskeletons / Scrolls of Biting | One continuous effective-decision sequence per type, shared across copies and rounds; sample in vanilla declaration order. [Baseline choice points](#monster-ai-1). |
+| Small Leaf Slimes | Independent type-local opening entries in creation order; preserve subsequent forced alternation without advancing intent sequences. |
+| Decimillipede | One continuous revival-selection sequence shared by front, middle and back; choose uniformly among the three attacks. |
+| Deterministic intent graphs | Preserve existing transitions and setup-assigned starting phases. |
+
+###### Rat sampling
+
+**Intent:** realign ordinary choices at matching rounds, selection positions and eligibility; align summoned openings independently of birth timing.
+
+**Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
+
+**Ordinary sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move identity, independently of Summon. Both scopes below use the shared combat address and separate purposes.
+
+| Ordinary opportunity | Address and consumption |
+|---|---|
+| Summoned opening | Combat-local summoned-rat ordinal in vanilla creation order, independent of birth round or summoner. Consume once at its first random intent selection. |
+| Later choice, any rat | Current combat round + round-local selection ordinal, shared by all rats in vanilla selection order, including after deaths. Advance only for ordinary choices with at least two positive-weight moves; openings stay separate. |
+
+Use `CombatState.RoundNumber` at selection; extra player turns stay in the same round. Reset the later-choice ordinal each round.
+
+**Limit:** different selection counts can still shift choices within a round.
+
+**Rejected alternatives:** percentiles align poorly across eligibility changes; pair sequences lose cross-pair relationships and retain count differences; markers retain filter-history differences after eligibility converges.
+
+###### Fabricator bot identities
+
+Use Fabricator occurrence + bot-selection ordinal + a separate bot-generation purpose. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in stable model-identity order. Singleton choices consume an ordinal. Preserve spawn order.
+
+###### Behavior preservation
+
+Fresh independent draws at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
+
+**Vanilla deviation — SL 4A(↓):** within-combat scope isolation and effective-decision consumption remove rerolls through unrelated or forced draws.
+
+**Vanilla deviation — SL 4A:** type isolation and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
+
+Baseline: [monster AI mechanics](#monster-ai-1).
+
+##### Card shuffling
 
 **Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
 
@@ -1049,7 +1118,7 @@ Assign independent uniform priorities on a common scale, sort all participating 
 
 Address opening shuffles by [combat address](#combat-addresses) + opening purpose; later shuffles by combat address + later purpose + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
 
-#### Priority assignment
+###### Priority assignment
 
 The **shuffle key** identifies the assignment below: a source-based key, or priority-sequence identity + assigned position. It is distinct from the random priority value and the card's final pile position.
 
@@ -1063,7 +1132,7 @@ The opening Innate subgroup uses [processing order](#card-processing-order), lea
 
 Freeze the card’s ordering properties at permanent removal and retain them through run end across [checkpoints](#saved-state). Include the entry in opening priority assignment, then omit it. Additions and reordered states can still shift sequential assignments.
 
-#### Source-based assignment — Acts 1–2
+###### Source-based assignment — Acts 1–2
 
 Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-consumption) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
 
@@ -1076,13 +1145,13 @@ Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-
 
 These assignments also initialize [combat selection clocks](#combat-card-clock-assignment). Existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
 
-#### Shuffle deviations
+###### Shuffle deviations
 
 **Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
 
 **Vanilla deviation — SL 4A(↓):** state-aware [processing order](#card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
 
-### Random pile insertion
+##### Random pile insertion
 
 **Intent:** align relative insertion depth across changing pile sizes while isolating unrelated sources and shuffles. Neighboring card identities may differ.
 
@@ -1107,96 +1176,9 @@ Advance once per inserted card, including into an empty pile; failed insertions 
 
 Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
-### Monster HP
+##### Random combat card selection
 
-**Intent:** align combat HP sequences independently of earlier rooms, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
-
-Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + combat-local HP-roll ordinal + monster HP purpose; select zero-based index `floor(u × count)` from ascending eligible HP values.
-
-Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
-
-Preserve vanilla full-range fallback, conditional probabilities, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#encounter-setup).
-
-Baseline: [monster HP mechanics](#monster-hp-1).
-
-### Monster AI
-
-**Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
-
-**Shared rules:** isolate monster model identities except for Decimillipede. Address sequences by [combat](#combat-addresses) + sharing scope + purpose; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
-
-**Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
-
-#### Intent sequences
-
-| Source | Local rules |
-|---|---|
-| Types limited to one occurrence in the combat, including Fabricator | Personal random-branch count, including singleton/all-zero branches; use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) with move identity keys. Deterministic transitions consume zero. |
-| Inklets | Two continuous effective-decision sequences: one for the middle, one shared by both outers. Sample in vanilla declaration order; retain these scopes after deaths. |
-| Exoskeletons / Scrolls of Biting | One continuous effective-decision sequence per type, shared across copies and rounds; sample in vanilla declaration order. [Baseline choice points](#monster-ai-1). |
-| Small Leaf Slimes | Independent type-local opening entries in creation order; preserve subsequent forced alternation without advancing intent sequences. |
-| Decimillipede | One continuous revival-selection sequence shared by front, middle and back; choose uniformly among the three attacks. |
-| Deterministic intent graphs | Preserve existing transitions and setup-assigned starting phases. |
-
-#### Rat sampling
-
-**Intent:** realign ordinary choices at matching rounds, selection positions and eligibility; align summoned openings independently of birth timing.
-
-**Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
-
-**Ordinary sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move identity, independently of Summon. Both scopes below use the shared combat address and separate purposes.
-
-| Ordinary opportunity | Address and consumption |
-|---|---|
-| Summoned opening | Combat-local summoned-rat ordinal in vanilla creation order, independent of birth round or summoner. Consume once at its first random intent selection. |
-| Later choice, any rat | Current combat round + round-local selection ordinal, shared by all rats in vanilla selection order, including after deaths. Advance only for ordinary choices with at least two positive-weight moves; openings stay separate. |
-
-Use `CombatState.RoundNumber` at selection; extra player turns stay in the same round. Reset the later-choice ordinal each round.
-
-**Limit:** different selection counts can still shift choices within a round.
-
-**Rejected alternatives:** percentiles align poorly across eligibility changes; pair sequences lose cross-pair relationships and retain count differences; markers retain filter-history differences after eligibility converges.
-
-#### Fabricator bot identities
-
-Use Fabricator occurrence + bot-selection ordinal + a separate bot-generation purpose. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in stable model-identity order. Singleton choices consume an ordinal. Preserve spawn order.
-
-#### Behavior preservation
-
-Fresh independent draws at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
-
-**Vanilla deviation — SL 4A(↓):** within-combat scope isolation and effective-decision consumption remove rerolls through unrelated or forced draws.
-
-**Vanilla deviation — SL 4A:** type isolation and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
-
-Baseline: [monster AI mechanics](#monster-ai-1).
-
-### Random creature targets
-
-**Intent:** align random enemy targets across changing eligible sets.
-
-Use four independent sequences addressed by [combat address](#combat-addresses) + sharing group + targeting purpose:
-
-| Sharing group | Sources |
-|---|---|
-| Forgotten Soul | All Forgotten Soul selections. |
-| Lightning | All Lightning copies, passive activations and evokes. |
-| Direct damage | Remaining plays that inherently cause damage, poison, or immediate HP loss; includes Knife Trap. |
-| Other | Mainly includes automatically played debuffs. |
-
-Zero damage preserves classification.
-
-With fewer than two eligible targets, advance nothing.
-
-Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
-
-**Within-combat deviation — SL 4A(↓):** group isolation removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
-
-Baseline: [random creature targeting](#random-creature-targeting).
-
-### Random combat card selection
-
-**Scope:** align random selection of existing combat cards, including combat-start effects and sampled choice offers. Player choices follow [combat-card routing](#combat-card-routing). Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows [fixed-priority selection](#fixed-priority-card-selection).
+**Scope:** align random selection of existing combat cards, including combat-start effects and sampled choice offers. Player choices follow [combat-card routing](#combat-card-routing). Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows its [theft policy](#thieving-hopper).
 
 Use combat-local [corrected clocks](#corrected-persistent-clocks) with [shared assignment](#combat-card-clock-assignment) and [combat addressing and resets](#combat-addresses). Preserve preference/fallback tiers, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
 
@@ -1219,17 +1201,34 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#combat-setup-and-shuffles).
 
-### Random orb types
+##### Thieving Hopper
 
-**Intent:** isolate random-orb generation by combat; preserve uniform sampling.
+Use [fixed priorities](#fixed-selection-priorities) with a separate purpose and [reward aliases](#card-reward-selection-keys). Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
-All sources share one sequence addressed by [combat address](#combat-addresses) + orb-type purpose.
+##### Random creature targets
 
-Failed channeling consumes zero.
+**Intent:** align random enemy targets across changing eligible sets.
 
-**Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
+Use four independent sequences addressed by [combat address](#combat-addresses) + sharing group + targeting purpose:
 
-### Combat card generation and transformations
+| Sharing group | Sources |
+|---|---|
+| Forgotten Soul | All Forgotten Soul selections. |
+| Lightning | All Lightning copies, passive activations and evokes. |
+| Direct damage | Remaining plays that inherently cause damage, poison, or immediate HP loss; includes Knife Trap. |
+| Other | Mainly includes automatically played debuffs. |
+
+Zero damage preserves classification.
+
+With fewer than two eligible targets, advance nothing.
+
+Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
+
+**Within-combat deviation — SL 4A(↓):** group isolation removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
+
+Baseline: [random creature targeting](#random-creature-targeting).
+
+##### Combat card generation and transformations
 
 **Intent and scope:** align random identities from combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their settled scope.
 
@@ -1254,7 +1253,7 @@ For Entropy's unordered selections, use [shared transformation batch rules](#uno
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
-### Random energy costs
+##### Random energy costs
 
 **Intent:** align cost rolls within card categories while separating combat draws from persistent potion opportunities. Cost rolls remain uniform over 0–3.
 
@@ -1283,6 +1282,28 @@ Oil's opportunity ordinal persists across combats. [Shared isolation impact](#sh
 **Within-combat deviation — SL 4A(↓):** group/category isolation, X skipping and overlap reuse remove consumption-based rerolls; processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
 
 Baseline: [random energy costs](#random-energy-costs-1).
+
+##### Random orb types
+
+**Intent:** isolate random-orb generation by combat; preserve uniform sampling.
+
+All sources share one sequence addressed by [combat address](#combat-addresses) + orb-type purpose.
+
+Failed channeling consumes zero.
+
+**Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
+
+##### Potion-generated cards
+
+**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
+
+Address each complete batch by potion type + its [effect ordinal](#potion-effect-opportunities), separately from other combat generation.
+
+Sample uniformly over eligible identities without a separate rarity roll.
+
+**Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
+
+Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
 
