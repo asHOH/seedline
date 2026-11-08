@@ -321,11 +321,15 @@ Use [corrected persistent clocks](#corrected-persistent-clocks) for selection. A
 
 **Routing boundary:** preserve display order. Apply effects at the clicked copies' actual pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
 
-**Batch association:** use the shared clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order. Assign that class's remaining logical occurrences in stable address order to its unclicked copies in frozen presentation order. This last pairing consumes no random draw. Apply effects after selection is complete.
+**Batch association:** use the shared clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates.
+
+1. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order.
+2. Assign each participating class's remaining logical occurrences in stable address order to its unclicked copies in frozen presentation order.
+3. Apply effects after selection is complete.
 
 Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Player-selected singleton and whole-class choices follow this same rule.
 
-**Coupling limit:** for matched nested sets of two and three occurrences, shared independent priorities select matching logical occurrences with probability `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
+**Coupling limit:** for single selections from matched nested sets of two and three occurrences, shared independent priorities select matching logical occurrences with probability `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
 
 ### Opportunity-specific selection priorities
 
