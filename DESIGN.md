@@ -339,13 +339,11 @@ Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportun
 
 **Selection state:** an occurrence's address, selection keys and aliases, [residual clocks and renewal counts](#corrected-persistent-clocks).
 
-#### Address reference
-
-Policies choose which identities and purposes supply their randomness.
+#### Shared addresses
 
 ##### Event addresses
 
-Event ID defines event-local scope; event RNG uses run seed + event ID.
+Event ID defines event-local scope. Retained [event RNG](#event-and-encounter-identities) follows baseline seeding.
 
 ##### Combat addresses
 
@@ -353,9 +351,7 @@ Ordinary combats use combat category + act-local combat ordinal + encounter iden
 
 Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter identity, leaving ordinary combat counters unchanged.
 
-Combat-local purposes derive from this address + purpose and reset each combat, providing isolation between combats. The [shared deviation](#loss-of-future-outcome-steering) applies where this removes cross-combat outcome steering; source policies retain their within-combat deviation assessments.
-
-Preserve settled scopes, including [potion-generated cards](#potion-generated-cards); use [shared consumption timing](#opportunity-consumption-timing).
+Combat-local random state derives from purpose + combat address and resets each combat. The [shared deviation](#loss-of-future-outcome-steering) applies where this removes cross-combat outcome steering.
 
 ##### Enemy occurrence identity
 
@@ -1366,6 +1362,8 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 #### Event and encounter identities
 
+**Event RNG:** in single-player, seeded by run seed + deterministic event ID hash (`EventModel.BeginEvent`).
+
 **Event / encounter identity selection:** per-act lists are generated upfront with `UpFront` RNG; event lists shuffle act-specific plus shared identities without explicit weights. Room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
 
 **Event-list wrapping (vanilla):** the cursor indexes `events[cursor % events.Count]`; the list wraps without reshuffling or clearing visits, and skipped entries remain in it. Skips advance the cursor too. A skipped event can qualify after wrapping; a full unsuccessful scan instead returns the cursor's event anyway, potentially repeated or ineligible.
@@ -1378,7 +1376,7 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 #### Ancient offerings
 
-All eight Ancients select their menus with event RNG seeded by run seed + event identity hash + player-slot contribution (`EventModel.BeginEvent`). Matching seed, Ancient and ordered eligible pools reproduce the menu independently of earlier event visits. Changed eligibility can also change which still-eligible options appear.
+All eight Ancients select their menus with [event RNG](#event-and-encounter-identities). Matching seed, Ancient and ordered eligible pools reproduce the menu independently of earlier event visits. Changed eligibility can also change which still-eligible options appear.
 
 | Ancient | Menu generation and relevant conditions |
 |---|---|
