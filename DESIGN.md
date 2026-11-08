@@ -280,8 +280,6 @@ Markers record pending advancements and freeze eligibility conditions at the ori
 
 Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
 
-A marker records a pending advancement with eligibility conditions frozen at the original draw. New draws use current eligibility.
-
 Ordinary markers are permanent; chests use the [finite-lifetime extension](#finite-lifetime-chest-markers).
 
 ### Fixed selection priorities
@@ -432,7 +430,7 @@ Each covered potion type has its own run-wide effect ordinal:
 
 **Cauldron exception:** for each covered type, acquired Cauldron potions grant one discard exemption each; consume one available exemption per same-type discard, regardless of clicked slot. Unclaimed Cauldron rewards, exempt discards and expiry of unused exemptions at next-room entry leave ordinals unchanged.
 
-**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch.
+**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch, preventing retention of favorable potion randomness to later combats.
 
 ### Generation
 
@@ -508,7 +506,7 @@ Shuffle outcomes must be independent of original deck sequence; use the [card-sh
 
 #### Unordered transformation batches
 
-Process the selected originals in the identity-only [card processing order](#card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
+Process selected originals in identity-only [card processing order](#card-processing-order). For each input identity, assign replacements in generation order to selected input positions in frozen presentation order.
 
 ## Source policies
 
