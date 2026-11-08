@@ -124,19 +124,22 @@ Source policies follow applicable shared policies and may use mechanisms directl
 
 ## Architecture overview
 
-Each controlled random operation has five descriptive dimensions:
+A source policy combines local decisions with applicable global and shared rules:
 
-| Dimension | Describes |
+| Component | Describes |
 |---|---|
-| Outcome | What is randomized. |
-| Sharing scope | Which operations share randomness for a given purpose. |
-| Address | How corresponding opportunities or entries are identified. |
-| Form | Addressed draw, stream, finite allocation or another coupling mechanism. |
-| State | What changes, resets and must survive save/load. |
+| Intent | What consistency the policy aims to achieve. |
+| Scope | Which operations the policy covers. |
+| Purpose | What each draw or stream determines. |
+| Generation and selection | How eligible outcomes are produced. |
+| Sharing scope | Which operations share randomness for a purpose. |
+| Addressing | How corresponding opportunities or entries are identified. |
+| State and consumption | When state advances or resets, and what survives save/load. |
+| Deviations | How gameplay differs from the baseline. |
+| Rationale | Why the design choices were made. |
+| Baseline | Existing mechanics for comparison. |
 
-Different stages of one source—such as occurrence, rarity, identity and attributes—may use different sharing scopes, counters or sequences.
-
-The guide below follows the [source-policy order](#source-policies); [generation sharing](#generation-sharing) compares their rarity and identity sharing. The [document hierarchy](#document-hierarchy) separates global rules, mechanisms and shared policies.
+A source's stages—occurrence, rarity, identity and attributes—may use different sharing scopes and state.
 
 ### Rewards
 
@@ -169,35 +172,36 @@ The guide below follows the [source-policy order](#source-policies); [generation
 
 ### Generation sharing
 
-Summary of generation sharing. Source policies own addressing, eligibility, construction and consumption rules under the [shared generation policies](#generation).
+Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
 #### Relics, potions and event-specific rewards
 
-| Sources | Rarity state | Identity supply |
+| Sources | Rarity | Identity supply |
 |---|---|---|
 | [Ordinary relics](#allocation): generic rewards / shop / Courier | Separate source sequences. | Disjoint finite allocations. |
-| [Relic Trader](#replacement-relics) | Event-slot addressing. | Courier allocation. |
-| [Potions](#acquisition-and-sequences): generic rewards / shop / Courier / generating effects | Per-source sequences. | Per-source, per-rarity sequences; generic modes share identities. |
+| [Relic Trader](#replacement-relics) | By event ID and reward slot. | Courier allocation. |
+| [Potions](#acquisition-and-sequences): generic rewards / shop / Courier / generating effects | Per-source sequences; generic rewards split standard-weight and uniform-identity modes. | Per-source, per-rarity sequences. |
 | [Event-specific rewards](#event-specific-rewards) | Event RNG. | Event RNG. |
 
 #### Card offers and shop cards
 
-| Sources | Rarity state | Identity supply |
+| Sources | Rarity | Identity supply |
 |---|---|---|
-| [Initial shop / Courier cards](#stock-and-prices) | Shop ordinal / type sequences or fixed rarity. | Shop ordinal / type-and-rarity sequences. |
-| [Own-character random-rarity offers](#offer-groups) | Shared luck; source Rare odds. | Non-Rare and rare-bearing triples; A0–6 extra Rares. |
+| [Initial shop cards](#stock-and-prices) | Shop ordinal; fixed colorless rarities. | Shop ordinal. |
+| [Courier cards](#stock-and-prices) | Per-type sequences; fixed colorless rarities. | Character: per-type, per-rarity sequences. Colorless: per-rarity sequences. |
+| [Own-character random-rarity offers](#offer-groups) | Shared luck and thresholds; source Rare odds. | Non-Rare and rare-bearing triples; A0–6 extra Rares. |
 | [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity, with local exceptions. |
-| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy source sequences / specified rarity. | Shared Power sequences; event-local Attack/Skill generation. |
+| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared Power sequences; Future of Potions uses event RNG for Attack/Skill. |
 | [Colorless / other-character offers](#other-offer-groups) | Source odds or fixed rarity. | Shared colorless sequence / per-character, per-rarity sequences. |
-| [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Expanded-pool sequences. |
+| [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Separate expanded-pool sequences. |
 
 #### Other card generation
 
-| Sources | Rarity state | Identity supply |
+| Sources | Rarity | Identity supply |
 |---|---|---|
-| [Permanent transformations / direct additions](#selection-and-consumption) | Separate rarity sequences where used; Automaton uses event RNG. | Shared permanent-card sequences by pool. |
-| [Potion-generated cards](#potion-generated-cards) | Uniform identities. | Potion-type effect batches. |
-| [Combat generation / Entropy](#combat-card-generation-and-transformations) | Uniform identities. | Combat-local sequences by group and pool. |
+| [Permanent transformations / direct additions](#selection-and-consumption) | Separate rarity sequences where used; the Infested Automaton event uses event RNG. | Shared permanent-card sequences by pool. |
+| [Potion-generated cards](#potion-generated-cards) | No rarity roll. | Uniform draws per potion-type effect batch. |
+| [Combat generation / Entropy](#combat-card-generation-and-transformations) | No rarity roll. | Uniform combat-local sequences by group and pool. |
 
 ## Global rules
 
@@ -1365,7 +1369,7 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 **Event skipping and probability:** assume a uniform hidden shuffle, fixed other eligibility and no wrapping. While condition K is false, skipping passes hidden K entries alongside encountered non-K entries; their exchangeable positions preserve K's odds when it becomes true. With two K events and three others, zero, one or two non-K encounters leave the next K chance at `2/5`. Encounters while K is true have the usual without-replacement effect. Individual-seed outcomes can differ; changing other eligibility can change the odds.
 
-**Ancient identity:** selected during upfront room generation, using `UpFront` RNG. Shared Ancients are divided between later acts before each act selects its Ancient. Earlier room visits leave these selections unchanged. Evidence: `RunManager.GenerateRooms`, `ActModel.GenerateRooms`.
+**Ancient identity:** selected during upfront room generation, using `UpFront` RNG. Shared Ancients are divided between later acts before each act selects its Ancient. Earlier room visits leave these selections unchanged.
 
 #### Ancient offerings
 
