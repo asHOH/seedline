@@ -278,11 +278,11 @@ Ordinary markers are permanent; chests use the [finite-lifetime extension](#fini
 
 ### Fixed selection priorities
 
-**Scope:** a single choice or effective batch, at most once per run.
+**Scope:** one choice or batch per run within each sharing scope.
 
-Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at the selection opportunity, from purpose + sharing scope + selection key. Select the lowest eligible priorities. Save the inputs needed to reproduce priorities; omit priority values.
+Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at the selection opportunity, from purpose + sharing scope + selection key. Select the lowest eligible priorities.
 
-**Weighted single choice:** use priority `-ln(U_i) / w_i` for weight `w_i`; select the lowest. Selection probability is `w_i / Σw`. Fixed relative weights preserve survivors' ranking when candidates are removed.
+**Weighted single choice:** among candidates with weight `w_i`, select the lowest `-ln(U_i) / w_i`. Selection probability is `w_i / Σw`. Fixed relative weights preserve survivors' ranking when candidates are removed.
 
 ### Corrected persistent clocks
 
