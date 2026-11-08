@@ -784,6 +784,8 @@ Replace the first Common in offer entry order, or the first Uncommon if no Commo
 
 For own-character random-rarity offers, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
+For Brain Leech's non-Rare Share Knowledge offers and Room Full of Cheese's Gorge offers, uniformly shuffle [display order](#stable-entry-addresses) after reward modifiers, with or without Wing Charm, using event RNG.
+
 ###### Scroll Boxes
 
 Resolve Defect's two independent 1% triple-Claw substitution checks with event RNG before requesting Common sequence entries. Non-Defect offers follow the no-substitution branch.
@@ -994,7 +996,7 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 
 **Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
 
-**Vanilla deviation — NoSL 1:** larger non-Rare offers favor enchanting positions in the triple.
+The [presentation shuffle](#presentation) removes the shared triple's visible enchantment-position bias.
 
 **Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
 
