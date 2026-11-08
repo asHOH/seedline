@@ -29,8 +29,7 @@ Consistency fixes with no gameplay impact are ungraded.
 | Grade | Impact |
 |---|---|
 | **1** | Presentation only. |
-| **2** | Preserves expectation but changes distribution or correlations; unnoticeable and neutral. |
-| **3** | Changes expectation; unnoticeable and neutral. |
+| **3** | Unnoticeable and neutral gameplay changes. |
 | **4A** | Noticeable and neutral. |
 | **4B** | Unnoticeable and non-neutral. |
 | **5** | Noticeable and non-neutral. |
@@ -117,7 +116,7 @@ Source policies follow applicable shared policies and may use mechanisms directl
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is its currently associated card object.
-- **Routing:** selection of logical occurrences within an equivalence class and their association with the physical copies chosen by the player.
+- **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with the physical copies chosen by the player.
 - **Occurrence address:** a logical occurrence's stable source identifier, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
@@ -172,6 +171,8 @@ A source's stages—occurrence, rarity, identity and attributes—may use differ
 
 ### Generation sharing
 
+In these tables, “shared” spans all covered sources in the row's offer category or named source group, within the stated partitions.
+
 Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
 #### Relics, potions and event-specific rewards
@@ -189,10 +190,11 @@ Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 |---|---|---|
 | [Initial shop cards](#stock-and-prices) | Shop ordinal; fixed colorless rarities. | Shop ordinal. |
 | [Courier cards](#stock-and-prices) | Per-type sequences; fixed colorless rarities. | Character: per-type, per-rarity sequences. Colorless: per-rarity sequences. |
-| [Own-character random-rarity offers](#offer-groups) | Shared luck and thresholds; source Rare odds. | Non-Rare and rare-bearing triples; A0–6 extra Rares. |
+| [Own-character random-rarity offers](#offer-groups), such as fight rewards and Orrery | Shared luck and thresholds; source Rare odds. | Shared triple sequences, split by offers with or without a Rare; one additional Rare sequence at A0–6. |
 | [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity, with local exceptions. |
-| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared Power sequences; Future of Potions uses event RNG for Attack/Skill. |
-| [Colorless / other-character offers](#other-offer-groups) | Source odds or fixed rarity. | Shared colorless sequence / per-character, per-rarity sequences. |
+| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared own-character Power sequences per rarity (Uncommon/Rare); Future of Potions uses event RNG for Attack/Skill. |
+| [Colorless offers: Lead Paperweight / Brain Leech's Rip](#other-offer-groups) | Source odds. | One shared colorless reward sequence. |
+| [Other-character offers: Kaleidoscope / Colorful Philosophers / Sea Glass](#other-offer-groups) | Kaleidoscope: event RNG. Others: fixed rarity. | Shared sequences per character and rarity. |
 | [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Separate expanded-pool sequences. |
 
 #### Other card generation
@@ -1322,7 +1324,7 @@ These are route-average choices: elite frequency and extra-offer sources shift t
 
 #### Combat-gold alternatives
 
-- **Shared rolls with independent compensation:** preserves A3+ normal-gold expectation but makes its distribution nonuniform (**Vanilla deviation — NoSL 2**); Bowler Hat can change the received total by 1.
+- **Shared rolls with independent compensation:** preserves A3+ normal-gold expectation but makes its distribution nonuniform (**Vanilla deviation — NoSL 3**); Bowler Hat can change the received total by 1.
 - **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
 
 #### Event-selection alternatives
