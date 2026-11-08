@@ -56,17 +56,15 @@ This deviation is shared across policies.
 
 Standalone StS2 v0.111.0 mod for everyday play, also suited to competition. Catfood comparisons use v1.1.2.
 
-Compare single-player runs with matching seeds, versions and rules, with all content unlocked (including relic, card and event pools).
+Compare single-player runs with matching seeds, versions and rules, and all content unlocked.
 
-**Exclude:** multiplayer behavior, tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, and content removed by game updates.
+**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, and content removed by game updates.
 
-**Numerical scope:** exclude negligible probability differences caused solely by rounding or exact boundary hits in random sampling, game-wide.
+**Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.
 
-**Default context:** assume Scarcity (Ascension 7 and above) unless stated otherwise. Policies apply without Scarcity using the corresponding probabilities.
+**Default difficulty:** Scarcity (Ascension 7+); below A7, use the corresponding probabilities.
 
-**Discussion boundary:** describe base random outcomes and preserve existing modifiers, including eggs, Fresnel Lens and fixed discounts. Discuss modifier interactions when they affect random operations.
-
-**Fixed identities and selections:** predetermined card, relic and potion identities, player choices and fixed selections are outside scope, except for [routing](#routing). Fixed-rarity requests with random identities remain in scope.
+**Discussion boundary:** describe base random outcomes and modifier interactions that affect random operations. Preserve existing modifiers, including eggs, Fresnel Lens and fixed discounts.
 
 ## Concepts and terms
 
