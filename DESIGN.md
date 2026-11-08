@@ -1216,7 +1216,7 @@ Use four independent sequences addressed by [combat address](#combat-addresses) 
 |---|---|
 | Forgotten Soul | All Forgotten Soul selections. |
 | Lightning | All Lightning copies, passive activations and evokes. |
-| Direct damage | Remaining plays that inherently cause damage, poison, or immediate HP loss; includes Knife Trap. |
+| Direct damage | Remaining effects that inherently cause damage, poison, or immediate HP loss; includes power and relic damage and Knife Trap. |
 | Other | Mainly includes automatically played debuffs. |
 
 Zero damage preserves classification.
