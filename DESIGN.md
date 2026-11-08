@@ -233,7 +233,7 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 
 In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
-**Card selection keys:** derive initial keys from occurrence addresses, applying [source-specific aliases](#card-reward-selection-keys); never use current list position.
+**Card selection keys:** derive initial keys from occurrence addresses, applying [source-specific aliases](#card-reward-selection-key-aliases); never use current list position.
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the selection keys already used to generate them, in ascending order.
 
@@ -369,11 +369,11 @@ Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetim
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [card processing order](#card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
-#### Card reward selection keys
+#### Card reward selection-key aliases
 
 When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet, Slippery Bridge and Thieving Hopper. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
 
-Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken. Selecting existing deck cards creates no reward aliases.
+Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken.
 
 #### Out-of-combat card lifetime
 
@@ -381,7 +381,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 | Operation | Occurrence and selection state |
 |---|---|
-| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-keys), regardless of which other offered cards are taken. |
+| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-key-aliases), regardless of which other offered cards are taken. |
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
 | Change status or eligibility | Retain the occurrence and its selection state through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
 | Copy a card | Create a fresh occurrence and selection state from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
@@ -1007,8 +1007,8 @@ Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clo
 | Selection / candidates | Mechanism and sharing | Local selection rules |
 |---|---|---|
 | Random permanent upgrades / downgrades of existing deck cards | Corrected clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
-| Pael's Tooth / Beautiful Bracelet | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-keys). | [Source rules](#fixed-priority-card-selection) below. |
-| Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-keys). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
+| Pael's Tooth / Beautiful Bracelet | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-key-aliases). | [Source rules](#fixed-priority-card-selection) below. |
+| Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Corrected clocks; Bridge-only scope with [reward aliases](#card-reward-selection-key-aliases). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
 | Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); one shared run-wide scope. | With one owned potion, leave its clock unchanged. Otherwise renew the selected clock once when the offer becomes available. Declined potions remain selectable. |
 
 ###### Weighted potion sacrifice clocks
@@ -1147,7 +1147,7 @@ Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
-These assignments also initialize [combat selection clocks](#combat-card-clock-assignment). Existing [card reward selection keys](#card-reward-selection-keys) retain their scopes.
+These assignments also initialize [combat selection clocks](#combat-card-clock-assignment). Existing [card reward selection-key aliases](#card-reward-selection-key-aliases) retain their scopes.
 
 ###### Shuffle deviations
 
@@ -1207,7 +1207,7 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 ##### Thieving Hopper
 
-Use [fixed priorities](#fixed-selection-priorities) with a separate purpose and [reward aliases](#card-reward-selection-keys). Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
+Use [fixed priorities](#fixed-selection-priorities) with a separate purpose and [reward aliases](#card-reward-selection-key-aliases). Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
 ##### Random enemy targets
 
