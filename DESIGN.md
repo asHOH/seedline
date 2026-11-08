@@ -371,7 +371,7 @@ Cards with generation entries use their [stable entry addresses](#stable-entry-a
 
 #### Card reward selection-key aliases
 
-When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet, Slippery Bridge and Thieving Hopper. Freeze the anchor in canonical offer generation order, before presentation-only swaps.
+When a card reward offer allows at most one card, the acquired card uses the first card's selection key as an alias for later selection by Pael's Tooth, Beautiful Bracelet, Slippery Bridge and Thieving Hopper. Freeze the first offer entry's selection key as the anchor before presentation-only swaps.
 
 Different offers, including [rerolls](#rerolls), have distinct anchors. Offers allowing multiple cards, including bundles, keep each acquired card's own selection keys even when only one is taken.
 
@@ -494,7 +494,7 @@ Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using s
 
 Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#card-equivalence). This order does not replace per-copy randomness or routing.
 
-Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
+Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers use their existing entry order before presentation-only swaps.
 
 Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#card-shuffling).
 
@@ -772,7 +772,7 @@ This exception occurs only once per run. The triples follow ordinary shared cons
 
 For own-character random-rarity offers, maintain one additional Rare-only identity sequence per character, shared by the three source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
 
-Replace the first Common in canonical generation order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
+Replace the first Common in offer entry order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Use [filtered draws](#filtered-draws) to exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
 **Replacement state:** identity and inherent upgrade roll come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership, and its [Acts 1–2 shuffle membership](#source-based-assignment--acts-12).
 
@@ -835,7 +835,7 @@ Use seven pools: the five characters, colorless and curse, separate from combat 
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
-**Vanilla deviation — SL 5(↓):** canonicalizing unordered transformation batches removes order-dependent replacement alternatives.
+**Vanilla deviation — SL 5(↓):** processing unordered transformation batches in [identity order](#unordered-transformation-batches) removes order-dependent replacement alternatives.
 
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -981,9 +981,9 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering](#offer-procedure). Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
-**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the three canonical entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [canonical triple](#card-reward-offers) precedes presentation swaps.
+**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the triple's entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [triple](#card-reward-offers) precedes presentation swaps.
 
-**Non-Rare larger offers:** use the canonical triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
+**Non-Rare larger offers:** use the triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
 
 **Weighted extra-group selection:** for rare-bearing Brain Leech and Lasting Candy, let `x` count all eligible cards and `y` eligible extra cards. Select the extra group when the source's independent uniform `[0,1)` roll is below `y/x`; otherwise use the triple's priorities. This gives each eligible card probability `1/x`, including replacement Rares.
 
@@ -994,7 +994,7 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 
 **Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
 
-**Vanilla deviation — NoSL 1:** larger non-Rare offers favor enchanting positions in the canonical triple.
+**Vanilla deviation — NoSL 1:** larger non-Rare offers favor enchanting positions in the triple.
 
 **Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
 
@@ -1253,7 +1253,7 @@ For Entropy's unordered selections, use [shared transformation batch rules](#uno
 
 **Within-combat deviation — SL 4A(↓):** partitioning sequences by pool and cost treatment, while sharing identity supply between generation and Entropy, changes source interactions and removes cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
 
-**Within-combat deviation — SL 4A(↓):** canonical Entropy batch processing removes selection-order rerolls for the same selected batch.
+**Within-combat deviation — SL 4A(↓):** processing Entropy batches in [identity order](#unordered-transformation-batches) removes selection-order rerolls for the same selected batch.
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
@@ -1616,7 +1616,7 @@ Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide
 
 | Source | Vanilla mechanics |
 |---|---|
-| Confused | Applied by Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant). Each owned card drawn with nonnegative canonical energy cost receives a combat-long cost modifier. X cards have canonical cost zero, so they consume a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
+| Confused | Applied by Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant). Each owned card drawn with nonnegative `EnergyCost.Canonical` (the card model's original energy cost) receives a combat-long cost modifier. X cards store zero in this field, so they consume a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
 | Slither | Wood Carvings' Snake enchantment. Rerolls its card on draw only while it remains in hand, with a combat-long modifier. Enchanting excludes X and Unplayable cards. |
 | Snecko Oil | Draws seven, then iterates the resulting hand in hand order. Rerolls non-X cards with nonnegative unmodified energy cost until turn end or next play, whichever comes first. |
 
