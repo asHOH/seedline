@@ -315,7 +315,7 @@ A player action does not advance a gameplay selector's clocks merely because it 
 
 ### Routing
 
-**Scope:** [out-of-combat](#equivalent-card-selections) and [combat](#combat-card-routing) operations on player-selected cards. These shared policies define equivalence and operation sharing.
+**Scope:** [out-of-combat](#out-of-combat-card-routing) and [combat](#combat-card-routing) operations on player-selected cards. These shared policies define equivalence and operation sharing.
 
 Use [corrected persistent clocks](#corrected-persistent-clocks) for selection. An already randomly selected logical target bypasses routing.
 
@@ -464,9 +464,11 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
 
 ### Selection
 
-#### Equivalent-card selections
+#### Card equivalence
 
 **Invariant — equivalent copies:** clicking any member of the same class has equivalent identity/status-level consequences apart from the effects of the clicked position. Where [routing](#routing) applies, each such click selects the same logical occurrence. Equivalence requires the same identity and gameplay-relevant status within the eligible context. Hidden selection state and pile position do not split the class.
+
+#### Out-of-combat card routing
 
 **Out-of-combat equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
@@ -477,22 +479,6 @@ All out-of-combat sources with player-selected cards share [routing clocks](#rou
 | Upgrade | Upgrades to player-selected cards, including Pael's Tooth's initial selection. |
 | Enchant | Enchantments on player-selected cards, across enchantment types and amounts. |
 | Permanent removal | Removal, transformation and Amalgamator's combining; sharing aligns surviving originals after [input retirement](#out-of-combat-card-lifetime). |
-
-#### Card processing order
-
-**Intent:** process unordered batches deterministically by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
-
-Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
-
-Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#equivalent-card-selections). This order does not replace per-copy randomness or routing.
-
-Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
-
-Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#card-shuffling).
-
-#### Unordered transformation batches
-
-Process the selected originals in the identity-only [card processing order](#card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 
 #### Combat-card routing
 
@@ -507,6 +493,22 @@ Within the same owner and eligible selection context, compare identity and gamep
 Within each equivalence class, route the logical occurrence as a unit, including its selection state, shuffle assignment, [Oil hand-entry assignment](#random-energy-costs), copy relationships and any deck link outside the protected cases above. Keep live references with their logical targets.
 
 **Vanilla deviation — SL 4A(↓):** within a routed class, trying different clicks on reload selects the same hidden state for later combat selection, shuffles and Oil costs. Position-dependent outcomes and the choice between different consequential deck links remain available, even after a shuffle.
+
+#### Card processing order
+
+**Intent:** process unordered batches deterministically by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
+
+Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
+
+Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#card-equivalence). This order does not replace per-copy randomness or routing.
+
+Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers retain their existing entry order as canonical generation order.
+
+Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#card-shuffling).
+
+#### Unordered transformation batches
+
+Process the selected originals in the identity-only [card processing order](#card-processing-order) first. Original upgrade/enchantment state does not affect this ordering; repeated requests for the same identity remain tied and retain their multiplicity. After generation, associate replacements in generation order with equivalent selected input positions in frozen presentation order.
 
 ## Source policies
 
@@ -1041,7 +1043,7 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 ###### Fixed-priority card selection
 
-- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [routing](#equivalent-card-selections). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
+- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [routing](#out-of-combat-card-routing). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
 - **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 
 #### Combat
