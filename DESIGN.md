@@ -138,7 +138,7 @@ A source policy combines local decisions with applicable global and shared rules
 | Rationale | Why the design choices were made. |
 | Baseline | Existing mechanics for comparison. |
 
-A source's stages—occurrence, rarity, identity and attributes—may use different sharing scopes and state.
+A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
 
 ### Rewards
 
@@ -147,7 +147,7 @@ A source's stages—occurrence, rarity, identity and attributes—may use differ
 | Relics and chests | [Relic allocation and borrowing](#relics); [chest rewards and advancement](#chests). |
 | Potions | [Generation and drops](#potions). |
 | Shops | [Shops, Wongos and Courier](#shops-wongos-and-courier). |
-| Cards | [Reward offers and Rare occurrence](#card-reward-offers); [permanent transformations and direct additions](#permanent-transformations-and-direct-card-additions). Both use [inherent card rolls](#inherent-card-rolls). |
+| Cards | [Reward offers and Rare timing](#card-reward-offers); [permanent transformations and direct additions](#permanent-transformations-and-direct-card-additions). Both use [inherent card rolls](#inherent-card-rolls). |
 | Other rewards | [Combat gold](#combat-gold); [event-specific rewards](#event-specific-rewards). |
 
 ### Encounter
@@ -593,11 +593,11 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 
 **Vanilla deviation — SL 5(↓):** failed grants no longer let players advance to a different later potion outcome.
 
-##### Drop occurrence
+##### Drop checks
 
-- Retain [Catfood addressing](#catfood-addressing-and-combat-rewards) and [vanilla's shared changing probability](#potions-1) across normal fights, elites and bosses. Extra ordinary checks advance the cumulative index; combat-category threshold differences are preserved. No act/Ancient reset.
-- **White Beast Statue:** forced drops freeze the occurrence index and stored probability; the potion still consumes a reward identity.
-- Save the occurrence index and probability.
+- Retain [Catfood addressing](#catfood-addressing-and-combat-rewards) and [vanilla's shared changing probability](#potions-1) across normal fights, elites and bosses. Extra ordinary checks advance the drop-check ordinal; combat-category threshold differences are preserved. No act/Ancient reset.
+- **White Beast Statue:** forced drops freeze the drop-check ordinal and stored probability; the potion still consumes a reward identity.
+- Save the drop-check ordinal and probability.
 
 #### Shops, Wongos and Courier
 
@@ -670,13 +670,13 @@ Future of Potions Attack/Skill identities use event RNG addressed by rarity and 
 
 For own-character random-rarity offers, including reachable [rerolls](#rerolls):
 
-1. Simulate three slots (all five for Brain Leech's Share Knowledge) under [Rare occurrence](#rare-occurrence).
+1. Simulate three slots (all five for Brain Leech's Share Knowledge) under [Rare timing and delivery](#rare-timing-and-delivery).
 2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple.
 3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
 
 Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve source-specific upgrade timing and modifier order.
 
-##### Rare occurrence
+##### Rare timing and delivery
 
 **Scope:** the three own-character random-rarity [offer groups](#offer-groups).
 
@@ -712,7 +712,7 @@ Cap each covered offer at one Rare. If a later slot reaches the next threshold:
 
 - Suppress that Rare and keep the reached threshold pending, retaining luck and the current threshold.
 - Treat suppressed slots as non-Rare for applicable offset updates.
-- Continue accumulating luck; only one occurrence can be pending until delivery.
+- Continue accumulating luck; only one Rare can remain pending until delivery.
 
 A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery.
 
@@ -721,7 +721,7 @@ A **Rare-eligible offer** has a positive chance of producing a Rare along its or
 
 This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; occurrences beyond the single pending threshold are omitted. **Frequency:** rare — approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
+**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; additional Rares beyond the single pending one are omitted. **Frequency:** rare — approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
 ###### A0–6: Rare delivery
 
@@ -733,7 +733,7 @@ Deliver every threshold crossing immediately under the shared luck and source-of
 
 Own-character random-rarity offers use two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
 
-A suppressed occurrence reserves no additional triple.
+A suppressed Rare reserves no additional triple.
 
 **Rationale:** shared sequences preserve triple alignment when a Rare moves between sources; separate normal/elite sequences advance differently.
 
