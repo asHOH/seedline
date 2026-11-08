@@ -166,9 +166,9 @@ The guide below follows the [source-policy order](#source-policies); [generation
 
 | Decision area | Policies |
 |---|---|
-| Setup and monsters | [Encounter setup](#encounter-setup); [monster HP](#monster-hp); [monster AI](#monster-ai). |
+| Setup and enemies | [Encounter setup](#encounter-setup); [enemy HP](#enemy-hp); [enemy AI](#enemy-ai). |
 | Card piles | [Card shuffling](#card-shuffling); [random pile insertion](#random-pile-insertion). |
-| Random selection | [Combat cards](#random-combat-card-selection); [Thieving Hopper](#thieving-hopper); [creature targets](#random-creature-targets). |
+| Random selection | [Combat cards](#random-combat-card-selection); [Thieving Hopper](#thieving-hopper); [enemy targets](#random-enemy-targets). |
 | Generation and effects | [Card generation and transformations](#combat-card-generation-and-transformations); [random energy costs](#random-energy-costs); [random orb types](#random-orb-types); [potion-generated cards](#potion-generated-cards). |
 
 ### Generation sharing
@@ -350,9 +350,9 @@ Combat-local purposes derive from this address + purpose and reset each combat, 
 
 Preserve settled scopes, including [potion-generated cards](#potion-generated-cards); use [shared consumption timing](#opportunity-consumption-timing).
 
-##### Monster occurrence identity
+##### Enemy occurrence identity
 
-For combat policies addressing individual monsters, monster address = source-local spawn opportunity + creation index, stable for the monster's lifetime.
+For combat policies addressing individual enemies, enemy address = source-local spawn opportunity + creation index, stable for the enemy's lifetime.
 
 Initial enemies use the [combat address](#combat-addresses) as their source; summons/replacements use the summoning/replaced occurrence.
 
@@ -1045,23 +1045,23 @@ Use the shared [combat address](#combat-addresses) + `purpose = setup`.
 
 Preserve encounter identity selection and setup sampling; reward ordinals and AI retain their own policies.
 
-##### Monster HP
+##### Enemy HP
 
 **Intent:** isolate HP sequences by combat, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat draw-order manipulation.
 
-Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + `purpose = monster HP` + combat-local HP-roll ordinal; select zero-based index `floor(u × count)` from ascending eligible HP values.
+Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + `purpose = enemy HP` + combat-local HP-roll ordinal; select zero-based index `floor(u × count)` from ascending eligible HP values.
 
 Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
 
-Preserve vanilla full-range fallback, conditional probabilities, creature lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#encounter-setup).
+Preserve vanilla full-range fallback, conditional probabilities, enemy lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#encounter-setup).
 
-Baseline: [monster HP mechanics](#monster-hp-1).
+Baseline: [enemy HP mechanics](#enemy-hp-1).
 
-##### Monster AI
+##### Enemy AI
 
 **Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
 
-**Shared rules:** partition sequences by monster model identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + purpose + sharing scope; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
+**Shared rules:** partition sequences by enemy model identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + purpose + sharing scope; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
 **Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
 
@@ -1071,7 +1071,7 @@ Baseline: [monster HP mechanics](#monster-hp-1).
 |---|---|
 | Types limited to one occurrence in the combat, including Fabricator | Personal random-branch count, including singleton/all-zero branches; use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) with move identity keys. Deterministic transitions consume zero. |
 | Inklets | Two continuous effective-decision sequences: one for the middle, one shared by both outers. Sample in vanilla declaration order; retain these scopes after deaths. |
-| Exoskeletons / Scrolls of Biting | One continuous effective-decision sequence per type, shared across copies and rounds; sample in vanilla declaration order. [Baseline choice points](#monster-ai-1). |
+| Exoskeletons / Scrolls of Biting | One continuous effective-decision sequence per type, shared across copies and rounds; sample in vanilla declaration order. [Baseline choice points](#enemy-ai-1). |
 | Small Leaf Slimes | Independent type-local opening entries in creation order; preserve subsequent forced alternation without advancing intent sequences. |
 | Decimillipede | One continuous revival-selection sequence shared by front, middle and back; choose uniformly among the three attacks. |
 | Deterministic intent graphs | Preserve existing transitions and setup-assigned starting phases. |
@@ -1105,9 +1105,9 @@ Fresh independent draws at vanilla conditional probabilities, with preserved seq
 
 **Vanilla deviation — SL 4A(↓):** partitioning AI sequences within combat and effective-decision consumption remove rerolls through unrelated or forced draws.
 
-**Vanilla deviation — SL 4A:** partitioning by monster model and rat move rankings change survivor alternatives. For example, in the [reference examples](#monster-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
+**Vanilla deviation — SL 4A:** partitioning by enemy model and rat move rankings change survivor alternatives. For example, in the [reference examples](#enemy-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
 
-Baseline: [monster AI mechanics](#monster-ai-1).
+Baseline: [enemy AI mechanics](#enemy-ai-1).
 
 ##### Card shuffling
 
@@ -1206,7 +1206,7 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 Use [fixed priorities](#fixed-selection-priorities) with a separate purpose and [reward aliases](#card-reward-selection-keys). Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
 
-##### Random creature targets
+##### Random enemy targets
 
 **Intent:** align random enemy targets across changing eligible sets.
 
@@ -1223,11 +1223,11 @@ Zero damage preserves classification.
 
 With fewer than two eligible targets, advance nothing.
 
-Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [monster occurrence identity](#monster-occurrence-identity). Repeats remain allowed.
+Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [enemy occurrence identity](#enemy-occurrence-identity). Repeats remain allowed.
 
 **Within-combat deviation — SL 4A(↓):** group partitioning removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
 
-Baseline: [random creature targeting](#random-creature-targeting).
+Baseline: [random enemy targeting](#random-enemy-targeting).
 
 ##### Combat card generation and transformations
 
@@ -1450,7 +1450,7 @@ Encounter setup uses floor-based addressing. Shuffle RNG persists across combats
 
 **Random insertion:** `CardPileCmd.Add` uses `Shuffle.NextInt(n + 1)`; `MegaRandom.NextInner` scales a uniform double, matching percentile gap sampling. Lifecycle guards skip insertions before rolling a position.
 
-#### Monster HP
+#### Enemy HP
 
 Enemy creation samples uniformly with `Niche` from the inclusive initial HP range, excluding `MaxHp` values (current/max HP denominators) in the enemy list; an empty candidate set restores the full range (`Creature.SetUniqueMonsterHpValue`). Startup creates/adds enemies sequentially; summons share this path. Death-triggered spawns precede source removal, so dying enemies still count.
 
@@ -1458,7 +1458,7 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 
 **Summons:** ordinary sampling covers Fabricator's bots, Two-Tailed Rats, Ovicopter's eggs and Phrog Parasite's four sequential Wrigglers. Eye with Teeth (6), Parafright (21) and Gas Bomb (7/8 by ascension) have fixed HP. Gremlin Merc creates Fat, creates/adds Sneaky, then adds Fat: each rolls before the other joins the enemy list (`SurprisePower.AfterDeath`).
 
-#### Monster AI
+#### Enemy AI
 
 **Randomness and selection:** vanilla uses the run-wide `RunRngSet.MonsterAi` for `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, draws `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still consume a draw. Deterministic transitions consume none. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
 
@@ -1491,7 +1491,7 @@ Exactly one kill yields a zero-immediate-damage next intent. Choosing before see
 
 **Fabricator:** Fabricate selects a defensive bot (Guardbot/Noisebot), then an offensive bot (Zapbot/Stabbot); Fabricating Strike selects only an offensive bot. Each draw excludes the immediately preceding bot identity across both pools. An intervening defensive bot therefore permits the previous offensive identity again. Full capacity forces deterministic Disintegrate; its bots use fixed moves. In the standard single-player encounter, kill/stun timing changes when selections occur while preserving their order and the sequence of summoned bot identities.
 
-#### Random creature targeting
+#### Random enemy targeting
 
 Direct random effects and automatic enemy targeting share one run-wide random stream, sampling uniformly among eligible enemies. A singleton selection consumes a draw; an empty set consumes none. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
 
