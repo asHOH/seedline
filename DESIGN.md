@@ -135,7 +135,7 @@ A source policy may cover:
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is its currently associated card object.
 - **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
 - **Occurrence address:** a logical occurrence's stable source identifier, distinct for each copy.
-- **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
+- **Selection key / selection-key alias:** a selection key is a candidate's stable identifier for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
 
 ## Architecture overview
@@ -233,9 +233,9 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 
 In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
-**Selection keys:** derive initial keys from occurrence addresses, applying [source-specific aliases](#card-reward-selection-keys); never use current list position.
+**Card selection keys:** derive initial keys from occurrence addresses, applying [source-specific aliases](#card-reward-selection-keys); never use current list position.
 
-**Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the candidate keys already used to generate them, in ascending order.
+**Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the selection keys already used to generate them, in ascending order.
 
 ### Stable entry addresses
 
@@ -333,7 +333,7 @@ Commit the association permutation and shared clock update with the action. Rene
 
 ### Opportunity-specific selection priorities
 
-Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportunity. Derive priorities from opportunity address + purpose + candidate key, excluding candidate sets and list positions. Sources define keys, sharing and opportunity counting.
+Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportunity. Derive priorities from purpose + opportunity address + selection key, excluding candidate sets and list positions.
 
 ## Shared policies
 
@@ -1234,7 +1234,7 @@ Zero damage preserves classification.
 
 With fewer than two eligible targets, advance nothing.
 
-Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; candidate key = [enemy occurrence identity](#enemy-occurrence-identity). Repeats remain allowed.
+Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; selection key = [enemy occurrence identity](#enemy-occurrence-identity). Repeats remain allowed.
 
 **Within-combat deviation — SL 4A(↓):** group partitioning removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
 
