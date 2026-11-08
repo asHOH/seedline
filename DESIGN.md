@@ -57,7 +57,7 @@ Standalone StS2 v0.111.0 mod for everyday play, also suited to competition. Catf
 
 Compare single-player runs with matching seeds, versions and rules, and all content unlocked.
 
-**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, and content removed by game updates.
+**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.
 
@@ -108,7 +108,7 @@ A source policy may cover:
 
 - **Map type:** the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type:** the resolved room category. Ancients are counted separately in this design. An event can start combat while retaining its map type.
-- **Event ID / encounter ID:** identifies an event or combat encounter across repeated occurrences.
+- **Event ID / encounter ID:** identifies an event or combat encounter type.
 - **Normal fight:** a battle outside the elite and boss categories. **Combat:** any battle, including event battles.
 
 ### Items and rewards
@@ -347,7 +347,7 @@ Policies choose which identities and purposes supply their randomness.
 
 ##### Event addresses
 
-Events use event ID. Event RNG uses run seed + event ID in single-player, independently of event ordinals.
+Event ID defines event-local scope; event RNG uses run seed + event ID.
 
 ##### Combat addresses
 
@@ -911,9 +911,9 @@ Restore passed scheduling entries: each act-available, unvisited ID contributes 
 
 **Wrapping:** on exhaustion, restore passed entries and restart priorities, continuing each condition's draw index. ID sequences wrap in the act's established order; visited IDs stay excluded.
 
-**Fallback — empty eligible pool:** Relax act restrictions first, then all eligibility restrictions except visited-event exclusion, then allow repeats; stop at the first stage with a candidate.
+**Fallback — empty eligible pool:** if no eligible unvisited event remains, select `list[(n - 1) % list.Count]` from vanilla's original shuffled act list, where `n` is the 1-based act-local ordinary-event ordinal. Bypass eligibility and visited exclusions for this draw only.
 
-**Fallback impact:** staged relaxation can offer an out-of-act event where vanilla returns the cursor's event. **Frequency:** rare (qualitative judgment).
+**Vanilla deviation — NoSL 3:** ordinal indexing changes fallback probabilities conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
 
 **Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
