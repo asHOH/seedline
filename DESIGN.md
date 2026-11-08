@@ -50,7 +50,7 @@ Rare deviations include a **Frequency:** field.
 
 This deviation is shared across policies.
 
-**Vanilla deviation — SL 5↓(↓):** applies when changes remove planning decisions based on steering later outcomes through earlier consumption of shared randomness. This alignment tradeoff simplifies SL exploration. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favored orb sequence for the next battle.
+**Vanilla deviation — SL 5↓(↓):** applies when changes remove planning decisions based on steering later outcomes through earlier consumption of shared randomness. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favored orb sequence for the next battle.
 
 ## Scope
 
