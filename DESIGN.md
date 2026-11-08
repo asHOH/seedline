@@ -247,7 +247,7 @@ An entry's address is its original source sequence + original entry position, di
 
 ### Opportunity consumption timing
 
-**Invariant — consumption timing:** for an operation that consumes an opportunity, its random state stays unchanged until its result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
+**Invariant — consumption timing:** for operations that consume opportunities, generate results and advance random state only when those results become available to reveal or receive—even if left unrevealed, declined or skipped.
 
 Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
@@ -564,7 +564,7 @@ Relic generation consumes the rarity roll, chest opportunity and lifetime draw, 
 Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip or leave behind:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption-timing).
+- **Skip, including unopened chests:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption-timing).
 
 Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
 
