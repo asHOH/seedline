@@ -377,19 +377,16 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Out-of-combat card lifetime
 
-**Scope:** out-of-combat card operations for [persistent selection](#persistent-selection) and [routing](#routing), using the [occurrence address reference](#card-occurrence-addresses). Apply each source's selection, renewal and reset rules alongside these lifetime rules. Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment).
+**Scope:** out-of-combat card operations for [persistent selection](#persistent-selection) and [routing](#out-of-combat-card-routing), using [card occurrence addresses](#card-occurrence-addresses). Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment).
 
 | Operation | Occurrence and selection state |
 |---|---|
-| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-key-aliases), regardless of which other offered cards are taken. |
+| Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-key-aliases). |
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
-| Change status or eligibility | Retain the occurrence and its selection state through equivalence-class splits and merges; eligibility governs selection participation. [Upgrade/downgrade refills](#permanent-upgrades-and-downgrades) remain source-specific. |
-| Copy a card | Create a fresh occurrence and selection state from the granting source. Leave the original's selection state unchanged and consume no routing clocks. |
+| Change status or eligibility | The change itself preserves the occurrence and its selection state through equivalence-class splits and merges, subject to [upgrade/downgrade refills](#permanent-upgrades-and-downgrades). |
+| Copy a card | Create a fresh occurrence and selection state from the granting source. Consume no routing clocks. |
 | Permanently remove or combine cards | Retire the selected logical inputs. |
-| Transform a card | Retire the original and initialize fresh replacement selection state. Preserve source-specific gameplay inheritance; see [permanent transformations](#permanent-transformations-and-direct-additions). |
-| Apply [routing](#routing) | Permute associations with physical copies while keeping each occurrence's selection state together. |
-
-**Related reward-entry exception:** [A0–6 replacement state](#a06-multiple-rares).
+| [Transform a card](#permanent-transformations-and-direct-additions) | Retire the original and initialize fresh replacement selection state. |
 
 #### Combat-card clock assignment
 
