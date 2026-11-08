@@ -68,12 +68,12 @@ Compare single-player runs with matching seeds, versions and rules, and all cont
 
 ## Concepts and terms
 
-Two top-level policy categories classify random operations within effects:
+Random operations are grouped into:
 
 - **Rewards:** generated reward identities and amounts, including permanent transformation results.
-- **Encounter:** random selection of affected cards/items, room content, named event options and combat randomness. It is divided into **Non-combat** and **Combat** subcategories.
+- **Encounter:** selection of affected cards/items, room content, named event options and combat randomness; divided into **Non-combat** and **Combat**.
 
-Relic Trader's outgoing selection and replacement targets are handled together under Encounter.
+[Relic Trader](#relic-trader) groups outgoing selection and replacement relics under Encounter.
 
 Policy category and RNG ownership are separate: a reward can use event RNG.
 
@@ -82,47 +82,45 @@ Policy category and RNG ownership are separate: a reward can use event RNG.
 | Section | Owns |
 |---|---|
 | **Global rules** | Requirements and defaults that constrain all covered systems. |
-| **Reusable mechanisms** | Reusable algorithms with defined inputs, guarantees and limits. |
-| **Shared policies** | Required behavior used by multiple source policies within a defined context. |
-| **Source policies** | Rules for named sources or source families: mechanism choice, sharing scope, consumption and explicit exceptions. |
+| **Reusable mechanisms** | Algorithms for implementing policies. |
+| **Shared policies** | Rules shared by source policies within a defined scope. |
+| **Source policies** | Rules for named sources or source families, including local exceptions. |
 
-Source policies follow applicable shared policies and may use mechanisms directly. Global rules constrain all three layers; exceptions remain explicit in the rules that authorize them.
+Source policies follow applicable shared policies and may use mechanisms directly. Exceptions remain explicit in the rules that authorize them.
 
 ### Game context
 
-- **Map type** (`MapPointType`): the map marker; `Unknown` (`?`) may resolve into different room types.
-- **Room type** (`RoomType`): the resolved room—normal fight, elite, boss, chest, event, shop or rest site. Ancients are an Event room subtype counted separately in this design. An event may start combat without changing the map type.
-- **Event ID / encounter ID:** identifies a specific event / combat encounter.
-- **Normal fight / combat:** **normal fight** means `RoomType.Monster`; **combat** means any battle, including normal fights, elites, bosses and event battles.
+- **Map type:** the map marker; `Unknown` (`?`) may resolve into different room types.
+- **Room type:** the resolved room category. Ancients are counted separately in this design. An event can start combat while retaining its map type.
+- **Event ID / encounter ID:** identifies an event or combat encounter across repeated occurrences.
+- **Normal fight:** a battle outside the elite and boss categories. **Combat:** any battle, including event battles.
 
-### Reward terminology
+### Items and rewards
 
-- **Card reward offer:** cards presented together for one choice, usually three. **Card slot:** one position within an offer.
-- **Card pool:** can be own character, colorless or a specified other character.
+- **Card reward offer:** cards offered together for selection. **Card slot:** one position within an offer.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
-- **Ordinary relics:** Common / Uncommon / Rare / Shop; Event-exclusive relics sit outside these pools.
+- **Ordinary relics:** Common, Uncommon, Rare and Shop rarities.
 - **Generation / acquisition:** generation determines an item; acquisition means receiving it.
-- **Reward sources:** **Generic rewards** is an item-specific source class defined by each relevant policy. **Courier** means restocks from The Courier relic, distinct from the Potion Courier event.
 
 ### Randomness and addressing
 
-- **RNG / random state:** an RNG (random number generator) supplies random values. Random state includes RNG state and relevant context, including sequence contents and positions, opportunity counters, and stored rolls or selection priorities.
-- **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may draw from overlapping candidate pools.
+- **RNG:** random number generator.
+- **[Random state](#rng-derivation-and-addressing):** internal information tracking random processes across operations.
+- **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may draw from overlapping pools.
 - **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned draws or streams unchanged.
-- **Purpose:** the role of a random draw or stream, such as selection, ordering or upgrading.
-- **Roll:** a random draw for a named purpose, such as rarity or upgrading.
-- **Pool / sequence:** a pool defines candidate identities. A sequence is one ordered stream of entries; repeated identities are distinct entries. **Per-rarity identity sequences** provide one stream per rarity.
-- **Allocation:** finite relic stock assigned to one source, ordered into one or more sequences.
-- **Triple sequence:** a card identity sequence consumed only as complete consecutive groups of three entries; each group is a **triple**.
+- **Purpose:** the role of a draw or stream, such as selection, ordering or upgrading.
+- **Roll:** one random draw for a purpose.
+- **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered stream of entries. Repeated identities are distinct entries.
+- **Allocation:** finite relic stock assigned to a source and ordered into sequences.
+- **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
 - **Filter:** the eligibility conditions for a draw.
-- **Ordinal:** an opportunity's position within its category, counted across the run unless a scope is stated; scoped counts reset for each scope instance.
-- **Ordinal-addressed generation:** generation derived from an opportunity's ordinal within its stated scope. **Shop-ordinal generation** names the shop case.
-- **Event RNG:** an event's own generator.
-- **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is the card object currently associated with it.
+- **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
+- **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
+- **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is its currently associated card object.
 - **Routing:** selection of logical occurrences within an equivalence class and their association with the physical copies chosen by the player.
-- **Occurrence address:** the stable source identifier of a logical occurrence, distinct for each copy.
+- **Occurrence address:** a logical occurrence's stable source identifier, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key identifies an occurrence for a selection purpose; an alias is a source-specified replacement key for that purpose.
-- **Selection state:** an occurrence's address, selection keys and aliases, residual clocks, and renewal counts.
+- **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
 
 ## Architecture overview
 
@@ -214,6 +212,8 @@ Unless a policy specifies a change, preserve existing behavior, including:
 - Triggers, effect timing/order, modifiers and presentation.
 
 ### RNG derivation and addressing
+
+Random state includes RNG state, sequence contents and positions, opportunity counters, stored rolls and selection priorities.
 
 **Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable purpose and sharing-scope identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
@@ -329,6 +329,8 @@ Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportun
 ## Shared policies
 
 ### Addressing and state
+
+**Selection state:** an occurrence's address, selection keys and aliases, [residual clocks and renewal counts](#corrected-persistent-clocks).
 
 #### Address reference
 
