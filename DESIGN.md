@@ -353,13 +353,13 @@ Event-created battles outside ordinary encounter lists use event-local battle or
 
 Combat-local random state derives from purpose + combat address and resets each combat. The [shared deviation](#loss-of-future-outcome-steering) applies where this removes cross-combat outcome steering.
 
-##### Enemy occurrence identity
+##### Enemy occurrence addresses
 
-For combat policies addressing individual enemies, enemy address = source-local spawn opportunity + creation index, stable for the enemy's lifetime.
+An enemy's address is source-local spawn ordinal + creation index, stable for its lifetime.
 
 Initial enemies use the [combat address](#combat-addresses) as their source; summons/replacements use the summoning/replaced occurrence.
 
-One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order, regardless of animation timing.
+One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order.
 
 Revivals retain occurrence identity; summons and replacements receive fresh identities.
 
@@ -1228,7 +1228,7 @@ Zero damage preserves classification.
 
 With fewer than two eligible targets, advance nothing.
 
-Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; selection key = [enemy occurrence identity](#enemy-occurrence-identity). Repeats remain allowed.
+Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; selection key = [enemy occurrence address](#enemy-occurrence-addresses). Repeats remain allowed.
 
 **Within-combat deviation — SL 4A(↓):** group partitioning removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
 
