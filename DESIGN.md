@@ -365,11 +365,9 @@ Revivals retain occurrence identity; summons and replacements receive fresh iden
 
 ##### Card occurrence addresses
 
-Each card copy has a distinct logical occurrence with a stable source address. Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
+Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
 
 Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [card processing order](#card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
-
-Card initialization preserves generated attributes and presentation order; derive selection keys under the [shared addressing contract](#rng-derivation-and-addressing).
 
 #### Card reward selection keys
 
