@@ -257,13 +257,13 @@ Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). At each checkp
 
 **Advancement:** return the first eligible entry, then move each later eligible entry to the preceding eligible position. Ineligible positions remain unchanged. For example, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, move `B` to 2, `C` to 6, and so on.
 
-This generalizes fixed-rarity draws: viewing per-rarity identity sequences and rarity rolls as one mixed sequence, later entries of a rarity fill earlier positions of that rarity.
+**Method — deferred advancement:** perform the advancement on demand for infinite sequences and finite relic allocations.
 
-**Method — deferred advancement:** perform the advancement on demand for infinite sequences and finite relic allocations:
+Markers record pending advancements and freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
 - **Filtered draw:** return the first eligible entry and replace it with a marker for its filter.
 - **Marker resolution:** move the next eligible entry after it into the marker's position. Leave the same filter's marker at the supplying position.
-- **Ordinary draw:** resolve any front marker, then return the entry and remove the drawn position.
+- **Unfiltered draw:** resolve any front marker, then return the entry and remove the drawn position.
 
 **Marker collisions:** when a draw using filter `Y` encounters a marker for filter `X`, resolve that marker first.
 
@@ -272,7 +272,7 @@ This generalizes fixed-rarity draws: viewing per-rarity identity sequences and r
 
 Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
 
-Markers freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
+A marker records a pending advancement with eligibility conditions frozen at the original draw. New draws use current eligibility.
 
 Ordinary markers are permanent; chests use the [finite-lifetime extension](#finite-lifetime-chest-markers).
 
