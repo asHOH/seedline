@@ -85,7 +85,24 @@ Policy category and RNG ownership are separate: a reward can use event RNG.
 | **Shared policies** | Rules shared by source policies within a defined scope. |
 | **Source policies** | Rules for named sources or source families, including local exceptions. |
 
-Source policies follow applicable shared policies and may use mechanisms directly. Exceptions remain explicit in the rules that authorize them.
+Source policies combine local decisions with applicable global and shared rules and may use mechanisms directly. Exceptions remain explicit in the rules that authorize them.
+
+A source policy may cover:
+
+| Component | Describes |
+|---|---|
+| Intent | Consistency goal. |
+| Scope | Covered operations. |
+| Purpose | What each draw or stream determines. |
+| Generation | How outcomes are produced. |
+| Selection | How eligible candidates are chosen. |
+| Sharing scope | Which operations share randomness. |
+| Addressing | How corresponding opportunities or entries are identified. |
+| State | What information is retained, reset or saved. |
+| Consumption | When opportunities or entries are consumed. |
+| Deviations | Gameplay changes from the baseline. |
+| Rationale | Why these choices were made. |
+| Baseline | Existing mechanics. |
 
 ### Game context
 
@@ -123,22 +140,7 @@ Source policies follow applicable shared policies and may use mechanisms directl
 
 ## Architecture overview
 
-A source policy combines local decisions with applicable global and shared rules:
-
-| Component | Describes |
-|---|---|
-| Intent | What consistency the policy aims to achieve. |
-| Scope | Which operations the policy covers. |
-| Purpose | What each draw or stream determines. |
-| Generation and selection | How eligible outcomes are produced. |
-| Sharing scope | Which operations share randomness for a purpose. |
-| Addressing | How corresponding opportunities or entries are identified. |
-| State and consumption | When state advances or resets, and what survives save/load. |
-| Deviations | How gameplay differs from the baseline. |
-| Rationale | Why the design choices were made. |
-| Baseline | Existing mechanics for comparison. |
-
-A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
+The mod aligns corresponding same-seed opportunities through stable addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
 
 ### Rewards
 
@@ -151,6 +153,10 @@ A source may use different sharing scopes and state for whether and when a resul
 | Other rewards | [Combat gold](#combat-gold); [event-specific rewards](#event-specific-rewards). |
 
 ### Encounter
+
+- **Rooms and events:** align `?` draws by visit ordinal within each act and improve event agreement as eligible pools change.
+- **Selection:** stable keys and [persistent selection state](#corrected-persistent-clocks) retain alignment across choices. [Routing](#routing) makes equivalent card clicks select the same logical occurrence; eligibility histories and position-dependent effects still matter.
+- **Combat:** scope setup, enemy behavior and card randomness to each battle. Potion-generated cards and Oil costs use potion-effect ordinals across battles.
 
 #### Non-combat
 
@@ -171,7 +177,9 @@ A source may use different sharing scopes and state for whether and when a resul
 
 ### Generation sharing
 
-In these tables, “shared” spans all covered sources in the row's offer category or named source group, within the stated partitions.
+Sources sharing a sequence advance a common progression. Separate supplies limit that interference; finite relic allocations can still interact through borrowing. Ordinal addressing gives corresponding opportunities their own randomness, as with initial shop cards.
+
+“Shared” spans each row's named sources or offer category, within the stated partitions. Source policies supply local exceptions.
 
 Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
@@ -190,8 +198,8 @@ Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 |---|---|---|
 | [Initial shop cards](#stock-and-prices) | Shop ordinal; fixed colorless rarities. | Shop ordinal. |
 | [Courier cards](#stock-and-prices) | Per-type sequences; fixed colorless rarities. | Character: per-type, per-rarity sequences. Colorless: per-rarity sequences. |
-| [Own-character random-rarity offers](#offer-groups), such as fight rewards and Orrery | Shared luck and thresholds; source Rare odds. | Shared triple sequences, split by offers with or without a Rare; one additional Rare sequence at A0–6. |
-| [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity, with local exceptions. |
+| [Own-character random-rarity offers](#offer-groups), such as fight rewards and Orrery | Shared luck and thresholds; source Rare odds. | Shared triple sequences, split by offers with or without a Rare. |
+| [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity. |
 | [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared own-character Power sequences per rarity (Uncommon/Rare); Future of Potions uses event RNG for Attack/Skill. |
 | [Colorless offers: Lead Paperweight / Brain Leech's Rip](#other-offer-groups) | Source odds. | One shared colorless reward sequence. |
 | [Other-character offers: Kaleidoscope / Colorful Philosophers / Sea Glass](#other-offer-groups) | Kaleidoscope: event RNG. Others: fixed rarity. | Shared sequences per character and rarity. |
@@ -299,7 +307,7 @@ Where renewal uses a per-occurrence count, derive each independent draw from pur
 
 Policies define when and how to renew consumed clocks from the same distribution.
 
-**Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once; a selected occurrence cannot re-enter the same batch. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
+**Batches:** for an unordered uniform sample of `k` distinct occurrences from a fixed eligible set, select the `k` smallest pre-selection clocks and subtract the `k`-th smallest clock from every unselected eligible survivor once. Consume each selected clock once. Commit from one eligibility snapshot, independently of UI click/enumeration order. Effects with intentionally sequential eligibility changes retain that distinction.
 
 A player-directed choice does not advance a gameplay selector's clocks merely because it changes membership; routing has its own scope. Fixed-target and explicit affect-all effects also consume no selection clocks.
 
