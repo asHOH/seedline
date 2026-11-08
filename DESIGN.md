@@ -205,8 +205,6 @@ Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
 ## Global rules
 
-The [fairness principle](#goals-and-principles) and labeled invariants constrain all covered behavior.
-
 ### Preservation defaults
 
 Unless a policy specifies a change, preserve existing behavior, including:
@@ -221,7 +219,7 @@ Random state includes RNG state, sequence contents and positions, opportunity co
 
 **Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable purpose and sharing-scope identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
-Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position. Concrete labels, encoding and RNG/hash algorithms can be chosen during implementation, subject to this contract.
+Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position.
 
 In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
@@ -231,15 +229,15 @@ In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local 
 
 ### Stable entry addresses
 
+An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
+
 **Invariant — stable addresses:** entries retain their original addresses through movement, filtered advancement, borrowing, removal and return.
 
 **Invariant — presentation-only reordering:** change only display positions, keeping each entry's address, attached random state and group membership with it.
 
-An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
-
 ### Opportunity consumption timing
 
-**Invariant — consumption timing:** for an operation that consumes an opportunity, its random state, including selection clocks, stays unchanged until its result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
+**Invariant — consumption timing:** for an operation that consumes an opportunity, its random state stays unchanged until its result becomes available for the player to reveal or receive. It advances at that point, regardless of actual viewing, acceptance or selection.
 
 Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
@@ -247,14 +245,7 @@ Deferred rewards consume at the payoff opportunity, not acquisition of the effec
 
 ### Saved state
 
-Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). A reload discards changes since the last checkpoint. Restore mod state before room regeneration so replay advances from the same saved state.
-
-At each checkpoint, save the following wherever used:
-
-- **Sequences:** contents, positions, original entry addresses and consumption.
-- **Markers:** positions, conditions, remaining lifetimes and carried entries.
-- **Opportunities:** counters and RNG state; chest-offer history and pending acquisition/skip decisions.
-- **Selection:** selection state, potion type clocks and their renewal counts, logical-to-physical occurrence associations and pending selection records.
+Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). At each checkpoint, save all mod state needed to reproduce subsequent outcomes; restore it before room regeneration.
 
 ## Reusable mechanisms
 
