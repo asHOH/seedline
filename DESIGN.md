@@ -440,7 +440,9 @@ Triple sequences retain each slot's rarity while rejecting duplicate identity ca
 
 #### Card equivalence
 
-**Invariant — equivalent copies:** clicking any member of the same class has equivalent identity/status-level consequences apart from the effects of the clicked position. Where [routing](#routing) applies, each such click selects the same logical occurrence. Equivalence requires the same identity and gameplay-relevant status within the eligible context. Hidden selection state and pile position do not split the class.
+Equivalence requires the same identity and gameplay-relevant status. Hidden selection state and pile position do not split a class.
+
+**Invariant — equivalent copies:** selecting different equivalent copies preserves identity/status-level outcomes, apart from position-dependent effects. [Routing](#routing) enforces this for covered player choices.
 
 #### Out-of-combat card routing
 
