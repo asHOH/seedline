@@ -233,7 +233,7 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 
 In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
 
-**Card selection keys:** derive initial keys from occurrence addresses, applying [source-specific aliases](#card-reward-selection-key-aliases); never use current list position.
+**Card selection keys:** derive initial keys from occurrence addresses, subject to [source-specific aliases](#card-reward-selection-key-aliases) and [combat-clock assignment](#combat-card-clock-assignment); never use current list position.
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the selection keys already used to generate them, in ascending order.
 
@@ -390,21 +390,19 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Combat-card clock assignment
 
-Freeze one assignment key per combat occurrence. Derive initial [corrected clocks](#corrected-persistent-clocks) from combat address + selection or routing scope + assignment key. For each renewal, also use that occurrence’s renewal count within that scope.
+For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [corrected clocks](#corrected-persistent-clocks) with one frozen selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
-**At combat start:** before selection effects, use each card’s [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling. Clock draws are independent of shuffle priorities.
+**At combat start:** before selection effects, use each card’s [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling.
 
 **During combat:** take the first applicable key for a fresh occurrence:
 
-| Card source | Assignment key |
+| Card source | Selection key |
 |---|---|
 | Identity drawn from a generation sequence | Original [sequence entry address](#stable-entry-addresses). |
 | Fixed token creation | Token identity + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
 | Other grants | Granting-source identity + committed grant ordinal within that source identity for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
 
-Pile movement and status or eligibility changes retain keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above. Preserve gameplay inheritance.
-
-Combat-local assignment removes cross-combat steering ([shared deviation](#loss-of-future-outcome-steering)). Under NoSL, selection retains uniform odds among eligible copies.
+Pile movement and status or eligibility changes themselves preserve keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above.
 
 #### Potion effect opportunities
 
