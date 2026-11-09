@@ -446,15 +446,17 @@ Equivalence requires the same identity and gameplay-relevant status. Hidden sele
 
 #### Out-of-combat card routing
 
-**Out-of-combat equivalence key:** in the same owner and eligible deck context, explicitly compare model ID, exact upgrade level, enchantment ID/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
+**Out-of-combat equivalence key:** compare card identity, upgrade level, enchantment identity/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
-All out-of-combat sources with player-selected cards share [routing clocks](#routing) by operation, separately for each card identity:
+For the out-of-combat operations below, sources share [routing clocks](#routing) by operation and card identity:
 
 | Routing scope | Operations |
 |---|---|
 | Upgrade | Upgrades to player-selected cards, including Pael's Tooth's initial selection. |
 | Enchant | Enchantments on player-selected cards, across enchantment types and amounts. |
-| Permanent removal | Removal, transformation and Amalgamator's combining; sharing aligns surviving originals after [input retirement](#out-of-combat-card-lifetime). |
+| Permanent removal | Removal, transformation and Amalgamator's combining. |
+
+Sharing the removal scope aligns surviving originals after [input retirement](#out-of-combat-card-lifetime).
 
 #### Combat-card routing
 
@@ -462,7 +464,7 @@ Use [routing](#routing) whenever the player selects an existing combat card. Ini
 
 Apply routing once per committed player choice, before effects, among the copies available for player selection. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
 
-Within the same owner and eligible selection context, compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Card processing order](#card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
+Compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Card processing order](#card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
 
 **Permanent-deck correspondence:** for Genetic Algorithm, The Scythe and Goopy cards, play can grow the linked permanent card. While Thieving Hopper’s steal is pending, the rule applies to every card identity: theft checks deck links in draw and discard, and player actions can move cards there from hand. In these cases, group combat copies by the exact permanent-deck occurrence they link to, with a separate group for combat-only copies. Each physical card keeps its link through routing, including after a shuffle.
 
