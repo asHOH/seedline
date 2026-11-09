@@ -410,16 +410,16 @@ Pile movement and status or eligibility changes themselves preserve keys, residu
 
 Each covered potion type has its own run-wide effect ordinal:
 
-| Action | Effect ordinal |
+| Action | Ordinal advancement |
 |---|---|
-| Committed use, including an empty effect batch | Consume one ordinal for the batch. |
-| Discard or trade | Skip one batch. |
-| Permanently skip an unclaimed covered potion reward on the reward screen | Consume one ordinal, once per skipped reward. |
-| Acquire | Leave unchanged. |
+| Committed use, even when no rolls occur | Advance once. |
+| Discard or trade | Advance once. |
+| A reward-screen opportunity ends with a covered potion unclaimed | Advance once per skipped reward. |
+| Acquire | None. |
 
-**Cauldron exception:** for each covered type, acquired Cauldron potions grant one discard exemption each; consume one available exemption per same-type discard, regardless of clicked slot. Unclaimed Cauldron rewards, exempt discards and expiry of unused exemptions at next-room entry leave ordinals unchanged.
+**Cauldron exception:** Each covered potion offered by Cauldron grants one exemption for its type — any action that would advance that type's effect ordinal consumes one available exemption instead. Unused exemptions expire at next-room entry.
 
-**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch, preventing retention of favorable potion randomness to later combats.
+**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
 
 ### Generation
 
