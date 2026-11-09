@@ -150,7 +150,7 @@ The mod aligns corresponding same-seed opportunities through stable addresses, s
 | Relics and chests | [Relic allocation and borrowing](#relics); [chest rewards and advancement](#chests). |
 | Potions | [Generation and drops](#potions). |
 | Shops | [Shops, Wongos and Courier](#shops-wongos-and-courier). |
-| Cards | [Reward offers and Rare timing](#card-reward-offers); [permanent transformations and direct additions](#permanent-transformations-and-direct-card-additions). Both use [inherent card rolls](#inherent-card-rolls). |
+| Cards | [Reward offers and Rare timing](#card-reward-offers); [permanent transformations and direct additions](#permanent-transformations-and-direct-card-additions). |
 | Other rewards | [Combat gold](#combat-gold); [event-specific rewards](#event-specific-rewards). |
 
 ### Encounter
@@ -422,9 +422,7 @@ Each covered potion type has its own run-wide effect ordinal:
 
 **Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
 
-### Generation
-
-#### Rarity and identity sequences
+### Rarity and identity sequences
 
 **Main idea:** align successive opportunities for the same kind of item across routes, with independent sharing scopes and sequence state for rarity and identity.
 
@@ -437,16 +435,6 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 Apply the filtered-draw mechanism to covered identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences retain each slot's rarity while rejecting duplicate identity candidates within that triple during generation. Other card sequences apply source-required duplicate exclusions through filtered draws.
-
-#### Inherent card rolls
-
-**Main idea:** bind random attributes to each generated card occurrence so evaluating them cannot shift later identities or attributes.
-
-Each card entry carries an **inherent upgrade roll** `u` uniformly distributed in `[0, 1)`, derived independently from its [stable entry address](#stable-entry-addresses) and the upgrade purpose.
-
-When generating an offer, upgrade an eligible card exactly when `u < p`, using that source's rarity- and act-dependent upgrade chance. Preserve sources that suppress random upgrades or explicitly guarantee an upgrade. Neither changes the inherent roll or advances another reward's random state. This does not upgrade cards already in the deck when the act changes.
-
-Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
 
 ### Selection
 
@@ -676,6 +664,14 @@ For own-character random-rarity offers, including reachable [rerolls](#rerolls):
 
 Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve source-specific upgrade timing and modifier order.
 
+##### Upgrade rolls
+
+Derive each independent upgrade roll `u`, uniform in `[0, 1)`, from `purpose = upgrade` + the card's [stable entry address](#stable-entry-addresses).
+
+At the source's existing random upgrade check, upgrade an eligible card when `u < p`, using its rarity- and act-dependent chance `p` at that check.
+
+Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
+
 ##### Rare timing and delivery
 
 **Scope:** the three own-character random-rarity [offer groups](#offer-groups).
@@ -768,7 +764,7 @@ For own-character random-rarity offers, maintain one additional Rare-only identi
 
 Replace the first Common in offer entry order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
 
-**Replacement state:** identity and inherent upgrade roll come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership, and its [Acts 1–2 shuffle membership](#source-based-assignment--acts-12).
+**Replacement state:** identity and [upgrade roll](#upgrade-rolls) come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership, and its [Acts 1–2 shuffle membership](#source-based-assignment--acts-12).
 
 **Accepted tradeoff:** extra-Rare sequence state depends on prior Rare counts; companion replacements depend on offer composition. These A0–6 alignment and distribution tradeoffs are accepted because the design primarily targets A7+.
 
