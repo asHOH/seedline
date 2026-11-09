@@ -114,6 +114,7 @@ A source policy may cover:
 ### Items and rewards
 
 - **Card reward offer:** cards offered together for selection. **Card slot:** one position within an offer.
+- **Reward skipping:** an acquisition opportunity ends with its reward unclaimed.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
 - **Ordinary relics:** Common, Uncommon, Rare and Shop rarities.
 - **Generation / acquisition:** generation determines an item; acquisition means receiving it.
@@ -414,7 +415,7 @@ Each covered potion type has its own run-wide effect ordinal:
 |---|---|
 | Committed use, even when no rolls occur | Advance once. |
 | Discard or trade | Advance once. |
-| A reward-screen opportunity ends with a covered potion unclaimed | Advance once per skipped reward. |
+| Skip a covered potion reward on the reward screen | Advance once per skipped reward. |
 | Acquire | None. |
 
 **Cauldron exception:** Each covered potion offered by Cauldron grants one exemption for its type — any action that would advance that type's effect ordinal consumes one available exemption instead. Unused exemptions expire at next-room entry.
