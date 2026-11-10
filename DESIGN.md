@@ -573,7 +573,7 @@ Other-source consumption can shorten future marker lifetimes; existing lifetimes
 
 **Vanilla deviation — NoSL 3:** skipping a chest, visiting a shop, then acquiring another chest's relic can slightly shift later character-specific reward probabilities.
 
-Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [chest mechanics](#shops-chests-and-relic-events).
 
 #### Potions
 
@@ -621,7 +621,7 @@ Derive each drop-check roll from the drop-check ordinal.
 
 **Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
 
-Baseline: [shop mechanics](#shop-and-courier-rng) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [shop mechanics](#shop-and-courier-rng).
 
 ##### Wongos
 
@@ -824,7 +824,7 @@ Lasting Candy uses the inherited pool's Power sequences while retaining its sour
 
 **Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
-Baseline: [card reward mechanics](#card-reward-offers-1) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [card reward mechanics](#card-reward-offers-1).
 
 #### Permanent transformations and direct card additions
 
@@ -847,7 +847,7 @@ Use seven pools: the five characters, colorless and curse, separate from card re
 
 **Vanilla deviation — SL 5(↓):** processing transformation batches in [identity order](#transformation-batches) removes order-dependent replacement alternatives.
 
-Baseline: [generation mechanics](#permanent-transformations-and-direct-additions) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [generation mechanics](#permanent-transformations-and-direct-additions).
 
 #### Combat gold
 
@@ -859,7 +859,7 @@ Fixed or absent combat gold, fixed extra payouts and event-choice gold consume n
 
 **Rationale and tradeoff:** an extra elite leaves later normal-fight gold unchanged, and vice versa. Reordering unreduced rewards with matching category counts preserves individual base payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward changes total base gold by 11–26 at A3+. [Rejected alternatives](#combat-gold-alternatives).
 
-Baseline: [gold ranges and exceptions](#combat-gold-1) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [gold ranges and exceptions](#combat-gold-1).
 
 #### Event-specific rewards
 
