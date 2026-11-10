@@ -135,7 +135,7 @@ A source policy may cover:
 - **Allocation:** finite relic stock assigned to a source and ordered into sequences.
 - **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
-- **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
+- **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
 - **Occurrence address:** a logical occurrence's source ID, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key is a candidate's ID for a selection purpose; an alias is a source-specified replacement key for that purpose.
@@ -435,7 +435,7 @@ With per-rarity identity sequences, a random-rarity request consumes one value f
 
 **Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
 
-Apply the filtered-draw mechanism to covered identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Skipped entries remain available to eligible draws and borrowing.
+Apply the filtered-draw mechanism to covered identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences retain each slot's rarity while rejecting duplicate identity candidates within that triple during generation. Other card sequences apply source-required duplicate exclusions through filtered draws.
 
@@ -601,23 +601,19 @@ Derive each drop-check roll from the drop-check ordinal.
 
 #### Shops, Wongos and Courier
 
-**Intent:** Extra rewards and Courier restocks no longer scramble later shops. Corresponding shops keep the same sale slot; relocated offers keep their base prices. Wongos affects only future Rare shop offers, and only when its featured relic is affordable.
+**Intent:** align corresponding shops independently of rewards and Courier restocks; keep base prices with their generated entries.
 
 ##### Stock and prices
 
-- Initial shop stock depends only on shop ordinal, except for Wongos, relic floor cutoffs and [borrowing](#borrowing).
-- **Initial cards:** generate rarity and identities by shop ordinal; preserve unavailable-rarity fallback.
-- **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
-- Sale slot uses independent shop-ordinal generation.
-- **Base prices:** use [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
-- **Courier cards:** use separate Attack/Skill/Power rarity sequences at shop odds and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Other options use [generic relic rewards](#source-classification).
+- **Initial cards:** generate character-card rarities and all card identities by shop ordinal; colorless slots request fixed Uncommon/Rare.
+- **Card rarity:** initial character cards and Courier character-card restocks use [vanilla shop base chances](#card-reward-offers-1) plus a fixed offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
+- **Courier cards:** use separate Attack/Skill/Power rarity sequences and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each.
+- **Card eligibility:** preserve unavailable-rarity fallback and displayed-card exclusions, including the just-purchased card during restocking.
+- **Relics and potions:** initial stock uses their shop supplies; restocks use their Courier supplies under [relic allocation](#allocation) and [potion generation](#generation).
+- **Sale slot:** derive independently from shop ordinal.
+- **Base prices:** derive from `purpose = base price` + [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 
-**Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
-
-**Boundary — relic floor cutoffs (see [appendix](#relic-bags)):** reaching corresponding shops on opposite sides of a cutoff can change their relics and shift later stock; these differences are inevitable and benign.
-
-**Vanilla deviation — NoSL 3:** Wongos's featured Rare uses shop stock, removing its vanilla advancement of shop-ineligible Rares toward later generic rewards.
+**Alignment boundary:** eligibility changes, including [relic floor cutoffs](#relic-bags), can change corresponding stock and subsequent sequence positions. Relics also retain [borrowing's boundary](#borrowing) and the Wongos exception below.
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
@@ -626,6 +622,16 @@ Derive each drop-check roll from the drop-check ordinal.
 **Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
 
 Baseline: [shop mechanics](#shop-and-courier-rng) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
+
+##### Wongos
+
+The featured offer consumes one shop Rare identity when affordable; below 200 gold, suppress it without consuming stock as a [consistency fix](#vanilla-deviations). The Common purchase and Mystery Ticket's deferred rewards use [generic relic rewards](#source-classification).
+
+**Identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; see the [filtered-pull example](#relic-bags).
+
+**Vanilla deviation — NoSL 3:** sourcing the featured Rare from shop stock removes its vanilla advancement of shop-ineligible Rares toward later generic rewards.
+
+Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
 #### Card reward offers
 
