@@ -633,7 +633,7 @@ Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
 #### Card reward offers
 
-**Intent:** equivalent rewards share identity order across sources. Corresponding rare-bearing offers share the same choices across sources. Larger own-character drafts preserve later three-card offer boundaries. Random upgrades leave later card choices unchanged; matching Lasting Candy triggers retain their rarity.
+**Intent:** align reward choices across related sources and preserve own-character triple boundaries across offer sizes.
 
 **Scope:** initial generation and reachable rerolls for the offer groups below.
 
@@ -662,8 +662,6 @@ Own-character random-rarity offers share [luck and thresholds](#luck-and-rarity-
 | Colorless: Lead Paperweight / Brain Leech's Rip | One shared rarity-roll sequence at Uncommon/Rare odds **98.51% / 1.49%**, with shared Uncommon/Rare identity sequences; consume individual entries across batch sizes. |
 | Other-character | Kaleidoscope uses event RNG for character and rarity; Colorful Philosophers / Sea Glass request fixed rarities. Share 12 identity sequences: four other characters × Common/Uncommon/Rare, consumed individually across batch sizes. |
 
-[Expanded pools](#prismatic-gem-and-dingy-rug) retain source rarity rules and draw grouping.
-
 ###### Type-specific offers
 
 Lasting Candy and The Future of Potions share own-character Uncommon and Rare Power identity sequences, consuming individual entries. Candy uses separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback and one roll per triggered card; boss triggers request Rare. Future of Potions requests its specified rarity.
@@ -672,7 +670,7 @@ Future of Potions Attack/Skill identities use event RNG addressed by rarity and 
 
 ##### Offer procedure
 
-For own-character random-rarity offers, including reachable [rerolls](#rerolls):
+For own-character random-rarity offers:
 
 1. Simulate three slots (all five for Brain Leech's Share Knowledge) under [Rare timing and delivery](#rare-timing-and-delivery).
 2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple.
