@@ -284,7 +284,7 @@ Markers record pending advancements and freeze eligibility conditions at the ori
 
 Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
 
-If a finite supply has no eligible entry to resolve a marker after [borrowing](#borrowing), remove the marker and continue the current draw. Chests also use [finite-lifetime expiry](#finite-lifetime-chest-markers).
+If an allocation has no eligible entry to resolve a marker after [borrowing](#borrowing), expire that marker, then continue the draw.
 
 ### Fixed selection priorities
 
@@ -546,31 +546,35 @@ Silver Crucible's empty chest room generates neither reward and leaves the chest
 
 **Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
 
-Draw the next eligible shared identity from the generic rarity sequence and replace it with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
+Draw the next eligible shared relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip, including unopened chests:** save the relic with the marker as its **carried entry**; at expiry it returns as an [ordinary reward entry](#opportunity-consumption-timing).
+- **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as an [ordinary reward entry](#opportunity-consumption-timing).
 
-Resolve the choice before expiry, including `x = 0`; permanent ineligibility or acquisition elsewhere cancels a skipped relic's return.
+Resolve the choice before expiry, including `x = 0`. Permanent ineligibility or acquisition elsewhere clears the carried entry, preserving the marker's lifetime.
+
+Refill and Circlet rewards bypass markers: skipping leaves stock unchanged; acquisition retains [baseline identity removal](#relic-bags).
 
 **Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
 
 ###### Finite-lifetime chest markers
 
-Use the [shared filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when supply exhaustion removes it. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry.
+Use the [shared filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when supply is exhausted. Each transfer decrements `x` and moves the marker to the supplying position. Collisions preserve each marker's lifetime and carried entry.
 
 **Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal. Corresponding chests share `u`; successive chests roll independently.
 
-Before recording the offer, `S` counts chest-eligible shared identities of that rarity, excluding previous chest offers, in:
+Before recording the offer, `S` counts eligible shared identities of that rarity, excluding previous chest offers, in:
 
 - The remaining generic sequence, including the drawn entry.
-- The **original shop and Courier allocations**, retaining identities after display or acquisition.
+- The **original shop and Courier allocations**, including displayed or acquired identities.
 
-Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation.
+The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation.
 
 **Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
 
-**Alignment:** acquire and skip share the future sequence up to the return position; skip adds one ordinary opportunity while preserving common-entry order. Across runs, reducing `S` by one changes `x` by zero or one; starting one shared entry later in the same order and reducing `x` by one gives the same expiry relic. Relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
+**Alignment:** for matching draws and eligibility with no borrowing, acquire and skip share the future sequence up to expiry; returning the carried entry adds one ordinary opportunity while preserving common-entry order. Reducing `S` by one changes `x` by zero or one; starting one shared entry later and reducing `x` by one gives the same expiry position.
+
+Under these assumptions, relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -610,7 +614,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use separate Attack/Skill/Power rarity sequences at shop odds and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Other options use [generic relic rewards](#source-classification).
 
 **Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
 
