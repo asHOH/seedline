@@ -110,37 +110,37 @@ A source policy may cover:
 - **ID:** an identifying label.
 - **Map type:** the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type:** the resolved room category. Ancients are counted separately in this design. An event can start combat while retaining its map type.
-- **Normal fight:** a battle outside the elite and boss categories. **Combat:** any battle, including event battles.
+- **Combat:** any battle, including event battles. **Normal fight:** a battle outside the elite and boss categories.
 
 ### Items and rewards
 
+- **Generation / acquisition:** generation determines an item; acquisition means receiving it.
 - **Card reward offer:** cards offered together for selection. **Card slot:** one position within an offer.
 - **Reward skipping:** an acquisition opportunity ends with its reward unclaimed.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
 - **Ordinary relics:** Common, Uncommon, Rare and Shop rarities.
-- **Generation / acquisition:** generation determines an item; acquisition means receiving it.
 
 ### Randomness and addressing
 
 - **RNG:** random number generator.
 - **[Random state](#rng-derivation-and-addressing):** internal information tracking random processes across operations.
-- **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may use overlapping pools.
-- **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned rolls or sequences unchanged.
 - **Purpose:** what the randomness determines, such as selection, ordering or upgrading.
 - **Roll:** sampling a random number, or the resulting number.
+- **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered collection of entries, such as random values or item identities. Repeated values or identities are distinct entries.
+- **Filter:** conditions determining which candidates or entries are eligible.
 - **Draw:** retrieving an item or entry from a pool or sequence.
 - **Selection:** choosing a candidate, whether by the game or the player.
-- **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered collection of entries, such as random values or item identities. Repeated values or identities are distinct entries.
+- **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may use overlapping pools.
+- **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned rolls or sequences unchanged.
 - **Allocation:** finite relic stock assigned to a source and ordered into sequences.
 - **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
-- **Filter:** conditions determining which candidates or entries are eligible.
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
-- **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
 - **Occurrence address:** a logical occurrence's source ID, distinct for each copy.
 - **Selection key / selection-key alias:** a selection key is a candidate's ID for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
+- **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
 
 ## Architecture overview
 
