@@ -561,20 +561,17 @@ Refill and Circlet rewards bypass markers: skipping leaves stock unchanged; acqu
 
 Use the [shared filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when supply is exhausted. Each transfer decrements `x` and moves the marker to the supplying position. Collisions preserve each marker's lifetime and carried entry.
 
-**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal. Corresponding chests share `u`; successive chests roll independently.
+**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal.
 
-Before recording the offer, `S` counts eligible shared identities of that rarity, excluding previous chest offers, in:
+Before recording the offer, `S` counts currently available, chest-eligible shared identities of that rarity across the generic, shop and Courier sequences, including the drawn entry. Exclude previous chest offers and consumed entries, including unbought shop displays.
 
-- The remaining generic sequence, including the drawn entry.
-- The **original shop and Courier allocations**, including displayed or acquired identities.
+Other-source consumption can shorten future marker lifetimes; existing lifetimes remain fixed.
 
-The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation.
+**Probability:** a single acquisition matches vanilla's character-specific probabilities under the [reference assumptions](#chest-marker-probabilities).
 
-**Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
+**Alignment:** with matching draws and eligibility and no borrowing, acquire and skip share the future sequence until expiry.
 
-**Alignment:** for matching draws and eligibility with no borrowing, acquire and skip share the future sequence up to expiry; returning the carried entry adds one ordinary opportunity while preserving common-entry order. Reducing `S` by one changes `x` by zero or one; starting one shared entry later and reducing `x` by one gives the same expiry position.
-
-Under these assumptions, relocation is a consistency fix with no gameplay impact under the [deviation convention](#vanilla-deviations).
+**Vanilla deviation — NoSL 3:** skipping a chest, visiting a shop, then acquiring another chest's relic can slightly shift later character-specific reward probabilities.
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -1332,6 +1329,30 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 Shop offsets approximate the mean Rare count across five character-card slots, excluding fixed colorless cards. Vanilla versus settled Rare chances per slot are **4.453% / 4.5%** at A7+ and **10.762% / 10.8%** at A0–6. Constant offsets change clustering: shops with any Rare character card occur in **19.55% / 20.56%** and **41.78% / 43.53%**, respectively.
 
 These are route-average choices: elite frequency and extra-offer sources shift the fitted rates. The [earlier A7+ study](outputs/reward-calibration-results.json) and A0–6 results retain sensitivity cases, assumptions and checks. The model approximates player-state eligibility, event outcomes and non-rarity item effects.
+
+### Chest marker probabilities
+
+[Finite-lifetime marker](#finite-lifetime-chest-markers) comparisons below concern generic rewards, with fixed eligibility and observations before borrowing or supply exhaustion.
+
+**Why one acquisition matches:** for the calculation, append remaining shop/Courier stock to the generic order. Rotating shared entries leaves character-specific positions unchanged. Uniform marker lifetime makes acquisition equivalent, for those positions, to deleting a uniformly chosen chest-eligible position. A uniform unseen order of `N` relics, including `C` character-specific relics, therefore gives vanilla's `C/(N - 1)` at each remaining position. Skipping returns the carried entry and preserves the position pattern. Earlier draws can break the required uniform-order assumption.
+
+**Example setup:** `K` is character-specific; all other relics are shared. All are shop-eligible. Vanilla uses its [independently shuffled bags](#relic-bags); the mod randomly assigns one relic to shop stock and uniformly orders the rest as generic stock.
+
+**Live-stock counting:** with `A, B, C, K`, display one shop relic → acquire a chest relic → draw an ordinary reward.
+
+- Vanilla: `K` survives the shop (`3/4`), then occupies either remaining position uniformly: `(3/4) × (1/2) = 3/8`.
+- Mod: `K` appears when initially first, or second with immediate marker expiry. These cases leave `S = 2`: `1/4 + (1/4) × (1/2) = 3/8`.
+
+Retaining the displayed shared relic in `S` instead gives `1/3`. Displaying `K` removes it from future rewards and leaves `S = 3` under either rule.
+
+**Remaining deviation:** with `A–E, K`, skip a chest → display one shop relic → acquire another chest relic → draw an ordinary reward.
+
+- Vanilla: skipping leaves the player bag unchanged. `K` survives the shop (`5/6`), then occupies any of four remaining positions uniformly: `(5/6) × (1/4) = 5/24`.
+- Mod: `K` appears when initially first (`1/6`), or second with the skipped marker advancing (`4/5`) and the acquired marker expiring immediately (`1/3`): `1/6 + (1/6) × (4/5) × (1/3) = 19/90`.
+
+The difference is `1/360`, about **0.278 percentage points** in this reduced pool. The shop changes the next marker's lifetime distribution, while the skipped relic's return position still follows the earlier count.
+
+**Shop influence:** with `u` and other state fixed, consuming `d` counted relics shortens a new lifetime by at most `d` eligible-entry advances. Initial shop stock contributes at most two per rarity before fallback; Courier restocks add more. Intervening draws determine how many rewards or rooms pass before expiry.
 
 ### Rejected alternatives
 
