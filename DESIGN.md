@@ -741,20 +741,20 @@ Own-character random-rarity offers use two triple sequences independent of the l
 
 ##### Uncommon probabilities
 
-Use these Uncommon probabilities, except for the opening entries below:
+Use these Uncommon probabilities for each Common/Uncommon entry, except for the opening triples:
 
 | Difficulty | Non-Rare offers | Rare-bearing companions |
 |---|---|---|
 | A7+ | 38% | 39% |
 | A0–6 | 40% | 40.5% |
 
-These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply.
+These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration).
 
-**Opening triples:** the first two non-Rare triples use their own generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
+**Opening triples:** the first two non-Rare triples in the run use [vanilla's per-slot probabilities](#card-reward-offers-1) for two consecutive normal-fight offers after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
 
-This exception occurs only once per run. The triples follow shared consumption, including by other sources.
+These triples follow shared consumption across sources.
 
-**Rationale:** these entries approximate two opening Act 1 normal fights without elite intervention. Normal-fight openings in Acts 2/3 are accounted for through average calibration rather than special entries.
+**Rationale:** these entries approximate an Act 1 opening of two normal fights. Later-act openings are covered by the average calibration.
 
 **Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
 
