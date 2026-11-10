@@ -477,15 +477,13 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 #### Card processing order
 
-**Intent:** process unordered batches deterministically by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
+**Intent:** improve same-seed consistency across different card sets and keep unordered batch outcomes independent of click or enumeration order.
 
-Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md).
+Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) to random-operation processing of unordered card batches. Source policies specify applicable comparisons.
 
-Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#card-equivalence). This order does not replace per-copy randomness or routing.
+Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under [card equivalence](#card-equivalence).
 
-Source policies specify applicable parts of this order. It controls random-operation processing, not display order or intentionally sequential effects; reward offers use their existing entry order before presentation-only swaps.
-
-Shuffle outcomes must be independent of original deck sequence; use the [card-shuffling policy](#card-shuffling).
+Preserve display order and intentionally sequential effects; reward offers use their existing entry order before presentation-only swaps.
 
 #### Unordered transformation batches
 
@@ -1115,7 +1113,7 @@ Baseline: [enemy AI mechanics](#enemy-ai-1).
 
 **Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
 
-**Scope:** opening and later shuffles use the assignment below and cards' current logical associations.
+**Scope:** opening and later shuffles use the assignment below and cards' current logical associations. Shuffle outcomes must be independent of original deck sequence.
 
 Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply existing opening-hand and shuffle modifiers.
 
