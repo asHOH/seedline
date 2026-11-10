@@ -106,9 +106,10 @@ A source policy may cover:
 
 ### Game context
 
+- **Identity:** which card, item, enemy or event it is. For example, Bash and Bash+ share an identity.
+- **ID:** an identity's stable label.
 - **Map type:** the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type:** the resolved room category. Ancients are counted separately in this design. An event can start combat while retaining its map type.
-- **Event ID / encounter ID:** identifies an event or combat encounter type.
 - **Normal fight:** a battle outside the elite and boss categories. **Combat:** any battle, including event battles.
 
 ### Items and rewards
@@ -476,7 +477,7 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 **Intent:** process unordered batches deterministically by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
 
-Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using stable model IDs.
+Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using card IDs.
 
 Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#card-equivalence). This order does not replace per-copy randomness or routing.
 
@@ -936,7 +937,7 @@ Baseline: [Ancient offerings](#ancient-offerings-1).
 Offer the first three owned potions in slot order, preserving display order. Use the existing [reward-rarity mapping and allowed card types](#card-reward-offers-1); generated cards follow [type-specific offers](#type-specific-offers).
 
 - Use three independent event-local type sequences, addressed by event ID + `purpose = type assignment` + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + `purpose = ordering` + potion model ID + duplicate number. Number identical offered copies from 1 in slot order.
+- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + `purpose = ordering` + potion ID + duplicate number. Number identical offered copies from 1 in slot order.
 - Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
 
 **Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
@@ -1060,7 +1061,7 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 **Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
 
-**Shared rules:** partition sequences by enemy model identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + purpose + sharing scope; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
+**Shared rules:** partition sequences by enemy identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + purpose + sharing scope; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
 **Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
 
@@ -1096,7 +1097,7 @@ Use `CombatState.RoundNumber` at selection; extra player turns stay in the same 
 
 ###### Fabricator bot identities
 
-Use Fabricator occurrence + `purpose = bot generation` + bot-selection ordinal. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in stable model-identity order. Singleton choices consume an ordinal. Preserve spawn order.
+Use Fabricator occurrence + `purpose = bot generation` + bot-selection ordinal. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in enemy ID order. Singleton choices consume an ordinal. Preserve spawn order.
 
 ###### Behavior preservation
 
@@ -1104,7 +1105,7 @@ Fresh independent draws at vanilla conditional probabilities, with preserved seq
 
 **Vanilla deviation — SL 4A(↓):** partitioning AI sequences within combat and effective-decision consumption remove rerolls through unrelated or forced draws.
 
-**Vanilla deviation — SL 4A:** partitioning by enemy model and rat move rankings change survivor alternatives. For example, in the [reference examples](#enemy-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
+**Vanilla deviation — SL 4A:** partitioning by enemy identity and rat move rankings change survivor alternatives. For example, in the [reference examples](#enemy-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
 
 Baseline: [enemy AI mechanics](#enemy-ai-1).
 
@@ -1445,7 +1446,7 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
 Encounter setup uses floor-based addressing. Shuffle RNG persists across combats; reshuffles and random pile insertions advance the same generator used for later opening hands.
 
-**Shuffle baseline:** opening shuffles clone cards in deck order (`Player.PopulateCombatState`), then apply Fisher–Yates directly (`CardPile.RandomizeOrderInternal` → `UnstableShuffle`). Later `CardPileCmd.Shuffle` combines discard and remaining draw cards, then uses `StableShuffle`: `List.Sort` followed by Fisher–Yates. Both apply existing shuffle modifiers afterward. `CardModel.CompareTo` compares only model identity and upgrade level, leaving enchantments, persistent progress and combat state tied; tied-copy order can still affect same-seed results.
+**Shuffle baseline:** opening shuffles clone cards in deck order (`Player.PopulateCombatState`), then apply Fisher–Yates directly (`CardPile.RandomizeOrderInternal` → `UnstableShuffle`). Later `CardPileCmd.Shuffle` combines discard and remaining draw cards, then uses `StableShuffle`: `List.Sort` followed by Fisher–Yates. Both apply existing shuffle modifiers afterward. `CardModel.CompareTo` compares only card identity and upgrade level, leaving enchantments, persistent progress and combat state tied; tied-copy order can still affect same-seed results.
 
 **Discard-pile order:** affects which cards fit when `AllForOne` returns cards to a nearly full hand; `AggressionPower` and `DrainPower` also sample through order-sensitive shuffles. `FranticEscape.OnPlay` adds 1 cost for the combat, so the shuffle ties above can include copies with different costs, allowing discard order to affect which cost is drawn earlier.
 
@@ -1612,7 +1613,7 @@ Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide
 
 | Source | Vanilla mechanics |
 |---|---|
-| Confused | Applied by Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant). Each owned card drawn with nonnegative `EnergyCost.Canonical` (the card model's original energy cost) receives a combat-long cost modifier. X cards store zero in this field, so they consume a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
+| Confused | Applied by Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant). Each owned card drawn with nonnegative `EnergyCost.Canonical` (the card's original energy cost) receives a combat-long cost modifier. X cards store zero in this field, so they consume a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
 | Slither | Wood Carvings' Snake enchantment. Rerolls its card on draw only while it remains in hand, with a combat-long modifier. Enchanting excludes X and Unplayable cards. |
 | Snecko Oil | Draws seven, then iterates the resulting hand in hand order. Rerolls non-X cards with nonnegative unmodified energy cost until turn end or next play, whichever comes first. |
 

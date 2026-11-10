@@ -40,7 +40,7 @@ Replay counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted s
 | 4 | Draw effect | absent < present; an effect with zero amount still qualifies. Compile Driver and active Swift qualify; expired Swift contributes no draw. |
 | 5 | Rarity | Authored rarity order below. |
 | 6 | Pool | character < colorless; Event and Token pools count as colorless. |
-| 7 | Identity | Fixed English alphabetical order, then stable model ID. |
+| 7 | Identity | Fixed English alphabetical order, then card ID. |
 
 ### 4. Copy state
 
