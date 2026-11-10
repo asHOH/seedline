@@ -284,7 +284,7 @@ Markers record pending advancements and freeze eligibility conditions at the ori
 
 Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
 
-Ordinary markers are permanent; chests use the [finite-lifetime extension](#finite-lifetime-chest-markers).
+If a finite supply has no eligible entry to resolve a marker after borrowing, remove the marker and continue the current draw. Chests also use [finite-lifetime expiry](#finite-lifetime-chest-markers).
 
 ### Fixed selection priorities
 
@@ -525,7 +525,7 @@ When the requested rarity has no eligible local entry, borrow the **last eligibl
 
 Apply borrowing during [marker resolution](#filtered-draws), preserving filtered-draw marker placement.
 
-**Chest refill:** when same-rarity borrowing fails for a chest, retain its generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. If none qualify, use the final fallback.
+**Chest refill:** when a chest reward has no eligible entry after same-rarity borrowing, retain its generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. If none qualify, use the final fallback.
 
 **Final fallback:** from the requested rarity onward in Shop → Common → Uncommon → Rare, try local entries then same-rarity borrowing at each rarity. Return Circlet if all fail; make no additional rarity roll.
 
@@ -557,7 +557,7 @@ Resolve the choice before expiry, including `x = 0`; permanent ineligibility or 
 
 ###### Finite-lifetime chest markers
 
-Use the [shared filtered-draw advancement and collision rules](#filtered-draws), with expiry after `x` eligible-entry advances. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry.
+Use the [shared filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when supply exhaustion removes it. Each transfer into the vacancy decrements `x` and moves the marker to the supplying position. Initial `x = 0` applies expiry at the drawn position. Collisions preserve each marker's lifetime and carried entry.
 
 **Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal. Corresponding chests share `u`; successive chests roll independently.
 
@@ -566,7 +566,7 @@ Before recording the offer, `S` counts chest-eligible shared identities of that 
 - The remaining generic sequence, including the drawn entry.
 - The **original shop and Courier allocations**, retaining identities after display or acquisition.
 
-Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation. Advancement uses generic stock; borrowing during selection or resolution uses a permanent marker under the [borrowing boundary](#borrowing).
+Apply current run-state eligibility throughout; shop eligibility adds no restriction. Character-specific identities and markers contribute zero. The original allocations act as a retained tail, reflecting vanilla's back-drawing shops and keeping shop-stock consumption outside lifetime generation.
 
 **Probability:** within sufficient supply and the [uniform-order assumptions](#relic-bags), acquisition models deletion of a uniform chest-eligible position in the combined generic order and retained tail. Skipping rotates eligible identities through their positions, preserving the character-specific position pattern.
 
