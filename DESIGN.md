@@ -687,31 +687,29 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 
 **Scope:** the three own-character random-rarity [offer groups](#offer-groups).
 
-**Intent:** separate when a Rare appears from the complete choice offered. Align corresponding rare-bearing and non-Rare opportunities while preserving source-dependent Rare chances; matching combat-room ordinals need not consume matching offer entries.
+**Intent:** separate Rare timing from offer identities while preserving source-dependent Rare chances.
 
 ##### Luck and rarity offset
 
-**State:** luck `L` starts at zero; the combat offset `o` starts at `-0.05`. The threshold is `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal, advancing only when a Rare is delivered into a generated offer.
+**State:** luck `L` starts at zero; the combat offset `o` starts at `-0.05`. The threshold is `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal.
 
 **Per slot:** process card slots in order. Each adds `-ln(1 - p)` to luck, where `p` is its Rare probability:
 
 - Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with the shared combat offset.
 - Fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
 
-**Rare delivery:** subject to the difficulty-specific cap below, a slot reaching the threshold becomes Rare. Reset luck to zero, discard the overshoot and advance to the next threshold. Common/Uncommon identities and their rarity mix come from the offer sequences, independently of this simulation.
+**Rare delivery:** subject to the difficulty-specific cap below, a slot reaching the threshold becomes Rare. Reset luck to zero, discard the overshoot and advance to the next threshold.
 
 **Combat offset updates:**
 
 - Normal-fight-rule and elite non-Rare slots add `0.005` (`0.01` without Scarcity), capped at `0.40`. Zero-probability slots still grow the offset while adding no luck.
 - A delivered Rare in either group resets the offset to `-0.05`.
-- Retain boss-reward offset resets, without advancing luck or these offer sequences.
+- Boss rewards reset the combat offset, preserving luck and the threshold.
 - Between acts, reset the offset to `-0.05`; carry luck, the threshold and sequence state forward.
 
-Save this state under the [saved-state rules](#saved-state), including an already-reached threshold awaiting delivery.
+**Rationale:** before deferral, exponential thresholds preserve the supplied waiting probabilities: `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`.
 
-**Rationale:** before deferral, `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`. Exponential thresholds preserve the supplied waiting probabilities without fitting a route-dependent luck distribution. This does not make the capped, deferred reward system identical to vanilla.
-
-**Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. Rare delivery resets luck and advances the threshold, ending this timing guarantee.
+**Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. This guarantee ends when either branch delivers a Rare.
 
 ##### A7+: one Rare per offer and deferral
 
