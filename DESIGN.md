@@ -237,7 +237,7 @@ Run seed is implicit in local and candidate addresses for new or re-addressed ra
 
 In RNG addresses, a scoped ordinal denotes `(scope ID, count)`: act-local includes act number; event-local includes event ID.
 
-**Card selection keys:** derive initial keys from occurrence addresses, subject to [source-specific aliases](#card-reward-selection-key-aliases) and [combat-clock assignment](#combat-card-clock-assignment); never use current list position.
+**Card selection keys:** derive initial keys from occurrence addresses, subject to [source-specific aliases](#card-reward-selection-key-aliases) and [combat-card selection state](#combat-card-selection-state); never use current list position.
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the selection keys already used to generate them, in ascending order.
 
@@ -369,7 +369,7 @@ Revivals retain their occurrence; summons and replacements start new occurrences
 
 ##### Card occurrence addresses
 
-Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
+Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetime); combat cards follow [combat-card selection state](#combat-card-selection-state).
 
 Cards with generation entries use their [entry addresses](#entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [card processing order](#card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
@@ -381,7 +381,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 #### Out-of-combat card lifetime
 
-**Scope:** out-of-combat card operations for [persistent selection](#persistent-selection) and [routing](#out-of-combat-card-routing), using [card occurrence addresses](#card-occurrence-addresses). Combat cards use the [combat-card lifetime rules](#combat-card-clock-assignment).
+**Scope:** out-of-combat card operations for [persistent selection](#persistent-selection) and [routing](#out-of-combat-card-routing), using [card occurrence addresses](#card-occurrence-addresses).
 
 | Operation | Occurrence and selection state |
 |---|---|
@@ -392,7 +392,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 | Permanently remove or combine cards | Retire the selected logical inputs. |
 | [Transform a card](#permanent-transformations-and-direct-additions) | Retire the original and initialize fresh replacement selection state. |
 
-#### Combat-card clock assignment
+#### Combat-card selection state
 
 For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [corrected clocks](#corrected-persistent-clocks) with one frozen selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
@@ -463,9 +463,11 @@ Sharing the removal scope aligns surviving originals after [input retirement](#o
 
 #### Combat-card routing
 
-Use [routing](#routing) whenever the player selects an existing combat card. Initialize routing clocks under [combat-card clock assignment](#combat-card-clock-assignment). Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the choice purpose and granting source as their scope, including Hand Trick's selection of a card to gain Sly and Thinking Ahead's return to the top of the draw pile. All routing clocks are combat-local and per card identity.
+Use [routing](#routing) whenever the player selects an existing combat card, among the copies available for that choice. Follow [combat-card selection state](#combat-card-selection-state).
 
-Apply routing once per committed player choice, before effects, among the copies available for player selection. A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays execute without another player choice.
+Partition routing clocks by card identity. Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the choice purpose and granting source as their scope, including Hand Trick's selection of a card to gain Sly and Thinking Ahead's return to the top of the draw pile.
+
+A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays bypass routing of the played card; player choices during their effects route normally.
 
 Compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Card processing order](#card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
 
@@ -1146,7 +1148,7 @@ Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
-These assignments also initialize [combat selection clocks](#combat-card-clock-assignment). Existing [card reward selection-key aliases](#card-reward-selection-key-aliases) retain their scopes.
+These assignments also initialize [combat selection clocks](#combat-card-selection-state). Existing [card reward selection-key aliases](#card-reward-selection-key-aliases) retain their scopes.
 
 ###### Shuffle deviations
 
@@ -1183,7 +1185,7 @@ Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
 **Scope:** align random selection of existing combat cards, including combat-start effects and sampled choice offers. For player-selected cards, use [combat-card routing](#combat-card-routing). Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows its [theft policy](#thieving-hopper).
 
-Use combat-local [corrected clocks](#corrected-persistent-clocks) with [shared assignment](#combat-card-clock-assignment) and [combat addressing and resets](#combat-addresses). Preserve preference/fallback tiers, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
+Use combat-local [corrected clocks](#corrected-persistent-clocks) with [shared selection state](#combat-card-selection-state) and [combat addressing and resets](#combat-addresses). Preserve preference/fallback tiers, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [shared consumption timing](#opportunity-consumption-timing).
 
 | Shared clock scope | Sources |
 |---|---|
