@@ -93,7 +93,7 @@ A source policy may cover:
 |---|---|
 | Intent | Consistency goal. |
 | Scope | Covered operations. |
-| Purpose | What each draw or stream determines. |
+| Purpose | What each draw or sequence determines. |
 | Generation | How outcomes are produced. |
 | Selection | How eligible candidates are chosen. |
 | Sharing scope | Which operations share randomness. |
@@ -125,10 +125,10 @@ A source policy may cover:
 - **RNG:** random number generator.
 - **[Random state](#rng-derivation-and-addressing):** internal information tracking random processes across operations.
 - **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may draw from overlapping pools.
-- **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned draws or streams unchanged.
-- **Purpose:** the role of a draw or stream, such as selection, ordering or upgrading.
+- **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned draws or sequences unchanged.
+- **Purpose:** the role of a draw or sequence, such as selection, ordering or upgrading.
 - **Roll:** one random draw for a purpose.
-- **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered stream of entries. Repeated identities are distinct entries.
+- **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered collection of entries, such as random values or item identities. Repeated values or identities are distinct entries.
 - **Allocation:** finite relic stock assigned to a source and ordered into sequences.
 - **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
 - **Filter:** the eligibility conditions for a draw.
@@ -229,9 +229,9 @@ Unless a policy specifies a change, preserve existing behavior, including:
 
 Random state includes RNG state, sequence contents and positions, opportunity counters, stored rolls and selection priorities.
 
-**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + purpose and sharing-scope IDs + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
+**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + purpose and sharing-scope IDs + the address components specified by its policy. The same full address reproduces the same draw or sequence; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
-Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable IDs rather than display labels; for streams, distinguish the stream's address from its current position.
+Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable IDs rather than display labels; distinguish a sequence's address from its current position.
 
 In RNG addresses, a scoped ordinal denotes `(scope ID, count)`: act-local includes act number; event-local includes event ID.
 
@@ -614,7 +614,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
-**Vanilla deviation — SL 4A(↓):** partitioned restock streams remove restock manipulation through interleaved purchase categories and effects.
+**Vanilla deviation — SL 4A(↓):** partitioned restock sequences remove restock manipulation through interleaved purchase categories and effects.
 
 **Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
 
@@ -883,7 +883,7 @@ Use event RNG for reward identities, random rarities and Fake Merchant's price r
 
 At run start, independently shuffle each condition's IDs using `purpose = ID order` + condition key. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new streams addressed by act + `purpose = insertion` + condition key + old/new + draw index. Sort each set, assign it along its sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new draw sequences addressed by `purpose = insertion` + act + condition key + old/new. Each draw adds its index to the sequence address. Sort each set, assign it along its ID sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
 
 [Rejected alternatives](#event-selection-alternatives).
 
@@ -1466,13 +1466,13 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 
 **All-zero fallback:** all-zero branches always choose the first listed move. Flyconid can reach `Smash → Vulnerable Spores → Frail Spores → Smash`, making all effective weights zero; it then selects Vulnerable Spores.
 
-**History and interruption:** `MonsterMoveStateMachine` follows branches until reaching a move and retains its state log for weight checks. Ordinary stun returns to the stored move; Thieving Hopper's Flutter depletion uses a deterministic follow-up. Decimillipede normally cycles `Writhe → Constrict → Bulk`; death leads through `Dead → Reattach → random attack`. After Reattach, the three attacks have equal weights. Revival draws share vanilla's AI stream across segments.
+**History and interruption:** `MonsterMoveStateMachine` follows branches until reaching a move and retains its state log for weight checks. Ordinary stun returns to the stored move; Thieving Hopper's Flutter depletion uses a deterministic follow-up. Decimillipede normally cycles `Writhe → Constrict → Bulk`; death leads through `Dead → Reattach → random attack`. After Reattach, the three attacks have equal weights. Revival draws share vanilla's AI RNG across segments.
 
 **Duplicate random selectors:** Inklets, Exoskeletons, Scrolls of Biting, Two-Tailed Rats, and possible pairs of small Leaf Slimes beside Slithering Strangler. Leaf Slimes randomize their opening, then alternate forcibly. Exoskeletons choose equally after Enrage; Skitter forces Mandibles, which leads to Enrage. The normal encounter's fourth copy also has a random opening. Scrolls choose equally between Chomp and a second consecutive Chew after their first Chew; the second Chew forces Chomp, followed by More Teeth and Chew. Forced random-branch selections still consume vanilla draws.
 
-**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its corresponding selections (second onward) use AI-stream positions one draw apart even with matching eligible moves.
+**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its corresponding selections (second onward) use AI draw indices one apart even with matching eligible moves.
 
-**Eligibility changes:** Two-Tailed Rats require timer, shared summon limit, space and teammate-intent checks to permit Summon. With Screech on cooldown and both attacks eligible, attack odds `1/2, 1/2` become attack/attack/Summon odds `1/11, 1/11, 9/11` when Summon is allowed, using ideal weight ratios. Changed intervals can select a different ordinary attack at the same AI-stream position. After `Screech → Scratch`, blocking Summon can force Disease Bite; this singleton still consumes an AI draw.
+**Eligibility changes:** Two-Tailed Rats require timer, shared summon limit, space and teammate-intent checks to permit Summon. With Screech on cooldown and both attacks eligible, attack odds `1/2, 1/2` become attack/attack/Summon odds `1/11, 1/11, 9/11` when Summon is allowed, using ideal weight ratios. Changed intervals can select a different ordinary attack at the same AI draw index. After `Screech → Scratch`, blocking Summon can force Disease Bite; this singleton still consumes an AI draw.
 
 **Rat selection order:** enemies are processed in encounter-slot order, `first` through `fifth`; originals occupy the last three slots. Earlier selected Summon intents block later rats. With equal otherwise-eligible Summon probability `p` and no existing teammate Summon intent, successive rats have probabilities `p`, `(1-p)p`, etc. Existing teammate intents can also block earlier selectors. Sources: `CombatState.SortEnemiesBySlotName`, `CombatManager` player-turn preparation, `TwoTailedRat.CanSummon`.
 
@@ -1495,7 +1495,7 @@ Exactly one kill yields a zero-immediate-damage next intent. Choosing before see
 
 #### Random enemy targeting
 
-Direct random effects and automatic enemy targeting share one run-wide random stream, sampling uniformly among eligible enemies. A singleton selection consumes a draw; an empty set consumes none. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
+Direct random effects and automatic enemy targeting share one run-wide RNG, sampling uniformly among eligible enemies. A singleton selection consumes a draw; an empty set consumes none. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
 
 ### Relics, shops and chests
 
@@ -1548,7 +1548,7 @@ Both filtered pulls leave eligible supply. Front bias can affect several later p
 
 #### Shop and Courier RNG
 
-Initial stock and restocks share these player RNG streams. Each listed random operation consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
+Initial stock and restocks share these player RNGs. Each listed random operation consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
 
 | Restock | `Rewards` draws | `Shops` draws |
 |---|---|---|
@@ -1609,7 +1609,7 @@ Entropy is the sole random combat transformation source. It transforms selected 
 
 #### Random energy costs
 
-Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide `CombatEnergyCosts` RNG; combat entry preserves its position. Without intervening Confused/Slither rolls, the next Oil continues the unused stream. Their on-draw rolls, including during Oil's own draw, shift its starting position; shuffles, targeting and other RNG streams leave it unchanged. Catfood adds no cost-specific patch.
+Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide `CombatEnergyCosts` RNG; combat entry preserves its position. Without intervening Confused/Slither rolls, the next Oil uses the next unused draws. Their on-draw rolls, including during Oil's own draw, shift its starting draw index; shuffles, targeting and other RNGs leave it unchanged. Catfood adds no cost-specific patch.
 
 | Source | Vanilla mechanics |
 |---|---|
@@ -1736,7 +1736,7 @@ Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: 
 
 **Potions:** drop checks use `player seed` + `cumulative check index`, starting at 0, with vanilla's changing probability. Forced drops also advance this index. Potion factories seed each batch with a shared call index.
 
-**Combat card rewards:** identities/upgrades use room type, count and offer position, separating normal-fight and elite offers. Rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-stream bug, not a wrong ordinal; gameplay impact has not been reproduced.
+**Combat card rewards:** identities/upgrades use room type, count and offer position, separating normal-fight and elite offers. Rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-RNG bug; gameplay impact has not been reproduced.
 
 **Card rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`. The separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets. Combat rerolls update their room type's rarity state, potentially shifting later offers; non-Rare rerolls raise the offset, as in vanilla.
 
