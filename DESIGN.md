@@ -637,19 +637,17 @@ Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
 **Scope:** initial generation and reachable rerolls for the offer groups below.
 
-Colorless and other-character rewards share across batch sizes because their few sources have varying offer sizes.
-
 ##### Offer groups
 
-Group identities by pool, rarity request, eligibility filter and draw grouping. Upgrade rules and the number taken leave grouping unchanged.
+Upgrade rules and the number taken leave identity sharing unchanged.
 
 Own-character random-rarity offers share [luck and thresholds](#luck-and-rarity-offset), [non-Rare and rare-bearing triples](#offer-sequences), and [A0–6 extra Rares](#a06-multiple-rares):
 
-| Group | Rare odds | Sources and offer size |
-|---|---|---|
-| Normal-fight rule | Normal-fight chance with the shared combat offset. | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights: three-card offers. |
-| Elite rule | Elite chance with the same combat offset. | Elites and The Hunt in elite combats: three-card offers. |
-| Fixed base odds | Base Rare odds without the combat offset. | Orrery: five three-card offers; Lost Coffer: one; Trial's Nondescript Guilty: two. Brain Leech's Share Knowledge: choose one of five, using [supplementary cards](#supplementary-cards). |
+| Rare odds | Sources and offer size |
+|---|---|
+| Normal-fight chance with the shared combat offset. | Normal fights, Dream Catcher, Prayer Wheel and The Hunt in normal fights: three-card offers. |
+| Elite chance with the same combat offset. | Elites and The Hunt in elite combats: three-card offers. |
+| Base Rare odds without the combat offset. | Orrery: five three-card offers; Lost Coffer: one; Trial's Nondescript Guilty: two. Brain Leech's Share Knowledge: choose one of five, using [supplementary cards](#supplementary-cards). |
 
 ###### Other offer groups
 
@@ -657,16 +655,19 @@ Own-character random-rarity offers share [luck and thresholds](#luck-and-rarity-
 |---|---|
 | Own-character fixed Rare | Separate Rare triple sequence; one triple per offer: non-final bosses, White Star, The Hunt's delivered boss rewards, Hefty Tablet, Glass Eye and Crystal Sphere. |
 | Own-character fixed Common / Uncommon | Separate triple sequence per rarity. Glass Eye consumes two triples per rarity; Crystal Sphere one. Common exceptions: [Room Full of Cheese](#supplementary-cards), [Scroll Boxes](#scroll-boxes). |
-| Colorless: Lead Paperweight / Brain Leech's Rip | One shared rarity-roll sequence at Uncommon/Rare odds **98.51% / 1.49%**, with shared Uncommon/Rare identity sequences; consume individual entries across batch sizes. |
-| Other-character | Kaleidoscope uses event RNG for character and rarity; Colorful Philosophers / Sea Glass request fixed rarities. Share 12 identity sequences: four other characters × Common/Uncommon/Rare, consumed individually across batch sizes. |
+| Colorless: Lead Paperweight / Brain Leech's Rip | Shared rarity-roll sequence at Uncommon/Rare odds **98.51% / 1.49%**, with shared Uncommon/Rare identity sequences. |
+| Other-character | Kaleidoscope uses event RNG for character and rarity; Colorful Philosophers / Sea Glass request fixed rarities. Share Common/Uncommon/Rare identity sequences per character. |
+
+Colorless and other-character rewards consume individual entries across batch sizes.
 
 **Crystal Sphere:** does not reset the combat rarity offset.
 
 ###### Type-specific offers
 
-Lasting Candy and The Future of Potions share own-character Uncommon and Rare Power identity sequences, consuming individual entries. Candy uses separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback and one roll per triggered card; boss triggers request Rare. Future of Potions requests its specified rarity.
+Lasting Candy and The Future of Potions share own-character Uncommon and Rare Power identity sequences, consuming individual entries.
 
-Future of Potions Attack/Skill identities use event RNG addressed by rarity and type, independently of other potion options, at the specified rarity.
+- **Lasting Candy:** separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback; boss triggers request Rare.
+- **The Future of Potions:** request the option's rarity; Attack/Skill identities use event RNG addressed by rarity and type.
 
 ##### Upgrade rolls
 
@@ -799,7 +800,7 @@ Resolve Defect's two independent 1% triple-Claw substitution checks with event R
 
 ##### Rerolls
 
-A reachable reroll follows its source's [offer group](#offer-groups) and, where applicable, the [offer procedure](#offer-procedure), consuming unused entries from its pool/request/filter group, including expanded pools. Preserve rarity and offset effects, offer structure and duplicate rules.
+A reachable reroll follows its source's [offer group](#offer-groups) and, where applicable, the [offer procedure](#offer-procedure), consuming unused entries from that group, including expanded pools. Preserve rarity and offset effects, offer structure and duplicate rules.
 
 Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
 
