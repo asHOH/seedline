@@ -107,7 +107,7 @@ A source policy may cover:
 ### Game context
 
 - **Identity:** which card, item, enemy or event it is. For example, Bash and Bash+ share an identity.
-- **ID:** an identity's stable label.
+- **ID:** an identifying label.
 - **Map type:** the map marker; `Unknown` (`?`) may resolve into different room types.
 - **Room type:** the resolved room category. Ancients are counted separately in this design. An event can start combat while retaining its map type.
 - **Normal fight:** a battle outside the elite and boss categories. **Combat:** any battle, including event battles.
@@ -134,10 +134,10 @@ A source policy may cover:
 - **Filter:** the eligibility conditions for a draw.
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
-- **Logical occurrence / physical copy:** a logical occurrence is a persistent per-copy selection identity; a physical copy is its currently associated card object.
+- **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
 - **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
-- **Occurrence address:** a logical occurrence's stable source identifier, distinct for each copy.
-- **Selection key / selection-key alias:** a selection key is a candidate's stable identifier for a selection purpose; an alias is a source-specified replacement key for that purpose.
+- **Occurrence address:** a logical occurrence's stable source ID, distinct for each copy.
+- **Selection key / selection-key alias:** a selection key is a candidate's stable ID for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
 
 ## Architecture overview
@@ -229,11 +229,11 @@ Unless a policy specifies a change, preserve existing behavior, including:
 
 Random state includes RNG state, sequence contents and positions, opportunity counters, stored rolls and selection priorities.
 
-**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable purpose and sharing-scope identifiers + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
+**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable purpose and sharing-scope IDs + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
-Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable identifiers rather than display labels; for streams, distinguish the stream's address from its current position.
+Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable IDs rather than display labels; for streams, distinguish the stream's address from its current position.
 
-In RNG addresses, a scoped ordinal denotes `(scope identity, count)`: act-local includes act number; event-local includes event ID.
+In RNG addresses, a scoped ordinal denotes `(scope ID, count)`: act-local includes act number; event-local includes event ID.
 
 **Card selection keys:** derive initial keys from occurrence addresses, subject to [source-specific aliases](#card-reward-selection-key-aliases) and [combat-clock assignment](#combat-card-clock-assignment); never use current list position.
 
@@ -349,9 +349,9 @@ Event ID defines event-local scope. Retained [event RNG](#event-and-encounter-id
 
 ##### Combat addresses
 
-Ordinary combats use combat category + act-local combat ordinal + encounter identity, with separate normal-fight, elite and boss counters.
+Ordinary combats use combat category + act-local combat ordinal + encounter ID, with separate normal-fight, elite and boss counters.
 
-Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter identity, leaving ordinary combat counters unchanged.
+Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter ID, leaving ordinary combat counters unchanged.
 
 Combat-local random state derives from purpose + combat address and resets each combat. The [shared deviation](#loss-of-future-outcome-steering) applies where this removes cross-combat outcome steering.
 
@@ -363,7 +363,7 @@ Initial enemies use the [combat address](#combat-addresses) as their source; sum
 
 One spawn opportunity covers the initial lineup or one summon/replacement trigger; number its enemies in vanilla creation order.
 
-Revivals retain occurrence identity; summons and replacements receive fresh identities.
+Revivals retain their occurrence; summons and replacements start new occurrences.
 
 ##### Card occurrence addresses
 
@@ -401,8 +401,8 @@ For combat [selection](#random-combat-card-selection) and [routing](#combat-card
 | Card source | Selection key |
 |---|---|
 | Identity drawn from a generation sequence | Original [sequence entry address](#stable-entry-addresses). |
-| Fixed token creation | Token identity + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
-| Other grants | Granting-source identity + committed grant ordinal within that source identity for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
+| Fixed token creation | Token ID + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
+| Other grants | Granting-source ID + committed grant ordinal within that source for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
 
 Pile movement and status or eligibility changes themselves preserve keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above.
 
@@ -477,7 +477,7 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 **Intent:** process unordered batches deterministically by usefulness for [new occurrence addresses](#card-occurrence-addresses), permanent and combat transformations, and [combat shuffles](#card-shuffling).
 
-Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) using card IDs.
+Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md).
 
 Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under the [equivalent-copy contract](#card-equivalence). This order does not replace per-copy randomness or routing.
 
@@ -924,7 +924,7 @@ Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still
 
 **Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure. Granted effects follow their policies separately.
 
-Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option identity: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
+Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option ID: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
 
 Retain vanilla generation and RNG positions for other menu components.
 
@@ -944,7 +944,7 @@ Offer the first three owned potions in slot order, preserving display order. Use
 
 ##### Ranwid relic sacrifice
 
-To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic identity.
+To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic ID.
 
 ##### Relic Trader
 
@@ -956,7 +956,7 @@ Generate slots 1–3 in order. For each, roll [ordinary relic rarity](#relic-bag
 
 ###### Outgoing relic assignment
 
-1. For each tradable owned relic and reward slot, use [fixed-priority derivation](#fixed-selection-priorities) keyed by event ID + relic identity + slot.
+1. For each tradable owned relic and reward slot, use [fixed-priority derivation](#fixed-selection-priorities) keyed by event ID + relic ID + slot.
 2. Freeze the three relics with the lowest minimum of its three pair priorities.
 3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
 
@@ -1069,7 +1069,7 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 | Source | Local rules |
 |---|---|
-| Types limited to one occurrence in the combat, including Fabricator | Personal random-branch count, including singleton/all-zero branches; use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) with move identity keys. Deterministic transitions consume zero. |
+| Types limited to one occurrence in the combat, including Fabricator | Personal random-branch count, including singleton/all-zero branches; use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) with move IDs as selection keys. Deterministic transitions consume zero. |
 | Inklets | Two continuous effective-decision sequences: one for the middle, one shared by both outers. Sample in vanilla declaration order; retain these scopes after deaths. |
 | Exoskeletons / Scrolls of Biting | One continuous effective-decision sequence per type, shared across copies and rounds; sample in vanilla declaration order. [Baseline choice points](#enemy-ai-1). |
 | Small Leaf Slimes | Independent type-local opening entries in creation order; preserve subsequent forced alternation without advancing intent sequences. |
@@ -1082,7 +1082,7 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 **Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
 
-**Ordinary sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move identity, independently of Summon. Both scopes below use the shared combat address and separate purposes.
+**Ordinary sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID, independently of Summon. Both scopes below use the shared combat address and separate purposes.
 
 | Ordinary opportunity | Address and consumption |
 |---|---|
@@ -1121,7 +1121,7 @@ Address opening shuffles by [combat address](#combat-addresses) + `purpose = ope
 
 ###### Priority assignment
 
-The **shuffle key** identifies the assignment below: a source-based key, or priority-sequence identity + assigned position. It is distinct from the random priority value and the card's final pile position.
+The **shuffle key** identifies the assignment below: a source-based key, or priority-sequence ID + assigned position. It is distinct from the random priority value and the card's final pile position.
 
 The opening Innate subgroup uses [processing order](#card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
 
@@ -1139,7 +1139,7 @@ Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-
 
 - **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
 - **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered or transformation-filter-only generation.
-- **Triple key assignment:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + `purpose = assignment` + card identity. Freeze that choice at acquisition; the others enter the remaining group.
+- **Triple key assignment:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + `purpose = assignment` + card ID. Freeze that choice at acquisition; the others enter the remaining group.
 - **Transformations:** treat as deletion plus direct addition.
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
