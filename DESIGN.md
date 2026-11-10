@@ -463,19 +463,17 @@ Sharing the removal scope aligns surviving originals after [input retirement](#o
 
 #### Combat-card routing
 
-Use [routing](#routing) whenever the player selects an existing combat card, among the copies available for that choice. Follow [combat-card selection state](#combat-card-selection-state).
+Use [routing](#routing) for each player selection of an existing combat card. Only copies available for that choice participate. Follow [combat-card selection state](#combat-card-selection-state).
 
-Partition routing clocks by card identity. Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the choice purpose and granting source as their scope, including Hand Trick's selection of a card to gain Sly and Thinking Ahead's return to the top of the draw pile.
+Partition routing clocks by card identity. Play, discard, exhaust, retrieval into hand, upgrade, enchantment and transformation each share one routing scope across granting sources. Other choices use the choice purpose and granting source as their scope, including Thinking Ahead's return to the top of the draw pile.
 
-A fixed-position effect such as Havoc takes the card at that position with its current logical association. Automatic duplicates and replays bypass routing of the played card; player choices during their effects route normally.
+Use [card processing order](#card-processing-order)'s state comparisons for equivalence, excluding origin rank; include consequential pending effects on particular copies.
 
-Compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Card processing order](#card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
-
-**Permanent-deck correspondence:** for Genetic Algorithm, The Scythe and Goopy cards, play can grow the linked permanent card. While Thieving Hopper's steal is pending, the rule applies to every card identity: theft checks deck links in draw and discard, and player actions can move cards there from hand. In these cases, group combat copies by the exact permanent-deck occurrence they link to, with a separate group for combat-only copies. Each physical card keeps its link through routing, including after a shuffle.
+**Permanent-deck correspondence:** group Genetic Algorithm, The Scythe and Goopy copies by their exact linked permanent-deck occurrence, with a separate group for combat-only copies. While Thieving Hopper's steal is pending, apply this grouping to every card identity.
 
 Within each equivalence class, route the logical occurrence as a unit, including its selection state, shuffle assignment, [Oil hand-entry assignment](#random-energy-costs), copy relationships and any deck link outside the protected cases above. Keep live references with their logical targets.
 
-**Vanilla deviation — SL 4A(↓):** within a routed class, trying different clicks on reload selects the same hidden state for later combat selection, shuffles and Oil costs. Position-dependent outcomes and the choice between different consequential deck links remain available, even after a shuffle.
+**Vanilla deviation — SL 4A(↓):** within a routed class, trying different clicks on reload selects the same hidden state for later combat selection, shuffles and Oil costs.
 
 #### Card processing order
 
