@@ -601,19 +601,17 @@ Derive each drop-check roll from the drop-check ordinal.
 
 #### Shops, Wongos and Courier
 
-**Intent:** align corresponding shops independently of rewards and Courier restocks; keep base prices with their generated entries.
+**Intent:** align corresponding shops independently of rewards and Courier restocks.
 
 ##### Stock and prices
 
-- **Initial cards:** generate character-card rarities and all card identities by shop ordinal; colorless slots request fixed Uncommon/Rare.
-- **Card rarity:** initial character cards and Courier character-card restocks use [vanilla shop base chances](#card-reward-offers-1) plus a fixed offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on the modeled routes.
-- **Courier cards:** use separate Attack/Skill/Power rarity sequences and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each.
-- **Card eligibility:** preserve unavailable-rarity fallback and displayed-card exclusions, including the just-purchased card during restocking.
-- **Relics and potions:** initial stock uses their shop supplies; restocks use their Courier supplies under [relic allocation](#allocation) and [potion generation](#generation).
+- **Initial cards:** generate card identities and random rarities by shop ordinal.
+- **Card rarity:** initial and restocked character cards use [vanilla shop base chances](#card-reward-offers-1) plus a [calibrated fixed offset](#rarity-calibration) of `0` at A7+ and `+0.018` at A0–6.
+- **Courier cards:** character cards use per-type rarity sequences and per-type, per-rarity identity sequences; colorless cards use per-rarity identity sequences.
 - **Sale slot:** derive independently from shop ordinal.
 - **Base prices:** derive from `purpose = base price` + [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 
-**Alignment boundary:** eligibility changes, including [relic floor cutoffs](#relic-bags), can change corresponding stock and subsequent sequence positions. Relics also retain [borrowing's boundary](#borrowing) and the Wongos exception below.
+**Alignment boundary:** eligibility changes, including [relic floor cutoffs](#relic-bags), can change corresponding stocks.
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
@@ -625,9 +623,9 @@ Baseline: [shop mechanics](#shop-and-courier-rng).
 
 ##### Wongos
 
-The featured offer consumes one shop Rare identity when affordable; below 200 gold, suppress it without consuming stock as a [consistency fix](#vanilla-deviations). The Common purchase and Mystery Ticket's deferred rewards use [generic relic rewards](#source-classification).
+The featured Rare uses shop stock. Suppress generation when unaffordable as a [consistency fix](#vanilla-deviations).
 
-**Identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; see the [filtered-pull example](#relic-bags).
+**Identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from its source without placing a new marker. This retains [vanilla's promotion of skipped identities](#relic-bags).
 
 **Vanilla deviation — NoSL 3:** sourcing the featured Rare from shop stock removes its vanilla advancement of shop-ineligible Rares toward later generic rewards.
 
@@ -1584,6 +1582,8 @@ Both filtered pulls leave eligible supply. Front bias can affect several later p
 | Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
 
 #### Shop and Courier RNG
+
+**Cards:** initial colorless slots request Uncommon/Rare. Character cards fall back to the next available rarity. Generation excludes displayed cards, including the just-purchased card during restocking.
 
 Initial stock and restocks share these player RNGs. Each listed random operation advances its RNG once; relic identity follows bag order. The counts and interactions below exclude additional item effects.
 
