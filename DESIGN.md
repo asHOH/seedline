@@ -766,21 +766,21 @@ These triples follow shared consumption across sources.
 
 ##### A0–6: multiple Rares
 
-For own-character random-rarity offers, maintain one additional Rare-only identity sequence per character, shared by the three source groups and independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence.
+Own-character random-rarity offers share one extra-Rare identity sequence per character, independent of fixed-Rare triples. For an offer with `k >= 1` Rares, draw `k - 1` entries from this sequence, excluding the original Rare and earlier extra Rares.
 
-Replace the first Common in offer entry order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Repeat for three, four or five Rares as needed. Exclude the original Rare and earlier extra Rares; replaced companions remain consumed.
+Replace the first Common in offer entry order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Replaced companions remain consumed.
 
 **Replacement state:** identity and [upgrade roll](#upgrade-rolls) come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership, and its [Acts 1–2 shuffle membership](#source-based-assignment--acts-12).
 
-**Accepted tradeoff:** extra-Rare sequence state depends on prior Rare counts; companion replacements depend on offer composition. These A0–6 alignment and distribution tradeoffs are accepted because the design primarily targets A7+.
+**Accepted tradeoff:** prior Rare counts and companion composition can weaken alignment between corresponding offers.
 
-**Vanilla deviation — NoSL 3:** Common-first replacement adds a preference for retaining Uncommon companions in multi-Rare offers, unlike vanilla's per-slot generation. **Frequency:** rare — at A0–6, approximately **0.265% of vanilla fixed-base-odds three-card offers** contain at least two Rares, calculated from the 3% per-slot Rare chance.
+**Vanilla deviation — NoSL 3:** Common-first replacement favors Uncommon companions in multi-Rare offers. **Frequency:** rare — about **2% of vanilla elite offers** in the [A0–6 calibration](#rarity-calibration).
 
 ##### Presentation
 
 For own-character random-rarity offers, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
-For Brain Leech's non-Rare Share Knowledge offers and Room Full of Cheese's Gorge offers, uniformly shuffle [display order](#entry-addresses) after reward modifiers, with or without Wing Charm, using event RNG.
+For Brain Leech's non-Rare Share Knowledge offers and Room Full of Cheese's Gorge offers, uniformly shuffle [display order](#entry-addresses) after reward modifiers using event RNG.
 
 ##### Scroll Boxes
 
