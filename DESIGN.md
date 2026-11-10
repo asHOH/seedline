@@ -136,13 +136,13 @@ A source policy may cover:
 - **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
 - **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
-- **Occurrence address:** a logical occurrence's stable source ID, distinct for each copy.
-- **Selection key / selection-key alias:** a selection key is a candidate's stable ID for a selection purpose; an alias is a source-specified replacement key for that purpose.
+- **Occurrence address:** a logical occurrence's source ID, distinct for each copy.
+- **Selection key / selection-key alias:** a selection key is a candidate's ID for a selection purpose; an alias is a source-specified replacement key for that purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
 
 ## Architecture overview
 
-The mod aligns corresponding same-seed opportunities through stable addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
+The mod aligns corresponding same-seed opportunities through addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
 
 ### Rewards
 
@@ -157,7 +157,7 @@ The mod aligns corresponding same-seed opportunities through stable addresses, s
 ### Encounter
 
 - **Rooms and events:** align `?` draws by visit ordinal within each act and improve event agreement as eligible pools change.
-- **Selection:** stable keys and [persistent selection state](#corrected-persistent-clocks) retain alignment across choices. [Routing](#routing) makes equivalent card clicks select the same logical occurrence; eligibility histories and position-dependent effects still matter.
+- **Selection:** selection keys and [persistent selection state](#corrected-persistent-clocks) retain alignment across choices. [Routing](#routing) makes equivalent card clicks select the same logical occurrence; eligibility histories and position-dependent effects still matter.
 - **Combat:** scope setup, enemy behavior and card randomness to each battle. Potion-generated cards and Oil costs use potion-effect ordinals across battles.
 
 #### Non-combat
@@ -229,7 +229,7 @@ Unless a policy specifies a change, preserve existing behavior, including:
 
 Random state includes RNG state, sequence contents and positions, opportunity counters, stored rolls and selection priorities.
 
-**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + stable purpose and sharing-scope IDs + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
+**Invariant — independent derivation:** new or re-addressed randomness derives from run seed + purpose and sharing-scope IDs + the address components specified by its policy. The same full address reproduces the same draw or stream; independent purposes use separate derivations and state. Share randomness only where a policy specifies sharing or coupling. Explicitly retained baseline RNGs keep their stated addressing.
 
 Run seed is implicit in local and candidate addresses for new or re-addressed randomness. In design address expressions, `+` means unambiguous composition of components, not arithmetic addition. Sharing scope may be implicit or expressed through the policy's address components, such as sharing group or pool. Use stable IDs rather than display labels; for streams, distinguish the stream's address from its current position.
 
@@ -239,7 +239,7 @@ In RNG addresses, a scoped ordinal denotes `(scope ID, count)`: act-local includ
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the selection keys already used to generate them, in ascending order.
 
-### Stable entry addresses
+### Entry addresses
 
 An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
 
@@ -324,7 +324,7 @@ Use [corrected persistent clocks](#corrected-persistent-clocks) for selection. A
 **Batch association:** use the shared clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates.
 
 1. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order.
-2. Assign each participating class's remaining logical occurrences in stable address order to its unclicked copies in frozen presentation order.
+2. Assign each participating class's remaining logical occurrences in address order to its unclicked copies in frozen presentation order.
 3. Apply effects after selection is complete.
 
 Commit the association permutation and shared clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Singleton and whole-class player selections follow this same rule.
@@ -369,7 +369,7 @@ Revivals retain their occurrence; summons and replacements start new occurrences
 
 Out-of-combat operations follow the [lifetime rules](#out-of-combat-card-lifetime); combat cards follow [combat-card clock assignment](#combat-card-clock-assignment).
 
-Cards with generation entries use their [stable entry addresses](#stable-entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [card processing order](#card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
+Cards with generation entries use their [entry addresses](#entry-addresses). Other cards use source opportunity address + copy index. Assign indices in the [card processing order](#card-processing-order) after establishing gameplay properties, with a distinct index for each equivalent copy. Treat the starting deck as one initial source opportunity.
 
 #### Card reward selection-key aliases
 
@@ -400,7 +400,7 @@ For combat [selection](#random-combat-card-selection) and [routing](#combat-card
 
 | Card source | Selection key |
 |---|---|
-| Identity drawn from a generation sequence | Original [sequence entry address](#stable-entry-addresses). |
+| Identity drawn from a generation sequence | Original [sequence entry address](#entry-addresses). |
 | Fixed token creation | Token ID + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
 | Other grants | Granting-source ID + committed grant ordinal within that source for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
 
@@ -602,7 +602,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 - **Initial cards:** generate rarity and identities by shop ordinal; preserve unavailable-rarity fallback.
 - **Card rarity:** vanilla shop base chances plus an invariant offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
 - Sale slot uses independent shop-ordinal generation.
-- **Base prices:** use [stable entry address](#stable-entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
+- **Base prices:** use [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use separate Attack/Skill/Power rarity sequences at shop odds and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
 - **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
 
@@ -671,7 +671,7 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 
 ##### Upgrade rolls
 
-Derive each independent upgrade roll `u`, uniform in `[0, 1)`, from `purpose = upgrade` + the card's [stable entry address](#stable-entry-addresses).
+Derive each independent upgrade roll `u`, uniform in `[0, 1)`, from `purpose = upgrade` + the card's [entry address](#entry-addresses).
 
 At the source's existing random upgrade check, upgrade an eligible card when `u < p`, using its rarity- and act-dependent chance `p` at that check.
 
@@ -779,7 +779,7 @@ Replace the first Common in offer entry order, or the first Uncommon if no Commo
 
 For own-character random-rarity offers, swap the original Rare, then extra Rares in draw order, into the simulated Rare positions in ascending slot order.
 
-For Brain Leech's non-Rare Share Knowledge offers and Room Full of Cheese's Gorge offers, uniformly shuffle [display order](#stable-entry-addresses) after reward modifiers, with or without Wing Charm, using event RNG.
+For Brain Leech's non-Rare Share Knowledge offers and Room Full of Cheese's Gorge offers, uniformly shuffle [display order](#entry-addresses) after reward modifiers, with or without Wing Charm, using event RNG.
 
 ###### Scroll Boxes
 
@@ -875,7 +875,7 @@ Use event RNG for reward identities, random rarities and Fake Merchant's price r
 
 **Intent and scope:** improve same-seed event matching within and across acts, prioritizing agreement before the first mismatch. Ancients remain separate; [forced events](#forced-events) bypass ordinary selection.
 
-**Conditions and state:** group IDs by equivalent eligibility predicates, excluding act availability and late eligibility checks, with one stable key per condition. Act availability determines participating IDs; evaluate late eligibility checks at ID selection to keep grouping compact. Follow the global [addressing](#rng-derivation-and-addressing), [consumption](#opportunity-consumption-timing) and [saved-state](#saved-state) rules.
+**Conditions and state:** group IDs by equivalent eligibility predicates, excluding act availability and late eligibility checks, with one key per condition. Act availability determines participating IDs; evaluate late eligibility checks at ID selection to keep grouping compact. Follow the global [addressing](#rng-derivation-and-addressing), [consumption](#opportunity-consumption-timing) and [saved-state](#saved-state) rules.
 
 ###### Act entry and carryover
 
@@ -978,7 +978,7 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering](#offer-procedure). Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
-**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the triple's entries through their [stable entry addresses](#stable-entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [triple](#card-reward-offers) precedes presentation swaps.
+**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the triple's entries through their [entry addresses](#entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [triple](#card-reward-offers) precedes presentation swaps.
 
 **Non-Rare larger offers:** use the triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
 
@@ -1194,7 +1194,7 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 **Consumption exceptions:** empty and forced-singleton selections leave clocks and renewal counts unchanged. So do whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell; hand returns require space for every selected card.
 
-**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by stable logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + `purpose = incidental shuffle`. Advance only for these shuffles.
+**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + `purpose = incidental shuffle`. Advance only for these shuffles.
 
 **Seeker Strike:** when sampling, use clocks only to choose the offered cards. Apply routing to the player-selected card within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
 
