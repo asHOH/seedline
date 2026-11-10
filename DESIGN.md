@@ -193,7 +193,7 @@ Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 |---|---|---|
 | [Ordinary relics](#allocation): generic rewards / shop / Courier | Separate source sequences. | Disjoint finite allocations. |
 | [Relic Trader](#replacement-relics) | By event ID and reward slot. | Courier allocation. |
-| [Potions](#acquisition-and-sequences): generic rewards / shop / Courier / generating effects | Per-source sequences; generic rewards split standard-weight and uniform-identity modes. | Per-source, per-rarity sequences. |
+| [Potions](#generation): generic rewards / shop / Courier / generating effects | Per-source sequences; generic rewards split standard-weight and uniform-identity modes. | Per-source, per-rarity sequences. |
 | [Event-specific rewards](#event-specific-rewards) | Event RNG. | Event RNG. |
 
 #### Card offers and shop cards
@@ -577,27 +577,27 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events) and [Catfood address
 
 #### Potions
 
-**Intent:** preserve comparable results across batch sizes while keeping repeatable generation from displacing ordinary rewards. Failed direct grants leave later potions unchanged. White Beast Statue's forced drops leave the ordinary drop-check state unchanged for use after the relic's removal.
+**Intent:** align results across batch sizes; partition repeatable generation from ordinary rewards.
 
-Potion copies carry no persistent selection state. Using, discarding or trading a player-selected potion affects that copy, preserving slot-dependent offers and trade payoffs.
+Potion copies carry no persistent selection state; use, discard and trade affect the selected copy, preserving slot-dependent outcomes.
 
-##### Acquisition and sequences
+##### Generation
 
-**Generic rewards** combines random combat rewards, events and other grants without paid/free or per-event separation; **shop** and **Courier** are separate. **Potion-generating effects** covers Alchemize, Entropic Brew and Delicate Frond, including use outside combat.
+Separate **generic rewards**, **shop**, **Courier** and **potion-generating effects**. Generic rewards combine combat, event and other grants regardless of cost; generating effects cover Alchemize, Entropic Brew and Delicate Frond, including outside combat.
 
-Each source draws individual potions from its own Common/Uncommon/Rare identity sequences over the full eligible pool. Generic rewards share identities across separate standard-weight and uniform-identity rarity sequences; uniform mode weights rarities by eligible identity counts. Other sources each use one standard-weight rarity sequence. [Standard weights](#potions-1) remain unchanged.
+Each source has Common/Uncommon/Rare identity sequences over the full eligible pool and a [standard-weight rarity sequence](#potions-1). Generic uniform-identity rewards use a separate rarity sequence weighted by eligible identity counts, sharing the same identity sequences.
 
-Preserve existing failure feedback, including Alchemize's failure animation. Batch boundaries affect duplicate filtering only.
+**Consumption:** direct inventory grants advance rarity and identity state only for acquired potions, including partial batches. Offers follow [shared timing](#opportunity-consumption-timing), even if unclaimed. Preserve failure feedback.
 
-**Example — batch boundaries:** Catfood's call-based seeding can turn `A | BCD | E` for requests `1–3–1` into `AFG | B` for `3–1`. Per-potion consumption instead follows `ABC | D`, subject to batch duplicate filtering.
+**Batches:** consume per potion and retain [source duplicate rules](#potions-1); regrouping `A | BCD` yields `ABC | D`, subject to filtering.
 
-**Vanilla deviation — SL 5(↓):** failed grants no longer let players advance to a different later potion outcome.
+**Vanilla deviation — SL 5(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
 
 ##### Drop checks
 
-- Retain [Catfood addressing](#catfood-addressing-and-combat-rewards) and [vanilla's shared changing probability](#potions-1) across normal fights, elites and bosses. Extra ordinary checks advance the drop-check ordinal; combat-category threshold differences are preserved. No act/Ancient reset.
-- **White Beast Statue:** forced drops freeze the drop-check ordinal and stored probability; the potion still consumes a reward identity.
-- Save the drop-check ordinal and probability.
+Derive each drop-check roll from the drop-check ordinal.
+
+**White Beast Statue:** freeze the drop-check ordinal and probability; forced rewards still advance generic potion generation.
 
 #### Shops, Wongos and Courier
 
