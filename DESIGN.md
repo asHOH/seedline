@@ -671,9 +671,7 @@ Lasting Candy and The Future of Potions share own-character Uncommon and Rare Po
 
 ##### Upgrade rolls
 
-Derive each independent upgrade roll `u`, uniform in `[0, 1)`, from `purpose = upgrade` + the card's [entry address](#entry-addresses).
-
-At the source's random upgrade check, upgrade an eligible card when `u < p`, using its rarity- and act-dependent chance `p` at that check.
+At the source's random upgrade check, use a uniform `[0, 1)` roll derived from `purpose = upgrade` + the card's [entry address](#entry-addresses).
 
 Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
 
