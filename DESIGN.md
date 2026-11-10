@@ -637,8 +637,6 @@ Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
 **Scope:** initial generation and reachable rerolls for the offer groups below.
 
-**Crystal Sphere:** does not reset the combat rarity offset.
-
 Colorless and other-character rewards share across batch sizes because their few sources have varying offer sizes.
 
 ##### Offer groups
@@ -662,11 +660,21 @@ Own-character random-rarity offers share [luck and thresholds](#luck-and-rarity-
 | Colorless: Lead Paperweight / Brain Leech's Rip | One shared rarity-roll sequence at Uncommon/Rare odds **98.51% / 1.49%**, with shared Uncommon/Rare identity sequences; consume individual entries across batch sizes. |
 | Other-character | Kaleidoscope uses event RNG for character and rarity; Colorful Philosophers / Sea Glass request fixed rarities. Share 12 identity sequences: four other characters × Common/Uncommon/Rare, consumed individually across batch sizes. |
 
+**Crystal Sphere:** does not reset the combat rarity offset.
+
 ###### Type-specific offers
 
 Lasting Candy and The Future of Potions share own-character Uncommon and Rare Power identity sequences, consuming individual entries. Candy uses separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback and one roll per triggered card; boss triggers request Rare. Future of Potions requests its specified rarity.
 
 Future of Potions Attack/Skill identities use event RNG addressed by rarity and type, independently of other potion options, at the specified rarity.
+
+##### Upgrade rolls
+
+Derive each independent upgrade roll `u`, uniform in `[0, 1)`, from `purpose = upgrade` + the card's [entry address](#entry-addresses).
+
+At the source's random upgrade check, upgrade an eligible card when `u < p`, using its rarity- and act-dependent chance `p` at that check.
+
+Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
 
 ##### Offer procedure
 
@@ -677,14 +685,6 @@ For own-character random-rarity offers:
 3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
 
 Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve upgrade timing and modifier order.
-
-##### Upgrade rolls
-
-Derive each independent upgrade roll `u`, uniform in `[0, 1)`, from `purpose = upgrade` + the card's [entry address](#entry-addresses).
-
-At the source's random upgrade check, upgrade an eligible card when `u < p`, using its rarity- and act-dependent chance `p` at that check.
-
-Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
 
 ##### Rare timing and delivery
 
