@@ -388,9 +388,9 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 | Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-key-aliases). |
 | Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
 | Change status or eligibility | The change itself preserves the occurrence and its selection state through equivalence-class splits and merges, subject to [upgrade/downgrade refills](#permanent-upgrades-and-downgrades). |
-| Copy a card | Create a fresh occurrence and selection state from the granting source. Consume no routing clocks. |
+| Copy a card | Create a new occurrence and selection state from the granting source. Consume no routing clocks. |
 | Permanently remove or combine cards | Retire the selected logical inputs. |
-| [Transform a card](#permanent-transformations-and-direct-additions) | Retire the original and initialize fresh replacement selection state. |
+| [Transform a card](#permanent-transformations-and-direct-additions) | Retire the original and initialize replacement selection state. |
 
 #### Combat-card selection state
 
@@ -398,7 +398,7 @@ For combat [selection](#random-combat-card-selection) and [routing](#combat-card
 
 **At combat start:** before selection effects, use each card's [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling.
 
-**During combat:** take the first applicable key for a fresh occurrence:
+**During combat:** take the first applicable key for a new occurrence:
 
 | Card source | Selection key |
 |---|---|
@@ -680,7 +680,7 @@ For own-character random-rarity offers, including reachable [rerolls](#rerolls):
 2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple.
 3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
 
-Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve source-specific upgrade timing and modifier order.
+Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve upgrade timing and modifier order.
 
 ##### Upgrade rolls
 
@@ -712,7 +712,7 @@ Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
 - Normal-fight-rule and elite non-Rare slots add `0.005` (`0.01` without Scarcity), capped at `0.40`. Zero-probability slots still grow the offset while adding no luck.
 - A delivered Rare in either group resets the offset to `-0.05`.
 - Retain boss-reward offset resets, without advancing luck or these offer sequences.
-- Between acts, reset the offset to `-0.05`; carry luck, the current threshold and sequence state forward.
+- Between acts, reset the offset to `-0.05`; carry luck, the threshold and sequence state forward.
 
 Save this state under the [saved-state rules](#saved-state), including an already-reached threshold awaiting delivery.
 
@@ -724,7 +724,7 @@ Save this state under the [saved-state rules](#saved-state), including an alread
 
 Cap each offer at one Rare. If a later slot reaches the next threshold:
 
-- Suppress that Rare and keep the reached threshold pending, retaining luck and the current threshold.
+- Suppress that Rare and keep the reached threshold pending, retaining luck and the threshold.
 - Treat suppressed slots as non-Rare for applicable offset updates.
 - Continue accumulating luck; only one Rare can remain pending until delivery.
 
@@ -803,7 +803,7 @@ Resolve Defect's two independent 1% triple-Claw substitution checks with event R
 
 ##### Rerolls
 
-A reachable reroll follows its source's [offer group](#offer-groups) and, where applicable, the [offer procedure](#offer-procedure), consuming fresh entries from its pool/request/filter group, including expanded pools. Preserve source-specific rarity and offset effects, offer structure and duplicate rules.
+A reachable reroll follows its source's [offer group](#offer-groups) and, where applicable, the [offer procedure](#offer-procedure), consuming unused entries from its pool/request/filter group, including expanded pools. Preserve rarity and offset effects, offer structure and duplicate rules.
 
 Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
 
@@ -1114,7 +1114,7 @@ Use Fabricator occurrence + `purpose = bot generation` + bot-selection ordinal. 
 
 ###### Behavior preservation
 
-Fresh independent rolls at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
+Independent rolls at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
 
 **Vanilla deviation — SL 4A(↓):** partitioning AI sequences within combat and effective-decision consumption remove rerolls through unrelated or forced rolls.
 
@@ -1275,7 +1275,7 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 |---|---|---|
 | Confused — Snecko Eye and Fake Snecko Eye | [Combat address](#combat-addresses) + `purpose = Confused cost` + card category | Five sequences, each following draw order. |
 | Slither | Combat address + `purpose = Slither cost` | One sequence shared by all enchanted copies, following draw order. |
-| Snecko Oil | `purpose = Oil cost` + [potion effect ordinal](#potion-effect-opportunities) + card category | Five fresh sequences per opportunity, using hand-entry order below. |
+| Snecko Oil | `purpose = Oil cost` + [potion effect ordinal](#potion-effect-opportunities) + card category | Five sequences per opportunity, using hand-entry order below. |
 
 **Card categories:** starter Strikes; starter Defends; Other Basic 1; Other Basic 2; Others. Other Basic slots follow each character's original starting-deck identity order and remain fixed through removals. Classify by current identity: upgrades and copies retain its category; transformations use the replacement's category. Other Strike-tagged attacks belong to Others.
 
@@ -1327,12 +1327,12 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 [Rarity model](outputs/reward-calibration.cjs) and [route/event projection](outputs/reward-calibration-environment.cjs), 2026-10-11. Fit vanilla's expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, including once-per-run opening triples and A0–6 Common-first replacement. Each three-act study uses 200,000 baseline and 200,000 independent validation runs. Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%; its zero-elite branch removes the first elite and replaces the second with an event.
 
-| Study | Validation fit: non-Rare offers / rare-bearing companions | Settled rates | Uncommon difference per 100 displayed slots |
+| Study | Validation fit: non-Rare offers / rare-bearing companions | Design rates | Uncommon difference per 100 displayed slots |
 |---|---|---|---|
 | [A7+](outputs/reward-calibration-act3-results.json) | 38.016% / 38.942% | 38% / 39% | −0.011 |
 | [A0–6](outputs/reward-calibration-a6-results.json) | 39.863% / 40.469% | 40% / 40.5% | +0.105 |
 
-Shop offsets approximate the mean Rare count across five character-card slots, excluding fixed colorless cards. Vanilla versus settled Rare chances per slot are **4.453% / 4.5%** at A7+ and **10.762% / 10.8%** at A0–6. Constant offsets change clustering: shops with any Rare character card occur in **19.55% / 20.56%** and **41.78% / 43.53%**, respectively.
+Shop offsets approximate the mean Rare count across five character-card slots, excluding fixed colorless cards. Rare chances per slot in vanilla versus this design are **4.453% / 4.5%** at A7+ and **10.762% / 10.8%** at A0–6. Constant offsets change clustering: shops with any Rare character card occur in **19.55% / 20.56%** and **41.78% / 43.53%**, respectively.
 
 These are route-average choices: elite frequency and extra-offer sources shift the fitted rates. The [earlier A7+ study](outputs/reward-calibration-results.json) and A0–6 results retain sensitivity cases, assumptions and checks. The model approximates player-state eligibility, event outcomes and non-rarity item effects.
 
@@ -1376,7 +1376,7 @@ The difference is `1/360`, about **0.278 percentage points** in this reduced poo
 
 ## Appendix: existing mechanics
 
-Existing mechanics for comparison: vanilla by default, [Catfood differences](#catfood-addressing-and-combat-rewards) explicitly labeled. Settled policies belong in the main design sections.
+Existing mechanics for comparison: vanilla by default, [Catfood differences](#catfood-addressing-and-combat-rewards) labeled. Policies belong in the main design sections.
 
 ### Rooms, events and combat
 
@@ -1688,7 +1688,7 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 | Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
 | Colorful Philosophers | Choose another character's color, then receive one three-card offer per rarity (Common/Uncommon/Rare) from that pool. Ordinary upgrade rolls apply. |
 | Sea Glass | Five Common, five Uncommon and five Rare cards from one featured other character; take any number of the 15. No random upgrades. |
-| Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions explicitly blocks pool modification. |
+| Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions blocks pool modification. |
 | Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
 | Wing Charm / earlier enchantments | Wing Charm's late reward-options hook selects one currently Swift-eligible card per generation batch with `Niche` RNG, including direct generation. Swift cannot overwrite or stack with an existing enchantment. Earlier Glitter excludes its Glam-enchanted cards; earlier Fresnel Lens excludes its Nimble-enchanted Block cards. Ordinary modifiers run before late modifiers; late modifiers follow relic-list order. |
 
