@@ -181,7 +181,7 @@ The mod aligns corresponding same-seed opportunities through addresses, shared s
 
 ### Generation sharing
 
-Sources sharing a sequence advance a common progression. Separate supplies limit that interference; finite relic allocations can still interact through borrowing. Ordinal addressing gives corresponding opportunities their own randomness, as with initial shop cards.
+Sources sharing a sequence advance a common progression. Separate supplies limit that interference; finite relic allocations can still interact through [borrowing](#borrowing). Ordinal addressing gives corresponding opportunities their own randomness, as with initial shop cards.
 
 "Shared" spans each row's named sources or offer category, within the stated partitions. Source policies supply local exceptions.
 
@@ -245,7 +245,7 @@ In RNG addresses, a scoped ordinal denotes `(scope ID, count)`: act-local includ
 
 An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
 
-**Invariant — stable addresses:** entries retain their original addresses through movement, filtered advancement, borrowing, removal and return.
+**Invariant — stable addresses:** entries retain their original addresses through movement, filtered advancement, [borrowing](#borrowing), removal and return.
 
 **Invariant — presentation-only reordering:** change only display positions, keeping each entry's address, attached random state and group membership with it.
 
@@ -284,7 +284,7 @@ Markers record pending advancements and freeze eligibility conditions at the ori
 
 Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
 
-If a finite supply has no eligible entry to resolve a marker after borrowing, remove the marker and continue the current draw. Chests also use [finite-lifetime expiry](#finite-lifetime-chest-markers).
+If a finite supply has no eligible entry to resolve a marker after [borrowing](#borrowing), remove the marker and continue the current draw. Chests also use [finite-lifetime expiry](#finite-lifetime-chest-markers).
 
 ### Fixed selection priorities
 
@@ -433,7 +433,7 @@ Each covered potion type has its own run-wide effect ordinal:
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered-draw mechanism](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation sharing](#generation-sharing) summarizes them.
 
-**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations borrow.
+**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
 
 Apply the filtered-draw mechanism to covered identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#stock-and-prices). Skipped entries remain available to eligible draws and borrowing.
 
