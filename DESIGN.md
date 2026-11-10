@@ -784,10 +784,10 @@ For Brain Leech's non-Rare Share Knowledge offers and Room Full of Cheese's Gorg
 
 ##### Scroll Boxes
 
-Resolve Defect's two independent 1% triple-Claw substitution checks with event RNG before requesting Common sequence entries. Non-Defect offers follow the no-substitution branch.
+Resolve Defect's two independent 1% [triple-Claw substitution checks](#card-reward-offers-1) with event RNG before drawing Common sequence entries. Non-Defect offers follow the no-substitution branch.
 
 - **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
-- **Triple-Claw exception:** if either bundle is replaced, bypass the shared Common sequence without inspecting its head. Each substituted bundle contains three fixed Claws; generate any remaining ordinary bundle entirely with event RNG. If both bundles are substituted, generate no unused ordinary-bundle cards.
+- **Triple-Claw exception:** if either bundle is replaced, generate any remaining ordinary bundle entirely with event RNG.
 
 #### Rerolls
 
