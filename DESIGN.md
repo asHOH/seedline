@@ -22,7 +22,7 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 Consistency fixes with no gameplay impact are ungraded.
 
-**Unnoticeable:** imperceptible across ordinary runs, considering frequency and effect size; effects on win chance provide supporting evidence. Use 500 runs as a rough benchmark, with the [A7+ one-Rare cap](#a7-one-rare-per-offer-and-deferral) as the reference.
+**Unnoticeable:** imperceptible across runs, considering frequency and effect size; effects on win chance provide supporting evidence. Use 500 runs as a rough benchmark, with the [A7+ one-Rare cap](#a7-one-rare-per-offer-and-deferral) as the reference.
 
 **Neutral:** an informed player would make no meaningful change to strategy.
 
@@ -321,7 +321,7 @@ A player action does not advance a gameplay selector's clocks merely because it 
 
 Use [corrected persistent clocks](#corrected-persistent-clocks) for selection. An already randomly selected logical target bypasses routing.
 
-**Routing boundary:** preserve display order. Apply effects at the clicked copies' actual pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
+**Routing boundary:** preserve display order. Apply effects at the clicked copies' pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
 
 **Batch association:** use the shared clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates.
 
@@ -511,7 +511,7 @@ Construct disjoint generic-reward, shop and Courier allocations once, targeting 
 
 Each source has one rarity-roll sequence, generated on demand indefinitely, and independently advancing, shuffled identity sequences per rarity. The shop also has one shuffled sequence containing all Shop-rarity identities.
 
-Ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the [borrowing boundary](#borrowing). Other sources' multi-choice offers must preserve unchosen generic entries.
+Generic reward opportunities must eventually expose every still-eligible entry, subject to the [borrowing boundary](#borrowing). Other sources' multi-choice offers must preserve unchosen generic entries.
 
 ##### Source classification
 
@@ -606,7 +606,7 @@ Derive each drop-check roll from the drop-check ordinal.
 ##### Stock and prices
 
 - **Initial cards:** generate character-card rarities and all card identities by shop ordinal; colorless slots request fixed Uncommon/Rare.
-- **Card rarity:** initial character cards and Courier character-card restocks use [vanilla shop base chances](#card-reward-offers-1) plus a fixed offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on ordinary routes.
+- **Card rarity:** initial character cards and Courier character-card restocks use [vanilla shop base chances](#card-reward-offers-1) plus a fixed offset of `0` at A7+ and `+0.018` at A0–6. The [three-act calibration](#rarity-calibration) approximates vanilla's mean Rare count on the modeled routes.
 - **Courier cards:** use separate Attack/Skill/Power rarity sequences and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each.
 - **Card eligibility:** preserve unavailable-rarity fallback and displayed-card exclusions, including the just-purchased card during restocking.
 - **Relics and potions:** initial stock uses their shop supplies; restocks use their Courier supplies under [relic allocation](#allocation) and [potion generation](#generation).
@@ -728,7 +728,7 @@ Cap each covered offer at one Rare. If a later slot reaches the next threshold:
 - Treat suppressed slots as non-Rare for applicable offset updates.
 - Continue accumulating luck; only one Rare can remain pending until delivery.
 
-A **Rare-eligible offer** has a positive chance of producing a Rare along its ordinary all-non-Rare progression, ignoring pending delivery.
+A **Rare-eligible offer** has a positive chance of producing a Rare along its all-non-Rare progression, ignoring pending delivery.
 
 - **Next eligible offer:** deliver the pending Rare in its first simulated slot instead of that slot's ordinary check. Reset luck, clear pending and advance the threshold once, applying the delivery source's offset rule. Process remaining slots normally.
 - **Ineligible offer:** retain the pending threshold and apply normal non-Rare offset growth.
@@ -764,7 +764,7 @@ These rounded rates approximate expected displayed Uncommon totals in the [three
 
 **Opening triples:** the first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
 
-This exception occurs only once per run. The triples follow ordinary shared consumption, including by other covered sources.
+This exception occurs only once per run. The triples follow shared consumption, including by other covered sources.
 
 **Rationale:** these entries approximate two opening Act 1 normal fights without elite intervention. Normal-fight openings in Acts 2/3 are accounted for through average calibration rather than special entries.
 
@@ -772,7 +772,7 @@ This exception occurs only once per run. The triples follow ordinary shared cons
 
 ###### Supplementary cards
 
-**Brain Leech — Share Knowledge:** generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the ordinary non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability.
+**Brain Leech — Share Knowledge:** generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability.
 
 **Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
 
@@ -807,7 +807,7 @@ A reachable reroll follows its source's [offer group](#offer-groups) and, where 
 
 Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
 
-Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the normal-run scope.
+Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood.
 
 ##### Prismatic Gem and Dingy Rug
 
@@ -816,13 +816,13 @@ Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood in the nor
 Preserve the [existing pool-modification boundaries](#card-reward-offers-1). Select the identity group for the complete request:
 
 - **Unchanged eligible pool:** reuse its existing group, including Rug's fixed-Common or already-colorless offers.
-- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume this group; ordinary identity sequences and triple boundaries remain unchanged.
+- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume this group; the original pool's identity sequences and triple boundaries remain unchanged.
 
 Retain source rarity, luck and upgrade rules, eligible-card sampling weights, offer sizes and duplicate exclusions. Neither relic resets luck state or restarts opening-only rarity exceptions.
 
 Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll sequence position and fallback rules.
 
-**Accepted tradeoff:** separate identity groups sacrifice alignment with ordinary own-character identities to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
+**Accepted tradeoff:** separate identity groups sacrifice alignment with identities from the unexpanded own-character pool to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
 
 Baseline: [card reward mechanics](#card-reward-offers-1).
 
@@ -965,7 +965,7 @@ To align sacrificed relics, offer one tradable owned relic using [fixed prioriti
 
 ###### Replacement relics
 
-Generate slots 1–3 in order. For each, roll [ordinary relic rarity](#relic-bags) addressed by event ID + reward slot, then take the last eligible Courier entry of that rarity, with no added filters.
+Generate slots 1–3 in order. For each, use the [vanilla relic rarity roll](#relic-bags) addressed by event ID + reward slot, then take the last eligible Courier entry of that rarity, with no added filters.
 
 ###### Outgoing relic assignment
 
@@ -1023,7 +1023,7 @@ Use [fixed priorities](#fixed-selection-priorities) or [corrected persistent clo
 
 ###### Weighted potion sacrifice clocks
 
-Each potion type has one clock `E`, keyed by `purpose = sacrifice` + type; use [shared initialization and renewal](#corrected-persistent-clocks). Ordinary use, discard, grants and absence preserve clocks and renewal counts.
+Each potion type has one clock `E`, keyed by `purpose = sacrifice` + type; use [shared initialization and renewal](#corrected-persistent-clocks). Use, discard, grants and absence preserve clocks and renewal counts.
 
 For owned count `w > 0`, select the lowest `E/w = m` and subtract `w × m` from other participating clocks. The table specifies renewal timing and the singleton exception.
 
@@ -1091,16 +1091,16 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 ###### Rat sampling
 
-**Intent:** realign ordinary choices at matching rounds, selection positions and eligibility; align summoned openings independently of birth timing.
+**Intent:** realign non-Summon choices at matching rounds, selection positions and eligibility; align summoned openings independently of birth timing.
 
 **Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
 
-**Ordinary sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID, independently of Summon. Both scopes below use the shared combat address and separate purposes.
+**Non-Summon sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID, independently of Summon. Both scopes below use the shared combat address and separate purposes.
 
-| Ordinary opportunity | Address and consumption |
+| Non-Summon opportunity | Address and consumption |
 |---|---|
 | Summoned opening | Combat-local summoned-rat ordinal in vanilla creation order, independent of birth round or summoner. Consume once at its first random intent selection. |
-| Later choice, any rat | Current combat round + round-local selection ordinal, shared by all rats in vanilla selection order, including after deaths. Advance only for ordinary choices with at least two positive-weight moves; openings stay separate. |
+| Later choice, any rat | Current combat round + round-local selection ordinal, shared by all rats in vanilla selection order, including after deaths. Advance only for non-Summon choices with at least two positive-weight moves; openings stay separate. |
 
 Use `CombatState.RoundNumber` at selection; extra player turns stay in the same round. Reset the later-choice ordinal each round.
 
@@ -1244,7 +1244,7 @@ Baseline: [random enemy targeting](#random-enemy-targeting).
 
 ##### Combat card generation and transformations
 
-**Intent and scope:** align random identities from combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their settled scope.
+**Intent and scope:** align random identities from combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their scope.
 
 Use independent sequences addressed by [combat address](#combat-addresses) + `purpose = card generation` + group + pool below. All copies and triggers sharing a group and pool use the same sequence.
 
@@ -1327,7 +1327,7 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 [Rarity model](outputs/reward-calibration.cjs) and [route/event projection](outputs/reward-calibration-environment.cjs), 2026-10-11. Fit vanilla's expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, including once-per-run opening triples and A0–6 Common-first replacement. Each three-act study uses 200,000 baseline and 200,000 independent validation runs. Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%; its zero-elite branch removes the first elite and replaces the second with an event.
 
-| Study | Validation fit: ordinary / companion | Settled rates | Uncommon difference per 100 displayed slots |
+| Study | Validation fit: non-Rare offers / rare-bearing companions | Settled rates | Uncommon difference per 100 displayed slots |
 |---|---|---|---|
 | [A7+](outputs/reward-calibration-act3-results.json) | 38.016% / 38.942% | 38% / 39% | −0.011 |
 | [A0–6](outputs/reward-calibration-a6-results.json) | 39.863% / 40.469% | 40% / 40.5% | +0.105 |
@@ -1427,7 +1427,7 @@ All eight Ancients select their menus with [event RNG](#event-and-encounter-iden
 
 #### Event eligibility
 
-**Scope:** vanilla entry predicates for **56 ordinary events** in solo ordinary runs with permanent unlocks satisfied; Ancients are separate. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout.
+**Scope:** vanilla entry predicates for **56 ordinary events**; Ancients are separate. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout.
 
 Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
@@ -1477,7 +1477,7 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 | Field of Man-Sized Holes | a card eligible for Perfect Fit |
 | Slippery Bridge | A removable card |
 
-**Forced event:** War Historian Repy adds one event outside this table: Lantern Key inserts it in Act 3; ordinary `IsAllowed` is always false.
+**Forced event:** War Historian Repy adds one event outside this table: Lantern Key inserts it in Act 3; `IsAllowed` is always false.
 
 #### Combat setup and shuffles
 
@@ -1528,7 +1528,7 @@ Exactly one kill yields a zero-immediate-damage next intent. Choosing before see
 
 **Same-type survivor alternatives:** clear other original Two-Tailed Rats, leaving one at `Scratch → Disease Bite → Summon → Scratch` and its summon opening with Scratch. Their random-selection counts are three and one. Kill either before Scratch executes. Either survivor chooses equally between Disease Bite (7 damage at A7+) and Screech (Frail, zero damage); Summon is spent for the original and timer-blocked for the copy. Vanilla uses the same next roll, yielding the same result for either kill.
 
-**Fabricator:** Fabricate selects a defensive bot (Guardbot/Noisebot), then an offensive bot (Zapbot/Stabbot); Fabricating Strike selects only an offensive bot. Each selection excludes the immediately preceding bot identity across both pools. An intervening defensive bot therefore permits the previous offensive identity again. Full capacity forces deterministic Disintegrate; its bots use fixed moves. In the standard single-player encounter, kill/stun timing changes when selections occur while preserving their order and the sequence of summoned bot identities.
+**Fabricator:** Fabricate selects a defensive bot (Guardbot/Noisebot), then an offensive bot (Zapbot/Stabbot); Fabricating Strike selects only an offensive bot. Each selection excludes the immediately preceding bot identity across both pools. An intervening defensive bot therefore permits the previous offensive identity again. Full capacity forces deterministic Disintegrate; its bots use fixed moves. Kill/stun timing changes when selections occur while preserving their order and the sequence of summoned bot identities.
 
 #### Random enemy targeting
 
@@ -1580,7 +1580,7 @@ Both filtered pulls leave eligible supply. Front bias can affect several later p
 | Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. Featured Rare is generated and consumed from stock on offer, even if declined. This also occurs below 200 gold and is **harmful to same-seed consistency**. Hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |
 | Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Randomly selects three owned relics and three replacements to offer; consumes all three replacement identities/rarities before the player's selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
-| Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
+| Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics use the [vanilla relic rarity roll](#relic-bags) even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
 | Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
 
 #### Shop and Courier RNG
@@ -1682,12 +1682,12 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 | Glass Eye | Five three-card offers: two Common, two Uncommon and one Rare, from the character pool. No random upgrades. |
 | Scroll Boxes | Choose one of two bundles, normally two Commons and one Uncommon each, with six distinct identities across ordinary bundles. Defect has an independent 1% triple-Claw substitution chance per bundle; substituted bundles contain three Claws. |
 | Room Full of Cheese — Gorge | Choose two of eight distinct Common character cards; no random upgrades. |
-| Crystal Sphere | The board has one card-reward item per ordinary rarity. Each recovered item gives a three-card offer of that rarity; vanilla identities and upgrade rolls use event RNG. |
-| The Future of Potions | Offers the first three owned potions in slot order; independently assigns a random allowed card type to every owned potion using event RNG. Trade a potion for three explicitly upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
+| Crystal Sphere | The board has one card-reward item for each of Common, Uncommon and Rare. Each recovered item gives a three-card offer of that rarity; vanilla identities and upgrade rolls use event RNG. |
+| The Future of Potions | Offers the first three owned potions in slot order; independently assigns a random allowed card type to every owned potion using event RNG. Trade a potion for three upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
 | Lead Paperweight / Brain Leech — Rip | Choose one of two / three colorless cards respectively. Rip costs 5 HP and suppresses random upgrades. |
 | Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
-| Colorful Philosophers | Choose another character's color, then receive one three-card offer per ordinary rarity from that pool. Ordinary upgrade rolls apply. |
-| Sea Glass | Five cards per ordinary rarity from one featured other character; take any number of the 15. No random upgrades. |
+| Colorful Philosophers | Choose another character's color, then receive one three-card offer per rarity (Common/Uncommon/Rare) from that pool. Ordinary upgrade rolls apply. |
+| Sea Glass | Five Common, five Uncommon and five Rare cards from one featured other character; take any number of the 15. No random upgrades. |
 | Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions explicitly blocks pool modification. |
 | Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
 | Wing Charm / earlier enchantments | Wing Charm's late reward-options hook selects one currently Swift-eligible card per generation batch with `Niche` RNG, including direct generation. Swift cannot overwrite or stack with an existing enchantment. Earlier Glitter excludes its Glam-enchanted cards; earlier Fresnel Lens excludes its Nimble-enchanted Block cards. Ordinary modifiers run before late modifiers; late modifiers follow relic-list order. |
