@@ -735,9 +735,7 @@ Deliver every threshold crossing immediately.
 
 ##### Offer sequences
 
-Own-character random-rarity offers use two triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
-
-A suppressed Rare reserves no additional triple.
+Own-character random-rarity offers use two triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies a Rare followed by two Common/Uncommon cards before presentation swaps.
 
 **Rationale:** shared sequences preserve triple alignment when a Rare moves between sources; separate normal/elite sequences advance differently.
 
