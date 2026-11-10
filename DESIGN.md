@@ -412,18 +412,18 @@ Pile movement and status or eligibility changes themselves preserve keys, residu
 
 **Scope:** [potion-generated cards](#potion-generated-cards) and [Snecko Oil costs](#random-energy-costs).
 
-Each covered potion type has its own run-wide effect ordinal:
+Each potion type has its own run-wide effect ordinal:
 
 | Action | Ordinal advancement |
 |---|---|
 | Committed use, even when no rolls occur | Advance once. |
 | Discard or trade | Advance once. |
-| Skip a covered potion reward on the reward screen | Advance once per skipped reward. |
+| Skip a potion reward on the reward screen | Advance once per skipped reward. |
 | Acquire | None. |
 
-**Cauldron exception:** Each covered potion offered by Cauldron grants one exemption for its type — any action that would advance that type's effect ordinal consumes one available exemption instead. Unused exemptions expire at next-room entry.
+**Cauldron exception:** Each potion offered by Cauldron grants one exemption for its type — any action that would advance that type's effect ordinal consumes one available exemption instead. Unused exemptions expire at next-room entry.
 
-**Vanilla deviation — SL 5(↑):** discard, trade and covered reward skips advance the next same-type effect batch. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
+**Vanilla deviation — SL 5(↑):** discard, trade and reward skips advance the next same-type effect batch. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
 
 ### Rarity and identity sequences
 
@@ -433,9 +433,9 @@ Each covered potion type has its own run-wide effect ordinal:
 
 With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered-draw mechanism](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation sharing](#generation-sharing) summarizes them.
 
-**Generation and lifetime:** covered potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
+**Generation and lifetime:** potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
 
-Apply the filtered-draw mechanism to covered identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
+Apply the filtered-draw mechanism to identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences retain each slot's rarity while rejecting duplicate identity candidates within that triple during generation. Other card sequences apply source-required duplicate exclusions through filtered draws.
 
@@ -722,7 +722,7 @@ Save this state under the [saved-state rules](#saved-state), including an alread
 
 ###### A7+: one Rare per offer and deferral
 
-Cap each covered offer at one Rare. If a later slot reaches the next threshold:
+Cap each offer at one Rare. If a later slot reaches the next threshold:
 
 - Suppress that Rare and keep the reached threshold pending, retaining luck and the current threshold.
 - Treat suppressed slots as non-Rare for applicable offset updates.
@@ -745,7 +745,7 @@ Deliver every threshold crossing immediately under the shared luck and source-of
 
 ###### Offer sequences
 
-Own-character random-rarity offers use two deterministic triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
+Own-character random-rarity offers use two triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies one Rare and two non-Rares. Store the Rare first in each rare-bearing triple.
 
 A suppressed Rare reserves no additional triple.
 
@@ -762,9 +762,9 @@ Use these Uncommon probabilities, except for the opening entries below:
 
 These rounded rates approximate expected displayed Uncommon totals in the [three-act calibration](#rarity-calibration). Shop offsets do not apply.
 
-**Opening triples:** the first two non-Rare triples use their own deterministic generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
+**Opening triples:** the first two non-Rare triples use their own generation with vanilla first-two-normal-offer probabilities after an offset reset, conditional on no Rare. At A0–6 these are **35%, 36%, 37%**, then **37/99, 37/98, 37/97**.
 
-This exception occurs only once per run. The triples follow shared consumption, including by other covered sources.
+This exception occurs only once per run. The triples follow shared consumption, including by other sources.
 
 **Rationale:** these entries approximate two opening Act 1 normal fights without elite intervention. Normal-fight openings in Acts 2/3 are accounted for through average calibration rather than special entries.
 
@@ -828,7 +828,7 @@ Baseline: [card reward mechanics](#card-reward-offers-1).
 
 #### Permanent transformations and direct card additions
 
-**Intent:** align same-pool transformations and covered direct additions while preserving source rarity odds.
+**Intent:** align same-pool transformations and direct additions while preserving source rarity odds.
 
 **Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
@@ -983,7 +983,7 @@ Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 **Intent:** preserve shared dish order across runs.
 
-Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dedicated dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries — including the previous displayed dish — until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
+Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries — including the previous displayed dish — until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
 
 ##### Wing Charm
 
@@ -1036,7 +1036,7 @@ Uniform copy-selection odds match [vanilla](#potions-1); removing sacrifice rero
 **Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement (shared clocks replace `CombatCardSelection`).
 **Downgrade sources:** Wongos and Reflections.
 
-- **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise take the next value from one dedicated run-wide refill sequence, shared only by Wongos and Reflections. This sequence is consumed at most three times per run.
+- **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise take the next value from one run-wide refill sequence, shared only by Wongos and Reflections. This sequence is consumed at most three times per run.
 - **Downgrade-clock refill:** Wongos refreshes the downgraded card's downgrade clock using event RNG. Reflections leaves consumed downgrade clocks at zero; no later permanent downgrade source can use them.
 
 Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
@@ -1062,7 +1062,7 @@ Preserve encounter identity selection and setup sampling; reward ordinals and AI
 
 **Intent:** isolate HP sequences by combat, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat roll-order manipulation.
 
-Use shared-percentile sampling for each covered HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + `purpose = enemy HP` + combat-local HP-roll ordinal; select zero-based index `floor(u × count)` from ascending eligible HP values.
+Use shared-percentile sampling for each HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + `purpose = enemy HP` + combat-local HP-roll ordinal; select zero-based index `floor(u × count)` from ascending eligible HP values.
 
 Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
 
@@ -1207,7 +1207,7 @@ Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mumm
 
 **Consumption exceptions:** empty and forced-singleton selections leave clocks and renewal counts unchanged. So do whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell; hand returns require space for every selected card.
 
-**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one dedicated RNG shared by those five sources, addressed by combat + `purpose = incidental shuffle`. Advance only for these shuffles.
+**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one RNG shared by those five sources, addressed by combat + `purpose = incidental shuffle`. Advance only for these shuffles.
 
 **Seeker Strike:** when sampling, use clocks only to choose the offered cards. Apply routing to the player-selected card within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
 
@@ -1253,7 +1253,7 @@ Use independent sequences addressed by [combat address](#combat-addresses) + `pu
 | Ordinary costs | One sequence per pool: own character, colorless, each other character, curse and status. Share ordinary-cost generation and Entropy; Jackpot uses the own-character sequence. |
 | Free this turn | One own-character sequence shared by generators applying this effect. |
 | Free this combat | One own-character Attack sequence for Metamorphosis. |
-| Splash | One dedicated sequence over the combined eligible other-character Attacks, uniform across identities. |
+| Splash | One sequence over the combined eligible other-character Attacks, uniform across identities. |
 
 Classify cost treatment by the generating source's free effect; natural costs, upgrades and later modifiers leave classification unchanged. Entropy follows the original card's transformation pool regardless of its acquisition source.
 
@@ -1777,7 +1777,7 @@ Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: 
 
 **Card rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`. The separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets. Combat rerolls update their room type's rarity state, potentially shifting later offers; non-Rare rerolls raise the offset, as in vanilla.
 
-**Direct/event generation:** card factories seed by adding room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified. Transformations retain caller-supplied RNGs. Neither uses dedicated shared identity sequences by pool.
+**Direct/event generation:** card factories seed by adding room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified. Transformations retain caller-supplied RNGs. Neither uses shared identity sequences by pool.
 
 **Encounter setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
 
