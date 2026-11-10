@@ -533,14 +533,14 @@ Baseline: [relic bags](#relic-bags) and [Catfood's rarity-roll limit](#catfood-a
 
 #### Chests
 
-**Intent:** chest gold is independent of normal-fight counts; Silver Crucible's empty chest consumes no chest opportunity.
+##### Reward generation
 
-##### Rewards and consumption
+On entering a non-empty chest room, advance the chest ordinal once and generate both gold and relic rewards.
 
-- Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
-- Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
+- **Gold:** generate base gold from the chest ordinal, independently of combat gold.
+- **Relic:** consume one generic rarity-roll entry, derive the [marker-lifetime roll](#finite-lifetime-chest-markers), and exclude the drawn identity from later chests.
 
-Relic generation consumes one rarity-roll sequence entry and one chest opportunity, derives the marker-lifetime roll, and exhausts the identity for future chests.
+Silver Crucible's empty chest room generates neither reward and leaves the chest ordinal unchanged.
 
 ##### Relic advancement
 
