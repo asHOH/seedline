@@ -497,35 +497,39 @@ Generate replacements for selected originals in identity-only [card processing o
 
 #### Relics
 
-**Intent:** partition normal-play relic supplies among shops, Courier and generic rewards; remove Catfood's fixed rarity-roll limit for random relic rewards.
+**Intent:** limit interference between generic, shop and Courier relic rewards.
 
 ##### Allocation
 
-Construct disjoint generic-reward, shop and Courier allocations once. Each source has one rarity-roll sequence and independently advancing, shuffled Common/Uncommon/Rare identity sequences; shop also has all Shop-rarity identities in one shuffled sequence. Split each Common/Uncommon/Rare pool **45% / 35% / 20%** between generic rewards, shop and Courier respectively.
+Construct disjoint generic-reward, shop and Courier allocations once, targeting **45% / 35% / 20%** of each Common/Uncommon/Rare pool. Include shop-ineligible relics. Use these fully unlocked counts:
 
-Capacity is per rarity/source. Exact fully unlocked allocations (generic rewards / shop / Courier): **Common 12 / 9 / 5; Uncommon 14 / 11 / 7; Rare 17 / 13 / 8**.
+| Rarity | Generic rewards | Shop | Courier |
+|---|---|---|---|
+| Common | 12 | 9 | 5 |
+| Uncommon | 14 | 11 | 7 |
+| Rare | 17 | 13 | 8 |
 
-Mix shop-ineligible relics into allocations normally.
+Each source has one rarity-roll sequence, generated on demand indefinitely, and independently advancing, shuffled identity sequences per rarity. The shop also has one shuffled sequence containing all Shop-rarity identities.
 
-**Generic opportunity coverage:** advancing ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the stated exhaustion/borrowing boundary. An outside multi-choice offer must not retire unchosen generic entries before those opportunities.
+Ordinary generic reward opportunities must eventually expose every still-eligible entry, subject to the [borrowing boundary](#borrowing). Other sources' multi-choice offers must preserve unchosen generic entries.
 
-##### Source classification and consumption
+##### Source classification
 
-Hidden random relic rewards from combat, chests, events and rest sites, including relic-triggered grants in any room, use the generic rewards source, with source-specific eligibility, regardless of cost (including Ranwid and Mystery Box), subject to explicit source exceptions. Classify deferred payoffs separately from their granting relic.
+By default, hidden random relic rewards use the generic rewards source, including paid rewards and relic-triggered grants. Classify deferred payoffs separately from their granting relic.
 
 ##### Borrowing
 
-**Scope boundary:** borrowing covers source exhaustion. Entire-rarity exhaustion uses the settled chest-refill and final-fallback rules below, which require no alignment. Evaluate source partitioning excluding borrowing's rare tail effects and cross-sequence interactions.
+**Consistency boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
 
-On source exhaustion, borrow the **last eligible remaining identity** of the requested rarity from another sequence. Priority: Courier sequence borrows from generic rewards first; Others borrow from Courier first.
+When the requested rarity has no eligible local entry, borrow the **last eligible entry** from another source's sequence of that rarity. Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
 
-Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
+Apply borrowing during [marker resolution](#filtered-draws), preserving filtered-draw marker placement.
 
-**Fallback — chest refilling:** when same-rarity borrowing fails, retain the normal generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. This also advances later generic rarity rolls. Without a refill candidate, use the final fallback.
+**Chest refill:** when same-rarity borrowing fails for a chest, retain its generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. If none qualify, use the final fallback.
 
-**Final fallback:** starting at the requested rarity, try local entries and same-rarity borrowing before advancing through Shop → Common → Uncommon → Rare, without wrapping or another rarity roll; otherwise return Circlet.
+**Final fallback:** from the requested rarity onward in Shop → Common → Uncommon → Rare, try local entries then same-rarity borrowing at each rarity. Return Circlet if all fail; make no additional rarity roll.
 
-Baseline pool sizes and draw rules: [relic bags](#relic-bags); Catfood's roll limit: [Catfood addressing](#catfood-addressing-and-combat-rewards).
+Baseline: [relic bags](#relic-bags) and [Catfood's rarity-roll limit](#catfood-addressing-and-combat-rewards).
 
 #### Chests
 
@@ -606,7 +610,7 @@ Preserve existing failure feedback, including Alchemize's failure animation. Bat
 - Sale slot uses independent shop-ordinal generation.
 - **Base prices:** use [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 - **Courier cards:** use separate Attack/Skill/Power rarity sequences at shop odds and per-type, per-rarity identity sequences. Colorless restocks request fixed Uncommon or Rare, with one identity sequence each. Preserve unavailable-rarity fallback, exclude cards still displayed, and retain [original mechanics](#shops-chests-and-relic-events).
-- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification-and-consumption).
+- **Wongos:** featured offer consumes **one shop Rare identity**; below 200 gold, suppress the offer without consuming stock as a [consistency fix](#vanilla-deviations). Treat the featured offer as a shop display for [chest lifetime counts](#relic-advancement). Other options use [generic relic rewards](#source-classification).
 
 **Wongos identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from the designated source without placing a new marker. This preserves vanilla's local promotion of skipped identities toward later unrestricted draws; developer intent is unknown. See the [filtered-pull example](#relic-bags).
 
