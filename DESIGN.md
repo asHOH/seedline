@@ -485,9 +485,11 @@ Identical cards remain tied regardless of selection state, acquisition order or 
 
 Preserve display order and intentionally sequential effects; reward offers use their existing entry order before presentation-only swaps.
 
-#### Unordered transformation batches
+#### Transformation batches
 
-Process selected originals in identity-only [card processing order](#card-processing-order). For each input identity, assign replacements in generation order to selected input positions in frozen presentation order.
+A transformation batch comprises the originals selected together.
+
+Generate replacements for selected originals in identity-only [card processing order](#card-processing-order). Within each input identity, pair replacements in generation order with originals in frozen presentation order.
 
 ## Source policies
 
@@ -827,12 +829,12 @@ Use seven pools: the five characters, colorless and curse, separate from card re
 - **Other characters / curse:** one identity sequence per pool.
 
 - **[Transformations](#out-of-combat-card-lifetime):** retain [vanilla target pools, eligibility and gameplay inheritance](#permanent-transformations-and-direct-additions).
-- **Unordered transformation batches:** use [shared batch rules](#unordered-transformation-batches).
+- **Transformation batches:** use [shared batch rules](#transformation-batches).
 - **Direct additions:** use the granting source's pool and restrictions. Infested Automaton's Study / Touch Core use event RNG for rarity, leaving the addition rarity sequence unchanged; identities use the shared permanent own-character sequences.
 
 **Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
 
-**Vanilla deviation — SL 5(↓):** processing unordered transformation batches in [identity order](#unordered-transformation-batches) removes order-dependent replacement alternatives.
+**Vanilla deviation — SL 5(↓):** processing transformation batches in [identity order](#transformation-batches) removes order-dependent replacement alternatives.
 
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions) and [Catfood addressing](#catfood-addressing-and-combat-rewards).
 
@@ -1246,11 +1248,11 @@ Classify cost treatment by the generating source's free effect; natural costs, u
 
 Draw identities without a separate rarity roll. Consume one entry per generated identity, including every offered alternative, under [shared consumption timing](#opportunity-consumption-timing).
 
-For Entropy's unordered selections, use [shared transformation batch rules](#unordered-transformation-batches), then apply replacements in the existing gameplay execution order.
+For each Entropy batch, use [shared transformation batch rules](#transformation-batches), then apply replacements in the existing gameplay execution order.
 
 **Within-combat deviation — SL 4A(↓):** partitioning sequences by pool and cost treatment, while sharing identity supply between generation and Entropy, changes source interactions and removes cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
 
-**Within-combat deviation — SL 4A(↓):** processing Entropy batches in [identity order](#unordered-transformation-batches) removes selection-order rerolls for the same selected batch.
+**Within-combat deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls for the same selected batch.
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
