@@ -519,7 +519,7 @@ On source exhaustion, borrow the **last eligible remaining identity** of the req
 
 Marker resolution follows the same borrowing and marker placement rules as a filtered draw.
 
-**Fallback — chest refilling:** when same-rarity borrowing fails, retain the normal generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, using one additional generic relic rarity RNG draw. This also advances later generic rarity rolls. Without a refill candidate, use the final fallback.
+**Fallback — chest refilling:** when same-rarity borrowing fails, retain the normal generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. This also advances later generic rarity rolls. Without a refill candidate, use the final fallback.
 
 **Final fallback:** starting at the requested rarity, try local entries and same-rarity borrowing before advancing through Shop → Common → Uncommon → Rare, without wrapping or another rarity roll; otherwise return Circlet.
 
@@ -534,7 +534,7 @@ Baseline pool sizes and draw rules: [relic bags](#relic-bags); Catfood's roll li
 - Silver Crucible suppresses the first chest's rewards without advancing chest ordinal; the next chest is ordinal 1.
 - Base gold uses ordinal-addressed generation with the non-empty chest ordinal, independently of combat gold.
 
-Relic generation consumes the rarity roll, chest opportunity and lifetime draw, and exhausts the identity for future chests.
+Relic generation consumes one rarity-roll sequence entry and one chest opportunity, derives the marker-lifetime roll, and exhausts the identity for future chests.
 
 ##### Relic advancement
 
@@ -1345,7 +1345,7 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 
 #### Room resolution
 
-**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll consumes one `UnknownMapPoint` draw. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG state persists across acts. Catfood leaves this unchanged.
+**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll advances `UnknownMapPoint` once. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the draw, without renormalizing the remaining probabilities. Odds reset between acts; RNG state persists across acts. Catfood leaves this unchanged.
 
 **Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
 
@@ -1353,7 +1353,7 @@ Existing mechanics for comparison: vanilla by default, [Catfood differences](#ca
 |---|---|
 | `?` shop exclusion | Shop is excluded when the previous visited map point contained a shop, or every outgoing map node is a shop. Stored shop odds freeze during exclusion. |
 | Juzu Bracelet / Golden Compass | Juzu excludes normal fights from `?` resolution. Golden Compass forces Event during its affected act. |
-| Lantern Key | In Act 3, forces `?` to Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. Like Golden Compass, forced resolution still consumes one `UnknownMapPoint` draw while non-event odds freeze. |
+| Lantern Key | In Act 3, forces `?` to Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. Like Golden Compass, forced resolution still advances `UnknownMapPoint` once while non-event odds freeze. |
 
 #### Event and encounter identities
 
@@ -1384,7 +1384,7 @@ All eight Ancients select their menus with [event RNG](#event-and-encounter-iden
 | Vakuu | One choice from each of three fixed pools. |
 | Nonupeipe | Three choices from a shuffled pool; Beautiful Bracelet joins with ≥4 Swift-eligible cards. |
 
-**Scope of consistency:** some granted effects consume shared RNGs. Neow's Bones shuffles its relic candidates with shared `Rewards` RNG. Dusty Tome also calls `Rewards`, but its eligible pool contains exactly one card per character in this version: Corruption, Wraith Form, The Sealed Throne, Forbidden Grimoire or Biased Cognition. Its payload is therefore fixed by character despite consuming a draw.
+**Scope of consistency:** some granted effects advance shared RNGs. Neow's Bones shuffles its relic candidates with shared `Rewards` RNG. Dusty Tome also calls `Rewards`, but its eligible pool contains exactly one card per character in this version: Corruption, Wraith Form, The Sealed Throne, Forbidden Grimoire or Biased Cognition. Its payload is therefore fixed by character despite advancing `Rewards` once.
 
 **Fur Coat:** selects marked normal-fight/elite map nodes with its own run-seed + player-slot + relic-ID RNG and saves their coordinates. Matching maps reproduce the marks independently of earlier RNG consumption.
 
@@ -1462,23 +1462,23 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 
 #### Enemy AI
 
-**Randomness and selection:** vanilla uses the run-wide `RunRngSet.MonsterAi` for `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, draws `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still consume a draw. Deterministic transitions consume none. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
+**Randomness and selection:** vanilla uses the run-wide `RunRngSet.MonsterAi` for `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, draws `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still advance the AI RNG once. Deterministic transitions leave it unchanged. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
 
 **All-zero fallback:** all-zero branches always choose the first listed move. Flyconid can reach `Smash → Vulnerable Spores → Frail Spores → Smash`, making all effective weights zero; it then selects Vulnerable Spores.
 
 **History and interruption:** `MonsterMoveStateMachine` follows branches until reaching a move and retains its state log for weight checks. Ordinary stun returns to the stored move; Thieving Hopper's Flutter depletion uses a deterministic follow-up. Decimillipede normally cycles `Writhe → Constrict → Bulk`; death leads through `Dead → Reattach → random attack`. After Reattach, the three attacks have equal weights. Revival draws share vanilla's AI RNG across segments.
 
-**Duplicate random selectors:** Inklets, Exoskeletons, Scrolls of Biting, Two-Tailed Rats, and possible pairs of small Leaf Slimes beside Slithering Strangler. Leaf Slimes randomize their opening, then alternate forcibly. Exoskeletons choose equally after Enrage; Skitter forces Mandibles, which leads to Enrage. The normal encounter's fourth copy also has a random opening. Scrolls choose equally between Chomp and a second consecutive Chew after their first Chew; the second Chew forces Chomp, followed by More Teeth and Chew. Forced random-branch selections still consume vanilla draws.
+**Duplicate random selectors:** Inklets, Exoskeletons, Scrolls of Biting, Two-Tailed Rats, and possible pairs of small Leaf Slimes beside Slithering Strangler. Leaf Slimes randomize their opening, then alternate forcibly. Exoskeletons choose equally after Enrage; Skitter forces Mandibles, which leads to Enrage. The normal encounter's fourth copy also has a random opening. Scrolls choose equally between Chomp and a second consecutive Chew after their first Chew; the second Chew forces Chomp, followed by More Teeth and Chew. Forced random-branch selections still advance the vanilla AI RNG.
 
-**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its corresponding selections (second onward) use AI draw indices one apart even with matching eligible moves.
+**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its corresponding selections (second onward) use AI RNG positions differing by one advance even with matching eligible moves.
 
-**Eligibility changes:** Two-Tailed Rats require timer, shared summon limit, space and teammate-intent checks to permit Summon. With Screech on cooldown and both attacks eligible, attack odds `1/2, 1/2` become attack/attack/Summon odds `1/11, 1/11, 9/11` when Summon is allowed, using ideal weight ratios. Changed intervals can select a different ordinary attack at the same AI draw index. After `Screech → Scratch`, blocking Summon can force Disease Bite; this singleton still consumes an AI draw.
+**Eligibility changes:** Two-Tailed Rats require timer, shared summon limit, space and teammate-intent checks to permit Summon. With Screech on cooldown and both attacks eligible, attack odds `1/2, 1/2` become attack/attack/Summon odds `1/11, 1/11, 9/11` when Summon is allowed, using ideal weight ratios. Changed intervals can select a different ordinary attack at the same AI RNG position. After `Screech → Scratch`, blocking Summon can force Disease Bite; this singleton still advances the AI RNG once.
 
 **Rat selection order:** enemies are processed in encounter-slot order, `first` through `fifth`; originals occupy the last three slots. Earlier selected Summon intents block later rats. With equal otherwise-eligible Summon probability `p` and no existing teammate Summon intent, successive rats have probabilities `p`, `(1-p)p`, etc. Existing teammate intents can also block earlier selectors. Sources: `CombatState.SortEnemiesBySlotName`, `CombatManager` player-turn preparation, `TwoTailedRat.CanSummon`.
 
 **Rat history alternatives:** originals open with Scratch, Disease Bite and Screech. Assume the Screech starter and either attacker can be killed before the first random selection. With Summon timer-blocked, the survivor offers Bite/Screech after Scratch or Scratch/Screech after Bite. Vanilla's shared percentile selects Screech in both alternatives or neither: 50% SL availability. Shared move rankings or marker-filtered iid move sequences give `2/3`, preserving each survivor's 50/50 odds. Across all three pairs of opening histories, vanilla interval agreement averages `1/3`, matching shared priorities under equal pair weighting.
 
-**Cross-type draw consumption:** in the lineup `Leaf Slime S → Twig Slime M → Twig Slime S`, killing either small slime removes different numbers of later AI draws: Leaf S selects through random branches even during forced alternation; Twig S has a fixed attack. This can change Twig M's next draw.
+**Cross-type RNG advancement:** in the lineup `Leaf Slime S → Twig Slime M → Twig Slime S`, killing either small slime removes different numbers of later AI RNG advances: Leaf S selects through random branches even during forced alternation; Twig S has a fixed attack. This can shift the AI RNG position used for Twig M's next choice.
 
 **Survivor-choice alternatives:** Flyconid opens with `Smash → Frail Spores`; Twig Slime M with `Sticky Shot → attack`. Assume either can be killed before the next intent selection. The sole survivor uses the same next AI draw:
 
@@ -1495,7 +1495,7 @@ Exactly one kill yields a zero-immediate-damage next intent. Choosing before see
 
 #### Random enemy targeting
 
-Direct random effects and automatic enemy targeting share one run-wide RNG, sampling uniformly among eligible enemies. A singleton selection consumes a draw; an empty set consumes none. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
+Direct random effects and automatic enemy targeting share one run-wide RNG, sampling uniformly among eligible enemies. A singleton selection advances the RNG once; an empty set leaves it unchanged. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
 
 ### Relics, shops and chests
 
@@ -1548,16 +1548,16 @@ Both filtered pulls leave eligible supply. Front bias can affect several later p
 
 #### Shop and Courier RNG
 
-Initial stock and restocks share these player RNGs. Each listed random operation consumes a separate draw; relic identity follows bag order. The counts and interactions below exclude additional item effects.
+Initial stock and restocks share these player RNGs. Each listed random operation advances its RNG once; relic identity follows bag order. The counts and interactions below exclude additional item effects.
 
-| Restock | `Rewards` draws | `Shops` draws |
+| Restock | `Rewards` advances | `Shops` advances |
 |---|---|---|
 | Character card | 2: rarity, upgrade check | 2: identity, price |
 | Fixed-rarity colorless card | 1: upgrade check | 2: identity, price |
 | Relic | 1: rarity | 1: price |
 | Potion | 0 | 3: rarity, identity, price |
 
-Ordinary shop cards suppress random upgrades but still consume the check draw.
+Ordinary shop cards suppress random upgrades but still advance the RNG once for the check.
 
 **Harmful to same-seed consistency — later restock effects:**
 
@@ -1572,7 +1572,7 @@ Thus even one restock per category can interfere. Equivalent slots share generat
 
 #### Card state and selection
 
-**Combat card selection:** selection uses `CombatCardSelection`, except auto-play uses `Shuffle`. `NextItem` consumes a draw for singletons; batch selectors shuffle the full input before taking their count. See [shuffle mechanics](#combat-setup-and-shuffles) for `StableShuffle` ordering.
+**Combat card selection:** selection uses `CombatCardSelection`, except auto-play uses `Shuffle`. `NextItem` advances the RNG once for singletons; batch selectors shuffle the full input before taking their count. See [shuffle mechanics](#combat-setup-and-shuffles) for `StableShuffle` ordering.
 
 **Out-of-combat player-selected card batches:** batch selections are unordered. Deck selectors and reward grids collect the full selection before effects. Enumeration can affect acquisition order (e.g. Sea Glass).
 
@@ -1603,13 +1603,13 @@ The following generators and the six card-generating potions use shared factorie
 
 Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. Jack of All Trades excludes itself.
 
-Stoke, Jackpot, Metamorphosis and Calamity allow duplicate identities. Creative AI and Call of the Void make separate single-card draws, allowing repeats across them. Other multi-card factory batches require distinct identities. Thieving Hopper's theft and random affliction selection also consume `CombatCardGeneration`.
+Stoke, Jackpot, Metamorphosis and Calamity allow duplicate identities. Creative AI and Call of the Void make separate single-card draws, allowing repeats across them. Other multi-card factory batches require distinct identities. Thieving Hopper's theft and random affliction selection also advance `CombatCardGeneration`.
 
 Entropy is the sole random combat transformation source. It transforms selected hand cards in selection order using `CombatCardSelection`, with the [default transformation pool and exclusions](#permanent-transformations-and-direct-additions). Different selected originals can have different eligible lists, making results depend on selection order. Fixed-result transformations and Largesse's multiplayer generation fall outside this policy's scope.
 
 #### Random energy costs
 
-Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide `CombatEnergyCosts` RNG; combat entry preserves its position. Without intervening Confused/Slither rolls, the next Oil uses the next unused draws. Their on-draw rolls, including during Oil's own draw, shift its starting draw index; shuffles, targeting and other RNGs leave it unchanged. Catfood adds no cost-specific patch.
+Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide `CombatEnergyCosts` RNG; combat entry preserves its position. Without intervening Confused/Slither rolls, the next Oil uses the next unused draws. Their on-draw rolls, including during Oil's own draw, shift its starting RNG position; shuffles, targeting and other RNGs leave it unchanged. Catfood adds no cost-specific patch.
 
 | Source | Vanilla mechanics |
 |---|---|
@@ -1659,7 +1659,7 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 
 **Direct card additions:** sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll the base-odds card-offer rates above, with the stated A0–6 direct-addition rates, before identity and independently of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools.
 
-**Permanent transformation's target:** callers use event RNG, `Niche` or player `Transformations` RNG. Use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. `CardFactory` preserves pool enumeration order through filtering, then consumes one RNG draw for a uniform index into the eligible list; batches allow repeated results. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
+**Permanent transformation's target:** callers use event RNG, `Niche` or player `Transformations` RNG. Use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. `CardFactory` preserves pool enumeration order through filtering, then advances the RNG once to obtain a uniform index into the eligible list; batches allow repeated results. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
 
 **Transformation attributes:** Claws copies the original upgrade state and compatible enchantment to Maul (`Claws.CreateMaulFromOriginal`). This gameplay inheritance is separate from initializing fresh hidden selection state.
 
@@ -1678,7 +1678,7 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 
 ### Potions
 
-**Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both the random draw and probability update.
+**Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both RNG advancement for the check and the probability update.
 
 **Potion generation:** ordinary generation rolls 65% Common / 25% Uncommon / 10% Rare, then identity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state.
 
@@ -1736,7 +1736,7 @@ Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: 
 
 **Potions:** drop checks use `player seed` + `cumulative check index`, starting at 0, with vanilla's changing probability. Forced drops also advance this index. Potion factories seed each batch with a shared call index.
 
-**Combat card rewards:** identities/upgrades use room type, count and offer position, separating normal-fight and elite offers. Rarity is rolled before identity; a Rare consumes the current slot's identity draw. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-RNG bug; gameplay impact has not been reproduced.
+**Combat card rewards:** identities/upgrades use room type, count and offer position, separating normal-fight and elite offers. Rarity is rolled before identity; a Rare still advances the current slot's identity RNG once. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-RNG bug; gameplay impact has not been reproduced.
 
 **Card rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`. The separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets. Combat rerolls update their room type's rarity state, potentially shifting later offers; non-Rare rerolls raise the offset, as in vanilla.
 
