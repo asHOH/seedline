@@ -681,7 +681,7 @@ For own-character random-rarity offers:
 2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple.
 3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
 
-Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3. Preserve upgrade timing and modifier order.
+Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3.
 
 #### Rare timing and delivery
 
