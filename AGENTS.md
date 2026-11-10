@@ -9,8 +9,6 @@
 - Write for implementers and design reviewers. Keep authoring instructions here; reading guides serve navigation and interpretation.
 - Use established terms; define new names before use, only for distinct, reusable concepts. Mention edge cases; expand only when material.
 - In address expressions, place purpose before sharing scope.
-- `DESIGN.md` owns settled policies and reusable reference facts independently of `WORKING.md`, which holds unresolved work and supporting evidence.
-- Split independent decisions. Organize `WORKING.md` by choices that can settle independently or require different evidence.
 - Follow [Document hierarchy](DESIGN.md#document-hierarchy): goals/concepts → global rules → mechanisms → shared policies → source policies → reference/appendix.
 - Extract repeated algorithms into mechanisms and cross-source requirements into shared policies. Define shared invariants, boundaries, consumption rules and rationale once; source policies add local rules and exceptions.
 - State requirements in policy text; notes explain them. Put intent/scope first, baseline context last, and rationale beside its rule.
