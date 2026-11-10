@@ -883,7 +883,7 @@ Use event RNG for reward identities, random rarities and Fake Merchant's price r
 
 At run start, independently shuffle each condition's IDs using `purpose = ID order` + condition key. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` independent uniform draws from separate old/new draw sequences addressed by `purpose = insertion` + act + condition key + old/new. Each draw adds its index to the sequence address. Sort each set, assign it along its ID sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` entries from separate old/new sequences of independent uniform rolls, addressed by `purpose = insertion` + act + condition key + old/new. Derive each roll from its sequence address + entry index. Sort each set, assign it along its corresponding ID sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
 
 [Rejected alternatives](#event-selection-alternatives).
 
