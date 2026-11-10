@@ -791,11 +791,9 @@ Resolve Defect's two independent 1% [triple-Claw substitution checks](#card-rewa
 
 #### Rerolls
 
-A reachable reroll follows its source's [offer group](#offer-groups) and, where applicable, the [offer procedure](#offer-procedure), consuming unused entries from that group, including expanded pools. Preserve rarity and offset effects, offer structure and duplicate rules.
+Generate reachable rerolls using the source's [offer group](#offer-groups) and, where applicable, [offer procedure](#offer-procedure), drawing unused entries from that group's sequences, including [expanded pools](#prismatic-gem-and-dingy-rug).
 
-Event-generated supplementary cards use fresh local generation without restarting the original offer's address.
-
-Kaleidoscope's Neow offers cannot be rerolled with Orobas's Driftwood.
+Rerolls of Kaleidoscope's Neow offers are unreachable.
 
 #### Prismatic Gem and Dingy Rug
 
