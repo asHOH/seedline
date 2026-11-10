@@ -8,7 +8,7 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 ## Goals and principles
 
-**Goal:** keep choices and combat challenges comparable across same-seed runs with different routes and decisions. Compare corresponding opportunities—such as each run's first shop or third normal-fight reward—even on different floors.
+**Goal:** keep choices and combat challenges comparable across same-seed runs with different routes and decisions. Compare corresponding opportunities — such as each run's first shop or third normal-fight reward — even on different floors.
 
 **Fairness principle:** preserve meaningful consequences while minimizing unrelated future gameplay changes.
 
@@ -183,7 +183,7 @@ The mod aligns corresponding same-seed opportunities through addresses, shared s
 
 Sources sharing a sequence advance a common progression. Separate supplies limit that interference; finite relic allocations can still interact through borrowing. Ordinal addressing gives corresponding opportunities their own randomness, as with initial shop cards.
 
-“Shared” spans each row's named sources or offer category, within the stated partitions. Source policies supply local exceptions.
+"Shared" spans each row's named sources or offer category, within the stated partitions. Source policies supply local exceptions.
 
 Shared rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
@@ -251,7 +251,7 @@ An entry's address is its original source sequence + original entry position, di
 
 ### Opportunity consumption timing
 
-**Invariant — consumption timing:** for operations that consume opportunities, generate results and advance random state only when those results become available to reveal or receive—even if left unrevealed, declined or skipped.
+**Invariant — consumption timing:** for operations that consume opportunities, generate results and advance random state only when those results become available to reveal or receive — even if left unrevealed, declined or skipped.
 
 Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
 
@@ -267,7 +267,7 @@ Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). At each checkp
 
 **Main idea:** take the next eligible item without pulling skipped items toward the front of later draws.
 
-**Advancement:** return the first eligible entry, then move each later eligible entry to the preceding eligible position. Ineligible positions remain unchanged. For example, if eligible entries `A`, `B`, `C`, … occupy positions 2, 6, 8, …, return `A`, move `B` to 2, `C` to 6, and so on.
+**Advancement:** return the first eligible entry, then move each later eligible entry to the preceding eligible position. Ineligible positions remain unchanged. For example, if eligible entries `A`, `B`, `C`, ... occupy positions 2, 6, 8, ..., return `A`, move `B` to 2, `C` to 6, and so on.
 
 **Method — deferred advancement:** perform the advancement on demand for infinite sequences and finite relic allocations.
 
@@ -396,7 +396,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 
 For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [corrected clocks](#corrected-persistent-clocks) with one frozen selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
-**At combat start:** before selection effects, use each card’s [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling.
+**At combat start:** before selection effects, use each card's [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling.
 
 **During combat:** take the first applicable key for a fresh occurrence:
 
@@ -406,7 +406,7 @@ For combat [selection](#random-combat-card-selection) and [routing](#combat-card
 | Fixed token creation | Token ID + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
 | Other grants | Granting-source ID + committed grant ordinal within that source for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
 
-Pile movement and status or eligibility changes themselves preserve keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input’s combat state and initializes the replacement under the rules above.
+Pile movement and status or eligibility changes themselves preserve keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input's combat state and initializes the replacement under the rules above.
 
 #### Potion effect opportunities
 
@@ -471,7 +471,7 @@ A fixed-position effect such as Havoc takes the card at that position with its c
 
 Compare identity and gameplay-relevant state, including exact upgrades, enchantments, carried values, expiring modifiers and pending effects that reference a particular copy. [Card processing order](#card-processing-order) supplies state comparisons; its final origin rank belongs to shuffle ordering.
 
-**Permanent-deck correspondence:** for Genetic Algorithm, The Scythe and Goopy cards, play can grow the linked permanent card. While Thieving Hopper’s steal is pending, the rule applies to every card identity: theft checks deck links in draw and discard, and player actions can move cards there from hand. In these cases, group combat copies by the exact permanent-deck occurrence they link to, with a separate group for combat-only copies. Each physical card keeps its link through routing, including after a shuffle.
+**Permanent-deck correspondence:** for Genetic Algorithm, The Scythe and Goopy cards, play can grow the linked permanent card. While Thieving Hopper's steal is pending, the rule applies to every card identity: theft checks deck links in draw and discard, and player actions can move cards there from hand. In these cases, group combat copies by the exact permanent-deck occurrence they link to, with a separate group for combat-only copies. Each physical card keeps its link through routing, including after a shuffle.
 
 Within each equivalence class, route the logical occurrence as a unit, including its selection state, shuffle assignment, [Oil hand-entry assignment](#random-energy-costs), copy relationships and any deck link outside the protected cases above. Keep live references with their logical targets.
 
@@ -974,7 +974,7 @@ Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 **Intent:** preserve shared dish order across runs.
 
-Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dedicated dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries—including the previous displayed dish—until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
+Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dedicated dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries — including the previous displayed dish — until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
 
 ##### Wing Charm
 
@@ -1117,7 +1117,7 @@ Baseline: [enemy AI mechanics](#enemy-ai-1).
 
 **Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
 
-**Scope:** opening and later shuffles use the assignment below and cards’ current logical associations.
+**Scope:** opening and later shuffles use the assignment below and cards' current logical associations.
 
 Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply existing opening-hand and shuffle modifiers.
 
@@ -1135,7 +1135,7 @@ The opening Innate subgroup uses [processing order](#card-processing-order), lea
 | Other starting Basics; eligible rewards/direct additions | Source-based priorities below. | Second sequence, most useful first. |
 | Remaining cards | Second sequence: earliest acquisition floor first, then ascending processing order. | Both rows combined, most useful first. |
 
-Freeze the card’s ordering properties at permanent removal and retain them through run end across [checkpoints](#saved-state). Include the entry in opening priority assignment, then omit it. Additions and reordered states can still shift sequential assignments.
+Freeze the card's ordering properties at permanent removal and retain them through run end across [checkpoints](#saved-state). Include the entry in opening priority assignment, then omit it. Additions and reordered states can still shift sequential assignments.
 
 ###### Source-based assignment — Acts 1–2
 
@@ -1280,7 +1280,7 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 - Unordered entry batches share one entry ordinal, with internal ascending [processing order](#card-processing-order) frozen at entry.
 - Sequential draws and explicitly ordered returns, including All for One, preserve source order.
 
-Apply [combat-card routing](#combat-card-routing) to Oil’s hand-entry assignment.
+Apply [combat-card routing](#combat-card-routing) to Oil's hand-entry assignment.
 
 Oil batches are isolated by effect opportunity; the ordinal persists across combats. The [shared deviation](#loss-of-future-outcome-steering) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
 
@@ -1400,7 +1400,7 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
 | Acts | Condition beyond act | Count | Events |
 |---|---|---:|---|
-| 1 (Overgrowth) | None | 8 | Aroma of Chaos; Byrdonis’ Nest; Dense Vegetation; Jungle Maze Adventure; Sapphire Seed; Tablet of Truth; Wellspring; Wood Carvings |
+| 1 (Overgrowth) | None | 8 | Aroma of Chaos; Byrdonis' Nest; Dense Vegetation; Jungle Maze Adventure; Sapphire Seed; Tablet of Truth; Wellspring; Wood Carvings |
 | 1 (Overgrowth) | Gold ≥ 44 | 1 | Whispering Hollow |
 | 1 (Overgrowth) | Gold ≥ 100 | 1 | Morphic Grove |
 | 1 (Overgrowth) | Gold ≥ 149 | 1 | Luminous Choir |
@@ -1420,7 +1420,7 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 | 2 | ≥ 1 potion | 1 | Stone of All Time |
 | 3 | None | 5 | Battleworn Dummy; Hungry for Mushrooms; Reflections; Tinker Time; Trial |
 | 3 | HP ≥ 12 | 1 | Round Tea Party |
-| 3 | A card eligible for Soul’s Power | 1 | Grave of the Forgotten |
+| 3 | A card eligible for Soul's Power | 1 | Grave of the Forgotten |
 | 1–2 | None | 2 | Brain Leech; Room Full of Cheese |
 | 1–2 | Gold ≥ 150 | 1 | Tea Master |
 | 2–3 | None | 2 | Potion Courier; Symbiote |
@@ -1505,7 +1505,7 @@ Direct random effects and automatic enemy targeting share one run-wide RNG, samp
 
 #### Relic bags
 
-**Pools and order:** the fully unlocked player bag contains **122 ordinary relics**—26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag has separately shuffled per-rarity lists; the two bags overlap in identity.
+**Pools and order:** the fully unlocked player bag contains **122 ordinary relics** — 26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag has separately shuffled per-rarity lists; the two bags overlap in identity.
 
 **Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare; fixed-rarity requests consume identity only, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front. Factory rarity rolls default to player `Rewards` RNG; chests use separate `TreasureRoomRelics` RNG.
 
