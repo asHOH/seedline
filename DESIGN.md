@@ -760,9 +760,9 @@ These triples follow shared consumption across sources.
 
 ##### Supplementary cards
 
-**Brain Leech — Share Knowledge:** generate two additional Common/Uncommon cards with event RNG, excluding all identities already selected; use the non-Rare Uncommon probability if no Rare is delivered, otherwise the rare-bearing companion probability.
+**Brain Leech — Share Knowledge:** generate two additional Common/Uncommon cards with event RNG, excluding identities already in the offer. Use the [Uncommon-probability table](#uncommon-probabilities) according to whether a Rare was delivered.
 
-**Room Full of Cheese:** use one Common triple and generate the remaining five Common cards with event RNG.
+**Room Full of Cheese — Gorge:** use one Common triple and generate the remaining five Common cards with event RNG.
 
 ##### A0–6: multiple Rares
 
