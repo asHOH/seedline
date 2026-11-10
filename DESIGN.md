@@ -715,22 +715,21 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 
 Cap each offer at one Rare. If a later slot reaches the next threshold:
 
-- Suppress that Rare and keep the reached threshold pending, retaining luck and the threshold.
+- Keep that threshold pending and continue accumulating luck until delivery; only one Rare can remain pending.
 - Treat suppressed slots as non-Rare for applicable offset updates.
-- Continue accumulating luck; only one Rare can remain pending until delivery.
 
-A **Rare-eligible offer** has a positive chance of producing a Rare along its all-non-Rare progression, ignoring pending delivery.
+An offer is **Rare-eligible** if at least one slot has positive Rare probability along its all-non-Rare progression, ignoring pending delivery.
 
-- **Next eligible offer:** deliver the pending Rare in its first simulated slot instead of that slot's ordinary check. Reset luck, clear pending and advance the threshold once, applying the delivery source's offset rule. Process remaining slots normally.
+- **Next eligible offer:** replace its first simulated slot's ordinary check with the pending Rare. Clear pending and apply the [delivery and offset rules](#luck-and-rarity-offset), then process remaining slots normally.
 - **Ineligible offer:** retain the pending threshold and apply normal non-Rare offset growth.
 
-This naturally excludes the first two three-card normal-rule offers after an offset reset without elite intervention; use probability eligibility rather than room counts. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
+This excludes the first two three-card normal-rule offers after an offset reset without elite intervention. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
 **Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; additional Rares beyond the single pending one are omitted. **Frequency:** rare — approximately **0.3% of vanilla A7+ runs** contain a dual-Rare offer from these sources (project-owner estimate).
 
 ##### A0–6: Rare delivery
 
-Deliver every threshold crossing immediately under the shared luck and source-offset rules, without a per-offer cap or deferral.
+Deliver every threshold crossing immediately.
 
 #### Offer construction
 
