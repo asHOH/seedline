@@ -93,7 +93,7 @@ A source policy may cover:
 |---|---|
 | Intent | Consistency goal. |
 | Scope | Covered operations. |
-| Purpose | What each draw or sequence determines. |
+| Purpose | What the randomness determines. |
 | Generation | How outcomes are produced. |
 | Selection | How eligible candidates are chosen. |
 | Sharing scope | Which operations share randomness. |
@@ -126,12 +126,12 @@ A source policy may cover:
 - **[Random state](#rng-derivation-and-addressing):** internal information tracking random processes across operations.
 - **Partitioning:** separation of random state or finite stock by category, such as source, pool or purpose. Random-state partitions may draw from overlapping pools.
 - **Isolation:** separation of randomness between opportunities, such as combats or potion uses. Consumption within one leaves another's assigned draws or sequences unchanged.
-- **Purpose:** the role of a draw or sequence, such as selection, ordering or upgrading.
+- **Purpose:** what the randomness determines, such as selection, ordering or upgrading.
 - **Roll:** one random draw for a purpose.
 - **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered collection of entries, such as random values or item identities. Repeated values or identities are distinct entries.
 - **Allocation:** finite relic stock assigned to a source and ordered into sequences.
 - **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
-- **Filter:** the eligibility conditions for a draw.
+- **Filter:** conditions determining which candidates or entries are eligible.
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
 - **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope. For example, **Shop-ordinal generation** names the shop case.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
