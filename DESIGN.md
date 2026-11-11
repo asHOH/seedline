@@ -916,11 +916,9 @@ Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinar
 
 ### Ancient offerings
 
-**Intent:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure.
+**Intent:** align Ancient offerings when eligibility changes.
 
-**Scope:** Ancient offering selection. Granted effects follow their policies separately.
-
-Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option ID: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
+Use [fixed priorities](#fixed-selection-priorities) with vanilla weights, keyed by Ancient ID + option-pool ID + option ID, for Orobas's third pool, Pael's second/third, Tezcatara's first, and Tanx's and Nonupeipe's pools. Display each pool's selections in priority order.
 
 Retain vanilla generation and RNG positions for other menu components.
 
