@@ -213,7 +213,7 @@ Rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
 | Sources | Rarity | Identity supply |
 |---|---|---|
-| [Permanent transformations / direct additions](#permanent-transformations-and-direct-card-additions) | Separate rarity sequences where used; the Infested Automaton event uses event RNG. | Shared permanent-card sequences by pool. |
+| [Permanent transformations / direct additions](#permanent-transformations-and-direct-card-additions) | Transformations: no rarity roll. Random-rarity additions: per-pool sequences; Infested Automaton uses event RNG. | One shared uniform identity sequence per pool. |
 | [Potion-generated cards](#potion-generated-cards) | No rarity roll. | Uniform draws per potion-type effect batch. |
 | [Combat generation / Entropy](#combat-card-generation-and-transformations) | No rarity roll. | Uniform combat-local sequences by group and pool. |
 
@@ -435,7 +435,7 @@ Each potion type has its own run-wide effect ordinal:
 
 **Scope:** relics, potions, cards, permanent transformations and covered direct additions.
 
-With per-rarity identity sequences, a random-rarity request consumes one value from its **rarity-roll sequence**, then draws an eligible item from that rarity's **identity sequence** using the [filtered-draw mechanism](#filtered-draws). Fixed-rarity requests consume identity only; pools with one identity sequence draw directly. Source policies specify sharing and RNG exceptions; [generation sharing](#generation-sharing) summarizes them.
+When a source rolls rarity, consume one value from its **rarity-roll sequence**; fixed-rarity requests consume identity only. Use [filtered draws](#filtered-draws) on the per-rarity **identity sequence** where present; otherwise filter the pool's sequence to the requested rarity, if any. Source policies specify sharing and RNG exceptions; [generation sharing](#generation-sharing) summarizes them.
 
 **Generation and lifetime:** potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
 
@@ -820,13 +820,10 @@ Lasting Candy draws from the inherited pool's Power sequences while retaining it
 
 **Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
-For random results, use seven pools: the five characters, colorless and curse, separate from card reward offers and combat transformations. Consume individual identity entries:
+For random results, transformations and additions share one uniform identity sequence per pool: the five characters, colorless and curse. Keep these separate from card reward offers and combat transformations.
 
-- **Own character / colorless:** for each pool, transformations and additions share Common/Uncommon/Rare identity sequences, with separate transformation/addition rarity sequences. Transformations weight rarities by current eligible identity counts, excluding the original; random-rarity additions use vanilla base odds and unavailable-rarity fallback.
-- **Other characters / curse:** one identity sequence per pool.
-
-- **Transformations:** follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
-- **Infested Automaton:** Study and Touch Core use event RNG for rarity, leaving the addition rarity sequence unchanged.
+- **Transformations:** draw directly, filtering out the original identity; follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
+- **Direct additions:** preserve fixed rarities; random rarities use per-pool rarity sequences at vanilla base odds, except Infested Automaton's Study and Touch Core use event RNG. Apply unavailable-rarity fallback within the source's eligible pool, then filter the identity sequence by rarity and source restrictions.
 
 **Vanilla deviation — SL 5(↓):** processing batches in [identity order](#transformation-batches) removes order-dependent alternatives.
 
@@ -1132,7 +1129,7 @@ Freeze the card's ordering properties at permanent removal and retain them throu
 Use [offer groups](#offer-groups) and [permanent-card sequences](#permanent-transformations-and-direct-card-additions) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
 
 - **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
-- **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered or transformation-filter-only generation.
+- **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered, rarity-only or transformation-filter-only generation.
 - **Triple key assignment:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + `purpose = assignment` + card ID. Freeze that choice at acquisition; the others enter the remaining group.
 - **Transformations:** treat as deletion plus direct addition.
 - **Copies and event-local supplementary cards:** enter the remaining group.
