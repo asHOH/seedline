@@ -159,7 +159,7 @@ The mod aligns same-seed opportunities through addresses, shared state for relat
 ### Encounter
 
 - **Rooms and events:** align unforced `?` resolutions within each act and improve event agreement as eligible pools change.
-- **Selection:** selection keys and [persistent selection state](#persistent-clocks) retain alignment across choices. [Routing](#routing) makes equivalent card clicks select the same logical occurrence; eligibility histories and position-dependent effects still matter.
+- **Selection:** selection keys and [persistent selection state](#persistent-clocks) retain alignment across choices. [Routing](#routing) makes clicks on equivalent copies select the same logical occurrence; eligibility histories and position-dependent effects still matter.
 - **Combat:** scope setup, enemy behavior and card randomness to each battle. Potion-generated cards and Oil costs use potion-effect ordinals across battles.
 
 #### Non-combat
@@ -286,7 +286,7 @@ Markers record pending advancements and freeze eligibility conditions at the ori
 - If the resolved entry fails `Y`, retain it at the marker's former position and continue searching for `Y`.
 - If it satisfies `Y`, return it and place a marker for `Y` there. The marker for `X` remains at the supplying position, representing an advancement of `X` followed by an advancement of `Y`.
 
-Apply the same rule recursively to further collisions, including identical filters: two advancements require two markers.
+Apply the rule recursively to further collisions, including identical filters: two advancements require two markers.
 
 If an allocation has no eligible entry to resolve a marker after [borrowing](#borrowing), expire that marker, then continue the draw.
 
@@ -333,9 +333,9 @@ Use [persistent clocks](#persistent-clocks) for selection. An already randomly s
 2. Assign each participating class's remaining logical occurrences in address order to its unclicked copies in frozen presentation order.
 3. Apply effects after selection is complete.
 
-Commit the association permutation and clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Singleton and whole-class player selections follow this same rule.
+Commit the association permutation and clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Singleton and whole-class player selections follow this rule.
 
-**Coupling limit:** for single selections from matched nested sets of two and three occurrences, shared independent priorities select matching logical occurrences with probability `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
+**Coupling limit:** for single selections from nested sets of two and three selection keys, shared independent priorities select the same key with probability `2/3`, maximal for uniform selection. Different selection keys or eligibility histories can reduce agreement.
 
 ### Opportunity-specific selection priorities
 
@@ -485,7 +485,7 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) to random-operation processing of unordered card batches. Source policies specify applicable comparisons.
 
-Identical cards remain tied regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under [card equivalence](#card-equivalence).
+Preserve ties regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under [card equivalence](#card-equivalence).
 
 Preserve display order and intentionally sequential effects; reward offers use their entry order before presentation-only swaps.
 
@@ -548,7 +548,7 @@ Silver Crucible's empty chest room generates neither reward and leaves the chest
 
 **Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
 
-Draw the next eligible shared relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers). Both choices advance along the same path:
+Draw the next eligible shared relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers).
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
 - **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as an [ordinary reward entry](#opportunity-consumption-timing).
@@ -571,7 +571,7 @@ Other-source consumption can shorten future marker lifetimes; existing lifetimes
 
 **Probability:** a single acquisition matches vanilla's character-specific probabilities under the [reference assumptions](#chest-marker-probabilities).
 
-**Alignment:** with matching draws and eligibility and no borrowing, acquire and skip share the future sequence until expiry.
+**Alignment:** with identical subsequent draw requests and eligibility, and no borrowing, acquire and skip share the future sequence until expiry.
 
 **Vanilla deviation — NoSL 3:** skipping a chest, visiting a shop, then acquiring another chest's relic can slightly shift later character-specific reward probabilities.
 
@@ -587,7 +587,7 @@ Potion copies carry no persistent selection state; use, discard and trade affect
 
 Separate **generic rewards**, **shop**, **Courier** and **potion-generating effects**. Generic rewards combine combat, event and other grants regardless of cost; generating effects cover Alchemize, Entropic Brew and Delicate Frond, including outside combat.
 
-Each source has Common/Uncommon/Rare identity sequences over the full eligible pool and a [standard-weight rarity sequence](#potions-1). Generic uniform-identity rewards use a separate rarity sequence weighted by eligible identity counts, sharing the same identity sequences.
+Each source has Common/Uncommon/Rare identity sequences over the full eligible pool and a [standard-weight rarity sequence](#potions-1). Generic uniform-identity rewards use a separate rarity sequence weighted by eligible identity counts, sharing the identity sequences.
 
 **Consumption:** direct inventory grants advance rarity and identity state only for acquired potions, including partial batches. Offers follow [consumption timing](#opportunity-consumption-timing), even if unclaimed. Preserve failure feedback.
 
@@ -713,7 +713,7 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 
 **Rationale:** before deferral, exponential thresholds preserve the supplied waiting probabilities: `P(no Rare through n slots) = exp(-sum(-ln(1 - p_i))) = product(1 - p_i)`.
 
-**Competition effect — luck coupling:** with matched luck, threshold, offset and three-card offers, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. This guarantee ends when either branch delivers a Rare.
+**Competition effect — luck coupling:** for three-card offers with equal starting luck, threshold and offset, an elite leaves more luck than a normal fight if neither delivers a Rare. The lead survives boss rewards and act transitions; with equal later increments, the elite branch reaches the shared threshold no later. This guarantee ends when either branch delivers a Rare.
 
 ##### A7+: one Rare per offer and deferral
 
@@ -931,10 +931,10 @@ Baseline: [Ancient offerings](#ancient-offerings-1).
 Offer the first three owned potions in slot order, preserving display order. Use the [reward-rarity mapping and allowed card types](#card-reward-offers-1); generated cards follow [type-specific offers](#type-specific-offers).
 
 - Use three independent event-local type sequences, addressed by event ID + `purpose = type assignment` + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + `purpose = ordering` + potion ID + duplicate number. Number identical offered copies from 1 in slot order.
+- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + `purpose = ordering` + potion ID + duplicate number. Number offered copies of each potion ID from 1 in slot order.
 - Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
 
-**Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Identical copies retain the same multiset of trades when reordered.
+**Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Reordering copies of one potion ID preserves their multiset of trades.
 
 ### Ranwid relic sacrifice
 
@@ -942,7 +942,7 @@ To align sacrificed relics, offer one tradable owned relic using [fixed prioriti
 
 ### Relic Trader
 
-**Intent:** align replacement relics; prioritize outgoing-relic overlap over trade matching.
+**Intent:** align replacement relics; prioritize outgoing-relic overlap over preserving each relic's replacement pairing.
 
 #### Replacement relics
 
@@ -980,10 +980,10 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering]
 
 | Source / extra group | Group-selection roll | Selection within the extra group |
 |---|---|---|
-| Rare-bearing Brain Leech: two supplementary positions | Event RNG. | If both cards are eligible, select uniformly with an independent event-RNG roll under a separate purpose. Matching eligible extras retain the same target whenever both runs select the group. |
+| Rare-bearing Brain Leech: two supplementary positions | Event RNG. | If both cards are eligible, select uniformly with an independent event-RNG roll under a separate purpose. When both runs select the group and the same supplementary positions are eligible, they select the same position. |
 | Lasting Candy: added Power | Power sequence entry + `purpose = Wing Charm`, evaluated only if the Power is eligible; otherwise use the triple directly. | Select the Power. Qualifying combat offers have three base cards, so there are no other supplementary candidates. |
 
-**Other batches:** use the same entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
+**Other batches:** use entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
 
 The [presentation shuffle](#presentation) removes the shared triple's visible enchantment-position bias.
 
@@ -1072,7 +1072,7 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 #### Rat sampling
 
-**Intent:** realign non-Summon choices at matching rounds, selection positions and eligibility; align summoned openings independently of birth timing.
+**Intent:** realign later non-Summon choices by combat round and round-local selection ordinal when eligible moves agree; align summoned openings independently of birth timing.
 
 **Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
 
@@ -1105,7 +1105,7 @@ Baseline: [enemy AI mechanics](#enemy-ai-1).
 
 ### Card shuffling
 
-**Intent:** align source-matched cards in Acts 1–2 and usefulness ranks in Act 3, accepting rank-based shifts.
+**Intent:** align cards by source-based shuffle key in Acts 1–2 and usefulness rank in Act 3, accepting rank-based shifts.
 
 **Scope:** opening and later shuffles use the assignment below and cards' current logical associations. Shuffle outcomes must be independent of original deck sequence.
 
@@ -1244,7 +1244,7 @@ For each Entropy batch, use [transformation batch rules](#transformation-batches
 
 **Within-combat deviation — SL 4A(↓):** partitioning sequences by pool and cost treatment, while sharing identity supply between generation and Entropy, changes source interactions and removes cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
 
-**Within-combat deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls for the same selected batch.
+**Within-combat deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls.
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
@@ -1536,7 +1536,7 @@ One-rarity example, front at left; `K` is character-specific. Acquire and skip a
 
 **Eligibility:** pool membership, requested rarity and depletion constrain every draw. Run-state `IsAllowed` failures are purged from all rarity lists in the queried bag. Source filters instead retain skipped entries. Shops and Wongos require `IsAllowedInShops`, excluding Amethyst Aubergine (Common), Bowler Hat and Lucky Fysh (Uncommon), Old Coin and The Courier (Rare). Wongos is the only non-shop ordinary-bag caller with an additional identity filter; Relic Trader's tradability restriction applies to outgoing relics, not replacements.
 
-**Filtered relic pulls:** remove the first matching entry from the requested end and compact the list. For one uniformly shuffled rarity with two shop-eligible identities and one shop-ineligible identity:
+**Filtered relic pulls:** remove the first eligible entry from the requested end and compact the list. For one uniformly shuffled rarity with two shop-eligible identities and one shop-ineligible identity:
 
 | First pull | Chance the next unrestricted front pull is shop-ineligible |
 |---|---|
@@ -1584,7 +1584,7 @@ Ordinary shop cards suppress random upgrades but still advance the RNG once for 
 - **Card → relic; relic → character card:** rarity, identity and price can change. Both also shift potion rarity, identity and price; relics shift fixed-rarity colorless card identity/price.
 - **Potion → card:** identity and price can change. **Potion → relic:** price only; rarity and bag order stay unchanged.
 
-Thus even one restock per category can interfere. Equivalent slots share generators; matching RNG state, request and candidates preserves outcomes. Events may consume shared rewards/bags despite having event RNG.
+Thus even one restock per category can interfere. Identical RNG state, requests and ordered candidate lists reproduce outcomes. Events may consume shared rewards/bags despite having event RNG.
 
 ### Cards
 
@@ -1722,7 +1722,7 @@ Attack/Skill/Power Potions offer three distinct eligible own-character cards of 
 
 These six potions and Snecko Oil are combat-only.
 
-All six use the [combat-card factory mechanics](#combat-card-generation-and-transformations-1). Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools, matching vanilla.
+All six use the [combat-card factory mechanics](#combat-card-generation-and-transformations-1). Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools.
 
 ### Combat gold
 

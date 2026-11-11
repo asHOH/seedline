@@ -18,7 +18,7 @@ Evaluate stages 1–3 using each identity's unupgraded, unenchanted base propert
 
 ## Comparison order
 
-Evaluate stages 1–7 in order. Within a stage, compare its rows from top to bottom. The first strict difference decides; later stages cannot override it. Identical copies remain tied.
+Evaluate stages 1–7 in order. Within a stage, compare its rows from top to bottom. The first strict difference decides; cards equal under all seven stages remain tied.
 
 ### 1. Category
 
@@ -56,7 +56,7 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 | 2 | Carried card value | Higher carried damage or Block ranks later; includes accumulated in-combat gains. Enchantment-owned bonuses use the enchantment rows. |
 | 3 | Enchantment rank | Authored enchantment order below. |
 | 4 | Enchantment amount | Lower < higher. |
-| 5 | Momentum's carried bonus | Within either Momentum rank, lower accumulated damage < higher, including inherited bonus on copies. |
+| 5 | Momentum's carried bonus | Within either Momentum rank, lower accumulated damage < higher. |
 | 6 | Upgrade state | `unupgraded < temporarily downgraded < upgraded`; definitions below. |
 | 7 | Guilty combat count | Guilty: fewer combats completed < more. Ignore Dowsing's room progress. |
 | 8 | Ethereal | `none < Ethereal`. |
@@ -89,7 +89,7 @@ After deferred tie-breaks, use these deterministic tie-breakers in order:
 | 2 | Slither card's lasting energy cost | Lower < higher; stage 3 retains its fixed Slither tier. |
 | 3 | Active cost modifiers | Compare star modifiers, then energy modifiers, using the rule below. |
 
-Compare each modifier list in application order. Within each modifier, compare expiration (turn-or-play < turn-only < until-played < combat-long), operation (set < add), value ascending, then reduce-only flag (false < true); star modifiers use expiration and value. If one list is an exact prefix of the other, the shorter list comes first. Include active modifiers whose effects are currently masked; cleared modifiers and acquisition history stay outside this comparison.
+Compare modifier lists entry by entry in application order. For each pair, compare expiration (turn-or-play < turn-only < until-played < combat-long), operation (set < add), value ascending, then reduce-only flag (false < true); star modifiers use expiration and value. If all paired entries tie, compare list lengths, shorter first. Include active modifiers whose effects are currently masked; cleared modifiers and acquisition history stay outside this comparison.
 
 Slither uses the resulting energy cost under [lasting properties](#property-scope), including before its first roll and after later overrides. Equal current costs can diverge as their modifiers expire.
 
