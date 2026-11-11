@@ -875,15 +875,15 @@ Baseline: [room restrictions and chance updates](#room-resolution).
 
 #### Act entry and carryover
 
-**Alignment:** shared-event order is secondary; sufficiently rare prefix-agreement losses are acceptable.
+**Alignment:** accept rare earlier mismatches for better agreement in the order of events two runs encounter.
 
-At run start, independently shuffle each condition's IDs using `purpose = ID order` + condition key. This fixes each arriving group's internal order. At act entry, retain surviving unvisited IDs in their current order, remove expired IDs and insert newly act-available, unvisited IDs in their run-start order. Run-wide visited exclusions persist.
+At run start, independently shuffle each condition's IDs using `purpose = ID order` + condition key.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` entries from separate old/new sequences of independent uniform rolls, addressed by `purpose = insertion` + act + condition key + old/new. Derive each roll from its sequence address + entry index. Sort each set, assign it along its corresponding ID sequence in existing order, then merge by priority. This preserves uniform interleaving and both internal orders.
+At act entry, rebuild each condition's sequence using only unvisited IDs available in that act. Preserve survivors' order and insert newly available IDs in their run-start order.
 
-[Rejected alternatives](#event-selection-alternatives).
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` old and `m` new independent uniform rolls, addressed by `purpose = insertion` + act + condition key + old/new + entry index. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform. [Rejected alternatives](#event-selection-alternatives).
 
-Restore passed scheduling entries: each act-available, unvisited ID contributes one entry, including IDs whose condition currently fails. This removes earlier-act depletion while retaining ID order.
+**Remaining counts:** reset each condition's count to its number of act-available, unvisited IDs, even when the condition currently fails.
 
 #### Within-act selection
 
