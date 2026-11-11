@@ -61,7 +61,7 @@ Compare single-player runs with matching seeds, versions and rules, and all cont
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.
 
-**Default difficulty:** Scarcity (Ascension 7+); below A7, use the corresponding probabilities.
+**Default difficulty:** Scarcity (Ascension 7+); below A7, use A0–6 probabilities.
 
 **Discussion boundary:** describe base random outcomes and modifier interactions that affect random operations. Preserve modifiers, including eggs, Fresnel Lens and fixed discounts.
 
@@ -144,7 +144,7 @@ A source policy may cover:
 
 ## Architecture overview
 
-The mod aligns corresponding same-seed opportunities through addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
+The mod aligns same-seed opportunities through addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
 
 ### Rewards
 
@@ -181,7 +181,7 @@ The mod aligns corresponding same-seed opportunities through addresses, shared s
 
 ### Generation sharing
 
-Sources sharing a sequence advance a common progression. Separate supplies limit that interference; finite relic allocations can still interact through [borrowing](#borrowing). Ordinal addressing gives corresponding opportunities their own randomness, as with initial shop cards.
+Sources sharing a sequence advance a common progression. Separate supplies limit that interference; finite relic allocations can still interact through [borrowing](#borrowing). Ordinal addressing gives opportunities their own randomness, as with initial shop cards.
 
 "Shared" spans each row's named sources or offer category, within the stated partitions. Source policies supply local exceptions.
 
@@ -603,7 +603,7 @@ Derive each drop-check roll from the drop-check ordinal.
 
 ### Shops, Wongos and Courier
 
-**Intent:** align corresponding shops independently of rewards and Courier restocks.
+**Intent:** align shops independently of rewards and Courier restocks.
 
 #### Stock and prices
 
@@ -613,7 +613,7 @@ Derive each drop-check roll from the drop-check ordinal.
 - **Sale slot:** derive independently from shop ordinal.
 - **Base prices:** derive from `purpose = base price` + [entry address](#entry-addresses) for initial stock and Courier restocks. Initial shop cards use shop ordinal + slot as their entry address.
 
-**Alignment boundary:** eligibility changes, including [relic floor cutoffs](#relic-bags), can change corresponding stocks.
+**Alignment boundary:** eligibility changes, including [relic floor cutoffs](#relic-bags), can weaken stock alignment.
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
@@ -776,7 +776,7 @@ Replace the first Common in offer entry order, or the first Uncommon if no Commo
 
 **Replacement state:** identity and [upgrade roll](#upgrade-rolls) come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership, and its [Acts 1–2 shuffle membership](#source-based-assignment--acts-12).
 
-**Accepted tradeoff:** prior Rare counts and companion composition can weaken alignment between corresponding offers.
+**Accepted tradeoff:** prior Rare counts and companion composition can weaken alignment between offers built from the same triple.
 
 **Vanilla deviation — NoSL 3:** Common-first replacement favors Uncommon companions in multi-Rare offers. **Frequency:** rare — about **2% of vanilla elite offers** in the [A0–6 calibration](#rarity-calibration).
 
@@ -831,7 +831,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 ### Combat gold
 
-**Intent:** align corresponding normal-fight and elite gold rewards independently.
+**Intent:** align normal-fight and elite gold rewards independently.
 
 **Generation and addressing:** derive each roll from `purpose = gold reward` + combat category (normal fight or elite) + that category's gold-reward ordinal. Event battles use their encounter's room type. Roll uniformly over vanilla's adjusted inclusive gold range.
 
@@ -968,7 +968,7 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 ### Wing Charm
 
-**Intent and scope:** align Swift targets across corresponding generated rewards, preserving generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
+**Intent and scope:** align Swift selection across generated rewards through shared entry priorities, preserving generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
 Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering](#offer-procedure). Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
@@ -1033,7 +1033,7 @@ Reflections applies downgrades in ascending pre-selection downgrade-clock order:
 
 ### Encounter setup
 
-**Intent:** align corresponding combat setups within an act regardless of earlier-act combat counts.
+**Intent:** align combat setups within an act regardless of earlier-act combat counts.
 
 Use the [combat address](#combat-addresses) + `purpose = setup`.
 
@@ -1290,7 +1290,7 @@ Failed channeling consumes zero.
 
 ### Potion-generated cards
 
-**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid across corresponding card-generation opportunities.
+**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid.
 
 Partition generation state by potion type, separately from other combat generation; isolate each complete batch by addressing it with potion type + its [effect ordinal](#potion-effect-opportunities).
 
@@ -1488,7 +1488,7 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 
 **Duplicate random selectors:** Inklets, Exoskeletons, Scrolls of Biting, Two-Tailed Rats, and possible pairs of small Leaf Slimes beside Slithering Strangler. Leaf Slimes randomize their opening, then alternate forcibly. Exoskeletons choose equally after Enrage; Skitter forces Mandibles, which leads to Enrage. The normal encounter's fourth copy also has a random opening. Scrolls choose equally between Chomp and a second consecutive Chew after their first Chew; the second Chew forces Chomp, followed by More Teeth and Chew. Forced random-branch selections still advance the vanilla AI RNG.
 
-**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its corresponding selections (second onward) use AI RNG positions differing by one advance even with matching eligible moves.
+**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its selections (second onward) use AI RNG positions differing by one advance even with matching eligible moves.
 
 **Eligibility changes:** Two-Tailed Rats require timer, shared summon limit, space and teammate-intent checks to permit Summon. With Screech on cooldown and both attacks eligible, attack odds `1/2, 1/2` become attack/attack/Summon odds `1/11, 1/11, 9/11` when Summon is allowed, using ideal weight ratios. Changed intervals can select a different ordinary attack at the same AI RNG position. After `Screech → Scratch`, blocking Summon can force Disease Bite; this singleton still advances the AI RNG once.
 
