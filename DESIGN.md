@@ -867,7 +867,9 @@ Baseline: [room restrictions and chance updates](#room-resolution).
 
 ### Ordinary-event selection
 
-**Intent and scope:** keep event sequences matching across same-seed runs for as long as possible, even as eligibility and acts change. Ordinary events exclude [Ancients](#ancient-offerings) and [events with forced identities](#forced-events).
+**Intent:** keep event sequences matching across same-seed runs for as long as possible, even as eligibility and acts change.
+
+**Scope:** ordinary events, excluding [Ancients](#ancient-offerings) and [events with forced identities](#forced-events).
 
 **Conditions:** group event IDs by equivalent eligibility predicates, excluding act availability and [late eligibility checks](#event-eligibility), with one key per condition. Act availability determines participating IDs; evaluate late checks when selecting an ID.
 
@@ -916,7 +918,9 @@ Lantern Key's forced War Historian Repy follows this bypass.
 
 ### Ancient offerings
 
-**Intent and scope:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure. Granted effects follow their policies separately.
+**Intent:** align Ancient offerings when eligibility changes. Preserve vanilla weights and menu structure.
+
+**Scope:** Ancient offering selection. Granted effects follow their policies separately.
 
 Use [fixed priorities](#fixed-selection-priorities) keyed by Ancient ID + option-pool ID + option ID: one from Orobas's third pool, Pael's second/third and Tezcatara's first; three from Tanx's and Nonupeipe's three-choice pools. Preserve survivors' relative display order.
 
@@ -968,7 +972,9 @@ Generate one persistent event-local sequence of independent draws over all rando
 
 ### Wing Charm
 
-**Intent and scope:** align Swift selection across generated rewards through shared entry priorities, preserving generation-batch boundaries and modifier order. This includes eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
+**Intent:** align Swift selection through shared entry priorities, preserving generation-batch boundaries and modifier order.
+
+**Scope:** generated rewards and eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
 
 Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering](#offer-procedure). Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
 
@@ -1225,7 +1231,9 @@ Baseline: [random enemy targeting](#random-enemy-targeting).
 
 ### Combat card generation and transformations
 
-**Intent and scope:** align random identities from combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their scope.
+**Intent:** align random card identities.
+
+**Scope:** combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their scope.
 
 Use independent sequences addressed by [combat address](#combat-addresses) + `purpose = card generation` + group + pool below. All copies and triggers sharing a group and pool use the same sequence.
 
@@ -1290,7 +1298,9 @@ Failed channeling consumes zero.
 
 ### Potion-generated cards
 
-**Intent and scope:** align random card generation from Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid.
+**Intent:** align random card generation.
+
+**Scope:** Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid.
 
 Partition generation state by potion type, separately from other combat generation; isolate each complete batch by addressing it with potion type + its [effect ordinal](#potion-effect-opportunities).
 
