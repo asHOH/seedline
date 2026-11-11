@@ -2,13 +2,19 @@
 
 **Status:** preliminarily settled — ready for use, with fine-tuning remaining.
 
-Detailed ranking for the [card processing order contract](DESIGN.md#card-processing-order). Source-specific projections, including identity-only transformations, retain that contract.
+Detailed ranking for the [card processing order policy](DESIGN.md#card-processing-order).
 
 ## Property scope
 
-**Lasting properties** are current card properties with modifiers that survive turn boundaries until this instance's next play within the combat. Include qualifying temporary and shared effects, such as Spiked Gauntlets' +1 Power cost, Corruption's free Skills, Bookmark and upgraded Enlightenment. Burst and Echo Form contribute no replay; Ringing Triangle contributes no Retain.
+**Lasting properties** are current card properties with modifiers that survive turn boundaries until this instance's next play within the combat. Include card-specific effects such as Bookmark and upgraded Enlightenment, and persistent shared effects such as Spiked Gauntlets' +1 Power cost and Corruption's free Skills. Exclude shared charges another card can consume, including Pounce's next-Skill discount. Burst and Echo Form contribute no replay; Ringing Triangle contributes no Retain.
 
-**Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stage 4 gives Bound, card-specific availability and temporary keywords their own rows; its turn-effect block compares presence and temporary costs. Until-played effects that survive turn boundaries, including Pounce's next-Skill discount, leave that block unchanged. Stage 6's state tie-breakers also include turn-limited state. Other property comparisons use lasting properties. Apply the [scope exclusions](#scope-exclusions) throughout.
+**Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stage 4 compares their presence, costs and temporary keywords separately from Bound and card-specific availability. Stage 6 also includes turn-limited state.
+
+Other comparisons use lasting properties. Apply the [scope exclusions](#scope-exclusions) throughout.
+
+## Identity-only order
+
+Evaluate stages 1–3 using each identity's unupgraded, unenchanted base properties, excluding instance state and combat effects. Resolve any remaining tie between distinct identities with stage 3's identity row; copies of the same identity remain tied.
 
 ## Comparison order
 
@@ -18,11 +24,11 @@ Evaluate stages 1–7 in order. Within a stage, compare its rows from top to bot
 
 Curse (including Quests beside Injury) < Status < Strike < Defend < Other Basic < Other Attack < Other Skill < Power.
 
-Strike/Defend means starter identities. With replay >= 1, they move to Other Attack/Skill.
+Strike/Defend means starter identities. With replay >= 1, they promote to Other Attack/Skill.
 
 ### 2. Replay
 
-Replay counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted starter Strikes/Defends. Preserve fractions: `1, 2, 3` becomes `0, 0.5, 1`.
+Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted starter Strikes/Defends. Preserve fractions: `1, 2, 3` becomes `0, 0.5, 1`.
 
 ### 3. Within-category order
 
@@ -55,25 +61,21 @@ Replay counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted s
 | 7 | Guilty combat count | Guilty: fewer combats completed < more. Ignore Dowsing's room progress. |
 | 8 | Ethereal | `none < Ethereal`. |
 | 9 | Sly | `none < Sly`. |
-| 10 | Fetch / pending-return availability | Fetch: draw spent < draw available. Bolas / Thrumming Hatchet: no pending return < pending return. These card-specific comparisons share one row. |
+| 10 | Fetch / pending-return availability | Fetch's first-play draw this turn: spent < available. Bolas / Thrumming Hatchet's return at the next hand draw: none pending < pending. |
 | 11a | Turn-effect presence | `none < turn effect`. |
-| 11b | Temporary star cost | If both have turn effects, compare resulting star costs: `(absent = 0) < X < 1 < 2 < ...`. |
-| 11c | Temporary energy cost | If both have turn effects, compare resulting energy costs: `0 < X < 1 < 2 < 3 < ...`. This row uses Slither's actual temporary cost. |
+| 11b | Star cost with turn effects | If both have turn effects, compare resulting star costs: `(absent = 0) < X < 1 < 2 < ...`. |
+| 11c | Energy cost with turn effects | If both have turn effects, compare resulting energy costs: `0 < X < 1 < 2 < 3 < ...`, including Slither's actual cost. |
 | 12 | Temporary keywords | `none < temporary Retain / temporary Sly`. Either or both satisfy the present tier; stage 6 resolves their internal order. |
 
 Carried values include Genetic Algorithm's Block and damage accumulated by The Scythe, Sovereign Blade, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
 **Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending; upgraded = currently upgraded. This includes Dampen's stored restoration. Exact current upgrade level breaks ties within the upgraded tier.
 
-**Availability:** Fetch tracks its first-play draw for this turn. Bolas and Thrumming Hatchet track their return at the next hand draw. Their identities make these comparisons independent.
-
-Rows 11b–11c add turn-limited cost modifiers to the lasting cost calculation and compare the resulting costs. Shared next-play discounts such as Pounce remain excluded from these rows. Row 12 covers Expertise's temporary Retain and Hand Trick's temporary Sly.
-
-Example: with all earlier rows tied, two cards that cost 0 and 1 this turn sort `0 < 1`. A difference in upgrade level has already decided their order before this comparison is reached.
+Rows 11b–11c recalculate costs with turn-limited modifiers included, preserving modifier application order. Row 12 covers Expertise's temporary Retain and Hand Trick's temporary Sly.
 
 ### 5. Deferred tie-breaks
 
-`=` defers a distinction until all comparisons in stages 1–4 tie. Then revisit declared equality groups from the latest layer backward, treating their written order as `<`. Within the expired-enchantment member, use the original active enchantment order. Slash-separated entries simply share a tier and continue to later layers.
+If stages 1–4 tie, resolve the `=` group in [enchantment rank](#enchantment-rank) using its written order as `<`. Within the expired-enchantment member, use the original active enchantment order.
 
 For example, `none = Spiral` lets upgrade level and later copy-state rows decide first; only a remaining tie uses the written `none < Spiral` fallback.
 
@@ -84,16 +86,16 @@ After deferred tie-breaks, use these deterministic tie-breakers in order:
 | Order | Property | Ascending rule |
 |---|---|---|
 | 1 | Temporary-keyword combination | temporary Retain < temporary Sly < both. Absence was resolved in stage 4. |
-| 2 | Slither's stored cost | Lower < higher; stage 3 retains its fixed Slither tier. |
+| 2 | Slither card's lasting energy cost | Lower < higher; stage 3 retains its fixed Slither tier. |
 | 3 | Active cost modifiers | Compare star modifiers, then energy modifiers, using the rule below. |
 
 Compare each modifier list in application order. Within each modifier, compare expiration (turn-or-play < turn-only < until-played < combat-long), operation (set < add), value ascending, then reduce-only flag (false < true); star modifiers use expiration and value. If one list is an exact prefix of the other, the shorter list comes first. Include active modifiers whose effects are currently masked; cleared modifiers and acquisition history stay outside this comparison.
 
-Equal current costs can diverge as their modifiers expire. Slither stores its roll for the combat; direct retrieval such as Secret Weapon can preserve it.
+Slither uses the resulting energy cost under [lasting properties](#property-scope), including before its first roll and after later overrides. Equal current costs can diverge as their modifiers expire.
 
 ### 7. Origin
 
-Combat-only cards rank before permanent cards and their linked combat instances. This is the final comparison, after state tie-breaks.
+Combat-only cards rank before permanent cards and their linked combat instances.
 
 ## Identity and rarity ranks
 
@@ -101,11 +103,11 @@ Usefulness motivated the initial Curse/Status ranking; comparisons follow the wr
 
 **Curses:** Bad Luck < Enthralled < Normality < Regret < Debt < Shame < Doubt < Decay < Writhe < Curse of the Bell < Greed < Injury < Quests < Guilty < Spore Mind < Poor Sleep < Ascender's Bane < Folly < Clumsy.
 
-**Quests:** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map; their exact positions beside Injury are immaterial.
+**Quests:** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map.
 
 **Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed < Dazed < Frantic Escape.
 
-**Rarity layer:** Basic < Trash Heap < Common < Other Token < Uncommon < Exterminate/Squash < Rare < Sovereign Blade < Other Event < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later layers.
+**Rarity rank:** Basic < Trash Heap < Common < Other Token < Uncommon < Exterminate/Squash < Rare < Sovereign Blade < Other Event < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later comparisons.
 
 | Event tier | Identities |
 |---|---|
@@ -117,12 +119,20 @@ Usefulness motivated the initial Curse/Status ranking; comparisons follow the wr
 
 Glam < (none = expired enchantment = Spiral = Clone = Imbued) < Momentum (carried bonus = 0) < Soul's Power < Sharp < Tezcatara's Ember < Vigorous < Momentum (carried bonus > 0) < Corrupted < Instinct < Inky < Nimble < Goopy < Adroit < Sown < Slither < Perfect Fit < Steady < Royally Approved < Swift.
 
-Momentum uses the bonus currently carried; playing and copying are equivalent ways to acquire it. Expired enchantments share the equality member above. Their internal stage-5 fallback follows their active ranks: Glam < Vigorous < Sown < Swift for the currently expiring types.
+Momentum uses the bonus currently carried, including inherited bonus on copies. The expiring enchantments are Glam, Vigorous, Sown and Swift.
 
 ## Scope exclusions
 
-- **Smog and Ringing:** excluded as shared encounter effects in the current solo scope.
-- **Galvanized and Tainted:** excluded because the current solo encounters use a single Globe Head or Infested Prism. Galvanic and Vital Spark apply their shared penalty to Power or Skill cards respectively, including new combat entries.
-- **Hex-derived Ethereal:** excluded at every stage because Spectral Knight in the three-knight elite encounter applies Hex across the player's cards. Inherent and locally added Ethereal, such as Sculpting Strike's keyword, still count. A Hex-only card uses the `none` tier; a card with local Ethereal plus Hex uses the `Ethereal` tier. Hex supplies no later source tie-break.
+Exclude these encounter effects at every stage:
 
-**Scope limits:** Knowledge Demon's menu-only Status cards and multiplayer-only cards lie outside the covered batches.
+| Effect | Source and scope |
+|---|---|
+| Smog | Smoggy. |
+| Ringing | Ringing. |
+| Galvanized | Globe Head's Galvanic; Power cards. |
+| Tainted | Infested Prism's Vital Spark; Skill cards. |
+| Hex-derived Ethereal | Spectral Knight's Hex. |
+
+Galvanic and Vital Spark also affect new combat entries; each has one source enemy.
+
+**Scope limits:** Knowledge Demon's menu-only Status cards and multiplayer-only cards.

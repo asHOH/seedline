@@ -439,7 +439,7 @@ Apply the filtered-draw mechanism to identity sequences, including shop-batch du
 
 Triple sequences retain each slot's rarity while rejecting duplicate identity candidates within that triple during generation. Other card sequences apply source-required duplicate exclusions through filtered draws.
 
-### Selection
+### Card selection and processing
 
 #### Card equivalence
 
@@ -489,7 +489,7 @@ Preserve display order and intentionally sequential effects; reward offers use t
 
 A transformation batch comprises the originals selected together.
 
-Generate replacements for selected originals in identity-only [card processing order](#card-processing-order). Within each input identity, pair replacements in generation order with originals in frozen presentation order.
+Generate replacements for selected originals in [identity-only order](CARD_ORDER.md#identity-only-order). Within each input identity, pair replacements in generation order with originals in frozen presentation order.
 
 ## Source policies — Rewards
 
