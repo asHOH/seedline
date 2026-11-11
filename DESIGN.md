@@ -933,15 +933,19 @@ Baseline: [Ancient offerings](#ancient-offerings-1).
 
 ### The Future of Potions: card-type assignment
 
-**Intent:** match rarity/type menus for equal offered rarity counts, and potion/type choices for identical offered potion multisets regardless of order. Retaining an individual potion's trade when other potions change is best effort.
+**Intent:** match rarity/type options for equal offered counts by reward rarity, and each potion ID's assigned types for identical offered potion multisets.
 
-Offer the first three owned potions in slot order, preserving display order. Use the [reward-rarity mapping and allowed card types](#card-reward-offers-1); generated cards follow [type-specific offers](#type-specific-offers).
+Assign types to the first three owned potions, retaining slot order for display.
 
-- Use three independent event-local type sequences, addressed by event ID + `purpose = type assignment` + reward rarity (Common/Uncommon/Rare). Each entry is an independent uniform draw from that rarity's allowed types.
-- Order offered potions with [fixed priorities](#fixed-selection-priorities), keyed by event ID + `purpose = ordering` + potion ID + duplicate number. Number offered copies of each potion ID from 1 in slot order.
-- Within each reward rarity, pair potions in priority order with successive type entries. Consume one entry per offered option and keep those assignments for the event.
+- Use one independent type sequence per reward rarity, addressed by `purpose = type assignment` + event ID + rarity. Each entry is an independent uniform draw from that rarity's allowed card types.
+- Rank offered potions with [fixed priorities](#fixed-selection-priorities), keyed by `purpose = ordering` + event ID + potion ID + copy number. Number each potion ID's offered copies from 1 in slot order.
+- Within each rarity, assign successive type entries to offered potions in ascending priority order. Keep these assignments for the event.
 
-**Rationale and limit:** rarity sequences align menus while preserving vanilla's independent type probabilities. Shared priorities retain relative ordering across overlapping inventories, but adding or removing a same-rarity potion can shift a survivor's sequence position. Reordering copies of one potion ID preserves their multiset of trades.
+Card identities follow [type-specific offers](#type-specific-offers).
+
+**Limit:** a potion offered in both runs may receive different card types when the other offered potions with the same rarity differ.
+
+Baseline: [reward-rarity mapping and allowed card types](#card-reward-offers-1).
 
 ### Ranwid relic sacrifice
 
@@ -1679,7 +1683,7 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 | Scroll Boxes | Choose one of two bundles, normally two Commons and one Uncommon each, with six distinct identities across ordinary bundles. Defect has an independent 1% triple-Claw substitution chance per bundle; substituted bundles contain three Claws. |
 | Room Full of Cheese — Gorge | Choose two of eight distinct Common character cards; no random upgrades. |
 | Crystal Sphere | The board has one card-reward item for each of Common, Uncommon and Rare. Each recovered item gives a three-card offer of that rarity; vanilla identities and upgrade rolls use event RNG. |
-| The Future of Potions | Offers the first three owned potions in slot order; independently assigns a random allowed card type to every owned potion using event RNG. Trade a potion for three upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
+| The Future of Potions | Offers the first three owned potions in slot order; independently assigns a random allowed card type to every owned potion using event RNG. Trade a potion to choose one of three upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
 | Lead Paperweight / Brain Leech — Rip | Choose one of two / three colorless cards respectively. Rip costs 5 HP and suppresses random upgrades. |
 | Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
 | Colorful Philosophers | Choose another character's color, then receive one three-card offer per rarity (Common/Uncommon/Rare) from that pool. Ordinary upgrade rolls apply. |
