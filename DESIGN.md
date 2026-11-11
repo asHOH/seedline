@@ -875,23 +875,30 @@ Baseline: [room restrictions and chance updates](#room-resolution).
 
 #### Act entry and carryover
 
-**Alignment:** accept rare earlier mismatches for better agreement in the order of events two runs encounter.
+**Alignment:** accept rare earlier mismatches for better agreement in the relative order of events both runs encounter.
 
 At run start, independently shuffle each condition's IDs using `purpose = ID order` + condition key.
 
 At act entry, rebuild each condition's sequence using only unvisited IDs available in that act. Preserve survivors' order and insert newly available IDs in their run-start order.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` old and `m` new independent uniform rolls, addressed by `purpose = insertion` + act + condition key + old/new + entry index. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform. [Rejected alternatives](#event-selection-alternatives).
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` rolls from independent uniform sequences, addressed by `purpose = insertion` + act + condition key + surviving/incoming + roll index. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform. [Rejected alternatives](#event-selection-alternatives).
 
 **Remaining counts:** reset each condition's count to its number of act-available, unvisited IDs, even when the condition currently fails.
 
 #### Within-act selection
 
-**Priority persistence:** initialize once at Act 1 entry for shared-event order; refresh at each ordinary-event resolution in Acts 2–3 for prefix agreement with differing pools.
+**Priority persistence:**
 
-1. Reset per-condition roll indices to zero. For each remaining count `n_c > 0`, initialize priority `-ln(U) / n_c`. Independent uniform `U ∈ (0, 1)` rolls use `purpose = condition selection` + condition key + roll index, plus act in Act 1 or act-local ordinary-event ordinal in Acts 2–3.
+| Act | Condition priorities and roll indices | Alignment aim |
+|---|---|---|
+| 1 | Initialize at act entry; retain between selections. | Match relative event order. |
+| 2–3 | Refresh priorities from remaining counts and reset roll indices at each selection. | Delay the act's first mismatch when earlier visits leave different pools. |
+
+Remaining counts and ID positions carry between selections in every act.
+
+1. Reset per-condition roll indices to zero. For each remaining count `n_c > 0`, initialize priority `-ln(U) / n_c`. Independent uniform `U ∈ (0, 1)` rolls use `purpose = condition selection` + condition key + roll index. In Acts 2–3, also include the act-local ordinary-event ordinal.
 2. Decrement the lowest-priority condition's count. If its predicate passes and an unvisited ID remains, try the next unvisited ID and advance the ID position, including on late eligibility failure.
-3. After failure, retire that condition at zero; otherwise add a fresh `-ln(U) / remaining_count` to its priority. Keep other priorities fixed and repeat step 2.
+3. After failure, retire that condition at zero; otherwise add a fresh `-ln(U) / n_c` to its priority. Keep other priorities fixed and repeat step 2.
 4. On success, commit the visit and state changes. In Act 1, update the winning priority as in step 3.
 
 **Wrapping:** when all counts reach zero, refill them from act-available, unvisited IDs and restart priorities, continuing roll indices. ID sequences wrap in their established order, excluding visited IDs.
@@ -902,7 +909,7 @@ At act entry, rebuild each condition's sequence using only unvisited IDs availab
 
 **Vanilla deviation — NoSL 3:** ordinal indexing changes fallback probabilities conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
 
-**Behavior preservation:** before count refill or ID wrapping, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting state + same selected event leaves the same state. Cross-run and SL correlations change.
+**Behavior preservation:** before count refill or ID wrapping, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting random state + same selected event leaves the same random state. Cross-run and SL correlations change.
 
 Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and late eligibility checks](#event-eligibility).
 
@@ -910,7 +917,7 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 
 **Intent:** keep Lantern Key from consuming an ordinary-event opportunity.
 
-Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection) and its act-local ordinal advancement. Record the visit.
+Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection). Record the visit and leave the act-local ordinary-event ordinal unchanged.
 
 **Vanilla deviation — NoSL 3:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes later ordinary-event availability.
 
@@ -1356,10 +1363,10 @@ The difference is `1/360`, about **0.278 percentage points** in this reduced poo
 
 #### Event-selection alternatives
 
-- **Retained priorities in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
-- **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more Act 1 shared-order reversals.
-- **Cross-act insertion — shared position priorities:** reserve incoming positions by shared output-position priority. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
-- **Cross-act insertion — weighted merging:** use shared rolls to choose old or incoming entries proportionally to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order when tests varied prior event consumption.
+- **Retained priorities in every act:** better preserves the relative order of events both runs encounter when pools match, but can bring forward the first mismatch when surviving pools differ.
+- **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more event-order reversals in Act 1.
+- **Cross-act insertion — position priorities:** reserve incoming positions using output-position priorities shared across runs. Can delay the first mismatch, but preserved less relative event order in simulated act transitions.
+- **Cross-act insertion — weighted merging:** use rolls shared across runs to choose surviving or incoming IDs proportionally to remaining counts. Can delay the first mismatch compared with sorted priorities, but preserved less relative event order when tests varied prior event consumption.
 
 ## Appendix: existing mechanics
 
