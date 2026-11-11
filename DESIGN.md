@@ -831,13 +831,13 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 ### Combat gold
 
-**Intent:** align corresponding normal-fight and elite gold rewards independently, preserving vanilla distributions; partition their rolls from other rewards.
+**Intent:** align corresponding normal-fight and elite gold rewards independently.
 
-**Generation and addressing:** derive each roll from `purpose = gold reward` + combat category + that category's gold-reward ordinal. Normal fights and elites use separate ordinals; event battles use their encounter's `RoomType`. Roll uniformly over the inclusive gold range, preserving endpoint adjustments and payout modifiers.
+**Generation and addressing:** derive each roll from `purpose = gold reward` + combat category (normal fight or elite) + that category's gold-reward ordinal. Event battles use their encounter's room type. Roll uniformly over vanilla's adjusted inclusive gold range.
 
-Fixed or absent combat gold, fixed extra payouts and event-choice gold consume neither ordinal. Gremlin Merc's half-gold reward advances the normal-fight ordinal using its reduced range; zero gold advances neither.
+Advance ordinals only for generated random combat-gold rewards. Gremlin Merc's half-gold reward uses the reduced range and advances the normal-fight ordinal.
 
-**Rationale and tradeoff:** an extra elite leaves later normal-fight gold unchanged, and vice versa. Reordering unreduced rewards with matching category counts preserves individual base payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward changes total base gold by 11–26 at A3+. [Rejected alternatives](#combat-gold-alternatives).
+**Rationale and tradeoff:** reordering unreduced rewards preserves each category's payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward adds 11–26 base gold at A3+. [Rejected alternatives](#combat-gold-alternatives).
 
 Baseline: [gold ranges and exceptions](#combat-gold-1).
 
