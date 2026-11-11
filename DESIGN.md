@@ -843,11 +843,11 @@ Baseline: [gold ranges and exceptions](#combat-gold-1).
 
 ### Event-specific rewards
 
-**Scope:** Trash Heap, Doll Room, event choices granting otherwise unobtainable rewards and Fake Merchant stock.
+**Scope:** Trash Heap, Doll Room, Fake Merchant stock, Neow's Bones' Ancient relic pair, and other rewards exclusive to events.
 
-Neow's Bones' Ancient relic pair follows this policy; its curse follows [direct additions](#permanent-transformations-and-direct-card-additions).
+Use [event RNG](#event-addresses) for reward identities, random rarities and Fake Merchant's price rolls.
 
-Use event RNG for reward identities, random rarities and Fake Merchant's price rolls, keeping its shop fixed for the same seed.
+Neow's Bones' curse follows [direct additions](#permanent-transformations-and-direct-card-additions).
 
 ## Source policies — Encounter — Non-combat
 
