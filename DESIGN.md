@@ -213,7 +213,7 @@ Rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
 | Sources | Rarity | Identity supply |
 |---|---|---|
-| [Permanent transformations / direct additions](#selection-and-consumption) | Separate rarity sequences where used; the Infested Automaton event uses event RNG. | Shared permanent-card sequences by pool. |
+| [Permanent transformations / direct additions](#permanent-transformations-and-direct-card-additions) | Separate rarity sequences where used; the Infested Automaton event uses event RNG. | Shared permanent-card sequences by pool. |
 | [Potion-generated cards](#potion-generated-cards) | No rarity roll. | Uniform draws per potion-type effect batch. |
 | [Combat generation / Entropy](#combat-card-generation-and-transformations) | No rarity roll. | Uniform combat-local sequences by group and pool. |
 
@@ -816,20 +816,15 @@ Lasting Candy draws from the inherited pool's Power sequences while retaining it
 
 **Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
 
-#### Selection and consumption
+For random results, use seven pools: the five characters, colorless and curse, separate from card reward offers and combat transformations. Consume individual identity entries:
 
-Use seven pools: the five characters, colorless and curse, separate from card reward offers and combat transformations. Consume individual identity entries:
-
-- **Own character / colorless:** for each pool, transformations and additions share Common/Uncommon/Rare identity sequences, with separate transformation/addition rarity sequences. Transformations weight rarities by current eligible identity counts, excluding the original; additions use vanilla base odds and unavailable-rarity fallback.
+- **Own character / colorless:** for each pool, transformations and additions share Common/Uncommon/Rare identity sequences, with separate transformation/addition rarity sequences. Transformations weight rarities by current eligible identity counts, excluding the original; random-rarity additions use vanilla base odds and unavailable-rarity fallback.
 - **Other characters / curse:** one identity sequence per pool.
 
-- **[Transformations](#out-of-combat-card-lifetime):** retain [vanilla target pools, eligibility and gameplay inheritance](#permanent-transformations-and-direct-additions).
-- **Transformation batches:** use [batch rules](#transformation-batches).
-- **Direct additions:** use the granting source's pool and restrictions. Infested Automaton's Study / Touch Core use event RNG for rarity, leaving the addition rarity sequence unchanged; identities use the shared permanent own-character sequences.
+- **Transformations:** follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
+- **Infested Automaton:** Study and Touch Core use event RNG for rarity, leaving the addition rarity sequence unchanged.
 
-**Distinguished Cape:** draw twice from the curse sequence; the second pull skips the first identity.
-
-**Vanilla deviation — SL 5(↓):** processing transformation batches in [identity order](#transformation-batches) removes order-dependent replacement alternatives.
+**Vanilla deviation — SL 5(↓):** processing batches in [identity order](#transformation-batches) removes order-dependent alternatives.
 
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions).
 
@@ -1130,7 +1125,7 @@ Freeze the card's ordering properties at permanent removal and retain them throu
 
 #### Source-based assignment — Acts 1–2
 
-Use [offer groups](#offer-groups) and [permanent-card sequences](#selection-and-consumption) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
+Use [offer groups](#offer-groups) and [permanent-card sequences](#permanent-transformations-and-direct-card-additions) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
 
 - **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
 - **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered or transformation-filter-only generation.
