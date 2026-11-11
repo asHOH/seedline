@@ -995,28 +995,28 @@ Baseline: [dish selection](#endless-conveyor-dishes).
 
 ### Wing Charm
 
-**Intent:** align Swift selection through shared entry priorities, preserving generation-batch boundaries and modifier order.
+**Intent:** align Swift targets on shared reward entries.
 
-**Scope:** generated rewards and eligible direct generation; Sea Glass retains one selection per five-card rarity batch, not one across its combined display.
+**Scope:** batches processed by Wing Charm's reward-options hook.
 
-Apply [A0–6 replacement state](#a06-multiple-rares) and [replacement ordering](#offer-procedure). Evaluate resulting cards' Swift eligibility when Wing Charm runs, after earlier modifiers. No eligible cards means no effect; select an eligible singleton directly.
+Apply [A0–6 replacement state](#a06-multiple-rares) and evaluate Swift eligibility after earlier modifiers. An empty eligible set has no effect; select a singleton directly.
 
-**Triple-backed offers:** assign independent uniform `[0,1)` Wing Charm priorities to the triple's entries through their [entry addresses](#entry-addresses), and select the lowest-priority eligible card, subject to the exceptions below. The [triple](#card-reward-offers) precedes presentation swaps.
+**Default selection:** use [fixed-priority derivation](#fixed-selection-priorities), keyed by `purpose = Wing Charm` + [card occurrence address](#card-occurrence-addresses). Select the lowest-priority eligible card in the batch.
 
-**Non-Rare larger offers:** use the triple in Brain Leech and Room Full of Cheese; if none of its cards is eligible, select uniformly among eligible supplementary cards with event RNG. Restricting selection to interchangeable slots aligns the shared triple while preserving marginal gameplay outcomes, subject to the opening-triple deviation below.
+**Non-Rare larger offers:** for Brain Leech's Share Knowledge and Room Full of Cheese's Gorge, select from the triple; if it has no eligible cards, select uniformly among eligible supplementary cards using event RNG.
 
-**Weighted extra-group selection:** for rare-bearing Brain Leech and Lasting Candy, let `x` count all eligible cards and `y` eligible extra cards. Select the extra group when the source's independent uniform `[0,1)` roll is below `y/x`; otherwise use the triple's priorities. This gives each eligible card probability `1/x`, including replacement Rares.
+**Rationale:** interchangeable positions preserve marginal targeting probabilities; [presentation shuffling](#presentation) removes visible position bias.
+
+**Weighted group selection:** for rare-bearing Share Knowledge and Lasting Candy, select the extras when the independent uniform `[0,1)` roll below is less than `eligible extras / all eligible cards`; otherwise select from the triple.
 
 | Source / extra group | Group-selection roll | Selection within the extra group |
 |---|---|---|
-| Rare-bearing Brain Leech: two supplementary positions | Event RNG. | If both cards are eligible, select uniformly with an independent event-RNG roll under a separate purpose. When both runs select the group and the same supplementary positions are eligible, they select the same position. |
-| Lasting Candy: added Power | Power sequence entry + `purpose = Wing Charm`, evaluated only if the Power is eligible; otherwise use the triple directly. | Select the Power. Qualifying combat offers have three base cards, so there are no other supplementary candidates. |
-
-**Other batches:** use entry-derived priorities for every card and select the lowest eligible one. Other-character offers share per-entry priorities across Sea Glass and Colorful Philosophers despite different batch sizes. No separate advancing Wing Charm counter is required.
-
-The [presentation shuffle](#presentation) removes the shared triple's visible enchantment-position bias.
+| Share Knowledge: two supplementary positions | Event RNG. | Select uniformly among eligible supplementary positions, using `purpose = Wing Charm supplementary selection` + event ID when both qualify. |
+| Lasting Candy: added Power | `purpose = Wing Charm` + Power entry address, evaluated only when the Power is eligible. | Select the Power. |
 
 **Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
+
+Baseline: [Wing Charm and earlier reward modifiers](#card-reward-offers-1).
 
 ### Persistent selection
 
@@ -1727,7 +1727,7 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 | Lead Paperweight / Brain Leech — Rip | Choose one of two / three colorless cards respectively. Rip costs 5 HP and suppresses random upgrades. |
 | Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
 | Colorful Philosophers | Choose another character's color, then receive one three-card offer per rarity (Common/Uncommon/Rare) from that pool. Ordinary upgrade rolls apply. |
-| Sea Glass | Five Common, five Uncommon and five Rare cards from one featured other character; take any number of the 15. No random upgrades. |
+| Sea Glass | Three five-card generation batches (Common, Uncommon, Rare) from one featured other character, each triggering Wing Charm separately. Take any number from the combined display. No random upgrades. |
 | Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions blocks pool modification. |
 | Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
 | Wing Charm / earlier enchantments | Wing Charm's late reward-options hook selects one currently Swift-eligible card per generation batch with `Niche` RNG, including direct generation. Swift cannot overwrite or stack with an existing enchantment. Earlier Glitter excludes its Glam-enchanted cards; earlier Fresnel Lens excludes its Nimble-enchanted Block cards. Ordinary modifiers run before late modifiers; late modifiers follow relic-list order. |
