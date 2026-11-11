@@ -867,9 +867,9 @@ Baseline: [room restrictions and chance updates](#room-resolution).
 
 ### Ordinary-event selection
 
-**Intent and scope:** improve same-seed event matching within and across acts, prioritizing agreement before the first mismatch. Ancients remain separate; [forced events](#forced-events) bypass ordinary selection.
+**Intent and scope:** keep event sequences matching across same-seed runs for as long as possible, even as eligibility and acts change. Ordinary events exclude [Ancients](#ancient-offerings) and [events with forced identities](#forced-events).
 
-**Conditions and state:** group IDs by equivalent eligibility predicates, excluding act availability and late eligibility checks, with one key per condition. Act availability determines participating IDs; evaluate late eligibility checks at ID selection to keep grouping compact. Follow the global [addressing](#rng-derivation-and-addressing), [consumption](#opportunity-consumption-timing) and [saved-state](#saved-state) rules.
+**Conditions:** group event IDs by equivalent eligibility predicates, excluding act availability and [late eligibility checks](#event-eligibility), with one key per condition. Act availability determines participating IDs; evaluate late checks when selecting an ID.
 
 #### Act entry and carryover
 
