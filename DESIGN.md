@@ -527,15 +527,15 @@ By default, hidden random relic rewards use the generic rewards source, includin
 
 **Consistency boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
 
-When the requested rarity has no eligible local entry, borrow from another source's sequence of that rarity using a [tail draw](#relic-tail-draws). Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
+When the requested rarity has no eligible local entry, borrow from another source's allocation of that rarity using a [tail draw](#relic-tail-draws). Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
 
-Apply borrowing during [marker resolution](#filtered-draws), preserving filtered-draw marker placement.
+Apply borrowing during [marker resolution](#filtered-draws), but skip filtered-draw marker placement in the donor allocation.
 
 **Chest refill:** when a chest reward has no eligible entry after same-rarity borrowing, retain its generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. If none qualify, use the final fallback.
 
 **Final fallback:** from the requested rarity onward in Shop → Common → Uncommon → Rare, try local entries then same-rarity borrowing at each rarity. Return Circlet if all fail; make no additional rarity roll.
 
-Baseline: [relic bags](#relic-bags) and [Catfood's rarity-roll limit](#catfood-addressing-and-combat-rewards).
+Baseline: [relic bags](#relic-bags).
 
 ### Chests
 
