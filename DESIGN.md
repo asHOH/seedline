@@ -278,7 +278,7 @@ Preserve [vanilla's run-save checkpoints](#run-save-checkpoints). At each checkp
 Markers record pending advancements and freeze eligibility conditions at the original draw, including batch exclusions and state-dependent restrictions; the current draw still enforces current eligibility.
 
 - **Filtered draw:** return the first eligible entry and replace it with a marker for its filter.
-- **Marker resolution:** move the next eligible entry after it into the marker's position. Leave the same filter's marker at the supplying position.
+- **Marker resolution:** move the next eligible entry after it into the marker's position. Leave the same filter's marker at the supplying position. Resolve markers only when encountered by forward draws or recursive marker resolution.
 - **Unfiltered draw:** resolve any front marker, then return the entry and remove the drawn position.
 
 **Marker collisions:** when a draw using filter `Y` encounters a marker for filter `X`, resolve that marker first.
@@ -289,6 +289,10 @@ Markers record pending advancements and freeze eligibility conditions at the ori
 Apply the rule recursively to further collisions, including identical filters: two advancements require two markers.
 
 If an allocation has no eligible entry to resolve a marker after [borrowing](#borrowing), expire that marker, then continue the draw.
+
+### Relic tail draws
+
+Scan stored positions backward, skipping every marker and ineligible entry. Remove the first eligible relic.
 
 ### Fixed selection priorities
 
@@ -439,7 +443,7 @@ When a source rolls rarity, consume one value from its **rarity-roll sequence**;
 
 **Generation and lifetime:** potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
 
-Apply the filtered-draw mechanism to identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
+Apply the filtered-draw mechanism to identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [relic tail draws](#relic-tail-draws) and [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences retain each slot's rarity while rejecting duplicate identity candidates within that triple during generation. Other card sequences apply source-required duplicate exclusions through filtered draws.
 
@@ -513,7 +517,7 @@ Construct disjoint generic-reward, shop and Courier allocations once, targeting 
 
 Each source has one rarity-roll sequence, generated on demand indefinitely, and independently advancing, shuffled identity sequences per rarity. The shop also has one shuffled sequence containing all Shop-rarity identities.
 
-Generic reward opportunities must eventually expose every still-eligible entry, subject to the [borrowing boundary](#borrowing). Other sources' multi-choice offers must preserve unchosen generic entries.
+Without [borrowing](#borrowing), generic reward opportunities must eventually expose every still-eligible entry, and other sources' multi-choice offers must preserve unchosen generic entries.
 
 #### Source classification
 
@@ -523,7 +527,7 @@ By default, hidden random relic rewards use the generic rewards source, includin
 
 **Consistency boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
 
-When the requested rarity has no eligible local entry, borrow the **last eligible entry** from another source's sequence of that rarity. Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
+When the requested rarity has no eligible local entry, borrow from another source's sequence of that rarity using a [tail draw](#relic-tail-draws). Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
 
 Apply borrowing during [marker resolution](#filtered-draws), preserving filtered-draw marker placement.
 
@@ -561,7 +565,7 @@ Refill and Circlet rewards bypass markers: skipping leaves stock unchanged; acqu
 
 ##### Finite-lifetime chest markers
 
-Use the [filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when supply is exhausted. Each transfer decrements `x` and moves the marker to the supplying position. Collisions preserve each marker's lifetime and carried entry.
+Use the [filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when its resolution exhausts eligible supply after borrowing. Each transfer decrements `x` and moves the marker to the supplying position. Collisions preserve each marker's lifetime and carried entry.
 
 **Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal.
 
@@ -961,17 +965,17 @@ Baseline: [relic-event mechanics](#shops-chests-and-relic-events).
 
 #### Replacement relics
 
-Generate slots 1–3 in order. For each, use the [vanilla relic rarity roll](#relic-bags) addressed by event ID + reward slot, then take the last eligible Courier entry of that rarity, with no added filters.
+Generate reward slots 1–3 in order. For each, roll [vanilla relic rarity](#relic-bags) using `purpose = replacement rarity` + event ID + reward slot, then use a [tail draw](#relic-tail-draws) from the [Courier allocation](#allocation) of that rarity, with ordinary relic eligibility. Use [borrowing and fallback](#borrowing) on exhaustion.
+
+Consume all three replacements when offered, including borrowed generic entries.
 
 #### Outgoing relic assignment
 
-1. For each tradable owned relic and reward slot, use [fixed-priority derivation](#fixed-selection-priorities) keyed by event ID + relic ID + slot.
-2. Freeze the three relics with the lowest minimum of its three pair priorities.
-3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot.
+1. Give each tradable owned relic / reward-slot pair an independent uniform **pair priority**, using [fixed-priority derivation](#fixed-selection-priorities) keyed by `purpose = outgoing assignment` + event ID + relic ID + reward slot.
+2. Select the three relics with the lowest minima across their three pair priorities.
+3. Among these relics, repeatedly assign the lowest-priority remaining pair, removing its relic and slot from further assignment.
 
-**Behavior preservation:** outgoing selection and pairing remain uniform. One eligible-owned-relic substitution retains at least two outgoing relics, with maximal symmetric expected outgoing overlap.
-
-**Rejected alternatives:** independent candidate priorities give lower trade agreement with the same outgoing overlap; direct pairing over all eligible relics gives higher trade agreement but can change two outgoing relics after one inventory substitution.
+**Rationale:** Replacing one eligible owned relic retains at least two outgoing relics, with maximal expected outgoing overlap among rules treating identities symmetrically. See the [matching analysis and alternatives](#relic-trader-alternatives).
 
 Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
@@ -1376,6 +1380,13 @@ The difference is `1/360`, about **0.278 percentage points** in this reduced poo
 - **Cross-act insertion — position priorities:** reserve incoming positions using output-position priorities shared across runs. Can delay the first mismatch, but preserved less relative event order in simulated act transitions.
 - **Cross-act insertion — weighted merging:** use rolls shared across runs to choose surviving or incoming IDs proportionally to remaining counts. Can delay the first mismatch compared with sorted priorities, but preserved less relative event order when tests varied prior event consumption.
 
+#### Relic Trader alternatives
+
+[Matching analysis](outputs/relic-trader-matching-results.json) assumes three identical, distinct replacements in the same reward slots across runs. It verifies uniform outgoing selection and pairing, and the symmetric expected outgoing-overlap bound.
+
+- **Independent candidate priorities:** lower trade agreement with the same outgoing overlap.
+- **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
+
 ## Appendix: existing mechanics
 
 Existing mechanics for comparison: vanilla by default, [Catfood differences](#catfood-addressing-and-combat-rewards) labeled. Policies belong in the main design sections.
@@ -1575,13 +1586,16 @@ Both filtered pulls leave eligible supply. Front bias can affect several later p
 
 #### Shops, chests and relic events
 
+**Tradable relics:** Ranwid and Relic Trader share `RelicModel.IsTradable`, which excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics.
+
 | Source | Mechanics |
 |---|---|
 | Chests | Relics are generated on room entry; base gold uses `Rewards` on opening. Pool and consumption rules: [relic bags](#relic-bags). |
 | Neow — Silver Crucible | First treasure room is empty, with neither gold nor relics. |
 | Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. Featured Rare is generated and consumed from stock on offer, even if declined. This also occurs below 200 gold and is **harmful to same-seed consistency**. Hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |
-| Relic Trader | Acts 2–3; all players own ≥5 tradable relics. Randomly selects three owned relics and three replacements to offer; consumes all three replacement identities/rarities before the player's selection. Normally no leave. Replacement rarity is independent and replacements need not be tradable. Tradable excludes Starter/Event/Ancient, upon-pickup, used-up, melted and pet-spawning relics. |
+| Ranwid — relic sacrifice | Offers one uniformly selected tradable owned relic using event RNG; sacrificing it grants two hidden random relics, generated after removal. |
+| Relic Trader | Offers three trades, using an event-RNG shuffle of tradable owned relics. Generates all three displayed replacements from the player bag's front with player `Rewards` rarity rolls, independently of outgoing rarity; consumes them before choice. Choose one; normally no leave. |
 | Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics use the [vanilla relic rarity roll](#relic-bags) even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
 | Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
 
