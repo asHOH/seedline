@@ -981,9 +981,17 @@ Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 ### Endless Conveyor
 
-**Intent:** preserve shared dish order across runs.
+**Intent:** align dish order across changing eligibility.
 
-Generate one persistent event-local sequence of independent draws over all randomized dishes using vanilla weights and a dish-selection purpose. For each random offer, continue from the current position, consuming ineligible entries — including the previous displayed dish — until the first eligible entry is offered; retain the resulting position for the next random offer. This preserves vanilla conditional probabilities while keeping the shared candidate order.
+Use one sequence addressed by `purpose = dish selection`, drawing independently over all [random dishes at vanilla weights](#endless-conveyor-dishes).
+
+For each random offer, advance past ineligible entries, offer the first eligible dish, and resume after it next time.
+
+Fixed Seapunk Salad displays consume zero sequence entries.
+
+**Vanilla deviation — SL 4A(↓):** changing only potion-slot availability can switch the next random offer only to or from Suspicious Condiment.
+
+Baseline: [dish selection](#endless-conveyor-dishes).
 
 ### Wing Charm
 
@@ -1491,6 +1499,20 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 | Slippery Bridge | A removable card |
 
 **Forced events:** Lantern Key's War Historian Repy is the only forced replacement of an ordinary-event draw; `IsAllowed` is always false.
+
+#### Endless Conveyor dishes
+
+Dishes are generated on entry and after each purchase's effects, even when the next purchase is unaffordable. Every fifth display is Seapunk Salad; other displays use one weighted event-RNG roll, excluding the previous dish.
+
+| Dish | Weight | Additional condition |
+|---|---:|---|
+| Caviar | 6 | None. |
+| Spicy Snappy / Jelly Liver / Fried Eel | 3 each | None. |
+| Suspicious Condiment | 3 | An open potion slot. |
+| Clam Roll | 6 | Below full HP. |
+| Golden Fysh | 1 | After the first display. |
+
+Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RNG.
 
 #### Combat setup and shuffles
 
