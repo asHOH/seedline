@@ -1,0 +1,5022 @@
+[
+  {
+    "run_hash": "28aa58feb2551598",
+    "seed": "9QFD6ZA86E",
+    "start_time": 1786684209,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 30,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 30,
+              "id": "CARD.ROCKET_PUNCH"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.GENETIC_ALGORITHM",
+              "props": {
+                "ints": [
+                  {
+                    "name": "CurrentBlock",
+                    "value": 1
+                  },
+                  {
+                    "name": "IncreasedBlock",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SIGNAL_BOOST"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.ROCKET_PUNCH"
+          }
+        ],
+        "held": [
+          "RELIC.BOOMING_CONCH",
+          "RELIC.CRACKED_CORE",
+          "RELIC.PENDULUM",
+          "RELIC.STONE_CRACKER",
+          "RELIC.ORICHALCUM",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.BAG_OF_MARBLES",
+          "RELIC.ANCHOR",
+          "RELIC.THE_COURIER",
+          "RELIC.GORGET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "a163144a3fba15e6",
+    "seed": "BCMA4DWJLH82",
+    "start_time": 1786822085,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": false,
+    "lower": false,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 7,
+        "lower": false,
+        "upper": true,
+        "complete": false,
+        "reason": "unrecognized_offer_boundaries",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+            "monster_ids": [
+              "MONSTER.BYGONE_EFFIGY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 7,
+              "id": "CARD.DEFRAGMENT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.LEAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.COLD_SNAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BARRAGE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.COMPILE_DRIVER"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.CLAW"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.BOOST_AWAY"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.UPROAR"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEFRAGMENT"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_BONES",
+          "RELIC.LOST_COFFER",
+          "RELIC.LEAD_PAPERWEIGHT",
+          "RELIC.TOXIC_EGG"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b4ef9ae32840fb59",
+    "seed": "JN927FRR5C5K",
+    "start_time": 1786986746,
+    "character": "CHARACTER.REGENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 27,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 27,
+              "id": "CARD.COMET"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.CRUSH_UNDER"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DYING_STAR"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.COMET"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_TALISMAN",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.FRESNEL_LENS",
+          "RELIC.PARRYING_SHIELD",
+          "RELIC.GAME_PIECE",
+          "RELIC.TUNING_FORK",
+          "RELIC.WHETSTONE",
+          "RELIC.REPTILE_TRINKET",
+          "RELIC.MEAL_TICKET",
+          "RELIC.ARCHAIC_TOOTH",
+          "RELIC.FROZEN_EGG",
+          "RELIC.MANGO",
+          "RELIC.JOSS_PAPER",
+          "RELIC.GORGET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b29fe69e9c1809b4",
+    "seed": "LV565XZAER3G",
+    "start_time": 1787083494,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 9,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 14,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHROG_PARASITE_ELITE",
+            "monster_ids": [
+              "MONSTER.PHROG_PARASITE",
+              "MONSTER.WRIGGLER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 14,
+              "id": "CARD.SETUP_STRIKE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.BRAND"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FEED"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.SETUP_STRIKE"
+          }
+        ],
+        "held": [
+          "RELIC.LARGE_CAPSULE",
+          "RELIC.STRIKE_DUMMY",
+          "RELIC.PANTOGRAPH",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.PARRYING_SHIELD",
+          "RELIC.REGAL_PILLOW",
+          "RELIC.SELF_FORMING_CLAY",
+          "RELIC.WHETSTONE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "8720a00f93282601",
+    "seed": "WC43TURSVA6K",
+    "start_time": 1787341668,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 11,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+            "monster_ids": [
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 2
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 11,
+              "id": "CARD.DEFRAGMENT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.COMPACT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ADAPTIVE_STRIKE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEFRAGMENT"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_SACRIFICE",
+          "RELIC.CRACKED_CORE",
+          "RELIC.WHETSTONE",
+          "RELIC.BOWLER_HAT",
+          "RELIC.SPARKLING_ROUGE",
+          "RELIC.BLOOD_VIAL"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "00d8a5cac60bdb4d",
+    "seed": "E83VSEM8D298",
+    "start_time": 1786985138,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 24,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 24,
+              "id": "CARD.SERPENT_FORM"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.KNIFE_TRAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.PREDATOR"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.SERPENT_FORM"
+          }
+        ],
+        "held": [
+          "RELIC.LEAFY_POULTICE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.BLOOD_VIAL",
+          "RELIC.PLANISPHERE",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.HAPPY_FLOWER",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.POLLINOUS_CORE",
+          "RELIC.TINGSHA"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "38d97efa262835db",
+    "seed": "Y8T6BL0NNTF4",
+    "start_time": 1787539871,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 15,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYRDONIS_ELITE",
+            "monster_ids": [
+              "MONSTER.BYRDONIS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 3
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 15,
+              "id": "CARD.CRIMSON_MANTLE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.RAGE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.PRIMAL_FORCE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.CRIMSON_MANTLE"
+          }
+        ],
+        "held": [
+          "RELIC.HEFTY_TABLET",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.MINIATURE_CANNON",
+          "RELIC.PETRIFIED_TOAD",
+          "RELIC.TINY_MAILBOX",
+          "RELIC.HORN_CLEAT"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "def5a26c0aa84d9c",
+    "seed": "L2FH1TFUZJZV",
+    "start_time": 1787526419,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 9,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHROG_PARASITE_ELITE",
+            "monster_ids": [
+              "MONSTER.PHROG_PARASITE",
+              "MONSTER.WRIGGLER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 9,
+              "id": "CARD.STORM_OF_STEEL"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.CLOAK_AND_DAGGER"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SERPENT_FORM"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.STORM_OF_STEEL"
+          }
+        ],
+        "held": [
+          "RELIC.LAVA_ROCK",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.CAPTAINS_WHEEL"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b67e7d7bc1ce7d4c",
+    "seed": "3Y5TZEHLSEJC",
+    "start_time": 1787724070,
+    "character": "CHARACTER.REGENT",
+    "ascension": 10,
+    "win": true,
+    "lower": false,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 15,
+        "lower": false,
+        "upper": true,
+        "complete": false,
+        "reason": "missing_choices",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYRDONIS_ELITE",
+            "monster_ids": [
+              "MONSTER.BYRDONIS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [],
+        "gained": [],
+        "held": [
+          "RELIC.HEFTY_TABLET",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.ORANGE_DOUGH",
+          "RELIC.STURDY_CLAMP",
+          "RELIC.REGAL_PILLOW"
+        ]
+      },
+      {
+        "source": "elite",
+        "floor": 30,
+        "lower": false,
+        "upper": true,
+        "complete": false,
+        "reason": "missing_choices",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.DECIMILLIPEDE_ELITE",
+            "monster_ids": [
+              "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_BACK"
+            ],
+            "room_type": "elite",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [],
+        "gained": [],
+        "held": [
+          "RELIC.HEFTY_TABLET",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.ORANGE_DOUGH",
+          "RELIC.STURDY_CLAMP",
+          "RELIC.REGAL_PILLOW",
+          "RELIC.MANGO",
+          "RELIC.VERY_HOT_COCOA",
+          "RELIC.ICE_CREAM",
+          "RELIC.ANCHOR"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "2fa276e7922d5dd0",
+    "seed": "RD3P3WN7L8Q5",
+    "start_time": 1788087342,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 44,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SOUL_NEXUS_ELITE",
+            "monster_ids": [
+              "MONSTER.SOUL_NEXUS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 44,
+              "id": "CARD.TEAR_ASUNDER"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SETUP_STRIKE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BRAND"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.INFERNO"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.TEAR_ASUNDER"
+          }
+        ],
+        "held": [
+          "RELIC.ARCANE_SCROLL",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.REGAL_PILLOW",
+          "RELIC.LASTING_CANDY",
+          "RELIC.VENERABLE_TEA_SET",
+          "RELIC.GREMLIN_HORN",
+          "RELIC.YUMMY_COOKIE",
+          "RELIC.PAPER_PHROG",
+          "RELIC.STRIKE_DUMMY",
+          "RELIC.CLOAK_CLASP",
+          "RELIC.INTIMIDATING_HELMET",
+          "RELIC.PLANISPHERE",
+          "RELIC.DISTINGUISHED_CAPE",
+          "RELIC.FAKE_HAPPY_FLOWER",
+          "RELIC.JOSS_PAPER",
+          "RELIC.TUNGSTEN_ROD",
+          "RELIC.MUMMIFIED_HAND",
+          "RELIC.STRAWBERRY"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "2c09af9d7c5942f5",
+    "seed": "B9NER7ZL31X9",
+    "start_time": 1787001377,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 28,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.DECIMILLIPEDE_ELITE",
+            "monster_ids": [
+              "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_BACK"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 28,
+              "id": "CARD.JUGGERNAUT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.PYRE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.INFERNO"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.JUGGERNAUT"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_SACRIFICE",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.INTIMIDATING_HELMET",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.VEXING_PUZZLEBOX",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.CANDELABRA",
+          "RELIC.TOASTY_MITTENS",
+          "RELIC.POTION_BELT",
+          "RELIC.AMETHYST_AUBERGINE",
+          "RELIC.CENTENNIAL_PUZZLE",
+          "RELIC.AKABEKO"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "01f72e1e3ace2bdd",
+    "seed": "XC3VGFYM1L63",
+    "start_time": 1788112811,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 8,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 13,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+            "monster_ids": [
+              "MONSTER.SKULKING_COLONY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 13,
+              "id": "CARD.CAPTURE_SPIRIT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SOUL_STORM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SENTRY_MODE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.CAPTURE_SPIRIT"
+          }
+        ],
+        "held": [
+          "RELIC.CURSED_PEARL",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.ROYAL_STAMP",
+          "RELIC.POCKETWATCH",
+          "RELIC.STONE_CRACKER",
+          "RELIC.KUNAI"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "e6b96775cd24a1a8",
+    "seed": "4QYJ36W02UKT",
+    "start_time": 1788821641,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+            "monster_ids": [
+              "MONSTER.BYGONE_EFFIGY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 8,
+              "id": "CARD.MURDER"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SHADOWMELD"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.POISONED_STAB"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.MURDER"
+          }
+        ],
+        "held": [
+          "RELIC.SILKEN_TRESS",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.WHETSTONE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d189c9270529a42d",
+    "seed": "SJS2QD9D5VP7",
+    "start_time": 1787001534,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 7,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+            "monster_ids": [
+              "MONSTER.SKULKING_COLONY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 8,
+              "id": "CARD.OFFERING"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.TRUE_GRIT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.IMPERVIOUS"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.OFFERING"
+          }
+        ],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.PANTOGRAPH"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "07c9fae10ab0540e",
+    "seed": "VXLF78ZRX142",
+    "start_time": 1787967834,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 14,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.TERROR_EEL_ELITE",
+            "monster_ids": [
+              "MONSTER.TERROR_EEL"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 14,
+              "id": "CARD.BURNING_PACT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.CRIMSON_MANTLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DOMINATE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.BURNING_PACT"
+          }
+        ],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.CHOSEN_CHEESE",
+          "RELIC.SPARKLING_ROUGE",
+          "RELIC.PETRIFIED_TOAD",
+          "RELIC.CLOAK_CLASP",
+          "RELIC.HORN_CLEAT"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "de76ec3cd00611d3",
+    "seed": "PL2D5NTXNZQS",
+    "start_time": 1788943074,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 14,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+            "monster_ids": [
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 14,
+              "id": "CARD.STOKE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.IMPERVIOUS"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ARMAMENTS"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.STOKE"
+          }
+        ],
+        "held": [
+          "RELIC.SILKEN_TRESS",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.STRIKE_DUMMY",
+          "RELIC.HAPPY_FLOWER"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "99e08ec5d703c248",
+    "seed": "3GUKHK6QX4K8",
+    "start_time": 1788995903,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 31,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 31,
+              "id": "CARD.OBLIVION"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.REAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SPIRIT_OF_ASH"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.OBLIVION"
+          }
+        ],
+        "held": [
+          "RELIC.LEAD_PAPERWEIGHT",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.AMETHYST_AUBERGINE",
+          "RELIC.JOSS_PAPER",
+          "RELIC.MEAL_TICKET",
+          "RELIC.SEAL_OF_GOLD",
+          "RELIC.VAMBRACE",
+          "RELIC.TINY_MAILBOX",
+          "RELIC.STONE_CRACKER",
+          "RELIC.RAINBOW_RING"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "891b19881d5de3a2",
+    "seed": "JF9YEZ6G89FZ",
+    "start_time": 1789003657,
+    "character": "CHARACTER.SILENT",
+    "ascension": 8,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 11,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHROG_PARASITE_ELITE",
+            "monster_ids": [
+              "MONSTER.PHROG_PARASITE",
+              "MONSTER.WRIGGLER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 10
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 11,
+              "id": "CARD.ABRASIVE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.NIGHTMARE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DAGGER_SPRAY"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.ABRASIVE"
+          }
+        ],
+        "held": [
+          "RELIC.WINGED_BOOTS",
+          "RELIC.ART_OF_WAR",
+          "RELIC.PENDULUM",
+          "RELIC.NUNCHAKU",
+          "RELIC.STRIKE_DUMMY"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "4c83e6de4539f440",
+    "seed": "0GJDL84Z5R65",
+    "start_time": 1789099455,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 9,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 43,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SOUL_NEXUS_ELITE",
+            "monster_ids": [
+              "MONSTER.SOUL_NEXUS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 43,
+              "id": "CARD.AGGRESSION"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.STOMP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BRAND"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.AGGRESSION"
+          }
+        ],
+        "held": [
+          "RELIC.PRECISE_SCISSORS",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.CHOSEN_CHEESE",
+          "RELIC.PANTOGRAPH",
+          "RELIC.GORGET",
+          "RELIC.VENERABLE_TEA_SET",
+          "RELIC.STRIKE_DUMMY",
+          "RELIC.NUTRITIOUS_SOUP",
+          "RELIC.STRAWBERRY",
+          "RELIC.GREMLIN_HORN",
+          "RELIC.PLANISPHERE",
+          "RELIC.PEN_NIB",
+          "RELIC.DELICATE_FROND",
+          "RELIC.WHETSTONE",
+          "RELIC.SPARKLING_ROUGE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "90cc78efed8f0321",
+    "seed": "C17JML3F0NKW",
+    "start_time": 1788618326,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 15,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYRDONIS_ELITE",
+            "monster_ids": [
+              "MONSTER.BYRDONIS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 15,
+              "id": "CARD.MACHINE_LEARNING"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.GLACIER"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.MULTI_CAST"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.MACHINE_LEARNING"
+          }
+        ],
+        "held": [
+          "RELIC.FISHING_ROD",
+          "RELIC.CRACKED_CORE",
+          "RELIC.SWORD_OF_STONE",
+          "RELIC.ORNAMENTAL_FAN",
+          "RELIC.GAME_PIECE",
+          "RELIC.ANCHOR",
+          "RELIC.RED_MASK"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "bf8314b5203833ab",
+    "seed": "EQQLTBFLR2TY",
+    "start_time": 1789179358,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 9,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.TERROR_EEL_ELITE",
+            "monster_ids": [
+              "MONSTER.TERROR_EEL"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 9,
+              "id": "CARD.DEMON_FORM"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SETUP_STRIKE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.MANGLE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEMON_FORM"
+          }
+        ],
+        "held": [
+          "RELIC.CURSED_PEARL",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.MEMBERSHIP_CARD",
+          "RELIC.TUNGSTEN_ROD",
+          "RELIC.POTION_BELT",
+          "RELIC.STRIKE_DUMMY"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "facd7fbb0a3b1e81",
+    "seed": "VSRSK4FRRW8P",
+    "start_time": 1789345918,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 8,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 12,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.TERROR_EEL_ELITE",
+            "monster_ids": [
+              "MONSTER.TERROR_EEL"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 12,
+              "id": "CARD.UNMOVABLE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.POMMEL_STRIKE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BARRICADE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.UNMOVABLE"
+          }
+        ],
+        "held": [
+          "RELIC.HEFTY_TABLET",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.CLOAK_CLASP",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.MEAL_TICKET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "11f9e7b16ae4e90b",
+    "seed": "HEBQBFF2N659",
+    "start_time": 1789416168,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 25,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.JUGGERNAUT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BODY_SLAM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.IMPERVIOUS"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.CURSED_PEARL",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.ANCHOR",
+          "RELIC.WHETSTONE",
+          "RELIC.SHURIKEN",
+          "RELIC.POCKETWATCH",
+          "RELIC.GORGET",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.PAPER_PHROG"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d24ade1973389492",
+    "seed": "459WBSC35MVF",
+    "start_time": 1789246843,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 40,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.MECHA_KNIGHT_ELITE",
+            "monster_ids": [
+              "MONSTER.MECHA_KNIGHT"
+            ],
+            "room_type": "elite",
+            "turns_taken": 9
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 40,
+              "id": "CARD.SEANCE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.TIMES_UP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.THE_SCYTHE",
+              "props": {
+                "ints": [
+                  {
+                    "name": "CurrentDamage",
+                    "value": 13
+                  },
+                  {
+                    "name": "IncreasedDamage",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.NECRO_MASTERY"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.AFTERLIFE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.THE_SCYTHE",
+              "props": {
+                "ints": [
+                  {
+                    "name": "CurrentDamage",
+                    "value": 13
+                  },
+                  {
+                    "name": "IncreasedDamage",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.SEANCE"
+          }
+        ],
+        "held": [
+          "RELIC.SCROLL_BOXES",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.AMETHYST_AUBERGINE",
+          "RELIC.ANCHOR",
+          "RELIC.PEN_NIB",
+          "RELIC.WHITE_STAR",
+          "RELIC.VAJRA",
+          "RELIC.PAELS_TOOTH",
+          "RELIC.STONE_CRACKER",
+          "RELIC.PENDULUM",
+          "RELIC.WAR_PAINT",
+          "RELIC.SAI",
+          "RELIC.BAG_OF_PREPARATION",
+          "RELIC.LANTERN"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "1a7b8dc663340835",
+    "seed": "M46BJCH42HCM",
+    "start_time": 1789200983,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 12,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYRDONIS_ELITE",
+            "monster_ids": [
+              "MONSTER.BYRDONIS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 12,
+              "id": "CARD.SQUEEZE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.COUNTDOWN"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SEANCE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.SQUEEZE"
+          }
+        ],
+        "held": [
+          "RELIC.FISHING_ROD",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.BEATING_REMNANT",
+          "RELIC.GAMBLING_CHIP",
+          "RELIC.FROZEN_EGG"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "02ffe9dd40249a8d",
+    "seed": "BRFREDBZE3T9",
+    "start_time": 1789961564,
+    "character": "CHARACTER.REGENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 31,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.HEAVENLY_DRILL"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.PHOTON_CUT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ROYALTIES"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.MINI_REGENT",
+          "RELIC.BAG_OF_PREPARATION",
+          "RELIC.KUNAI",
+          "RELIC.HORN_CLEAT",
+          "RELIC.POTION_BELT",
+          "RELIC.YUMMY_COOKIE",
+          "RELIC.RIPPLE_BASIN",
+          "RELIC.FAKE_HAPPY_FLOWER",
+          "RELIC.FAKE_VENERABLE_TEA_SET",
+          "RELIC.FAKE_LEES_WAFFLE",
+          "RELIC.ODDLY_SMOOTH_STONE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "4eb2d2474617b996",
+    "seed": "Y72VEL38EXGA",
+    "start_time": 1789404275,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 14,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+            "monster_ids": [
+              "MONSTER.SKULKING_COLONY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "floor_added_to_deck": 14,
+              "id": "CARD.THE_SCYTHE",
+              "props": {
+                "ints": [
+                  {
+                    "name": "CurrentDamage",
+                    "value": 13
+                  },
+                  {
+                    "name": "IncreasedDamage",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.PULL_AGGRO"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.ERADICATE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "current_upgrade_level": 1,
+            "id": "CARD.THE_SCYTHE",
+            "props": {
+              "ints": [
+                {
+                  "name": "CurrentDamage",
+                  "value": 13
+                },
+                {
+                  "name": "IncreasedDamage",
+                  "value": 0
+                }
+              ]
+            }
+          }
+        ],
+        "held": [
+          "RELIC.GOLDEN_PEARL",
+          "RELIC.LAVA_LAMP",
+          "RELIC.BRONZE_SCALES",
+          "RELIC.PEAR",
+          "RELIC.HAPPY_FLOWER"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "23d1aded76d929f4",
+    "seed": "G4547K88JUEP",
+    "start_time": 1788688059,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 27,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 27,
+              "id": "CARD.MODDED"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.LIGHTNING_ROD"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BUFFER"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.MODDED"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_BONES",
+          "RELIC.WINGED_BOOTS",
+          "RELIC.NEOWS_SACRIFICE",
+          "RELIC.CRACKED_CORE",
+          "RELIC.POTION_BELT",
+          "RELIC.WAR_PAINT",
+          "RELIC.MUMMIFIED_HAND",
+          "RELIC.PAELS_HORN",
+          "RELIC.LOST_WISP",
+          "RELIC.ANCHOR",
+          "RELIC.MINIATURE_CANNON"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "71cadbf2f96a3b9d",
+    "seed": "XWT9L1T94BPT",
+    "start_time": 1790440603,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHROG_PARASITE_ELITE",
+            "monster_ids": [
+              "MONSTER.PHROG_PARASITE",
+              "MONSTER.WRIGGLER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 8,
+              "id": "CARD.DEMESNE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.UNDEATH"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.INVOKE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEMESNE"
+          }
+        ],
+        "held": [
+          "RELIC.ARCANE_SCROLL",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.SPARKLING_ROUGE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d2a0224b26b1045a",
+    "seed": "QD1ZUEPF2XNW",
+    "start_time": 1788092649,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 28,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "floor_added_to_deck": 28,
+              "id": "CARD.MULTI_CAST"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.TRASH_TO_TREASURE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.GLACIER"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "current_upgrade_level": 1,
+            "id": "CARD.MULTI_CAST"
+          }
+        ],
+        "held": [
+          "RELIC.PHIAL_HOLSTER",
+          "RELIC.CRACKED_CORE",
+          "RELIC.ANCHOR",
+          "RELIC.WHETSTONE",
+          "RELIC.MANGO",
+          "RELIC.PENDULUM",
+          "RELIC.TOXIC_EGG",
+          "RELIC.SAND_CASTLE",
+          "RELIC.MR_STRUGGLES",
+          "RELIC.CANDELABRA",
+          "RELIC.WAR_PAINT",
+          "RELIC.HAPPY_FLOWER"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "860f03d5a128d5bf",
+    "seed": "Q6HU5U23N7PJ",
+    "start_time": 1786870413,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 12,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+            "monster_ids": [
+              "MONSTER.BYGONE_EFFIGY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 3
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 12,
+              "id": "CARD.STORM_OF_STEEL"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.MIRAGE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.THE_HUNT"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.STORM_OF_STEEL"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_TALISMAN",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.POCKETWATCH",
+          "RELIC.VAJRA",
+          "RELIC.BAG_OF_MARBLES",
+          "RELIC.MUMMIFIED_HAND"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "48afe3366ebb968d",
+    "seed": "FMSK5MDE6NAA",
+    "start_time": 1790469637,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 11,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYRDONIS_ELITE",
+            "monster_ids": [
+              "MONSTER.BYRDONIS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 11,
+              "id": "CARD.DEMESNE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SENTRY_MODE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEBILITATE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEMESNE"
+          }
+        ],
+        "held": [
+          "RELIC.LEAD_PAPERWEIGHT",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.PETRIFIED_TOAD",
+          "RELIC.ORICHALCUM"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d5bc56e11a6ed5ab",
+    "seed": "43Y1CHF2C73V",
+    "start_time": 1788539994,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 8,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 4,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.SACRIFICE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SNAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.HAUNT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.AFTERLIFE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.BANSHEES_CRY"
+          }
+        ],
+        "held": [
+          "RELIC.LEAFY_POULTICE",
+          "RELIC.BOUND_PHYLACTERY"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "af813e924cb2e0ff",
+    "seed": "AHGYJAT1GPAA",
+    "start_time": 1789434907,
+    "character": "CHARACTER.REGENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 15,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.TERROR_EEL_ELITE",
+            "monster_ids": [
+              "MONSTER.TERROR_EEL"
+            ],
+            "room_type": "elite",
+            "turns_taken": 9
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 15,
+              "id": "CARD.ROYALTIES"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.I_AM_INVINCIBLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ASTRAL_PULSE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.ROYALTIES"
+          }
+        ],
+        "held": [
+          "RELIC.FISHING_ROD",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.BAG_OF_MARBLES",
+          "RELIC.NUNCHAKU",
+          "RELIC.FESTIVE_POPPER",
+          "RELIC.WAR_PAINT"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "8da40e0ff06371b0",
+    "seed": "QJZSKMSYDPG6",
+    "start_time": 1790969435,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 42,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.MECHA_KNIGHT_ELITE",
+            "monster_ids": [
+              "MONSTER.MECHA_KNIGHT"
+            ],
+            "room_type": "elite",
+            "turns_taken": 10
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.BRAND"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.RAMPAGE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ONE_TWO_PUNCH"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.POMANDER",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.LANTERN",
+          "RELIC.PETRIFIED_TOAD",
+          "RELIC.FESTIVE_POPPER",
+          "RELIC.MEMBERSHIP_CARD",
+          "RELIC.BIIIG_HUG",
+          "RELIC.BAG_OF_PREPARATION",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.ANCHOR",
+          "RELIC.STRAWBERRY",
+          "RELIC.TEA_OF_DISCOURTESY",
+          "RELIC.TOOLBOX",
+          "RELIC.LUCKY_FYSH",
+          "RELIC.PRESERVED_FOG",
+          "RELIC.WHETSTONE",
+          "RELIC.WAR_PAINT",
+          "RELIC.BLOOD_VIAL",
+          "RELIC.AKABEKO"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "9667626099f29dd8",
+    "seed": "15G9X7US5883",
+    "start_time": 1789131341,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 14,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+            "monster_ids": [
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 14,
+              "id": "CARD.KNIFE_TRAP"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.ENVENOM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SIDESTEP"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.KNIFE_TRAP"
+          }
+        ],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.SWORD_OF_STONE",
+          "RELIC.MINIATURE_CANNON",
+          "RELIC.FESTIVE_POPPER",
+          "RELIC.BOOK_OF_FIVE_RINGS",
+          "RELIC.VENERABLE_TEA_SET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "87bdbd969ed6ea2c",
+    "seed": "HJPSPBMHRYBM",
+    "start_time": 1788058866,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 31,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.DECIMILLIPEDE_ELITE",
+            "monster_ids": [
+              "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_BACK"
+            ],
+            "room_type": "elite",
+            "turns_taken": 2
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.PACTS_END"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.THUNDERCLAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.STOKE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.BOOMING_CONCH",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.BRONZE_SCALES",
+          "RELIC.REPTILE_TRINKET",
+          "RELIC.WAR_PAINT",
+          "RELIC.UNCEASING_TOP",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.LIZARD_TAIL",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.BELLOWS",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.TUNING_FORK",
+          "RELIC.RINGING_TRIANGLE",
+          "RELIC.LANTERN",
+          "RELIC.FESTIVE_POPPER"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "17cf8daa1ff98ac3",
+    "seed": "816YLXKLA6A2",
+    "start_time": 1791411637,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 7,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+            "monster_ids": [
+              "MONSTER.BYGONE_EFFIGY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 8,
+              "id": "CARD.MODDED"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SHADOW_SHIELD"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.MACHINE_LEARNING"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.MODDED"
+          }
+        ],
+        "held": [
+          "RELIC.SILKEN_TRESS",
+          "RELIC.CRACKED_CORE",
+          "RELIC.WHETSTONE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d80f0d1ebf108eb6",
+    "seed": "BHLBJAG0U5W0",
+    "start_time": 1791230794,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 8,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 9,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYRDONIS_ELITE",
+            "monster_ids": [
+              "MONSTER.BYRDONIS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 9,
+              "id": "CARD.CONFLAGRATION"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.ONE_TWO_PUNCH"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FIGHT_ME"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.CONFLAGRATION"
+          }
+        ],
+        "held": [
+          "RELIC.NEW_LEAF",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.PLANISPHERE",
+          "RELIC.SPARKLING_ROUGE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "79c26643a522e9cb",
+    "seed": "0LQ7UU7D2ZL6",
+    "start_time": 1791656378,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 29,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.SIC_EM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEFILE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.NEGATIVE_PULSE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.OBLIVION"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.HANG"
+          }
+        ],
+        "held": [
+          "RELIC.SILVER_CRUCIBLE",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.VEXING_PUZZLEBOX",
+          "RELIC.REGAL_PILLOW",
+          "RELIC.GOLDEN_COMPASS",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.GREMLIN_HORN"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "a4a46d4e363f44ad",
+    "seed": "LE9GCM7VY93X",
+    "start_time": 1791759349,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 3,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.COMPACT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ADAPTIVE_STRIKE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.TURBO"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BARRAGE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.HELIX_DRILL"
+          }
+        ],
+        "held": [
+          "RELIC.PRECARIOUS_SHEARS",
+          "RELIC.CRACKED_CORE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "f1f407130859a603",
+    "seed": "UJLCHXLAK0EQ",
+    "start_time": 1791614989,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": false,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 43,
+        "lower": false,
+        "upper": true,
+        "complete": true,
+        "reason": "candy_or_boundaries",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SOUL_NEXUS_ELITE",
+            "monster_ids": [
+              "MONSTER.SOUL_NEXUS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.HELIX_DRILL"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ADAPTIVE_STRIKE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SIGNAL_BOOST"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "floor_added_to_deck": 43,
+              "id": "CARD.DEFRAGMENT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.COOLANT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SUPERCRITICAL"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.UPROAR"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.GUNK_UP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ITERATION"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.HAILSTORM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.GUNK_UP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BEAM_CELL"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BARRAGE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEFRAGMENT"
+          }
+        ],
+        "held": [
+          "RELIC.NEW_LEAF",
+          "RELIC.CRACKED_CORE",
+          "RELIC.REPTILE_TRINKET",
+          "RELIC.FRESNEL_LENS",
+          "RELIC.ORNAMENTAL_FAN",
+          "RELIC.GOLD_PLATED_CABLES",
+          "RELIC.WHITE_STAR",
+          "RELIC.DRIFTWOOD",
+          "RELIC.MINIATURE_TENT",
+          "RELIC.CHOSEN_CHEESE",
+          "RELIC.CLOAK_CLASP",
+          "RELIC.LASTING_CANDY",
+          "RELIC.LOST_WISP",
+          "RELIC.BAG_OF_PREPARATION",
+          "RELIC.JEWELRY_BOX",
+          "RELIC.DATA_DISK",
+          "RELIC.FESTIVE_POPPER",
+          "RELIC.STRAWBERRY",
+          "RELIC.CAPTAINS_WHEEL"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "8a4b1a71ba87613a",
+    "seed": "EGAG690JE273",
+    "start_time": 1792057273,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 30,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 30,
+              "id": "CARD.FIEND_FIRE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SETUP_STRIKE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.CASCADE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.FIEND_FIRE"
+          }
+        ],
+        "held": [
+          "RELIC.SCROLL_BOXES",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.MERCURY_HOURGLASS",
+          "RELIC.PLANISPHERE",
+          "RELIC.FESTIVE_POPPER",
+          "RELIC.WAR_PAINT",
+          "RELIC.PAELS_FLESH",
+          "RELIC.CENTENNIAL_PUZZLE",
+          "RELIC.REGAL_PILLOW",
+          "RELIC.RAINBOW_RING",
+          "RELIC.CLOAK_CLASP"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "be218a1f3e8f4db3",
+    "seed": "E5BLR067S92U",
+    "start_time": 1789357057,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 15,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.RAINBOW"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SCRAPE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.LEAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.GENETIC_ALGORITHM",
+              "props": {
+                "ints": [
+                  {
+                    "name": "CurrentBlock",
+                    "value": 1
+                  },
+                  {
+                    "name": "IncreasedBlock",
+                    "value": 0
+                  }
+                ]
+              }
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.COOLHEADED"
+          }
+        ],
+        "held": [
+          "RELIC.PRECARIOUS_SHEARS",
+          "RELIC.CRACKED_CORE",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.VAJRA",
+          "RELIC.TUNING_FORK",
+          "RELIC.EMOTION_CHIP"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "1447ae651bebcb32",
+    "seed": "SWUMQPNPH2QC",
+    "start_time": 1792544391,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 9,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+            "monster_ids": [
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 9,
+              "id": "CARD.PRIMAL_FORCE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.BODY_SLAM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.IMPERVIOUS"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.PRIMAL_FORCE"
+          }
+        ],
+        "held": [
+          "RELIC.BOOMING_CONCH",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.DREAM_CATCHER",
+          "RELIC.PERMAFROST",
+          "RELIC.MINIATURE_CANNON"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "8acf353ef8532c5e",
+    "seed": "WR156SAEZPK4",
+    "start_time": 1789858353,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 45,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.KNIGHTS_ELITE",
+            "monster_ids": [
+              "MONSTER.FLAIL_KNIGHT",
+              "MONSTER.SPECTRAL_KNIGHT",
+              "MONSTER.MAGI_KNIGHT"
+            ],
+            "room_type": "elite",
+            "turns_taken": 1
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.CORROSIVE_WAVE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FINISHER"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.MALAISE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.SILKEN_TRESS",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.PARRYING_SHIELD",
+          "RELIC.WAR_PAINT",
+          "RELIC.BOOK_OF_FIVE_RINGS",
+          "RELIC.AMETHYST_AUBERGINE",
+          "RELIC.BOWLER_HAT",
+          "RELIC.TOASTY_MITTENS",
+          "RELIC.VAJRA",
+          "RELIC.ORNAMENTAL_FAN",
+          "RELIC.BAG_OF_MARBLES",
+          "RELIC.CENTENNIAL_PUZZLE",
+          "RELIC.MERCURY_HOURGLASS",
+          "RELIC.STRIKE_DUMMY",
+          "RELIC.FUR_COAT",
+          "RELIC.ANCHOR",
+          "RELIC.HAPPY_FLOWER",
+          "RELIC.CLOAK_CLASP",
+          "RELIC.PEN_NIB",
+          "RELIC.FESTIVE_POPPER"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b07c66b4599973c0",
+    "seed": "XHXK2KZ33GRU",
+    "start_time": 1791079144,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 7,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.TERROR_EEL_ELITE",
+            "monster_ids": [
+              "MONSTER.TERROR_EEL"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 7,
+              "id": "CARD.TOOLS_OF_THE_TRADE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.CORROSIVE_WAVE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.POISONED_STAB"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.TOOLS_OF_THE_TRADE"
+          }
+        ],
+        "held": [
+          "RELIC.NEW_LEAF",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.JUZU_BRACELET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "6a430a1e71dab965",
+    "seed": "ND1U4DU419",
+    "start_time": 1792650588,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 7,
+    "win": true,
+    "lower": false,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 24,
+        "lower": false,
+        "upper": true,
+        "complete": false,
+        "reason": "missing_choices",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [],
+        "gained": [],
+        "held": [
+          "RELIC.DOWSING_ROD",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.BOOK_OF_FIVE_RINGS",
+          "RELIC.MEAL_TICKET",
+          "RELIC.PAELS_GROWTH",
+          "RELIC.PEN_NIB"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "fe347e87d27f93e9",
+    "seed": "T8VK4KAC9TBN",
+    "start_time": 1789674987,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 12,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+            "monster_ids": [
+              "MONSTER.BYGONE_EFFIGY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 12,
+              "id": "CARD.REANIMATE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.DEFY"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.HANG"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.REANIMATE"
+          }
+        ],
+        "held": [
+          "RELIC.SILVER_CRUCIBLE",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.SHOVEL",
+          "RELIC.KUNAI"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b4a3a5b0844aadb8",
+    "seed": "PM3XZLT8MBDE",
+    "start_time": 1792608364,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 12,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+            "monster_ids": [
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER",
+              "MONSTER.PHANTASMAL_GARDENER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 12,
+              "id": "CARD.ENVENOM"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SHADOWMELD"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.REFLEX"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.ENVENOM"
+          }
+        ],
+        "held": [
+          "RELIC.SILKEN_TRESS",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.TWISTED_FUNNEL",
+          "RELIC.LASTING_CANDY",
+          "RELIC.INTIMIDATING_HELMET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "2e713e27a3818c8e",
+    "seed": "277CJLSQG9JX",
+    "start_time": 1790143628,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 12,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.PHROG_PARASITE_ELITE",
+            "monster_ids": [
+              "MONSTER.PHROG_PARASITE",
+              "MONSTER.WRIGGLER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 12,
+              "id": "CARD.TRACKING"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.DODGE_AND_ROLL"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.SHADOWMELD"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.TRACKING"
+          }
+        ],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.TOXIC_EGG",
+          "RELIC.MINIATURE_CANNON",
+          "RELIC.PLANISPHERE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "637a8e3912d982f7",
+    "seed": "07JBE8TGH20P",
+    "start_time": 1791472390,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+            "monster_ids": [
+              "MONSTER.SKULKING_COLONY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 8,
+              "id": "CARD.BLADE_OF_INK"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.BLUR"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.WELL_LAID_PLANS"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.BLADE_OF_INK"
+          }
+        ],
+        "held": [
+          "RELIC.LEAFY_POULTICE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.MAW_BANK",
+          "RELIC.CENTENNIAL_PUZZLE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "bb84694f08527573",
+    "seed": "00SXMM1EZ0MN",
+    "start_time": 1792803840,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.LOOP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DARKNESS"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ALL_FOR_ONE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.GUNK_UP"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.MACHINE_LEARNING"
+          }
+        ],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.CRACKED_CORE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b03e0c650869496c",
+    "seed": "UUL950L5XPVG",
+    "start_time": 1789764426,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 28,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.LOOP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.LEAP"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FLAK_CANNON"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FIGHT_THROUGH"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.ALL_FOR_ONE"
+          }
+        ],
+        "held": [
+          "RELIC.LEAFY_POULTICE",
+          "RELIC.CRACKED_CORE",
+          "RELIC.ANCHOR",
+          "RELIC.REPTILE_TRINKET",
+          "RELIC.SYMBIOTIC_VIRUS",
+          "RELIC.UNCEASING_TOP",
+          "RELIC.ARCHAIC_TOOTH",
+          "RELIC.BRONZE_SCALES",
+          "RELIC.CENTENNIAL_PUZZLE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "696677bdc16a8969",
+    "seed": "A8RBC66UE93T",
+    "start_time": 1792827174,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": false,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 8,
+        "lower": false,
+        "upper": true,
+        "complete": false,
+        "reason": "unrecognized_offer_boundaries",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+            "monster_ids": [
+              "MONSTER.SKULKING_COLONY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.PHANTOM_BLADES"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "enchantment": {
+                "amount": 1,
+                "id": "ENCHANTMENT.SWIFT"
+              },
+              "id": "CARD.POISONED_STAB"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "floor_added_to_deck": 8,
+              "id": "CARD.BACKFLIP"
+            },
+            "was_picked": true
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.BACKFLIP"
+          }
+        ],
+        "held": [
+          "RELIC.CURSED_PEARL",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.WING_CHARM",
+          "RELIC.VENERABLE_TEA_SET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "6a65e10335a181c8",
+    "seed": "RT6AW8N3VGKF",
+    "start_time": 1793274683,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 27,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.ENTOMANCER_ELITE",
+            "monster_ids": [
+              "MONSTER.ENTOMANCER"
+            ],
+            "room_type": "elite",
+            "turns_taken": 2
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.MISERY"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.RATTLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.TIMES_UP"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.HEFTY_TABLET",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.OLD_COIN",
+          "RELIC.MEAL_TICKET",
+          "RELIC.PARRYING_SHIELD",
+          "RELIC.BIG_HAT",
+          "RELIC.CHEMICAL_X",
+          "RELIC.STONE_CRACKER",
+          "RELIC.PAELS_LEGION",
+          "RELIC.POTION_BELT",
+          "RELIC.BONE_FLUTE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "b2ead3d67057c202",
+    "seed": "C6NQAUL4XM5Y",
+    "start_time": 1788770715,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 31,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.DECIMILLIPEDE_ELITE",
+            "monster_ids": [
+              "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+              "MONSTER.DECIMILLIPEDE_SEGMENT_BACK"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.BULLET_TIME"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.CALCULATED_GAMBLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.NIGHTMARE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.LOST_COFFER",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.FESTIVE_POPPER",
+          "RELIC.ETERNAL_FEATHER",
+          "RELIC.MANGO",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.POCKETWATCH",
+          "RELIC.WAR_PAINT",
+          "RELIC.WHETSTONE",
+          "RELIC.ORNAMENTAL_FAN",
+          "RELIC.PAPER_KRANE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "ca7dac24b9016544",
+    "seed": "WR4L5U3LJWLK",
+    "start_time": 1792956004,
+    "character": "CHARACTER.REGENT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 7,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+            "monster_ids": [
+              "MONSTER.BYGONE_EFFIGY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 7,
+              "id": "CARD.HEAVENLY_DRILL"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.ASTRAL_PULSE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SWORD_SAGE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.HEAVENLY_DRILL"
+          }
+        ],
+        "held": [
+          "RELIC.PRECISE_SCISSORS",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.CENTENNIAL_PUZZLE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d4aae173314cf99b",
+    "seed": "VG5R6H2YLF1N",
+    "start_time": 1786922524,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 7,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 7,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.TERROR_EEL_ELITE",
+            "monster_ids": [
+              "MONSTER.TERROR_EEL"
+            ],
+            "room_type": "elite",
+            "turns_taken": 8
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 7,
+              "id": "CARD.EIDOLON"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SOW"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SOUL_STORM"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.EIDOLON"
+          }
+        ],
+        "held": [
+          "RELIC.LEAD_PAPERWEIGHT",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.LANTERN"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "4a2e3ceea9fc4e38",
+    "seed": "REAGF258BT3Y",
+    "start_time": 1789830459,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 8,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.HEADBUTT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.IMPERVIOUS"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BODY_SLAM"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.TREMBLE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DOMINATE"
+          }
+        ],
+        "held": [
+          "RELIC.GOLDEN_PEARL",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.MINIATURE_TENT"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "e6edfad928430ec9",
+    "seed": "LLREPGKGZJ9U",
+    "start_time": 1793418605,
+    "character": "CHARACTER.REGENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 29,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.I_AM_INVINCIBLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEVASTATE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ARSENAL"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.PRECISE_SCISSORS",
+          "RELIC.DIVINE_RIGHT",
+          "RELIC.ANCHOR",
+          "RELIC.CENTENNIAL_PUZZLE",
+          "RELIC.BOOK_OF_FIVE_RINGS",
+          "RELIC.CANDELABRA",
+          "RELIC.ECTOPLASM",
+          "RELIC.LOST_WISP",
+          "RELIC.GIRYA",
+          "RELIC.POTION_BELT",
+          "RELIC.WHETSTONE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "60c946d97d533dde",
+    "seed": "MEQG13X3HPX3",
+    "start_time": 1793515127,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 46,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SOUL_NEXUS_ELITE",
+            "monster_ids": [
+              "MONSTER.SOUL_NEXUS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 46,
+              "id": "CARD.THRASH"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.UNMOVABLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.SPITE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.THRASH"
+          }
+        ],
+        "held": [
+          "RELIC.KALEIDOSCOPE",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.MANGO",
+          "RELIC.BAG_OF_PREPARATION",
+          "RELIC.PENDULUM",
+          "RELIC.AMETHYST_AUBERGINE",
+          "RELIC.RED_SKULL",
+          "RELIC.PAELS_TOOTH",
+          "RELIC.BURNING_STICKS",
+          "RELIC.PETRIFIED_TOAD",
+          "RELIC.ANCHOR",
+          "RELIC.GORGET",
+          "RELIC.JEWELED_MASK",
+          "RELIC.PANTOGRAPH",
+          "RELIC.SLING_OF_COURAGE",
+          "RELIC.ICE_CREAM",
+          "RELIC.TUNING_FORK",
+          "RELIC.LETTER_OPENER",
+          "RELIC.FAKE_VENERABLE_TEA_SET",
+          "RELIC.FAKE_ORICHALCUM",
+          "RELIC.ODDLY_SMOOTH_STONE"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "62861feaa39a26ba",
+    "seed": "KZMB8TGZH9AY",
+    "start_time": 1786979400,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "orrery",
+        "floor": 38,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "room_type": "shop",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "floor_added_to_deck": 38,
+              "id": "CARD.PREPARED"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SNAKEBITE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEFLECT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "floor_added_to_deck": 38,
+              "id": "CARD.CLOAK_AND_DAGGER"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.SLICE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FLICK_FLACK"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "floor_added_to_deck": 38,
+              "id": "CARD.BLUR"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.OUTBREAK"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ASSASSINATE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.RICOCHET"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DODGE_AND_ROLL"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.HAZE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.POISONED_STAB"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DAGGER_SPRAY"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.PREPARED"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.ECHOING_SLASH"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.POUNCE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEADLY_POISON"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEFLECT"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.NOXIOUS_FUMES"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.RESTLESSNESS"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BEAT_DOWN"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "current_upgrade_level": 1,
+            "id": "CARD.PREPARED"
+          },
+          {
+            "current_upgrade_level": 1,
+            "floor_added_to_deck": 38,
+            "id": "CARD.PREPARED"
+          },
+          {
+            "current_upgrade_level": 1,
+            "id": "CARD.CLOAK_AND_DAGGER"
+          },
+          {
+            "current_upgrade_level": 1,
+            "floor_added_to_deck": 38,
+            "id": "CARD.CLOAK_AND_DAGGER"
+          },
+          {
+            "current_upgrade_level": 1,
+            "id": "CARD.BLUR"
+          },
+          {
+            "current_upgrade_level": 1,
+            "floor_added_to_deck": 38,
+            "id": "CARD.BLUR"
+          }
+        ],
+        "held": [
+          "RELIC.SILVER_CRUCIBLE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.CHOSEN_CHEESE",
+          "RELIC.WHETSTONE",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.VENERABLE_TEA_SET",
+          "RELIC.SOZU",
+          "RELIC.BING_BONG",
+          "RELIC.BONE_TEA",
+          "RELIC.OLD_COIN",
+          "RELIC.LOOMING_FRUIT",
+          "RELIC.ORRERY"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "c7e58a8cd3e3e1d9",
+    "seed": "VCXB8JXSVSFP",
+    "start_time": 1793579606,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": false,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 7,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SKULKING_COLONY_ELITE",
+            "monster_ids": [
+              "MONSTER.SKULKING_COLONY"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 7,
+              "id": "CARD.BULLET_TIME"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.TRACKING"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.PREPARED"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.BULLET_TIME"
+          }
+        ],
+        "held": [
+          "RELIC.LEAFY_POULTICE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.CENTENNIAL_PUZZLE",
+          "RELIC.SWORD_OF_STONE",
+          "RELIC.VENERABLE_TEA_SET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "d2096e575abe5d2c",
+    "seed": "62UHQD8MLB22",
+    "start_time": 1793674802,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 24,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 4
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 24,
+              "id": "CARD.PRIMAL_FORCE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.MANGLE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.BODY_SLAM"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.PRIMAL_FORCE"
+          }
+        ],
+        "held": [
+          "RELIC.LARGE_CAPSULE",
+          "RELIC.PAPER_PHROG",
+          "RELIC.PENDULUM",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.BRONZE_SCALES",
+          "RELIC.ANCHOR",
+          "RELIC.PEAR",
+          "RELIC.PERMAFROST",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.EMBER_TEA",
+          "RELIC.VENERABLE_TEA_SET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "cbe2e6812470a763",
+    "seed": "NDN7QUSUV8KJ",
+    "start_time": 1792510856,
+    "character": "CHARACTER.SILENT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "brain_leech",
+        "floor": 31,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "grid_plus_gained",
+        "rooms": [
+          {
+            "model_id": "EVENT.BRAIN_LEECH",
+            "room_type": "event",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.GRAND_FINALE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.SNAKEBITE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.FAN_OF_KNIVES"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.UNTOUCHABLE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.HIDDEN_DAGGERS"
+          }
+        ],
+        "held": [
+          "RELIC.NUTRITIOUS_OYSTER",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.LUCKY_FYSH",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.SHURIKEN",
+          "RELIC.CAPTAINS_WHEEL",
+          "RELIC.GLASS_EYE",
+          "RELIC.ANCHOR",
+          "RELIC.REPTILE_TRINKET",
+          "RELIC.BELT_BUCKLE",
+          "RELIC.STONE_CALENDAR",
+          "RELIC.PETRIFIED_TOAD"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "dfb05521c184c8a7",
+    "seed": "26M78KG0J7",
+    "start_time": 1793772596,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 7,
+    "win": true,
+    "lower": false,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 42,
+        "lower": false,
+        "upper": true,
+        "complete": false,
+        "reason": "missing_choices",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.KNIGHTS_ELITE",
+            "monster_ids": [
+              "MONSTER.FLAIL_KNIGHT",
+              "MONSTER.SPECTRAL_KNIGHT",
+              "MONSTER.MAGI_KNIGHT"
+            ],
+            "room_type": "elite",
+            "turns_taken": 0
+          }
+        ],
+        "choices": [],
+        "gained": [],
+        "held": [
+          "RELIC.SILVER_CRUCIBLE",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.FRESNEL_LENS",
+          "RELIC.TUNGSTEN_ROD",
+          "RELIC.SPARKLING_ROUGE",
+          "RELIC.YUMMY_COOKIE",
+          "RELIC.CHOSEN_CHEESE",
+          "RELIC.LANTERN",
+          "RELIC.WAR_HAMMER",
+          "RELIC.BLOOD_VIAL",
+          "RELIC.BAG_OF_MARBLES"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "448999f70d4359ac",
+    "seed": "Y14QRH3164CY",
+    "start_time": 1791844111,
+    "character": "CHARACTER.SILENT",
+    "ascension": 7,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 27,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.INFESTED_PRISMS_ELITE",
+            "monster_ids": [
+              "MONSTER.INFESTED_PRISM"
+            ],
+            "room_type": "elite",
+            "turns_taken": 7
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 27,
+              "id": "CARD.MALAISE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.ABRASIVE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DODGE_AND_ROLL"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.MALAISE"
+          }
+        ],
+        "held": [
+          "RELIC.NEOWS_SACRIFICE",
+          "RELIC.RING_OF_THE_SNAKE",
+          "RELIC.MUMMIFIED_HAND",
+          "RELIC.ORNAMENTAL_FAN",
+          "RELIC.VENERABLE_TEA_SET",
+          "RELIC.TWISTED_FUNNEL",
+          "RELIC.PAELS_BLOOD",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.LETTER_OPENER",
+          "RELIC.STRAWBERRY"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "97457de1441d93d8",
+    "seed": "1CYS43EKF0J5",
+    "start_time": 1794007979,
+    "character": "CHARACTER.IRONCLAD",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 42,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.MECHA_KNIGHT_ELITE",
+            "monster_ids": [
+              "MONSTER.MECHA_KNIGHT"
+            ],
+            "room_type": "elite",
+            "turns_taken": 6
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "id": "CARD.SPIRIT_OF_ASH"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.DEADLY_POISON"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.THE_HUNT"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [],
+        "held": [
+          "RELIC.LEAFY_POULTICE",
+          "RELIC.BURNING_BLOOD",
+          "RELIC.AKABEKO",
+          "RELIC.RIPPLE_BASIN",
+          "RELIC.VAMBRACE",
+          "RELIC.AMETHYST_AUBERGINE",
+          "RELIC.PAPER_PHROG",
+          "RELIC.TUNING_FORK",
+          "RELIC.PRISMATIC_GEM",
+          "RELIC.RED_SKULL",
+          "RELIC.SELF_FORMING_CLAY",
+          "RELIC.RAINBOW_RING",
+          "RELIC.VENERABLE_TEA_SET",
+          "RELIC.HORN_CLEAT",
+          "RELIC.MUSIC_BOX",
+          "RELIC.FAKE_HAPPY_FLOWER",
+          "RELIC.BAG_OF_MARBLES",
+          "RELIC.MEAL_TICKET",
+          "RELIC.STRAWBERRY",
+          "RELIC.RED_MASK"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "26c73f4c048fe2e5",
+    "seed": "74GW2JBF4E7C",
+    "start_time": 1794172870,
+    "character": "CHARACTER.NECROBINDER",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 45,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.MECHA_KNIGHT_ELITE",
+            "monster_ids": [
+              "MONSTER.MECHA_KNIGHT"
+            ],
+            "room_type": "elite",
+            "turns_taken": 10
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 45,
+              "id": "CARD.DEMESNE"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.DEFILE"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "id": "CARD.TRANSFIGURE"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.DEMESNE"
+          }
+        ],
+        "held": [
+          "RELIC.SMALL_CAPSULE",
+          "RELIC.LIZARD_TAIL",
+          "RELIC.BOUND_PHYLACTERY",
+          "RELIC.VAMBRACE",
+          "RELIC.PRAYER_WHEEL",
+          "RELIC.BAG_OF_PREPARATION",
+          "RELIC.UNCEASING_TOP",
+          "RELIC.PAELS_TOOTH",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.BEATING_REMNANT",
+          "RELIC.STRIKE_DUMMY",
+          "RELIC.CAPTAINS_WHEEL",
+          "RELIC.ART_OF_WAR",
+          "RELIC.MEAL_TICKET",
+          "RELIC.DIAMOND_DIADEM",
+          "RELIC.FAKE_ANCHOR",
+          "RELIC.FAKE_VENERABLE_TEA_SET",
+          "RELIC.MINIATURE_CANNON",
+          "RELIC.PERMAFROST",
+          "RELIC.REPTILE_TRINKET"
+        ]
+      }
+    ]
+  },
+  {
+    "run_hash": "82c3ad67f90d57a6",
+    "seed": "NY55WHWE2ESR",
+    "start_time": 1794134813,
+    "character": "CHARACTER.DEFECT",
+    "ascension": 10,
+    "win": true,
+    "lower": true,
+    "upper": true,
+    "points": [
+      {
+        "source": "elite",
+        "floor": 40,
+        "lower": true,
+        "upper": true,
+        "complete": true,
+        "reason": "reconstructed",
+        "rooms": [
+          {
+            "model_id": "ENCOUNTER.SOUL_NEXUS_ELITE",
+            "monster_ids": [
+              "MONSTER.SOUL_NEXUS"
+            ],
+            "room_type": "elite",
+            "turns_taken": 5
+          }
+        ],
+        "choices": [
+          {
+            "card": {
+              "floor_added_to_deck": 40,
+              "id": "CARD.REBOOT"
+            },
+            "was_picked": true
+          },
+          {
+            "card": {
+              "id": "CARD.CONSUMING_SHADOW"
+            },
+            "was_picked": false
+          },
+          {
+            "card": {
+              "current_upgrade_level": 1,
+              "id": "CARD.FUSION"
+            },
+            "was_picked": false
+          }
+        ],
+        "gained": [
+          {
+            "id": "CARD.REBOOT"
+          }
+        ],
+        "held": [
+          "RELIC.LARGE_CAPSULE",
+          "RELIC.LETTER_OPENER",
+          "RELIC.RED_MASK",
+          "RELIC.CRACKED_CORE",
+          "RELIC.MEAT_ON_THE_BONE",
+          "RELIC.JUZU_BRACELET",
+          "RELIC.STRAWBERRY",
+          "RELIC.SPARKLING_ROUGE",
+          "RELIC.PANDORAS_BOX",
+          "RELIC.BONE_TEA",
+          "RELIC.MEAL_TICKET",
+          "RELIC.TUNING_FORK",
+          "RELIC.ODDLY_SMOOTH_STONE",
+          "RELIC.JEWELED_MASK",
+          "RELIC.HISTORY_COURSE",
+          "RELIC.VENERABLE_TEA_SET"
+        ]
+      }
+    ]
+  }
+]

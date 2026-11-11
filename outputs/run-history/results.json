@@ -1,0 +1,185 @@
+{
+  "version": "v0.111.0",
+  "source": "https://spire-codex.com/exports/runs-v0.111.0.jsonl.gz",
+  "generated_at": "2026-11-10T01:55:37Z",
+  "sha256": "ef50b70d8855452f0b285bdf517333ea08182266a36a5143d1e0f9467d9b1a32",
+  "cardCatalogSha256": "eb878814b74c779f02dcaa2c62f35fefd3063824ae87dada4aca2f848029c6b7",
+  "total": 397829,
+  "excluded": {
+    "ascension": 74698,
+    "before_act3_boss": 112857,
+    "multiplayer": 161635,
+    "starting_deck_removals": 53,
+    "mod_serialization": 2316,
+    "mode_or_modifiers": 11225,
+    "character": 1390,
+    "acts": 484,
+    "unknown_content:CARD.WATCHER_CUT_THROUGH_FATE": 1,
+    "unknown_content:CARD.WATCHER_WAVE_OF_THE_HAND": 1,
+    "unknown_content:CARD.WATCHER_FOREIGN_INFLUENCE": 2,
+    "unknown_content:CARD.WATCHER_WINDMILL_STRIKE": 1,
+    "unknown_content:CARD.WATCHER_EVALUATE": 1,
+    "unknown_content:CARD.WATCHER_CONJURE_BLADE": 1,
+    "unknown_content:CARD.C_HH_PARALYZING_CASK": 3,
+    "unknown_content:RELIC.DRAW_AND_GUESS_MOD_RELIC_MEMORIAL_SKETCHBOOK": 1,
+    "unknown_content:CARD.STEEL_CORRUPTION": 1,
+    "unknown_content:RELIC.ARCHIPELAGO_RELIC_RELIC_COUPONS": 23,
+    "starting_gold": 21,
+    "unknown_content:CARD.C_HH_TOP_UP_RUN": 1,
+    "unknown_content:ENCOUNTER.GENSOKYOSPIRE-YUAN_LING_WEAK": 1,
+    "unknown_content:CARD.CARD_OF_PANDORA": 1,
+    "unknown_content:ENCHANTMENT.TAR_CHARIOT_UPRIGHT_ENCHANTMENT": 2,
+    "unknown_content:RELIC.LOST": 1,
+    "unknown_content:CARD.C_HH_SIXTY_SEVEN": 1,
+    "combat_reward_rarity": 9,
+    "unknown_content:ENCOUNTER.PIKA_MOD_ENCOUNTER_ETERNATUS_ENCOUNTER": 1,
+    "unknown_content:ENCOUNTER.GENSOKYOSPIRE-SATORI_BOSS": 2,
+    "unknown_content:CARD.D_IY_CARD_SLOT04": 1,
+    "unknown_content:ENCHANTMENT.TAR_DEATH_UPRIGHT_ENCHANTMENT": 1,
+    "unknown_content:ENCHANTMENT.TAR_STRENGTH_UPRIGHT_ENCHANTMENT": 5,
+    "unknown_content:ENCOUNTER.GENSOKYOSPIRE-UFO_WEAK": 1,
+    "unknown_content:ENCOUNTER.GENSOKYOSPIRE-AYA_BOSS": 1,
+    "unknown_content:POTION.GENSOKYOSPIRE-MISTY_LAKE_DRIFT_ICE": 1,
+    "unknown_content:EVENT.GENSOKYOSPIRE-SHIP_PHANTOM": 1,
+    "unknown_content:EVENT.GENSOKYOSPIRE-GARDEN_OF_THE_SUN": 1,
+    "unknown_content:EVENT.LIMBUS_COMPANY_HIDDEN_BOSS_COLLECTION_EVENT_LAST_KNIGHT_CHALLENGE_EVENT": 1,
+    "starting_deck_additions": 6,
+    "unknown_content:ENCOUNTER.YUKI_MOD_ENCOUNTER_GLOOMY_PACK_ENCOUNTER": 1,
+    "starting_ancient": 6,
+    "unknown_content:CARD.C_HH_LASER": 2,
+    "unknown_content:CARD.C_HH_COUNTER_HELIX": 1,
+    "unknown_content:ENCHANTMENT.MOCK_FREE_ENCHANTMENT": 4,
+    "combat_card_pool": 1,
+    "unknown_content:RELIC.ANCIENT_AFFECTION_RELIC_RED_ASCENSION": 1,
+    "unknown_content:CARD.WATCHER_VAULT": 1,
+    "unknown_content:RELIC.SPIRE_HEART_CONTROLLER_RELIC": 11,
+    "unknown_content:RELIC.SAPPHIRE_KEY_RELIC": 2,
+    "unknown_content:RELIC.EMERALD_KEY_RELIC": 1,
+    "unknown_content:CARD.NINE_LUNGE": 1,
+    "unknown_content:CARD.NECROBINDER_OVERHAUL_CARD_BRITTLE_BONE": 1,
+    "unknown_content:CARD.NECROBINDER_OVERHAUL_CARD_WHEEL_OF_FORTUNE": 1,
+    "unknown_content:POTION.SCBSMOD-SMART_POTION": 1,
+    "unknown_content:CARD.WATCHER_BOWLING_BASH": 1,
+    "unknown_content:RELIC.PLAGUE_SPEAR": 1,
+    "unknown_content:POTION.SCBSMOD-ARCANE_POTION": 1,
+    "unknown_content:CARD.LUST_TRAVEL2_CARD_HOLD_BREATH": 1,
+    "unknown_content:RELIC.SPIRE_DELIGHT_RELIC_CHEF_BAG": 1,
+    "unknown_content:RELIC.PQ_CHIPPED_GOBLET": 1,
+    "unknown_content:CARD.WATCHER_CRUSH_JOINTS": 1,
+    "unknown_content:ENCHANTMENT.TAR_DEATH_REVERSED_ENCHANTMENT": 1,
+    "unknown_content:ENCHANTMENT.TAR_HIEROPHANT_REVERSED_ENCHANTMENT": 1,
+    "unknown_content:ENCHANTMENT.TAR_HIGH_PRIESTESS_UPRIGHT_ENCHANTMENT": 1,
+    "unknown_content:ENCHANTMENT.TAR_FOOL_UPRIGHT_ENCHANTMENT": 1,
+    "unknown_content:CARD.DRAW_AND_GUESS_MOD_CARD_BLANK": 1,
+    "unknown_content:RELIC.FILLED_FUNNEL": 4,
+    "unknown_content:CARD.WATCHER_FLYING_SLEEVES": 1
+  },
+  "duplicateAttempts": 3,
+  "cohort": "solo standard A7-10; entered first Act 3 boss; wins, losses and abandons; screened for vanilla compatibility",
+  "runs": 33022,
+  "confirmedRuns": 65,
+  "possibleRuns": 71,
+  "incompleteRuns": 5,
+  "frequencyBounds": [
+    0.001968384713221489,
+    0.002150081763672703
+  ],
+  "wilson95Confirmed": [
+    0.0015447943824074123,
+    0.002507833890140269
+  ],
+  "groups": {
+    "A7": {
+      "runs": 2133,
+      "lower": 4,
+      "upper": 6
+    },
+    "CHARACTER.NECROBINDER": {
+      "runs": 4972,
+      "lower": 13,
+      "upper": 13
+    },
+    "loss_at_boss": {
+      "runs": 11608,
+      "lower": 18,
+      "upper": 19
+    },
+    "CHARACTER.SILENT": {
+      "runs": 8749,
+      "lower": 16,
+      "upper": 17
+    },
+    "A10": {
+      "runs": 26608,
+      "lower": 54,
+      "upper": 58
+    },
+    "CHARACTER.IRONCLAD": {
+      "runs": 8677,
+      "lower": 20,
+      "upper": 22
+    },
+    "win": {
+      "runs": 20714,
+      "lower": 46,
+      "upper": 51
+    },
+    "CHARACTER.DEFECT": {
+      "runs": 5613,
+      "lower": 11,
+      "upper": 13
+    },
+    "A8": {
+      "runs": 2254,
+      "lower": 5,
+      "upper": 5
+    },
+    "A9": {
+      "runs": 2027,
+      "lower": 2,
+      "upper": 2
+    },
+    "abandoned_at_boss": {
+      "runs": 700,
+      "lower": 1,
+      "upper": 1
+    },
+    "CHARACTER.REGENT": {
+      "runs": 5011,
+      "lower": 5,
+      "upper": 6
+    }
+  },
+  "sourceCounts": {
+    "elite": {
+      "locations": 196406,
+      "lower": 56,
+      "upper": 63
+    },
+    "brain_leech": {
+      "locations": 3068,
+      "lower": 8,
+      "upper": 8
+    },
+    "orrery": {
+      "locations": 981,
+      "lower": 1,
+      "upper": 1
+    },
+    "lost_coffer": {
+      "locations": 762,
+      "lower": 0,
+      "upper": 0
+    },
+    "trial": {
+      "locations": 466,
+      "lower": 0,
+      "upper": 0
+    }
+  },
+  "ambiguousReasons": {
+    "unrecognized_offer_boundaries": 2,
+    "missing_choices": 4,
+    "candy_or_boundaries": 1
+  }
+}
