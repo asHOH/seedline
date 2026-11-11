@@ -166,7 +166,7 @@ The mod aligns same-seed opportunities through addresses, shared state for relat
 
 | Decision area | Policies |
 |---|---|
-| Rooms and events | [Unknown rooms](#unknown-room-resolution); [ordinary events](#ordinary-event-selection); [forced events](#forced-events); [Ancient offerings](#ancient-offerings). |
+| Rooms and events | [Unknown rooms](#unknown-room-resolution); [ordinary events](#ordinary-event-selection); [Lantern Key](#lantern-key); [Ancient offerings](#ancient-offerings). |
 | Event selections and trades | [The Future of Potions](#the-future-of-potions-card-type-assignment); [Ranwid relic sacrifice](#ranwid-relic-sacrifice); [Relic Trader](#relic-trader); [Endless Conveyor](#endless-conveyor). |
 | Card and potion selection | [Wing Charm](#wing-charm); [persistent selection](#persistent-selection). |
 
@@ -869,7 +869,7 @@ Baseline: [room restrictions and chance updates](#room-resolution).
 
 **Intent:** keep event sequences matching across same-seed runs for as long as possible, even as eligibility and acts change.
 
-**Scope:** ordinary events, excluding [Ancients](#ancient-offerings) and [events with forced identities](#forced-events).
+**Scope:** ordinary events, excluding [Ancients](#ancient-offerings) and [Lantern Key's forced event](#lantern-key).
 
 **Conditions:** group event IDs by equivalent eligibility predicates, excluding act availability and [late eligibility checks](#event-eligibility), with one key per condition. Act availability determines participating IDs; evaluate late checks when selecting an ID.
 
@@ -906,15 +906,13 @@ At act entry, rebuild each condition's sequence using only unvisited IDs availab
 
 Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and late eligibility checks](#event-eligibility).
 
-### Forced events
+### Lantern Key
 
-**Intent:** inserting a forced event must not affect later ordinary-event availability.
+**Intent:** keep Lantern Key from consuming an ordinary-event opportunity.
 
-Resolve room type under the [unknown-room policy](#unknown-room-resolution). When an effect supplies a specific event identity, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its event RNG; it needs no special ordinary-event ordinal.
+Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection) and its act-local ordinal advancement. Record the visit.
 
-Lantern Key's forced War Historian Repy follows this bypass.
-
-**Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
+**Vanilla deviation — NoSL 3:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes later ordinary-event availability.
 
 ### Ancient offerings
 
@@ -1468,7 +1466,7 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 | Field of Man-Sized Holes | a card eligible for Perfect Fit |
 | Slippery Bridge | A removable card |
 
-**Forced event:** War Historian Repy adds one event outside this table: Lantern Key inserts it in Act 3; `IsAllowed` is always false.
+**Forced events:** Lantern Key's War Historian Repy is the only forced replacement of an ordinary-event draw; `IsAllowed` is always false.
 
 #### Combat setup and shuffles
 
