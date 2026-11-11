@@ -241,6 +241,10 @@ In RNG addresses, a scoped ordinal denotes `(scope ID, count)`: act-local includ
 
 **Selection tie-breaks:** tie-break extremely rare equal random-selection priorities by comparing the selection keys already used to generate them, in ascending order.
 
+### Shared result supply
+
+**Invariant:** when the next draw cannot satisfy a request and comparable requests are expected later in the same sharing scope, prefer resolving it from that supply, accepting shifts to later draws. Don't generate a result only for the current opportunity, which may never appear in other runs.
+
 ### Entry addresses
 
 An entry's address is its original source sequence + original entry position, distinguishing occurrences of repeated identities.
