@@ -802,15 +802,13 @@ Rerolls of Kaleidoscope's Neow offers are unreachable.
 Preserve the [pool-modification boundaries](#card-reward-offers-1). Select the identity group for the complete request:
 
 - **Unchanged eligible pool:** reuse its existing group, including Rug's fixed-Common or already-colorless offers.
-- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume this group; the original pool's identity sequences and triple boundaries remain unchanged.
+- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume this group.
 
-Retain source rarity, luck and upgrade rules, eligible-card sampling weights, offer sizes and duplicate exclusions. Neither relic resets luck state or restarts opening-only rarity exceptions.
+Changing pools preserves luck state and opening-triple progression.
 
-Lasting Candy uses the inherited pool's Power sequences while retaining its source rarity-roll sequence position and fallback rules.
+Lasting Candy draws from the inherited pool's Power sequences while retaining its source rarity-roll sequence position.
 
-**Accepted tradeoff:** separate identity groups sacrifice alignment with identities from the unexpanded own-character pool to avoid acquisition-dependent reconstruction; prior shared rarity state still matters.
-
-Baseline: [card reward mechanics](#card-reward-offers-1).
+**Accepted tradeoff:** separate identity groups sacrifice alignment with the unexpanded pool to avoid rebuilding sequences when the pool expands.
 
 ### Permanent transformations and direct card additions
 
