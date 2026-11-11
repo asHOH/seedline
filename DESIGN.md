@@ -949,7 +949,11 @@ Baseline: [reward-rarity mapping and allowed card types](#card-reward-offers-1).
 
 ### Ranwid relic sacrifice
 
-To align sacrificed relics, offer one tradable owned relic using [fixed priorities](#fixed-selection-priorities) keyed by event ID + relic ID.
+**Intent:** align the offered relic across changing inventories.
+
+Select one tradable owned relic using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = relic sacrifice` + event ID + relic ID.
+
+Baseline: [relic-event mechanics](#shops-chests-and-relic-events).
 
 ### Relic Trader
 
