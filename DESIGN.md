@@ -887,22 +887,22 @@ At act entry, rebuild each condition's sequence using only unvisited IDs availab
 
 #### Within-act selection
 
-**Schedule:** fixed in Act 1 for shared-event order; refreshed in Acts 2–3 for prefix agreement with differing pools.
+**Priority persistence:** initialize once at Act 1 entry for shared-event order; refresh at each ordinary-event resolution in Acts 2–3 for prefix agreement with differing pools.
 
-1. Initialize priority `-ln(U) / n_c` for conditions with `n_c > 0` unpassed entries: once at Act 1 entry, at each resolution in Acts 2–3. Independent uniform `U ∈ (0, 1)` rolls use condition key + per-condition roll index, plus act in Act 1 or act-local event ordinal in Acts 2–3.
-2. Spend one entry of the lowest-priority condition. If false or lacking unvisited IDs, retain its ID position. Otherwise, try its next unvisited ID; a failed late eligibility check passes that ID too.
-3. After failure, add a fresh `-ln(U) / remaining_count` to that condition's priority, retiring it at zero. Keep other priorities fixed and repeat.
-4. On success, advance the ID sequence and commit the visit and all passing. In Act 1, update the winning priority as in step 3 and retain priorities and roll indices; Acts 2–3 refresh at the next resolution.
+1. Reset per-condition roll indices to zero. For each remaining count `n_c > 0`, initialize priority `-ln(U) / n_c`. Independent uniform `U ∈ (0, 1)` rolls use `purpose = condition selection` + condition key + roll index, plus act in Act 1 or act-local ordinary-event ordinal in Acts 2–3.
+2. Decrement the lowest-priority condition's count. If its predicate passes and an unvisited ID remains, try the next unvisited ID and advance the ID position, including on late eligibility failure.
+3. After failure, retire that condition at zero; otherwise add a fresh `-ln(U) / remaining_count` to its priority. Keep other priorities fixed and repeat step 2.
+4. On success, commit the visit and state changes. In Act 1, update the winning priority as in step 3.
 
-**Wrapping:** on exhaustion, restore passed entries and restart priorities, continuing each condition's roll index. ID sequences wrap in the act's established order; visited IDs stay excluded.
-
-**Fallback — empty eligible pool:** if no eligible unvisited event remains, select `list[(n - 1) % list.Count]` from vanilla's original shuffled act list, where `n` is the 1-based act-local ordinary-event ordinal. Bypass eligibility and visited exclusions for this draw only.
-
-**Vanilla deviation — NoSL 3:** ordinal indexing changes fallback probabilities conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
+**Wrapping:** when all counts reach zero, refill them from act-available, unvisited IDs and restart priorities, continuing roll indices. ID sequences wrap in their established order, excluding visited IDs.
 
 **Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 
-**Behavior preservation:** before either structure wraps, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting state + same selected event leaves the same state. Scheduling changes cross-run and SL correlations; carrying ID order preserves earlier ordering across acts. Wrapping and the empty-pool fallback are separate probability and eligibility tradeoffs.
+**Fallback:** if the act has no eligible unvisited event, return `list[(n - 1) % list.Count]` from vanilla's original shuffled act list, where `n` is the 1-based act-local ordinary-event ordinal. Bypass eligibility and visited exclusions for this draw.
+
+**Vanilla deviation — NoSL 3:** ordinal indexing changes fallback probabilities conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
+
+**Behavior preservation:** before count refill or ID wrapping, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting state + same selected event leaves the same state. Cross-run and SL correlations change.
 
 Baseline: [event selection and wrapping](#event-and-encounter-identities); [condition predicates and late eligibility checks](#event-eligibility).
 
@@ -1360,7 +1360,7 @@ The difference is `1/360`, about **0.278 percentage points** in this reduced poo
 
 #### Event-selection alternatives
 
-- **Fixed scheduling in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
+- **Retained priorities in every act:** improves shared order with matching pools, but loses prefix agreement when survivor pools differ.
 - **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more Act 1 shared-order reversals.
 - **Cross-act insertion — shared position priorities:** reserve incoming positions by shared output-position priority. Can improve prefix agreement, but preserved less shared-event order in simulated act transitions.
 - **Cross-act insertion — weighted merging:** use shared rolls to choose old or incoming entries proportionally to remaining counts. Can improve prefix agreement over sorted priorities, but preserved less shared-event order when tests varied prior event consumption.
