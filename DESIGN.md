@@ -158,7 +158,7 @@ The mod aligns corresponding same-seed opportunities through addresses, shared s
 
 ### Encounter
 
-- **Rooms and events:** align `?` rolls by visit ordinal within each act and improve event agreement as eligible pools change.
+- **Rooms and events:** align unforced `?` resolutions within each act and improve event agreement as eligible pools change.
 - **Selection:** selection keys and [persistent selection state](#persistent-clocks) retain alignment across choices. [Routing](#routing) makes equivalent card clicks select the same logical occurrence; eligibility histories and position-dependent effects still matter.
 - **Combat:** scope setup, enemy behavior and card randomness to each battle. Potion-generated cards and Oil costs use potion-effect ordinals across battles.
 
@@ -853,14 +853,17 @@ Neow's Bones' curse follows [direct additions](#permanent-transformations-and-di
 
 ### Unknown-room resolution
 
-**Intent:** align rolls within each act and minimize movement of each room type's probability interval, limiting interference from earlier acts and other room types' changing chances.
+**Intent:** align `?` room type resolution across runs, even when their chances differ.
 
-#### Addressing and room-type chances
+**Addressing:** derive a uniform `[0, 1)` roll from `purpose = room type` + act-local room-type ordinal. Advance once per `?` visit, except Event rooms forced by Golden Compass or Lantern Key.
 
-- **Addressing:** room-type RNG uses the act-local ordinal of visited `?` nodes.
-- **Shop chance:** when the vanilla shop-exclusion rule excludes Shop, its stored chance remains unchanged, matching vanilla. Preserve Juzu Bracelet, Golden Compass and Lantern Key room-type restrictions.
-- **Effective chances:** after exclusions, allocate a 100% probability budget in vanilla order (normal fight → chest → shop), capping each chance at the remaining budget. Use these effective chances only as interval widths; preserve stored chances and their vanilla updates.
-- **Thresholds:** the chest interval begins at 0, the shop interval ends at 1, and the normal-fight interval stays centered at `7/15` unless shifted just enough to avoid overlap; `7/15` is the midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio. Unassigned space resolves to Event.
+**Interval widths:** after exclusions, allocate widths from stored chances in normal fight → chest → shop order, capping each at the remaining share of 100%.
+
+**Interval placement:** chest starts at 0 and shop ends at 1. Center normal fight at `7/15`, shifting only as needed to avoid overlap. Remaining space resolves to Event.
+
+**Rationale:** `7/15` is the normal-fight midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio.
+
+Baseline: [room restrictions and chance updates](#room-resolution).
 
 ### Ordinary-event selection
 
@@ -905,9 +908,9 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 
 **Intent:** inserting a forced event must not affect later ordinary-event availability.
 
-Resolve room type under the [unknown-room policy](#unknown-room-resolution). When an effect supplies a forced event, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its event RNG; it needs no special ordinary-event ordinal.
+Resolve room type under the [unknown-room policy](#unknown-room-resolution). When an effect supplies a specific event identity, enter it without ordinary event-list eligibility scanning, selection, cursor advancement or ordinary event-opportunity advancement. Record the actual event visit and retain the normal visited-event semantics. The forced event uses its event RNG; it needs no special ordinary-event ordinal.
 
-Lantern Key's forced War Historian Repy follows this bypass. A visited `?` still advances its act-local visited-node ordinal; preserve the forced room type and frozen non-event chances.
+Lantern Key's forced War Historian Repy follows this bypass.
 
 **Vanilla deviation — NoSL 3:** bypassing vanilla's forced-insertion opportunity consumption changes later ordinary-event availability relative to vanilla. Vanilla's consumption is probably unintended by developers.
 
