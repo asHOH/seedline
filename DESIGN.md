@@ -1445,11 +1445,11 @@ Vanilla mechanics; [Catfood differences](#catfood-addressing-and-combat-rewards)
 
 #### Ancient offerings
 
-All eight Ancients select their menus with [event RNG](#event-and-encounter-identities). Matching seed, Ancient and ordered eligible pools reproduce the menu independently of earlier event visits. Changed eligibility can also change which still-eligible options appear.
+Ancient menus use [event RNG](#event-and-encounter-identities). Matching seed, Ancient and ordered eligible pools reproduce the menu; changed eligibility can also change which still-eligible options appear.
 
 | Ancient | Menu generation and relevant conditions |
 |---|---|
-| Neow | Two positive options and one curse option, with fixed exclusion pairs and unlock/player-count restrictions. Pools are fixed in the fully unlocked solo scope. |
+| Neow | Two positive options and one curse option, with curse-dependent exclusions and random paired alternatives in the positive pool. |
 | Darv | Shuffles one choice from each eligible relic group; offers three, or two plus Dusty Tome with 50% probability. Ectoplasm and Sozu are Act 2 only. |
 | Orobas | One choice from each of three pools. Sea Glass's featured character uses event RNG. The third pool checks for the starter relic (Touch of Orobas) and supported starter card (Archaic Tooth), with a locked option if both are absent. |
 | Pael | One choice from each of three pools. Claw needs ≥3 Goopy-eligible cards; Tooth needs ≥5 removable cards; Legion requires no event pet. Second-pool weights: Growth 1; each other eligible option 2. |
@@ -1458,9 +1458,9 @@ All eight Ancients select their menus with [event RNG](#event-and-encounter-iden
 | Vakuu | One choice from each of three fixed pools. |
 | Nonupeipe | Three choices from a shuffled pool; Beautiful Bracelet joins with ≥4 Swift-eligible cards. |
 
-**Scope of consistency:** some granted effects advance shared RNGs. Neow's Bones shuffles its relic candidates with shared `Rewards` RNG. Dusty Tome also calls `Rewards`, but its eligible pool contains exactly one card per character in this version: Corruption, Wraith Form, The Sealed Throne, Forbidden Grimoire or Biased Cognition. Its payload is therefore fixed by character despite advancing `Rewards` once.
+**Shared RNG use:** acquiring Neow's Bones shuffles its relic candidates with `Rewards`. Offering Dusty Tome advances `Rewards` once, even if declined; its single eligible card per character makes the result fixed.
 
-**Fur Coat:** selects marked normal-fight/elite map nodes with its own run-seed + player-slot + relic-ID RNG and saves their coordinates. Matching maps reproduce the marks independently of earlier RNG consumption.
+**Fur Coat:** marks normal-fight/elite map nodes using its own run seed + player slot + relic ID RNG and saves their coordinates. Matching maps reproduce the marks.
 
 #### Event eligibility
 
