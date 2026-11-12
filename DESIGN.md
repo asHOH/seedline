@@ -1736,31 +1736,35 @@ Offers select uniformly among eligible card copies using event RNG; duplicates c
 
 #### Card reward offers
 
-**Card rarity:** shared offset starts at `-0.05` and resets there after a Rare combat reward roll, but not after direct additions or on Ancient entry. Normal/elite non-rare rolls add `0.005`, capped at `0.40`. Base Rare chances for normal/elite/shop rolls are 1.49%/5%/4.5%, plus the offset; base Uncommon chances are 37%/40%/37%. A negative Rare threshold also reduces the Uncommon chance: initial normal rewards have 0% Rare and 33.49% Uncommon. Boss rewards guarantee Rare and reset the shared offset. Shop rolls read the offset without updating it.
+**Shared rarity offset:** starts at `-0.05` and returns to it after Rare combat rolls. Normal/elite non-Rare rolls grow it up to `0.40`. Boss rewards guarantee Rare and reset it; direct additions and Ancient entry leave it unchanged. Shops read it without updating it.
 
-**Base-odds card offers:** Orrery, Lost Coffer, Brain Leech's Share Knowledge and Trial's Nondescript Guilty use Common/Uncommon/Rare odds of 61.51%/37%/1.49% per slot without reading or updating the combat offset. Share Knowledge and Trial suppress random upgrades. Each slot rolls base odds independently, so these offers can contain multiple Rares, including three in a three-card offer.
+| Rule | A7+ | A0–6 |
+|---|---|---|
+| Base Rare chance: normal / elite / shop | 1.49% / 5% / 4.5% | 3% / 10% / 9% |
+| Offset growth per non-Rare | `0.005` | `0.01` |
+| Common/Uncommon upgrade chance: Acts 1 / 2 / 3 | 0% / 12.5% / 25% | 0% / 25% / 50% |
 
-**Card upgrades:** ordinary Common/Uncommon chances in Acts 1/2/3 are **0% / 12.5% / 25%**; Rare cards have no ordinary act-based upgrade chance.
+Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% for normal/elite/shop; a negative Rare threshold also reduces Uncommon odds. Initial A7+ normal rewards therefore have 0% Rare and 33.49% Uncommon. Rare cards receive no ordinary act-based upgrade chance.
 
-**Without Scarcity (A0–6):** normal/elite/shop base Rare chances are 3%/10%/9%, non-Rare offset growth is `0.01`, and ordinary Common/Uncommon upgrade chances in Acts 1/2/3 are 0%/25%/50%. Base normal/direct-addition Common/Uncommon/Rare odds are 60%/37%/3%.
+**Base-odds offers:** Orrery, Lost Coffer, Brain Leech's Share Knowledge and Trial's Nondescript Guilty roll each slot independently, leaving the offset unread and unchanged. Common/Uncommon/Rare odds are 61.51%/37%/1.49% (60%/37%/3% at A0–6). Three-card offers can contain three Rares. Share Knowledge and Trial suppress random upgrades.
 
-**Normal versus elite card rewards:** both offer three distinct card identities from the same character pool under the same upgrade rules; elites have no inherent upgrade-chance bonus. Under Scarcity, ordinary normal offers cannot contain two Rares because the rare chance after offset is negative; elites can produce Rare → non-Rare → Rare because the last slot has a 0.5% Rare chance after the intervening non-Rare. Catfood preserves these rules.
+**Normal versus elite rewards:** both offer three distinct identities from the same character pool under the same upgrade rules. At A7+, normal offers have at most one Rare; elites can produce Rare → non-Rare → Rare, with a 0.5% final Rare chance after the intervening non-Rare. Catfood preserves these rules.
 
 | Source | Mechanics |
 |---|---|
 | Hefty Tablet | Choose one of three own-character Rares; Injury is added even if the Rare is skipped. |
 | Glass Eye | Five three-card offers: two Common, two Uncommon and one Rare, from the character pool. No random upgrades. |
-| Scroll Boxes | Choose one of two bundles, normally two Commons and one Uncommon each, with six distinct identities across ordinary bundles. Defect has an independent 1% triple-Claw substitution chance per bundle; substituted bundles contain three Claws. |
+| Scroll Boxes | Choose one of two bundles, each with two Commons and one Uncommon; six distinct identities overall. Defect independently replaces each bundle with three Claws at 1% chance. |
 | Room Full of Cheese — Gorge | Choose two of eight distinct Common character cards; no random upgrades. |
 | Crystal Sphere | The board has one card-reward item for each of Common, Uncommon and Rare. Each recovered item gives a three-card offer of that rarity; vanilla identities and upgrade rolls use event RNG. |
-| The Future of Potions | Offers the first three owned potions in slot order; independently assigns a random allowed card type to every owned potion using event RNG. Trade a potion to choose one of three upgraded character cards of the option's rarity/type. Eight combinations exist: Common Attack/Skill and Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
+| The Future of Potions | Offers the first three owned potions in slot order; event RNG independently assigns a card type to every owned potion. Trade one to choose from three upgraded character cards of its rarity/type: Common Attack/Skill or Uncommon/Rare Attack/Skill/Power. Rare/Event potions map to Rare cards; Common/Token to Common. |
 | Lead Paperweight / Brain Leech — Rip | Choose one of two / three colorless cards respectively. Rip costs 5 HP and suppresses random upgrades. |
 | Kaleidoscope | Two three-card offers; each independently selects three distinct other characters and generates one card from each using base rarity odds. |
 | Colorful Philosophers | Choose another character's color, then receive one three-card offer per rarity (Common/Uncommon/Rare) from that pool. Ordinary upgrade rolls apply. |
-| Sea Glass | Three five-card generation batches (Common, Uncommon, Rare) from one featured other character, each triggering Wing Charm separately. Take any number from the combined display. No random upgrades. |
-| Prismatic Gem / Dingy Rug | Gem (Orobas, Act 2) adds unlocked character pools unless the original pools are all colorless; Rug adds colorless cards, which are only Uncommon/Rare. Both require the card-reward flag and permitted pool modification, and preserve filters. After any rarity roll, sample uniformly among eligible identities, not equally among pools. Brain Leech's Share Knowledge and Room Full of Cheese lack the required flag and remain unchanged; The Future of Potions blocks pool modification. |
+| Sea Glass | Three five-card batches (Common, Uncommon, Rare) from one featured other character, processed separately by Wing Charm. Take any number from the combined display. No random upgrades. |
+| Prismatic Gem / Dingy Rug | Gem adds unlocked character pools unless the original pools are all colorless; Rug adds colorless Uncommon/Rare cards. Both require the card-reward flag and permitted pool modification, preserving filters. After any rarity roll, selection is uniform over eligible identities. Share Knowledge and Room Full of Cheese lack the flag; The Future of Potions blocks pool modification. |
 | Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
-| Wing Charm / earlier enchantments | Wing Charm's late reward-options hook selects one currently Swift-eligible card per generation batch with `Niche` RNG, including direct generation. Swift cannot overwrite or stack with an existing enchantment. Earlier Glitter excludes its Glam-enchanted cards; earlier Fresnel Lens excludes its Nimble-enchanted Block cards. Ordinary modifiers run before late modifiers; late modifiers follow relic-list order. |
+| Wing Charm / earlier enchantments | Its late reward-options hook uses `Niche` to select one Swift-eligible card per generation batch, including direct generation. Existing enchantments block Swift, including earlier Glitter's Glam and Fresnel Lens's Nimble on Block cards. Ordinary modifiers precede late modifiers; late modifiers follow relic-list order. |
 
 #### Permanent transformations and direct additions
 
