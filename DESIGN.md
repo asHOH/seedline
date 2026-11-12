@@ -1156,8 +1156,7 @@ Other starting Basics receive distinct [initial-source keys](#card-occurrence-ad
 
 - **Reward offers:** one shuffle key per shared triple from the [own-character offer groups](#offer-groups).
 - **Triple key assignment:** give the key to the acquired card from the triple with the lowest [fixed priority](#fixed-selection-priorities), addressed by `purpose = assignment` + event ID + card ID. Freeze the assignment at acquisition; other acquired cards from that triple enter the remaining group.
-- **Direct additions:** one shuffle key per [shared generation entry](#permanent-transformations-and-direct-card-additions); allow only unfiltered, rarity-only or transformation-filter-only generation.
-- **Transformations:** treat as deletion plus direct addition.
+- **Transformations and Direct additions:** one shuffle key per [shared generation entry](#permanent-transformations-and-direct-card-additions); allow only unfiltered, rarity-only or transformation-filter-only generation.
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
