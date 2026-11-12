@@ -1097,22 +1097,20 @@ Use [combat-local sequences](#combat-addresses), partitioned by enemy identity e
 
 #### Rat sampling
 
-**Intent:** realign later non-Summon choices by combat round and round-local selection ordinal when eligible moves agree; align summoned openings independently of birth timing.
+**Intent:** realign later non-Summon choices each round when eligibility agrees; align summoned openings independently of birth timing.
 
-**Summon:** all rats share one continuous combat-local percentile sequence. Advance exactly when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
+**Summon:** all rats share one percentile sequence. Advance when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
 
-**Non-Summon sampling:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID, independently of Summon. Both scopes below use the combat address and separate purposes.
+**Non-Summon:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID. Summon, summoned openings and later choices use separate purposes.
 
 | Non-Summon opportunity | Address and consumption |
 |---|---|
-| Summoned opening | Combat-local summoned-rat ordinal in vanilla creation order, independent of birth round or summoner. Consume once at its first random intent selection. |
-| Later choice, any rat | Current combat round + round-local selection ordinal, shared by all rats in vanilla selection order, including after deaths. Advance only for non-Summon choices with at least two positive-weight moves; openings stay separate. |
+| Summoned opening | Combat-local summoned-rat ordinal in creation order. Consume at its first random intent selection. |
+| After opening, any rat | Combat round + round-local selection ordinal, shared by all rats in vanilla selection order. Advance only when at least two non-Summon moves have positive effective weight. |
 
-Use `CombatState.RoundNumber` at selection; extra player turns stay in the same round. Reset the later-choice ordinal each round.
+At selection, use `CombatState.RoundNumber` (count combat rounds from 1, advancing after the enemies finish their turn).
 
-**Limit:** different selection counts can still shift choices within a round.
-
-**Rejected alternatives:** percentiles align poorly across eligibility changes; pair sequences lose cross-pair relationships and retain count differences; markers retain filter-history differences after eligibility converges.
+**Limit:** different selection counts can shift choices within a round. [Rejected alternatives](#rat-sampling-alternatives).
 
 #### Fabricator bot identities
 
@@ -1390,6 +1388,14 @@ The difference is `1/360`, about **0.278 percentage points** in this reduced poo
 
 - **Independent candidate priorities:** lower trade agreement with the same outgoing overlap.
 - **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
+
+#### Rat-sampling alternatives
+
+For non-Summon choices:
+
+- **Percentile sampling:** eligibility changes shift retained moves' intervals.
+- **Sequences per eligible move pair:** lose cross-pair alignment and retain selection-count differences.
+- **[Filtered draws](#filtered-draws):** retain filter-history differences after eligibility converges.
 
 ## Appendix: existing mechanics
 
