@@ -1768,13 +1768,15 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 
 #### Permanent transformations and direct additions
 
-**Direct card additions:** sources use shared reward RNG, `Niche` or event RNG. Infested Automaton and Endless Conveyor's Fried Eel roll the base-odds card-offer rates above, with the stated A0–6 direct-addition rates, before identity and independently of combat rarity offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from their eligible pools.
+**Random transformation results:** use the original card's pool; Quest cards and Event/Ancient/Token rarities use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Retain unlock/player restrictions and exclude the original identity. Combat transformations also require `CanBeGeneratedInCombat` and may use the Status pool.
 
-**Permanent transformation's target:** callers use event RNG, `Niche` or player `Transformations` RNG. Use the original card's pool, except Quest cards and Event/Ancient/Token-rarity cards use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Preserve unlock/player restrictions and exclude the original identity. `CardFactory` preserves pool enumeration order through filtering, then rolls a uniform index into the eligible list, advancing the RNG once; batches allow repeated results. Combat transformations additionally filter by `CanBeGeneratedInCombat` and may use the Status pool.
+`CardFactory` preserves pool order through filtering and selects a uniform eligible index, consuming one roll per card. Batches allow repeats. Permanent-transformation callers supply event RNG, `Niche` or player `Transformations`.
 
-**Transformation attributes:** Claws copies the original upgrade state and compatible enchantment to Maul (`Claws.CreateMaulFromOriginal`). This gameplay inheritance is separate from initializing fresh hidden selection state.
+**Batch order:** Astrolabe, Morphic Grove and Trial use returned selection order; Pandora's Box uses deck order; Leafy Poultice uses Strike then Defend. `CardCmd.Transform` resolves results before sorting by recorded pile position. Different eligible lists can make the result multiset order-dependent, even when only one original can replace another. Identical ordered lists preserve the multiset, as with own-character Basic Strike/Defend batches such as Pandora's Box.
 
-**Random transformation batches:** Astrolabe, Morphic Grove and Trial iterate returned selection order; Pandora's Box uses deck order; Leafy Poultice uses Strike then Defend. `CardCmd.Transform` resolves replacements before sorting by recorded pile position. Reordering inputs with different eligible lists can change the result multiset, even if only one original identity can replace another. Identical ordered lists preserve the multiset, including ordinary own-character Strike/Defend batches such as Pandora's Box.
+**Inherited attributes:** Claws copies the original upgrade state and compatible enchantment to Maul (`Claws.CreateMaulFromOriginal`).
+
+**Direct additions:** use `Rewards`, `Niche` or event RNG. Infested Automaton and Fried Eel roll [base rarity odds](#card-reward-offers-1) before identity, independently of combat offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from eligible identities.
 
 | Source | Mechanics |
 |---|---|
