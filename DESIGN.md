@@ -1464,7 +1464,7 @@ Ancient menus use [event RNG](#event-and-encounter-identities). Matching seed, A
 
 #### Event eligibility
 
-**Scope:** vanilla entry predicates for **56 ordinary events**; Ancients are separate. Act availability combines pool membership with entry predicates; run-wide visited exclusions apply throughout.
+The tables cover **56 ordinary events**, combining act availability with entry checks. Checks guaranteed by scope are omitted; run-wide visited exclusions also apply.
 
 Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
@@ -1502,9 +1502,9 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 | 1–3 | Total floor > 6 | 1 | Slippery Bridge |
 | 1–3 | ≥ 2 potions | 1 | The Future of Potions |
 
-**Late eligibility checks on selected IDs:**
+**Additional entry checks:** vanilla evaluates these in `IsAllowed`; the [design](#ordinary-event-selection) defers them until ID selection.
 
-| Event | Late eligibility check |
+| Event | Entry check |
 |---|---|
 | Wood Carvings | a removable Basic card |
 | Morphic Grove | ≥ 2 transformable cards |
