@@ -1554,23 +1554,29 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 #### Enemy AI
 
-**Randomness and selection:** vanilla's `RunRngSet.MonsterAi` carries its position across combats and is shared by `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, calls `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still advance the AI RNG once. Deterministic transitions leave it unchanged. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
+**Selection:** run-wide `MonsterAi` supplies move choices and Fabricator's bot identities. Random branches sample cumulative effective weights in declaration order, accounting for repetition limits, cooldowns and conditions. Singleton/all-zero branches advance RNG once; deterministic transitions leave it unchanged. Encounter-assigned openings use setup RNG.
 
 **All-zero fallback:** all-zero branches always choose the first listed move. Flyconid can reach `Smash → Vulnerable Spores → Frail Spores → Smash`, making all effective weights zero; it then selects Vulnerable Spores.
 
-**History and interruption:** `MonsterMoveStateMachine` follows branches until reaching a move and retains its state log for weight checks. Ordinary stun returns to the stored move; Thieving Hopper's Flutter depletion uses a deterministic follow-up. Decimillipede normally cycles `Writhe → Constrict → Bulk`; death leads through `Dead → Reattach → random attack`. After Reattach, the three attacks have equal weights. Revival selections share vanilla's AI RNG across segments.
+**History and interruption:** `MonsterMoveStateMachine` retains its state log for weight checks. Stun returns to the stored move; Thieving Hopper's Flutter depletion uses a deterministic follow-up. Decimillipede cycles `Writhe → Constrict → Bulk`; after `Dead → Reattach`, it chooses equally among these attacks using shared AI RNG.
 
-**Duplicate random selectors:** Inklets, Exoskeletons, Scrolls of Biting, Two-Tailed Rats, and possible pairs of small Leaf Slimes beside Slithering Strangler. Leaf Slimes randomize their opening, then alternate forcibly. Exoskeletons choose equally after Enrage; Skitter forces Mandibles, which leads to Enrage. The normal encounter's fourth copy also has a random opening. Scrolls choose equally between Chomp and a second consecutive Chew after their first Chew; the second Chew forces Chomp, followed by More Teeth and Chew. Forced random-branch selections still advance the vanilla AI RNG.
+**Repeated enemy types:** Inklets and rats are covered below. Other cases:
 
-**Same-type death timing:** outer Inklets alternate Jab with a 50/50 Piercing Gaze/Whirlwind choice, starting with Jab; the middle starts with Whirlwind. Remove the middle before its first random selection. Compare killing outer A before its first random selection versus after exactly one. Once B is alone in both plays, its selections (second onward) use AI RNG positions differing by one advance even with matching eligible moves.
+| Enemy | Move pattern |
+|---|---|
+| Small Leaf Slimes beside Slithering Strangler | Random opening, then forced alternation through random branches. |
+| Exoskeletons | After Enrage, choose Skitter/Mandibles equally; Skitter forces `Mandibles → Enrage`. The normal encounter's fourth copy has a random opening. |
+| Scrolls of Biting | After the first Chew, choose Chomp/Chew equally; a second Chew forces `Chomp → More Teeth → Chew`. |
 
-**Eligibility changes:** Two-Tailed Rats require timer, shared summon limit, space and teammate-intent checks to permit Summon. With Screech on cooldown and both attacks eligible, attack odds `1/2, 1/2` become attack/attack/Summon odds `1/11, 1/11, 9/11` when Summon is allowed, using ideal weight ratios. Changed intervals can select a different ordinary attack at the same AI RNG position. After `Screech → Scratch`, blocking Summon can force Disease Bite; this singleton still advances the AI RNG once.
+**Inklet death timing:** outers start with Jab, alternating it with a 50/50 Piercing Gaze/Whirlwind choice; the middle starts with Whirlwind. Kill the middle before its first random selection. Killing outer A before versus after one random selection leaves B's second and later selections one RNG advance apart, even with matching eligible moves.
 
-**Rat selection order:** enemies are processed in encounter-slot order, `first` through `fifth`; originals occupy the last three slots. Earlier selected Summon intents block later rats. With equal otherwise-eligible Summon probability `p` and no existing teammate Summon intent, successive rats have probabilities `p`, `(1-p)p`, etc. Existing teammate intents can also block earlier selectors. Sources: `CombatState.SortEnemiesBySlotName`, `CombatManager` player-turn preparation, `TwoTailedRat.CanSummon`.
+**Rat eligibility:** Summon depends on its timer, shared limit, space and teammate intents. With Screech on cooldown and both attacks eligible, enabling Summon changes attack/attack odds `1/2, 1/2` to attack/attack/Summon odds `1/11, 1/11, 9/11`. The same roll can then select a different attack. After `Screech → Scratch`, blocking Summon forces Disease Bite, still advancing RNG.
 
-**Rat history alternatives:** originals open with Scratch, Disease Bite and Screech. Assume the Screech starter and either attacker can be killed before the first random selection. With Summon timer-blocked, the survivor offers Bite/Screech after Scratch or Scratch/Screech after Bite. Vanilla's shared percentile selects Screech in both alternatives or neither: 50% SL availability. Shared move rankings or marker-filtered iid move sequences give `2/3`, preserving each survivor's 50/50 odds. Across all three pairs of opening histories, vanilla interval agreement averages `1/3`, matching shared priorities under equal pair weighting.
+**Rat selection order:** slots `first` through `fifth`; originals occupy the last three. Earlier Summon choices block later rats. With equal otherwise-eligible probability `p` and no existing Summon intent, successive rats have probabilities `p`, `(1-p)p`, etc. Existing teammate intents can also block earlier selectors.
 
-**Cross-type RNG advancement:** in the lineup `Leaf Slime S → Twig Slime M → Twig Slime S`, killing either small slime removes different numbers of later AI RNG advances: Leaf S selects through random branches even during forced alternation; Twig S has a fixed attack. This can shift the AI RNG position used for Twig M's next choice.
+**Rat history alternatives:** originals open with Scratch, Disease Bite and Screech. With Summon timer-blocked, kill the Screech starter and either attacker before the first random selection. The survivor offers Bite/Screech after Scratch or Scratch/Screech after Bite. Vanilla gives 50% SL availability of Screech; shared move rankings or marker-filtered independent uniform sequences give `2/3`, retaining each survivor's 50/50 odds. Across all three equally weighted opening-history pairs, both percentile sampling and shared priorities average `1/3` agreement.
+
+**Cross-type advancement:** in `Leaf Slime S → Twig Slime M → Twig Slime S`, killing either small slime can shift Twig M's next roll. Leaf S's forced alternation advances AI RNG; Twig S's fixed attack leaves it unchanged.
 
 **Survivor-choice alternatives:** Flyconid opens with `Smash → Frail Spores`; Twig Slime M with `Sticky Shot → attack`. Assume either can be killed before the next intent selection. The sole survivor uses the same next AI roll:
 
@@ -1579,15 +1585,15 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 | Lower | Vulnerable Spores | Attack |
 | Upper | Smash | Sticky Shot |
 
-Exactly one kill yields a zero-immediate-damage next intent. Choosing before seeing that intent gives a 50% chance; SL reveals which kill achieves it.
+Exactly one kill yields a zero-damage next intent: 50% before seeing the intent; guaranteed with SL exploration.
 
-**Same-type survivor alternatives:** clear other original Two-Tailed Rats, leaving one at `Scratch → Disease Bite → Summon → Scratch` and its summon opening with Scratch. Their random-selection counts are three and one. Kill either before Scratch executes. Either survivor chooses equally between Disease Bite (7 damage at A7+) and Screech (Frail, zero damage); Summon is spent for the original and timer-blocked for the copy. Vanilla uses the same next roll, yielding the same result for either kill.
+**Same-type survivor alternatives:** leave an original rat at `Scratch → Disease Bite → Summon → Scratch` and its summoned copy opening with Scratch; remove other rats. Their random-selection counts are three and one. Kill either before Scratch executes. Both survivors offer Disease Bite (7 damage at A7+)/Screech (Frail, zero damage) at 50/50; Summon is spent for the original and timer-blocked for the copy. Vanilla's shared next roll gives the same result for either kill.
 
-**Fabricator:** Fabricate selects a defensive bot (Guardbot/Noisebot), then an offensive bot (Zapbot/Stabbot); Fabricating Strike selects only an offensive bot. Each selection excludes the immediately preceding bot identity across both pools. An intervening defensive bot therefore permits the previous offensive identity again. Full capacity forces deterministic Disintegrate; its bots use fixed moves. Kill/stun timing changes when selections occur while preserving their order and the sequence of summoned bot identities.
+**Fabricator:** Fabricate selects Guardbot/Noisebot, then Zapbot/Stabbot; Fabricating Strike selects only Zapbot/Stabbot. Each draw excludes the last bot across both pools, so a defensive bot permits the previous offensive bot again. Full capacity forces Disintegrate; bots use fixed moves. Kill/stun timing changes selection timing, preserving bot order and identities.
 
 #### Random enemy targeting
 
-Direct random effects and automatic enemy targeting share one run-wide RNG, sampling uniformly among eligible enemies. A singleton selection advances the RNG once; an empty set leaves it unchanged. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects select separately per hit and allow repeats. Catfood preserves these behaviors.
+Direct random effects and automatic enemy targeting share run-wide `CombatTargets`, sampling uniformly among eligible enemies. Singletons advance RNG once; empty sets leave it unchanged. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects roll per hit and allow repeats.
 
 ### Relics, shops and chests
 
