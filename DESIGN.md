@@ -20,6 +20,8 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 ### Vanilla deviations
 
+Assess a seed's first playthrough.
+
 Consistency fixes with no gameplay impact are ungraded.
 
 **Unnoticeable:** imperceptible across runs, considering frequency and effect size; effects on win chance provide supporting evidence. Use 500 runs as a rough benchmark, with the [A7+ one-Rare cap](#a7-one-rare-per-offer-and-deferral) as the reference.
@@ -1031,13 +1033,13 @@ Baseline: [Wing Charm and earlier reward modifiers](#card-reward-offers-1).
 
 #### Weighted potion sacrifice clocks
 
-Each potion type has one clock `E`, keyed by `purpose = sacrifice` + type; use [initialization and renewal](#persistent-clocks). Use, discard, grants and absence preserve clocks and renewal counts.
+Keep a [persistent clock](#persistent-clocks) and renewal count per potion type, keyed by `purpose = sacrifice` + type. Inventory changes preserve both.
 
-For owned count `w > 0`, select the lowest `E/w = m` and subtract `w × m` from other participating clocks. The table specifies renewal timing and the singleton exception.
+Select the owned type with the smallest `clock / owned count`; call this minimum `m`. For each other owned type, subtract its `owned count × m` from its clock.
 
-Choose uniformly among winning-type copies in slot order, using `purpose = copy selection` + type + the type's pre-renewal count.
+Choose uniformly among copies of the selected type in slot order, using `purpose = copy selection` + type + its pre-renewal count.
 
-Uniform copy-selection odds match [vanilla](#potions-1); removing sacrifice rerolls through same-type replacement causes the [steering deviation](#loss-of-future-outcome-steering).
+Baseline: [potion sacrifice selection](#potions-1).
 
 #### Permanent upgrades and downgrades
 
@@ -1759,7 +1761,7 @@ Each offer uses event RNG to select eligible card copies uniformly; duplicates c
 
 | Source | Mechanics |
 |---|---|
-| Ranwid / Stone of All Time | Select one owned potion uniformly with event RNG. |
+| Ranwid / Stone of All Time | Select one owned potion uniformly in occupied-slot order using event RNG. |
 | White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. Freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
 | Alchemize | Generates one potion, excluding Fairy in a Bottle, Fruit Juice and Regen Potion. Attempts generation even with full slots. |
 | Entropic Brew | Fills empty slots with unrestricted potion generation, including outside combat. Generates only while slots are open and stops on the first failed acquisition. |
