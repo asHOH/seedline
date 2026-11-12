@@ -1159,11 +1159,9 @@ Other starting Basics receive distinct [initial-source keys](#card-occurrence-ad
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
 
-#### Shuffle deviations
+#### Vanilla deviations
 
-**Vanilla deviation — SL 5:** stabilizes shuffles across draw/discard choices, often lowering the best attainable fight outcome.
-
-**Vanilla deviation — SL 4A(↓):** state-aware [processing order](#card-processing-order) removes discard-order SL alternatives even with the same participating cards, such as drawing cheaper Frantic Escapes earlier ([baseline](#combat-setup-and-shuffles)). Losing these alternatives can lower the best attainable fight outcome.
+**Vanilla deviation — SL 5(↓):** fewer shuffle rerolls through draw/discard choices. Reordering the same discarded cards gives the same shuffle, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)). This can weaken all cards with a draw effect.
 
 ### Random pile insertion
 
