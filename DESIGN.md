@@ -1167,9 +1167,9 @@ Other starting Basics receive distinct [initial-source keys](#card-occurrence-ad
 
 ### Random pile insertion
 
-**Intent:** align relative insertion depth across changing pile sizes, with separate randomness for unrelated source groups and shuffles. Neighboring card identities may differ.
+**Intent:** align relative insertion depth across changing pile sizes.
 
-Address independent sequences by [combat address](#combat-addresses) + `purpose = insertion` + sharing group + target pile. Source copies share their group.
+Address sequences by `purpose = insertion` + [combat address](#combat-addresses) + sharing group + target pile.
 
 | Sharing group | Coverage |
 |---|---|
@@ -1180,13 +1180,11 @@ Address independent sequences by [combat address](#combat-addresses) + `purpose 
 | Soul Fysh | Beckon. |
 | The Insatiable | Frantic Escape. |
 
-For each insertion, take the next uniform `u ∈ [0,1)` and choose zero-based gap `floor(u × (n + 1))`, where `n` is the target pile's current size. This preserves vanilla's conditional gap probabilities.
+For each insertion in generation order, take the next uniform `u ∈ [0,1)` and choose zero-based gap `floor(u × (n + 1))`, where `n` is the target pile's current size.
 
-Insert cards one at a time into the evolving pile, preserving vanilla generation order, intervening hooks and existing-card order.
+Advance once per inserted card, including into an empty pile.
 
-Advance once per inserted card, including into an empty pile; failed insertions consume zero.
-
-**Within-combat deviation — SL 4A(↓):** partitioning by insertion group and target pile, with a separate shuffle partition, removes cross-sequence rerolls.
+**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other insertion groups, piles or shuffles.
 
 Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
