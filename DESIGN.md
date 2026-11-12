@@ -1712,27 +1712,27 @@ Metamorphosis generates own-character Attacks, free this combat. Splash offers t
 
 #### Random energy costs
 
-Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide `CombatEnergyCosts` RNG; combat entry preserves its position. Without intervening Confused/Slither rolls, the next Oil uses the next unused rolls. Their on-draw rolls, including during Oil's own draw, shift its starting RNG position; shuffles, targeting and other RNGs leave it unchanged. Catfood adds no cost-specific patch.
+Confused, Slither and Snecko Oil share run-wide `CombatEnergyCosts`, rolling uniformly from **0–3**. Combat entry preserves its position. Confused/Slither rolls during Oil's draw shift its subsequent hand rerolls. These are the stream's only gameplay consumers; Catfood adds no cost-specific patch.
 
 | Source | Vanilla mechanics |
 |---|---|
-| Confused | Applied by Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant). Each owned card drawn with nonnegative `EnergyCost.Canonical` (the card's original energy cost) receives a combat-long cost modifier. X cards store zero in this field, so they consume a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
+| Confused | Snecko Eye (Darv) and Fake Snecko Eye (Fake Merchant) apply it. Drawn owned cards with nonnegative original cost (`EnergyCost.Canonical`) receive a combat-long modifier. X cards store zero there, consuming a roll while remaining X. Snecko Eye also adds two cards to turn-start draws. |
 | Slither | Wood Carvings' Snake enchantment. Rerolls its card on draw only while it remains in hand, with a combat-long modifier. Enchanting excludes X and Unplayable cards. |
 | Snecko Oil | Draws seven, then iterates the resulting hand in hand order. Rerolls non-X cards with nonnegative unmodified energy cost until turn end or next play, whichever comes first. |
 
-Draw hooks resolve powers before cards and their enchantments: Confused rolls first, Kingly Kick applies its −1 draw discount, then Slither overwrites it with a separate roll. Hellraiser's earlier draw hook can play a drawn Strike before Slither checks hand presence.
+**Draw order:** powers resolve before cards and enchantments. Confused rolls, Kingly Kick applies its −1 discount, then Slither overwrites it with another roll. Hellraiser's earlier hook can play a drawn Strike before Slither checks hand presence.
 
 #### Random orb generation
 
-Chaos and Trash to Treasure sample uniformly from Lightning, Frost, Dark, Plasma and Glass using run-wide `CombatOrbGeneration`. They roll before channeling, so failed attempts advance the RNG. Defect cannot channel with zero slots; characters with no base orb slots automatically gain one (`OrbModel.GetRandomOrb`, `OrbCmd.Channel`).
+Chaos and Trash to Treasure use run-wide `CombatOrbGeneration` to sample uniformly from Lightning, Frost, Dark, Plasma and Glass. They roll before channeling, so failed attempts consume RNG. With zero current slots, characters with no base slots gain one; Defect cannot channel (`OrbModel.GetRandomOrb`, `OrbCmd.Channel`).
 
 #### Slippery Bridge selection
 
-Each offer uses event RNG to select eligible card copies uniformly; duplicates count separately. Eternal cards are not removable.
+Offers select uniformly among eligible card copies using event RNG; duplicates count separately. Eternal prevents removal.
 
 - **First offer:** removable non-Basic cards.
-- **Rerolls:** record the rejected copy. From removable cards, exclude previously rejected copies and all copies of the previous offer's identity, regardless of status. Basics are allowed.
-- **Empty candidate set, including the first offer:** select uniformly from all removable copies. Keep the rejected set; reapply normal filters next reroll. Fallback can repeat the previous copy or identity before every copy has been offered.
+- **Rerolls:** record the rejected copy. Exclude rejected copies and the previous offer's entire identity from removable cards. Basics are allowed.
+- **Empty candidates, including the first offer:** fall back to all removable copies. Keep the rejected set and reapply filters next reroll. Fallback can repeat a copy or identity before every copy has been offered.
 
 #### Card reward offers
 
