@@ -1114,15 +1114,13 @@ At selection, use `CombatState.RoundNumber` (count combat rounds from 1, advanci
 
 #### Fabricator bot identities
 
-Use Fabricator occurrence + `purpose = bot generation` + bot-selection ordinal. Sample uniformly from the requested pool after vanilla's immediate-repeat exclusion, in enemy ID order. Singleton choices consume an ordinal. Preserve spawn order.
+Use `purpose = bot generation` + [Fabricator occurrence](#enemy-occurrence-addresses) + its bot-selection ordinal, shared across offensive and defensive pools. Sample uniformly from the requested pool after immediate-repeat exclusion, in enemy ID order. Advance once per selection, including singletons.
 
-#### Behavior preservation
+#### Vanilla deviations
 
-Independent rolls at vanilla conditional probabilities, with preserved sequential eligibility and transitions, preserve the intended joint NoSL distribution.
+**Vanilla deviation — SL 4A(↓):** fewer reroll opportunities. In the [small-slime example](#enemy-ai-1), killing either small slime gives Twig M the same next intent.
 
-**Vanilla deviation — SL 4A(↓):** partitioning AI sequences within combat and effective-decision consumption remove rerolls through unrelated or forced rolls.
-
-**Vanilla deviation — SL 4A:** partitioning by enemy identity and rat move rankings change survivor alternatives. For example, in the [reference examples](#enemy-ai-1), Flyconid/Twig M can lose vanilla's guaranteed zero-immediate-damage alternative.
+**Vanilla deviation — SL 4A:** changed survivor alternatives. In the [reference examples](#enemy-ai-1), Flyconid/Twig M lose vanilla's guaranteed non-attacking option; trying both rat survivors finds Screech with probability `2/3`, up from `1/2`.
 
 Baseline: [enemy AI mechanics](#enemy-ai-1).
 
@@ -1538,7 +1536,7 @@ Enemy creation samples uniformly with `Niche` from the inclusive initial HP rang
 
 #### Enemy AI
 
-**Randomness and selection:** vanilla uses the run-wide `RunRngSet.MonsterAi` for `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, calls `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still advance the AI RNG once. Deterministic transitions leave it unchanged. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
+**Randomness and selection:** vanilla's `RunRngSet.MonsterAi` carries its position across combats and is shared by `MonsterModel.RollMove` and Fabricator's bot identities. `RandomBranchState.GetNextState` totals effective weights, calls `NextFloat(total)`, then subtracts each branch's weight in declaration order until the remainder is `<= 0`. Effective weights incorporate repetition limits, cooldowns and dynamic conditions. Singleton and all-zero selections still advance the AI RNG once. Deterministic transitions leave it unchanged. Encounter-assigned starting moves, such as Corpse Slugs' coordinated starts, use setup RNG separately.
 
 **All-zero fallback:** all-zero branches always choose the first listed move. Flyconid can reach `Smash → Vulnerable Spores → Frail Spores → Smash`, making all effective weights zero; it then selects Vulnerable Spores.
 
