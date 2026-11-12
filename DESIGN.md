@@ -1218,7 +1218,13 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 ### Thieving Hopper
 
-Use [fixed priorities](#fixed-selection-priorities) with a separate purpose and [reward aliases](#card-reward-selection-key-aliases). Apply [vanilla theft eligibility](#card-state-and-selection) to combat copies, selecting by their `DeckVersion` occurrences.
+**Intent:** align theft targets across decks.
+
+Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = Thieving Hopper` + the linked permanent-deck card's selection key, including [reward aliases](#card-reward-selection-key-aliases).
+
+**Vanilla deviation — SL 5(↓):** fewer within-combat theft rerolls through card generation or pile order. This can remove a reason to carry a card-generating potion into Act 2 or on Act 2 Ancient to change theft target.
+
+Baseline: [theft eligibility and recovery](#card-state-and-selection).
 
 ### Random enemy targets
 
@@ -1662,7 +1668,7 @@ Thus even one restock per category can interfere. Identical RNG state, requests 
 
 **Reflections:** Act 3; uses event RNG to downgrade up to two distinct upgraded cards, then upgrade up to four distinct upgradable cards, including those just downgraded.
 
-**Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death restores that same object (`SwipePower`).
+**Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death offers that same object as a skippable recovery reward (`SwipePower`, `SpecialCardReward`). Escape or skipping recovery leaves the card removed.
 
 **Pael's Tooth:** stores five player-selected unupgraded cards. After each combat, returns one random remaining stored card upgraded, using `Rewards` RNG.
 
