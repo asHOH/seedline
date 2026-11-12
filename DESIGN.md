@@ -1532,15 +1532,15 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 #### Combat setup and shuffles
 
-Encounter RNG is seeded from run seed, total floor and encounter ID; it samples variable composition and assigned starting states.
+**Encounter setup:** RNG seeded from run seed + total floor + encounter ID samples variable composition and starting states.
 
-Shuffle RNG persists across combats; reshuffles and random pile insertions advance the same generator used for later opening hands.
+**Shuffle RNG:** opening shuffles, reshuffles and random pile insertions share `Shuffle` across combats.
 
-**Shuffle baseline:** opening shuffles clone cards in deck order (`Player.PopulateCombatState`), then apply Fisher–Yates directly (`CardPile.RandomizeOrderInternal` → `UnstableShuffle`). Later `CardPileCmd.Shuffle` combines discard and remaining draw cards, then uses `StableShuffle`: `List.Sort` followed by Fisher–Yates. Both apply shuffle modifiers afterward. `CardModel.CompareTo` compares only card identity and upgrade level, leaving enchantments, persistent progress and combat state tied; tied-copy order can still affect same-seed results.
+**Shuffling:** opening shuffles start from deck-order clones. Reshuffles first sort combined discard/draw cards by identity and upgrade level (`StableShuffle`). Both use Fisher–Yates, then apply modifiers. Sorting leaves copies tied despite different enchantments, persistent progress or combat state, so input order can affect results.
 
-**Discard-pile order:** affects which cards fit when `AllForOne` returns cards to a nearly full hand; `AggressionPower` and `DrainPower` also sample through order-sensitive shuffles. `FranticEscape.OnPlay` adds 1 cost for the combat, so the shuffle ties above can include copies with different costs, allowing discard order to affect which cost is drawn earlier.
+**Discard order:** affects All for One with limited hand space and the shuffles used by Aggression and Drain Power. Frantic Escape's +1 combat cost per play can leave tied copies with different costs, changing which cost is drawn earlier.
 
-**Random insertion:** `CardPileCmd.Add` uses `Shuffle.NextInt(n + 1)`; `MegaRandom.NextInner` scales a uniform double, matching percentile gap sampling. Lifecycle guards skip insertions before rolling a position.
+**Random insertion:** for a pile of `n` cards, `CardPileCmd.Add` uses `Shuffle.NextInt(n + 1)` to select a uniform gap. Lifecycle guards run before the roll.
 
 #### Enemy HP
 
