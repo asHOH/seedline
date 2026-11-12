@@ -396,7 +396,7 @@ Different offers, including [rerolls](#rerolls), have distinct anchors. Offers a
 | Operation | Occurrence and selection state |
 |---|---|
 | Acquire a generated card | Preserve its address and source-defined selection keys, including [reward aliases](#card-reward-selection-key-aliases). |
-| Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state; see [Tooth's return-record rule](#fixed-priority-card-selection). |
+| Move, temporarily store, or recreate the physical object for an existing occurrence | Retain the logical occurrence and its selection state. |
 | Change status or eligibility | The change itself preserves the occurrence and its selection state through equivalence-class splits and merges, subject to [upgrade/downgrade refills](#permanent-upgrades-and-downgrades). |
 | Copy a card | Create a new occurrence and selection state from the granting source. Consume no routing clocks. |
 | Permanently remove or combine cards | Retire the selected logical inputs. |
@@ -1027,9 +1027,9 @@ Baseline: [Wing Charm and earlier reward modifiers](#card-reward-offers-1).
 | Selection | Mechanism and sharing | Local rules |
 |---|---|---|
 | Random permanent upgrades / downgrades of deck cards | [Persistent clocks](#persistent-clocks); separate upgrade and downgrade scopes shared across sources and filters. | Set consumed clocks to zero; apply [refill rules](#permanent-upgrades-and-downgrades). |
-| Pael's Tooth return order / Beautiful Bracelet targets | [Fixed priorities](#fixed-selection-priorities); separate purposes with [reward aliases](#card-reward-selection-key-aliases). | [Source rules](#fixed-priority-card-selection). |
-| Slippery Bridge: [vanilla candidates and fallback](#slippery-bridge-selection) | Persistent clocks; Bridge-only scope with [reward aliases](#card-reward-selection-key-aliases). | Commit each offer when shown; renew a declined card's clock once before the next selection, using its per-occurrence renewal count. |
-| Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); shared run-wide. | With one owned potion, preserve its clock. Otherwise renew the selected clock once when the offer becomes available. Declined potions remain selectable. |
+| Pael's Tooth return order / Beautiful Bracelet targets | [Fixed priorities](#fixed-selection-priorities); separate purposes with [reward aliases](#card-reward-selection-key-aliases). | Use [routing](#out-of-combat-card-routing) for Tooth's initial selection. |
+| Slippery Bridge: [vanilla candidates and fallback](#slippery-bridge-selection) | Persistent clocks; Bridge-only scope with [reward aliases](#card-reward-selection-key-aliases). | Commit each offer when available; renew a declined card's clock once before the next selection, using its per-occurrence renewal count. |
+| Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); shared run-wide. | With one owned potion, preserve its clock. Otherwise renew the selected clock once when the offer becomes available. |
 
 #### Weighted potion sacrifice clocks
 
@@ -1054,11 +1054,6 @@ Reflections processes downgrades and refills in ascending pre-selection downgrad
 **Vanilla deviation — SL 4A(↓):** removes rerolls of upgrade targets through unrelated RNG consumption. In vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `Niche` RNG.
 
 Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests-and-relic-events).
-
-#### Fixed-priority card selection
-
-- **Pael's Tooth:** store five player-selected unupgraded cards outside the deck using [routing](#out-of-combat-card-routing). Return one upgraded per subsequent combat trigger in priority order, retiring only its return-order record. Later removals never add or recycle these records.
-- **Beautiful Bracelet:** enchant up to four eligible deck cards with Swift 2.
 
 ## Source policies — Encounter — Combat
 
@@ -1665,7 +1660,9 @@ Thus even one restock per category can interfere. Identical RNG state, requests 
 
 **Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death restores that same object (`SwipePower`).
 
-**Pael's Tooth:** The player selects and removes five unupgraded cards. Each subsequent combat returns one random remaining stored card, upgraded; all five return after five combats. This is stored-card selection without replacement, not new identity generation. Mechanics clarified by the project owner.
+**Pael's Tooth:** stores five player-selected unupgraded cards. After each combat, returns one random remaining stored card upgraded, using `Rewards` RNG.
+
+**Beautiful Bracelet:** enchants up to four random Swift-eligible deck cards with Swift 2, using `Niche` RNG.
 
 #### Combat card generation and transformations
 
