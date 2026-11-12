@@ -1671,21 +1671,21 @@ Front bias can affect several later positions, depending on bag composition.
 
 #### Card state and selection
 
-**Combat card selection:** selection uses `CombatCardSelection`, except auto-play uses `Shuffle`. `NextItem` advances the RNG once for singletons; batch selectors shuffle the full input before taking their count. See [shuffle mechanics](#combat-setup-and-shuffles) for `StableShuffle` ordering.
+**Combat card selection:** random selection normally uses `CombatCardSelection`; random auto-play selection uses `Shuffle`. `NextItem` advances once even for singletons. `TakeRandom` and shuffle-then-take callers shuffle the full input; see [shuffle mechanics](#combat-setup-and-shuffles) for `StableShuffle` ordering.
 
-**Out-of-combat player-selected card batches:** batch selections are unordered. Deck selectors and reward grids collect the full selection before effects. Enumeration can affect acquisition order (e.g. Sea Glass).
+**Player-selected batches outside combat:** deck selectors and reward grids collect an unordered selection before applying effects. Enumeration can affect acquisition order (e.g. Sea Glass).
 
-**Deck operations on player-selected cards:** the inspected deck-selection callers cover upgrading (Smith), enchanting (Gnarled Hammer), permanent removal (Empty Cage), transformation (Astrolabe, Claws, Wood Carvings), combining removals with a new addition (Amalgamator), temporary storage for return (Pael's Tooth), and copying (Dolly's Mirror). Wongos and Reflections downgrade randomly. Reward selections acquire new occurrences. Catfood's inspected patches add no operation category.
+**Deck-selection operations:** upgrade (Smith), enchant (Gnarled Hammer), remove (Empty Cage), transform (Astrolabe, Claws, Wood Carvings), replace multiple cards with one (Amalgamator), store for return (Pael's Tooth), or copy (Dolly's Mirror). Wongos and Reflections downgrade randomly; reward selections acquire new occurrences. Inspected Catfood patches add no operation category.
 
 **Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
 
-**Mad Science:** after combat, permanently upgrades random eligible deck cards without replacement, one per power stack, using `CombatCardSelection`.
+**Mad Science — Improvement:** after combat, permanently upgrades distinct eligible deck cards, one per power stack, using `CombatCardSelection`.
 
-**Reflections:** Act 3; uses event RNG to downgrade up to two distinct upgraded cards, then upgrade up to four distinct upgradable cards, including those just downgraded.
+**Reflections:** uses event RNG to downgrade up to two distinct upgraded cards, then upgrade up to four distinct upgradable cards, including those just downgraded.
 
-**Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death offers that same object as a skippable recovery reward (`SwipePower`, `SpecialCardReward`). Escape or skipping recovery leaves the card removed.
+**Thieving Hopper:** appears at most once per supported run and steals once. Selects uniformly with `CombatCardGeneration` from draw/discard copies linked to a deck card (`DeckVersion`), using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThieveryMove`). Theft removes the deck card; Hopper's death offers that same object as a skippable reward (`SwipePower`, `SpecialCardReward`). Escape or skipping leaves it removed.
 
-**Pael's Tooth:** stores five player-selected unupgraded cards. After each combat, returns one random remaining stored card upgraded, using `Rewards` RNG.
+**Pael's Tooth:** stores five player-selected removable, upgradable cards. After each combat, returns one random stored card upgraded, using `Rewards` RNG.
 
 **Beautiful Bracelet:** enchants up to four random Swift-eligible deck cards with Swift 2, using `Niche` RNG.
 
