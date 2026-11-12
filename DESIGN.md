@@ -1278,19 +1278,19 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 
 ### Random energy costs
 
-**Intent:** align cost rolls within card categories while separating combat-local rolls from persistent potion opportunities. Cost rolls remain uniform over 0–3.
+**Intent:** align cost rolls within card categories.
 
 | Partition | Sequence address | Assignment |
 |---|---|---|
-| Confused — Snecko Eye and Fake Snecko Eye | [Combat address](#combat-addresses) + `purpose = Confused cost` + card category | Five sequences, each following draw order. |
-| Slither | Combat address + `purpose = Slither cost` | One sequence shared by all enchanted copies, following draw order. |
-| Snecko Oil | `purpose = Oil cost` + [potion effect ordinal](#potion-effect-opportunities) + card category | Five sequences per opportunity, using hand-entry order below. |
+| Confused — Snecko Eye and Fake Snecko Eye | `purpose = Confused cost` + [combat address](#combat-addresses) + card category | Draw order. |
+| Slither | `purpose = Slither cost` + combat address | Draw order across all Slither copies. |
+| Snecko Oil | `purpose = Oil cost` + [potion effect ordinal](#potion-effect-opportunities) + card category | Hand-entry order below. |
 
-**Card categories:** starter Strikes; starter Defends; Other Basic 1; Other Basic 2; Others. Other Basic slots follow each character's original starting-deck identity order and remain fixed through removals. Classify by current identity: upgrades and copies retain its category; transformations use the replacement's category. Other Strike-tagged attacks belong to Others.
+**Card categories:** starter Strikes; starter Defends; Other Basic 1; Other Basic 2; Others. Other Basic slots follow each character's original starting-deck identity order and remain fixed through removals. Classify by current identity; other Strike-tagged attacks belong to Others.
 
-**Consumption:** consume one entry per eligible cost roll. Confused's X cards and Slither draws that have left hand consume zero.
+**Consumption:** roll uniformly over 0–3, consuming one entry per eligible roll. Confused's X cards and Slither draws that have left hand consume zero.
 
-**Confused + Slither:** when both apply to the same draw, Slither reuses that draw's Confused value at Slither's usual timing, retaining its hand check and leaving its own sequence unchanged. Keep the enchantment; its sequence resumes when Confused is absent. Reapplication preserves late overwrites such as Kingly Kick's draw discount.
+**Confused + Slither:** when both apply to the same draw, Slither reapplies that draw's Confused value at its usual timing, only while the card remains in hand. Consume no Slither entry. Reapplication preserves Slither's overwrite of Kingly Kick's draw discount.
 
 **Oil assignment:** after Oil finishes drawing, order eligible cards within each category by latest successful entry into hand, earliest first:
 
@@ -1300,9 +1300,11 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 
 Apply [combat-card routing](#combat-card-routing) to Oil's hand-entry assignment.
 
-Oil batches are isolated by effect opportunity; the ordinal persists across combats. The [steering deviation](#loss-of-future-outcome-steering) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or earlier Oil hand sizes.
+The [steering deviation](#loss-of-future-outcome-steering) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or Oil hand sizes.
 
-**Within-combat deviation — SL 4A(↓):** group partitioning, card-category partitions for Confused and Oil, X skipping and overlap reuse remove consumption-based rerolls; processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
+**Vanilla deviation — SL 4A(↓):** source and category partitions, X skipping and overlap reuse remove consumption-based rerolls.
+
+**Vanilla deviation — SL 4A(↓):** processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
 
 Baseline: [random energy costs](#random-energy-costs-1).
 
