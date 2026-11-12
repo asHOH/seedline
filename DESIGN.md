@@ -1357,27 +1357,18 @@ Main runs use A3+ gold; A0–2 gold is a sensitivity case. Eligibility and event
 
 ### Chest marker probabilities
 
-[Finite-lifetime marker](#finite-lifetime-chest-markers) comparisons below concern generic rewards, with fixed eligibility and observations before borrowing or supply exhaustion.
+With a uniform unseen order, [finite-lifetime markers](#finite-lifetime-chest-markers) match vanilla's character-specific relic chances after one chest acquisition. Skipped chests followed by shops can change later chances.
 
-**Why one acquisition matches:** for the calculation, append remaining shop/Courier stock to the generic order. Rotating shared entries leaves character-specific positions unchanged. Uniform marker lifetime makes acquisition equivalent, for those positions, to deleting a uniformly chosen chest-eligible position. A uniform unseen order of `N` relics, including `C` character-specific relics, therefore gives vanilla's `C/(N - 1)` at each remaining position. Skipping returns the carried entry and preserves the position pattern. Earlier draws can break the required uniform-order assumption.
+The comparison concerns generic rewards at one rarity, with fixed eligibility and before borrowing or supply exhaustion. Uniform lifetimes affect character-specific positions like deleting a random chest-eligible position; earlier draws can break uniformity.
 
-**Example setup:** `K` is character-specific; all other relics are shared. All are shop-eligible. Vanilla uses its [independently shuffled bags](#relic-bags); the mod randomly assigns one relic to shop stock and uniformly orders the rest as generic stock.
+Examples contain one character-specific relic; all others are shared, and all are shop-eligible. The mod assigns one random relic to shop stock and uniformly orders the rest as generic stock; vanilla uses [independent bags](#relic-bags). The table gives the character-specific chance in the next generic reward.
 
-**Live-stock counting:** with `A, B, C, K`, display one shop relic → acquire a chest relic → draw an ordinary reward.
+| Pool size | Sequence | Vanilla | Mod |
+|---|---|---|---|
+| 4 | Shop display → take chest relic | 37.5% | 37.5% |
+| 6 | Skip chest → shop display → take chest relic | 20.8% | 21.1% |
 
-- Vanilla: `K` survives the shop (`3/4`), then occupies either remaining position uniformly: `(3/4) × (1/2) = 3/8`.
-- Mod: `K` appears when initially first, or second with immediate marker expiry. These cases leave `S = 2`: `1/4 + (1/4) × (1/2) = 3/8`.
-
-Retaining the displayed shared relic in `S` instead gives `1/3`. Displaying `K` removes it from future rewards and leaves `S = 3` under either rule.
-
-**Remaining deviation:** with `A–E, K`, skip a chest → display one shop relic → acquire another chest relic → draw an ordinary reward.
-
-- Vanilla: skipping leaves the player bag unchanged. `K` survives the shop (`5/6`), then occupies any of four remaining positions uniformly: `(5/6) × (1/4) = 5/24`.
-- Mod: `K` appears when initially first (`1/6`), or second with the skipped marker advancing (`4/5`) and the acquired marker expiring immediately (`1/3`): `1/6 + (1/6) × (4/5) × (1/3) = 19/90`.
-
-The difference is `1/360`, about **0.278 percentage points** in this reduced pool. The shop changes the next marker's lifetime distribution, while the skipped relic's return position still follows the earlier count.
-
-**Shop influence:** with `u` and other state fixed, consuming `d` counted relics shortens a new lifetime by at most `d` eligible-entry advances. Initial shop stock contributes at most two per rarity before fallback; Courier restocks add more. Intervening draws determine how many rewards or rooms pass before expiry.
+The second example adds **0.3 percentage points** because shop consumption changes new lifetimes while preserving existing ones. Counting already displayed shop relics in `S` lowers the first example's mod chance to **33.3%**.
 
 ### Rejected alternatives
 
