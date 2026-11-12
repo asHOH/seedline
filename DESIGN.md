@@ -1336,7 +1336,7 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
 
-[Event spreadsheet](references/StS2_Events.xlsx): **57 ordinary/forced events and 8 Ancients**. `is_deterministic` concerns offered choices. The workbook details criteria and state restrictions.
+[Event workbook](references/StS2_Events.xlsx): vanilla offers and eligibility for **56 ordinary events, forced War Historian Repy and 8 Ancients**.
 
 ### Rarity calibration
 
