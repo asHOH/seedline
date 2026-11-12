@@ -1190,9 +1190,11 @@ Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
 ### Random combat card selection
 
-**Scope:** align random selection of existing combat cards, including combat-start effects and sampled choice offers. For player-selected cards, use [combat-card routing](#combat-card-routing). Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows its [theft policy](#thieving-hopper).
+**Intent:** align selections across sources and changing card sets.
 
-Use combat-local [persistent clocks](#persistent-clocks) with [selection state](#combat-card-selection-state) and [combat addressing and resets](#combat-addresses). Preserve preference/fallback tiers, fixed batches and sequential eligibility changes. Select and process in ascending pre-selection clock order; renew consumed clocks immediately under [consumption timing](#opportunity-consumption-timing).
+**Scope:** existing combat cards, including sampled choice offers. Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows its [theft policy](#thieving-hopper).
+
+Use [combat-card selection state](#combat-card-selection-state). Renew consumed clocks immediately on commitment; process selected cards in ascending pre-selection clock order.
 
 | Shared clock scope | Sources |
 |---|---|
@@ -1201,15 +1203,17 @@ Use combat-local [persistent clocks](#persistent-clocks) with [selection state](
 | Return | Anointed, Jeweled Mask, Power Cell |
 | Attack auto-play | Beat Down, Uproar, Stampede |
 
-Each remaining source has independent clocks: Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker Strike. Copies of a source share its scope.
+Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker Strike each use a separate scope.
 
-**Consumption exceptions:** empty and forced-singleton selections leave clocks and renewal counts unchanged. So do whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell; hand returns require space for every selected card.
+**Consumption exceptions:** preserve clocks and renewal counts for empty or forced-singleton selections, and whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell. Whole-set hand returns qualify only when every selected card fits.
 
-**Incidental ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one RNG shared by those five sources, addressed by combat + `purpose = incidental shuffle`. Advance only for these shuffles.
+**Whole-set ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one shared RNG addressed by `purpose = incidental shuffle` + [combat address](#combat-addresses).
 
-**Seeker Strike:** when sampling, use clocks only to choose the offered cards. Apply routing to the player-selected card within the offered subset. Use the vanilla draw-pile selector for display, sorting only the offered cards by ascending rarity, then name.
+**Seeker Strike:** clocks select the offer; [routing](#combat-card-routing) resolves the player's choice within it. Keep vanilla offer display order.
 
-**Within-combat deviation — SL 4A(↓):** clock partitioning and forced-selection skips remove rerolls. Survivor clocks change which alternatives are reachable by varying discard order or the eligible set.
+**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through unrelated sources, forced selections or discard order.
+
+**Vanilla deviation — SL 4A:** persistent clocks change the alternatives available across eligible sets.
 
 Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#combat-setup-and-shuffles).
 
