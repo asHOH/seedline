@@ -1251,26 +1251,28 @@ Baseline: [random enemy targeting](#random-enemy-targeting).
 
 **Intent:** align random card identities.
 
-**Scope:** combat card, power and relic generators and Entropy. [Potion-generated cards](#potion-generated-cards) retain their scope.
+**Scope:** random card generation by cards, powers, relics, and Entropy. Potions follow [potion-generated cards](#potion-generated-cards).
 
-Use independent sequences addressed by [combat address](#combat-addresses) + `purpose = card generation` + group + pool below. All copies and triggers sharing a group and pool use the same sequence.
+Address sequences by `purpose = card generation` + [combat address](#combat-addresses) + group + pool:
 
-| Group | Identity supply and consumers |
+| Group | Pools and sources |
 |---|---|
-| Ordinary costs | One sequence per pool: own character, colorless, each other character, curse and status. Share ordinary-cost generation and Entropy; Jackpot uses the own-character sequence. |
-| Free this turn | One own-character sequence shared by generators applying this effect. |
-| Free this combat | One own-character Attack sequence for Metamorphosis. |
-| Splash | One sequence over the combined eligible other-character Attacks, uniform across identities. |
+| Ordinary costs | One sequence per character pool, plus colorless, curse and status; shared by ordinary-cost generation (including Jackpot) and Entropy. |
+| Free this turn | Own-character pool; shared by generators making cards free this turn. |
+| Free this combat | Own-character Attacks; Metamorphosis. |
+| Splash | Combined other-character Attacks, uniform across identities. |
 
-Classify cost treatment by the generating source's free effect; natural costs, upgrades and later modifiers leave classification unchanged. Entropy follows the original card's transformation pool regardless of its acquisition source.
+Classify cost treatment by the generating source's free effect; natural costs, upgrades and later modifiers leave classification unchanged. Entropy uses the original card's [transformation pool](#permanent-transformations-and-direct-additions).
 
-Draw identities without a separate rarity roll. Consume one entry per generated identity, including every offered alternative, under [consumption timing](#opportunity-consumption-timing).
+Use [identity sequences](#rarity-and-identity-sequences) without rarity rolls. Consume one entry per generated identity, including every offered alternative.
 
-For each Entropy batch, use [transformation batch rules](#transformation-batches), then apply replacements in the gameplay execution order.
+For Entropy, follow [transformation batch rules](#transformation-batches); apply replacements in vanilla execution order.
 
-**Within-combat deviation — SL 4A(↓):** partitioning sequences by pool and cost treatment, while sharing identity supply between generation and Entropy, changes source interactions and removes cross-group rerolls. Within a pool, ordinary-cost generation can advance Entropy's identity supply and vice versa.
+**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other pools, cost groups or unrelated sources.
 
-**Within-combat deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls.
+**Vanilla deviation — SL 4A:** ordinary-cost generation and Entropy now advance each other's identity supply within a pool.
+
+**Vanilla deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls.
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
