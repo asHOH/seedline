@@ -1136,7 +1136,7 @@ Address each shuffle by `purpose = shuffle` + [combat address](#combat-addresses
 
 #### Priority assignment
 
-Derive each card's priority from the shuffle address + its **shuffle key**: a source-based key or priority-sequence ID + assigned position.
+Derive each card's priority from the shuffle address + its **shuffle key**: a source-based key or priority-sequence ID + position reassigned at each shuffle.
 
 The opening Innate subgroup uses [processing order](#card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
 
@@ -1144,7 +1144,9 @@ The opening Innate subgroup uses [processing order](#card-processing-order), lea
 |---|---|---|
 | Defend and earlier processing order categories | First sequence, least useful first. | Same. |
 | Other starting Basics; eligible rewards/direct additions | Source-based keys below. | Second sequence, most useful first. |
-| Remaining cards | Second sequence: earliest acquisition floor first, then ascending processing order. | Both rows combined, most useful first. |
+| Remaining cards | Second sequence: permanent cards in acquisition order, followed by new combat occurrences in creation order. | Both rows combined, most useful first. |
+
+Number acquisition batches across the run and creation batches within each combat; order cards within each batch by [card processing order](#card-processing-order).
 
 Freeze the card's ordering properties at permanent removal and retain its entry through run end. Include it in opening priority assignment, then omit it from the shuffle. Additions and rank changes can still shift sequence positions.
 
