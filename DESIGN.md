@@ -1599,11 +1599,11 @@ Direct random effects and automatic enemy targeting share run-wide `CombatTarget
 
 #### Relic bags
 
-**Pools and order:** the fully unlocked player bag contains **122 ordinary relics** — 26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag has separately shuffled per-rarity lists; the two bags overlap in identity.
+**Two overlapping bags:** the player bag contains **122 ordinary relics** — 26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag shuffles its per-rarity lists separately.
 
-**Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare; fixed-rarity requests consume identity only, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front. Factory rarity rolls default to player `Rewards` RNG; chests use separate `TreasureRoomRelics` RNG.
+**Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare, normally using player `Rewards`; chests use `TreasureRoomRelics`. Fixed-rarity requests skip the roll, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front.
 
-**Consumption:** ordinary reward/shop generation removes the selected identity from both bags, even if declined or unbought. Chest generation removes it only from the chest bag. Acquiring a non-stackable relic removes its identity wherever present in both bags, preserving survivors' relative order. In single-player, skipping a chest relic leaves it available in the player bag.
+**Consumption:** ordinary reward/shop generation removes the identity from both bags, even if declined or unbought. Chest generation removes it only from the chest bag. Acquiring a non-stackable relic removes it from both bags, preserving survivors' order; skipping a chest leaves the player bag unchanged.
 
 One-rarity example, front at left; `K` is character-specific. Acquire and skip are alternative branches after generation:
 
@@ -1614,9 +1614,9 @@ One-rarity example, front at left; `K` is character-specific. Acquire and skip a
 | Acquire B | `D A C` | `A K C D` |
 | Skip B | `D A C` | `A K C B D` |
 
-**Eligibility:** pool membership, requested rarity and depletion constrain every draw. Run-state `IsAllowed` failures are purged from all rarity lists in the queried bag. Source filters instead retain skipped entries. Shops and Wongos require `IsAllowedInShops`, excluding Amethyst Aubergine (Common), Bowler Hat and Lucky Fysh (Uncommon), Old Coin and The Courier (Rare). Wongos is the only non-shop ordinary-bag caller with an additional identity filter; Relic Trader's tradability restriction applies to outgoing relics, not replacements.
+**Eligibility:** `IsAllowed` failures are purged from every rarity in the queried bag; source filters retain skipped entries. Shops and Wongos require `IsAllowedInShops`, excluding Amethyst Aubergine (Common), Bowler Hat and Lucky Fysh (Uncommon), Old Coin and The Courier (Rare). Wongos is the only non-shop ordinary-bag caller with an identity filter. Relic Trader filters outgoing relics for tradability; replacements use ordinary eligibility.
 
-**Filtered relic pulls:** remove the first eligible entry from the requested end and compact the list. For one uniformly shuffled rarity with two shop-eligible identities and one shop-ineligible identity:
+**Filtered pulls:** remove the first eligible entry from the requested end. For one uniformly shuffled rarity with two shop-eligible identities and one shop-ineligible identity:
 
 | First pull | Chance the next unrestricted front pull is shop-ineligible |
 |---|---|
@@ -1624,13 +1624,13 @@ One-rarity example, front at left; `K` is character-specific. Acquire and skip a
 | Filtered front | `2/3` |
 | Filtered back | `1/3` |
 
-Both filtered pulls leave eligible supply. Front bias can affect several later positions; its size depends on bag composition.
+Front bias can affect several later positions, depending on bag composition.
 
-**Chest probability:** for one rarity with a uniform unseen player-bag order, `N` remaining identities and `C` character-specific identities, acquiring a shared identity selected independently of that order leaves probability `C/(N-1)` at every remaining position: e.g. `5/100` becomes `5/99`. Skipping leaves the player bag unchanged. This describes marginal probabilities before further observations/restrictions, not every source history; preceding filtered draws can invalidate the uniform-order assumption.
+**Chest probability:** with a uniform unseen player-bag order, acquiring an independently selected shared identity raises the character-specific chance at every remaining position from `C/N` to `C/(N-1)`; e.g. `5/100` → `5/99`. Here `N` counts remaining identities of one rarity and `C` its character-specific identities. These marginal probabilities assume no further observations or restrictions; preceding filtered draws can invalidate uniformity.
 
 **Floor eligibility:** these 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited.
 
-**Identity depletion:** from the requested rarity, search forward along Shop → Common → Uncommon → Rare, then multiplayer fallback; otherwise Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this shared-bag fallback.
+**Depletion:** search from the requested rarity along Shop → Common → Uncommon → Rare, then multiplayer fallback, then Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this fallback.
 
 #### Shops, chests and relic events
 
