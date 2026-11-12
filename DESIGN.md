@@ -1230,22 +1230,20 @@ Baseline: [theft eligibility and recovery](#card-state-and-selection).
 
 **Intent:** align random enemy targets across changing eligible sets.
 
-Use four independent sequences addressed by [combat address](#combat-addresses) + `purpose = targeting` + sharing group:
+Address sequences by `purpose = targeting` + [combat address](#combat-addresses) + sharing group:
 
 | Sharing group | Sources |
 |---|---|
 | Forgotten Soul | All Forgotten Soul selections. |
 | Lightning | All Lightning copies, passive activations and evokes. |
-| Direct damage | Remaining effects that inherently cause damage, poison, or immediate HP loss; includes power and relic damage and Knife Trap. |
-| Other | Mainly includes automatically played debuffs. |
+| Direct damage | Remaining effects that inherently cause damage, poison, or immediate HP loss, even at zero damage; includes power and relic damage, Knife Trap and auto-played damaging cards (including through Beat Down). |
+| Other | Remaining effects, including Countdown and automatically played debuffs. |
 
-Zero damage preserves classification.
+Use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + group-local selection ordinal; selection key = [enemy occurrence address](#enemy-occurrence-addresses). Advance the ordinal only when at least two targets are eligible.
 
-With fewer than two eligible targets, advance nothing.
+**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other groups or forced targets.
 
-Reuse [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + combat-local selection ordinal; selection key = [enemy occurrence address](#enemy-occurrence-addresses). Repeats remain allowed.
-
-**Within-combat deviation — SL 4A(↓):** group partitioning removes cross-group rerolls; singleton skipping removes forced-target rerolls; priorities change alternatives across eligible sets.
+**Vanilla deviation — SL 4A:** priorities change the alternatives available across eligible sets.
 
 Baseline: [random enemy targeting](#random-enemy-targeting).
 
