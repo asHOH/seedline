@@ -869,7 +869,7 @@ Neow's Bones' curse follows [direct additions](#permanent-transformations-and-di
 
 **Rationale:** `7/15` is the normal-fight midpoint when chest/normal-fight/shop widths fill the range in their base `2:10:3` ratio.
 
-Baseline: [room restrictions and chance updates](#room-resolution).
+Baseline: [room restrictions and chance updates](#unknown-room-resolution-1).
 
 ### Ordinary-event selection
 
@@ -1406,21 +1406,26 @@ For one eligible relic removed/substituted and three distinct replacements match
 
 ## Appendix: existing mechanics
 
-Existing mechanics for comparison: vanilla by default, [Catfood differences](#catfood-addressing-and-combat-rewards) labeled. Policies belong in the main design sections.
+Vanilla mechanics; [Catfood differences](#catfood-addressing-and-combat-rewards) are labeled.
 
 ### Rooms, events and combat
 
-#### Room resolution
+#### Unknown-room resolution
 
-**Unknown-room resolution:** base chances are 10% normal fight / 2% chest / 3% shop; Event takes the remainder (initially 85%). Elites are disabled under ordinary rules. Each roll advances `UnknownMapPoint` once. The selected non-event type resets to its base chance; other allowed non-event types gain their base amount. Excluded types retain their stored odds. Exclusions apply before interpreting the roll, without renormalizing the remaining probabilities. Odds reset between acts; RNG state persists across acts. Catfood leaves this unchanged.
+**Selection:** sample cumulative chances in normal fight → chest → shop order; Event takes the remainder. Base chances are 10% / 2% / 3%; elites are disabled. Excluded types contribute no interval.
 
-**Unknown-room overflow:** vanilla checks cumulative thresholds in normal fight → elite (if enabled) → chest → shop order. Totals above 100% are neither normalized nor capped in stored state; intervals beyond 1 are unreachable, so later types lose effective probability and Event has none. At 70% normal fight / 14% chest / 21% shop, effective chances are 70% / 14% / 16%.
+**Overflow:** only the first 100% in selection order is reachable; stored chances remain uncapped. Thus 70% / 14% / 21% gives 70% / 14% / 16% and 0% Event.
+
+**Chance updates:** reset the selected non-event type to its base chance; add each other allowed non-event type's base amount. Excluded types' stored chances freeze.
+
+**Random state:** each `?` resolution advances `UnknownMapPoint` once, including forced Events, which freeze non-event chances. Chances reset between acts; RNG state continues.
 
 | Source | Mechanics |
 |---|---|
-| `?` shop exclusion | Shop is excluded when the previous visited map point contained a shop, or every outgoing map node is a shop. Stored shop odds freeze during exclusion. |
-| Juzu Bracelet / Golden Compass | Juzu excludes normal fights from `?` resolution. Golden Compass forces Event during its affected act. |
-| Lantern Key | In Act 3, forces `?` to Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. Like Golden Compass, forced resolution still advances `UnknownMapPoint` once while non-event odds freeze. |
+| Shop exclusion | Excluded when the previous visited map point contained a shop, or all next nodes are shops (at least one). |
+| Juzu Bracelet | Excludes normal fights. |
+| Golden Compass | Forces Event during its affected act. |
+| Lantern Key | In Act 3, forces Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. |
 
 #### Event and encounter identities
 
