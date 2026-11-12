@@ -1691,7 +1691,7 @@ Front bias can affect several later positions, depending on bag composition.
 
 #### Combat card generation and transformations
 
-The following generators and the six card-generating potions use shared factories and run-wide `CombatCardGeneration` RNG, sampling uniformly over eligible identities without a separate rarity roll. These factories exclude Basic/Ancient/Event rarities and cards with `CanBeGeneratedInCombat == false`, retaining unlock and player-count restrictions.
+**Uniform identity draws:** these generators and the [six card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`.
 
 | Pool / filter | Ordinary costs | Free this turn |
 |---|---|---|
@@ -1706,9 +1706,9 @@ The following generators and the six card-generating potions use shared factorie
 
 Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. Jack of All Trades excludes itself.
 
-Stoke, Jackpot, Metamorphosis and Calamity allow duplicate identities. Creative AI and Call of the Void make separate single-card draws, allowing repeats across them. Other multi-card factory batches require distinct identities. Thieving Hopper's theft and random affliction selection also advance `CombatCardGeneration`.
+**Duplicates:** Stoke, Jackpot, Metamorphosis and Calamity allow repeats within a batch. Other factory batches require distinct identities; Creative AI and Call of the Void allow repeats across their separate single-card draws. Thieving Hopper's theft and random affliction selection also advance this RNG.
 
-Entropy is the sole random combat transformation source. It transforms selected hand cards in selection order using `CombatCardSelection`, with the [default transformation pool and exclusions](#permanent-transformations-and-direct-additions). Different selected originals can have different eligible lists, making results depend on selection order. Fixed-result transformations and Largesse's multiplayer generation fall outside this policy's scope.
+**Entropy:** the sole random combat transformation source. It transforms selected hand cards in returned selection order using `CombatCardSelection` and the [default transformation pool](#permanent-transformations-and-direct-additions). Different originals can have different eligible lists, so order can change results. Coverage excludes fixed-result transformations and multiplayer Largesse.
 
 #### Random energy costs
 
