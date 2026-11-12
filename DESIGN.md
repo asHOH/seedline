@@ -1340,16 +1340,20 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ### Rarity calibration
 
-[Rarity model](outputs/reward-calibration.cjs) and [route/event projection](outputs/reward-calibration-environment.cjs), 2026-10-11. Fit vanilla's expected displayed Uncommon totals separately in non-Rare and rare-bearing offers, including once-per-run opening triples and A0–6 Common-first replacement. Each three-act study uses 200,000 baseline and 200,000 independent validation runs. Act 3 has 0/1/2/3 elites with probabilities 40%/40%/15%/5%; its zero-elite branch removes the first elite and replaces the second with an event.
+Calibration keeps [displayed Uncommon counts](#uncommon-probabilities) and [shop Rare counts](#stock-and-prices) close to vanilla averages, while spreading shop Rares across more visits.
 
-| Study | Validation fit: non-Rare offers / rare-bearing companions | Design rates | Uncommon difference per 100 displayed slots |
-|---|---|---|---|
-| [A7+](outputs/reward-calibration-act3-results.json) | 38.016% / 38.942% | 38% / 39% | −0.011 |
-| [A0–6](outputs/reward-calibration-a6-results.json) | 39.863% / 40.469% | 40% / 40.5% | +0.105 |
+Uncommon rates below are non-Rare offers / rare-bearing companions:
 
-Shop offsets approximate the mean Rare count across five character-card slots, excluding fixed colorless cards. Rare chances per slot in vanilla versus this design are **4.453% / 4.5%** at A7+ and **10.762% / 10.8%** at A0–6. Constant offsets change clustering: shops with any Rare character card occur in **19.55% / 20.56%** and **41.78% / 43.53%**, respectively.
+| Study | Design rates | Design − vanilla Uncommons per 100 slots |
+|---|---|---|
+| [A7+](outputs/reward-calibration-act3-results.json) | 38% / 39% | −0.01 |
+| [A0–6](outputs/reward-calibration-a6-results.json) | 40% / 40.5% | +0.1 |
 
-These are route-average choices: elite frequency and extra-offer sources shift the fitted rates. The [earlier A7+ study](outputs/reward-calibration-results.json) and A0–6 results retain sensitivity cases, assumptions and checks. The model approximates player-state eligibility, event outcomes and non-rarity item effects.
+Initial shops with at least one Rare character card rise from **20% to 21%** at A7+ and **42% to 44%** at A0–6.
+
+The [model](outputs/reward-calibration.cjs) uses 200,000 calibration and 200,000 validation runs per difficulty, with the same [projected three-act routes and economy](outputs/reward-calibration-environment.cjs) for vanilla and mod. Fits include opening triples and A0–6 Common-first replacement.
+
+Main runs use A3+ gold; A0–2 gold is a sensitivity case. Eligibility and event outcomes are approximated. Route assumptions and [sensitivity studies](outputs/reward-calibration-results.json) accompany the results.
 
 ### Chest marker probabilities
 
