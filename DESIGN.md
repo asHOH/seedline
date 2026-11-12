@@ -1374,29 +1374,34 @@ The second example adds **0.3 percentage points** because shop consumption chang
 
 #### Combat-gold alternatives
 
-- **Shared rolls with independent compensation:** preserves A3+ normal-gold expectation but makes its distribution nonuniform (**Vanilla deviation — NoSL 3**); Bowler Hat can change the received total by 1.
-- **Shared range-relative rolls:** preserves vanilla distributions, but at A3+ swapping normal → elite to elite → normal can change total gold by 1.
+- **Shared rolls with independent compensation:** nonuniform A3+ normal gold at unchanged expectation (**Vanilla deviation — NoSL 3**); normal/elite reordering can change Bowler Hat totals by 1.
+- **Shared range-relative rolls:** vanilla distributions, but reordering can change A3+ base gold by 1.
 
 #### Event-selection alternatives
 
-- **Retained priorities in every act:** better preserves the relative order of events both runs encounter when pools match, but can bring forward the first mismatch when surviving pools differ.
-- **Refreshed priorities in every act:** simpler and better same-ordinal matching, but more event-order reversals in Act 1.
-- **Cross-act insertion — position priorities:** reserve incoming positions using output-position priorities shared across runs. Can delay the first mismatch, but preserved less relative event order in simulated act transitions.
-- **Cross-act insertion — weighted merging:** use rolls shared across runs to choose surviving or incoming IDs proportionally to remaining counts. Can delay the first mismatch compared with sorted priorities, but preserved less relative event order when tests varied prior event consumption.
+For [condition priorities](#within-act-selection):
+
+- **Retained in every act:** differing survivor pools can cause earlier mismatches, despite better relative event order with matching pools.
+- **Refreshed in every act:** more Act 1 order reversals, despite better same-ordinal matching.
+
+Both [cross-act insertion](#act-entry-and-carryover) alternatives preserved less relative event order in simulations, despite sometimes delaying the first mismatch:
+
+- **Position priorities:** reserve incoming positions using shared output-position priorities.
+- **Weighted merging:** use shared rolls to choose surviving or incoming IDs proportionally to remaining counts.
 
 #### Relic Trader alternatives
 
-[Matching analysis](outputs/relic-trader-matching-results.json) assumes three identical, distinct replacements in the same reward slots across runs. It verifies uniform outgoing selection and pairing, and the symmetric expected outgoing-overlap bound.
+For one eligible relic removed/substituted and three distinct replacements matching by slot across runs, [analysis](outputs/relic-trader-matching-results.json) compares [the selected assignment](#outgoing-relic-assignment) with:
 
-- **Independent candidate priorities:** lower trade agreement with the same outgoing overlap.
-- **Direct pairing over all eligible relics:** higher trade agreement, but one inventory substitution can change two outgoing relics.
+- **Independent candidate priorities:** fewer matching outgoing/replacement pairs on average, equal expected outgoing overlap.
+- **Direct pairing over all eligible relics:** one inventory substitution can change two outgoing relics, despite more matching pairs on average.
 
 #### Rat-sampling alternatives
 
-For non-Summon choices:
+[Non-Summon choices](#rat-sampling):
 
-- **Percentile sampling:** eligibility changes shift retained moves' intervals.
-- **Sequences per eligible move pair:** lose cross-pair alignment and retain selection-count differences.
+- **Percentile sampling:** eligibility changes shift retained moves' roll intervals.
+- **Sequences per eligible move pair:** lose cross-pair alignment; selection-count differences persist.
 - **[Filtered draws](#filtered-draws):** retain filter-history differences after eligibility converges.
 
 ## Appendix: existing mechanics
