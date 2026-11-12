@@ -1326,9 +1326,9 @@ Baseline: [random orb generation](#random-orb-generation).
 
 **Scope:** Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid.
 
-Partition generation state by potion type, separately from other combat generation; isolate each complete batch by addressing it with potion type + its [effect ordinal](#potion-effect-opportunities).
+Address each batch by `purpose = potion card generation` + potion type + [effect ordinal](#potion-effect-opportunities). Orobic Acid's Attack, Skill and Power share one batch.
 
-Draw identities without a separate rarity roll.
+Use one [identity sequence](#rarity-and-identity-sequences) per batch.
 
 **Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
 
