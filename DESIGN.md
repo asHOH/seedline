@@ -1020,16 +1020,14 @@ Baseline: [Wing Charm and earlier reward modifiers](#card-reward-offers-1).
 
 ### Persistent selection
 
-**Intent:** align affected cards across sources, decks and reward choices, and potion sacrifice offers independently of inventory order.
+**Intent:** align card selections across sources, changing decks and reward choices, and potion sacrifice offers across changing inventories.
 
-Use [fixed priorities](#fixed-selection-priorities) or [persistent clocks](#persistent-clocks) as specified below.
-
-| Selection / candidates | Mechanism and sharing | Local selection rules |
+| Selection | Mechanism and sharing | Local rules |
 |---|---|---|
-| Random permanent upgrades / downgrades of existing deck cards | Persistent clocks; one shared scope per operation. Source filters do not split clocks. | Mark consumed clocks zero; apply the refill rules below. |
-| Pael's Tooth / Beautiful Bracelet | Fixed priorities; separate purposes with [reward aliases](#card-reward-selection-key-aliases). | [Source rules](#fixed-priority-card-selection) below. |
-| Slippery Bridge: [vanilla candidates](#slippery-bridge-selection), including fallback | Persistent clocks; Bridge-only scope with [reward aliases](#card-reward-selection-key-aliases). | Update once when a newly selected card is shown. If declined, renew its clock once before the next selection, using its per-occurrence renewal count. |
-| Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); one shared run-wide scope. | With one owned potion, leave its clock unchanged. Otherwise renew the selected clock once when the offer becomes available. Declined potions remain selectable. |
+| Random permanent upgrades / downgrades of deck cards | [Persistent clocks](#persistent-clocks); separate upgrade and downgrade scopes shared across sources and filters. | Set consumed clocks to zero; apply [refill rules](#permanent-upgrades-and-downgrades). |
+| Pael's Tooth return order / Beautiful Bracelet targets | [Fixed priorities](#fixed-selection-priorities); separate purposes with [reward aliases](#card-reward-selection-key-aliases). | [Source rules](#fixed-priority-card-selection). |
+| Slippery Bridge: [vanilla candidates and fallback](#slippery-bridge-selection) | Persistent clocks; Bridge-only scope with [reward aliases](#card-reward-selection-key-aliases). | Commit each offer when shown; renew a declined card's clock once before the next selection, using its per-occurrence renewal count. |
+| Ranwid the Elder / Stone of All Time: owned potions | [Weighted sacrifice clocks](#weighted-potion-sacrifice-clocks); shared run-wide. | With one owned potion, preserve its clock. Otherwise renew the selected clock once when the offer becomes available. Declined potions remain selectable. |
 
 #### Weighted potion sacrifice clocks
 
