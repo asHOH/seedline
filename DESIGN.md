@@ -1079,19 +1079,19 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 ### Enemy AI
 
-**Intent:** align intent decisions across move histories.
+**Intent:** align intents across move histories.
 
 Use [combat-local sequences](#combat-addresses), partitioned by enemy identity except for Decimillipede. Keep move history and eligibility outside addresses.
 
-**Effective-decision sequences:** advance only when at least two moves have positive effective weight.
+**Effective-decision sequences:** use vanilla percentile sampling; advance only when at least two moves have positive effective weight.
 
 #### Intent sequences
 
 | Source | Local rules |
 |---|---|
-| Inklets | Two effective-decision sequences: one for the middle, one shared by the outers. Use vanilla percentile sampling; retain scopes after deaths. |
-| Exoskeletons / Scrolls of Biting | One effective-decision sequence per type, shared by all copies. Use vanilla percentile sampling. |
-| Small Leaf Slimes | One opening sequence; consume one entry per enemy in creation order. |
+| Inklets | Two effective-decision sequences: one for the middle, one shared by the outers. Retain scopes after deaths. |
+| Exoskeletons / Scrolls of Biting | One effective-decision sequence per type. |
+| Small Leaf Slimes | One opening sequence, consumed once per enemy in creation order. |
 | Decimillipede | One revival-selection sequence shared by all segments. |
 | Other enemies with random intents, excluding [rats](#rat-sampling) | Use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities), addressed by the enemy's random-branch ordinal, with move IDs as selection keys. Count singleton/all-zero branches. |
 
@@ -1101,14 +1101,14 @@ Use [combat-local sequences](#combat-addresses), partitioned by enemy identity e
 
 **Summon:** all rats share one percentile sequence. Advance when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
 
-**Non-Summon:** when Summon is unavailable or loses, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID. Summon, summoned openings and later choices use separate purposes.
+**Non-Summon:** otherwise, use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) keyed by move ID. Summon, summoned openings and later choices use separate purposes.
 
 | Non-Summon opportunity | Address and consumption |
 |---|---|
 | Summoned opening | Combat-local summoned-rat ordinal in creation order. Consume at its first random intent selection. |
 | After opening, any rat | Combat round + round-local selection ordinal, shared by all rats in vanilla selection order. Advance only when at least two non-Summon moves have positive effective weight. |
 
-At selection, use `CombatState.RoundNumber` (count combat rounds from 1, advancing after the enemies finish their turn).
+Use `CombatState.RoundNumber` at selection: starts at 1 and advances after the enemy turn.
 
 **Limit:** different selection counts can shift choices within a round. [Rejected alternatives](#rat-sampling-alternatives).
 
