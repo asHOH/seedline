@@ -176,7 +176,7 @@ The mod aligns same-seed opportunities through addresses, shared state for relat
 
 | Decision area | Policies |
 |---|---|
-| Setup and enemies | [Encounter setup](#encounter-setup); [enemy HP](#enemy-hp); [enemy AI](#enemy-ai). |
+| Setup and enemies | [Combat setup](#combat-setup); [enemy HP](#enemy-hp); [enemy AI](#enemy-ai). |
 | Card piles | [Card shuffling](#card-shuffling); [random pile insertion](#random-pile-insertion). |
 | Random selection | [Combat cards](#random-combat-card-selection); [Thieving Hopper](#thieving-hopper); [enemy targets](#random-enemy-targets). |
 | Generation and effects | [Card generation and transformations](#combat-card-generation-and-transformations); [random energy costs](#random-energy-costs); [random orb types](#random-orb-types); [potion-generated cards](#potion-generated-cards). |
@@ -1057,29 +1057,29 @@ Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests
 
 ## Source policies — Encounter — Combat
 
-### Encounter setup
+### Combat setup
 
-**Intent:** align combat setups within an act regardless of earlier-act combat counts.
+**Intent:** align combat setups within each act.
 
-Use the [combat address](#combat-addresses) + `purpose = setup`.
+Use `purpose = setup` + [combat address](#combat-addresses) for encounter RNG, covering variable enemy composition and assigned starting states.
 
-Preserve encounter identity selection and setup sampling; reward ordinals and AI retain their own policies.
+Baseline: [combat setup](#combat-setup-and-shuffles).
 
 ### Enemy HP
 
 **Intent:** isolate HP sequences by combat, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat roll-order manipulation.
 
-Use shared-percentile sampling for each HP roll: derive uniform `u ∈ [0,1)` from [combat address](#combat-addresses) + `purpose = enemy HP` + combat-local HP-roll ordinal; select zero-based index `floor(u × count)` from ascending eligible HP values.
+For each HP roll, derive uniform `u ∈ [0,1)` from `purpose = enemy HP` + [combat address](#combat-addresses) + combat-local HP-roll ordinal. Select zero-based index `floor(u × eligible count)` from ascending eligible HP values.
 
-Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla HP sampling call in vanilla execution order, excluding fixed values.
+Initial enemies, summons, replacements and Tough Egg's hatch share this ordinal. Advance once per vanilla sampling call in execution order, including filtered singletons. Fixed HP ranges consume zero.
 
-Preserve vanilla full-range fallback, conditional probabilities, enemy lifecycle order and summon rules. Punch-Off's starting HP reductions remain under [encounter setup](#encounter-setup).
+Preserve vanilla eligibility and full-range fallback. Punch-Off's starting HP reductions use [combat setup](#combat-setup).
 
 Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 ### Enemy AI
 
-**Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [encounter setup](#encounter-setup).
+**Intent:** align intent decisions while preserving vanilla probabilities and reactions. Across histories, prioritize same-seed consistency; assess changes to vanilla SL alternatives as tradeoffs. Encounter-assigned starting moves remain under [combat setup](#combat-setup).
 
 **Rules:** partition sequences by enemy identity, except for Decimillipede. Address sequences by [combat](#combat-addresses) + purpose + sharing scope; consume independent entries in vanilla order. Preserve vanilla effective weights and state-machine behavior. History and eligibility stay outside addresses. Temporary states and resuming an intent consume zero.
 
@@ -1513,7 +1513,9 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 #### Combat setup and shuffles
 
-Encounter setup uses floor-based addressing. Shuffle RNG persists across combats; reshuffles and random pile insertions advance the same generator used for later opening hands.
+Encounter RNG is seeded from run seed, total floor and encounter ID; it samples variable composition and assigned starting states.
+
+Shuffle RNG persists across combats; reshuffles and random pile insertions advance the same generator used for later opening hands.
 
 **Shuffle baseline:** opening shuffles clone cards in deck order (`Player.PopulateCombatState`), then apply Fisher–Yates directly (`CardPile.RandomizeOrderInternal` → `UnstableShuffle`). Later `CardPileCmd.Shuffle` combines discard and remaining draw cards, then uses `StableShuffle`: `List.Sort` followed by Fisher–Yates. Both apply shuffle modifiers afterward. `CardModel.CompareTo` compares only card identity and upgrade level, leaving enchantments, persistent progress and combat state tied; tied-copy order can still affect same-seed results.
 
@@ -1523,9 +1525,9 @@ Encounter setup uses floor-based addressing. Shuffle RNG persists across combats
 
 #### Enemy HP
 
-Enemy creation samples uniformly with `Niche` from the inclusive initial HP range, excluding `MaxHp` values (current/max HP denominators) in the enemy list; an empty candidate set restores the full range (`Creature.SetUniqueMonsterHpValue`). Startup creates/adds enemies sequentially; summons share this path. Death-triggered spawns precede source removal, so dying enemies still count.
+Enemy creation samples uniformly with `Niche` from the inclusive initial HP range, excluding `MaxHp` values in the enemy list; an empty candidate set restores the full range (`Creature.SetUniqueMonsterHpValue`). Each creation consumes a roll, including fixed ranges and filtered singletons. Startup creates/adds enemies sequentially; summons share this path. Death-triggered spawns precede source removal, so dying enemies still count.
 
-**Special cases:** Tough Egg's hatch samples its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter-setup RNG.
+**Special cases:** Tough Egg's hatch samples its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter RNG.
 
 **Summons:** ordinary sampling covers Fabricator's bots, Two-Tailed Rats, Ovicopter's eggs and Phrog Parasite's four sequential Wrigglers. Eye with Teeth (6), Parafright (21) and Gas Bomb (7/8 by ascension) have fixed HP. Gremlin Merc creates Fat, creates/adds Sneaky, then adds Fat: each rolls before the other joins the enemy list (`SurprisePower.AfterDeath`).
 
@@ -1820,6 +1822,6 @@ Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: 
 
 **Direct/event generation:** card factories seed by adding room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified. Transformations retain caller-supplied RNGs. Neither uses shared identity sequences by pool.
 
-**Encounter setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
+**Combat setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
 
 **Shuffles:** re-seeds shuffle RNG at combat start; later shuffles continue it.
