@@ -1136,17 +1136,17 @@ Address each shuffle by `purpose = shuffle` + [combat address](#combat-addresses
 
 #### Priority assignment
 
-The **shuffle key** identifies the assignment below: a source-based key, or priority-sequence ID + assigned position. It is distinct from the random priority value and the card's final pile position.
+Derive each card's priority from the shuffle address + its **shuffle key**: a source-based key or priority-sequence ID + assigned position.
 
 The opening Innate subgroup uses [processing order](#card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
 
 | Cards | Acts 1–2 | Act 3 |
 |---|---|---|
 | Defend and earlier processing order categories | First sequence, least useful first. | Same. |
-| Other starting Basics; eligible rewards/direct additions | Source-based priorities below. | Second sequence, most useful first. |
+| Other starting Basics; eligible rewards/direct additions | Source-based keys below. | Second sequence, most useful first. |
 | Remaining cards | Second sequence: earliest acquisition floor first, then ascending processing order. | Both rows combined, most useful first. |
 
-Freeze the card's ordering properties at permanent removal and retain them through run end across [checkpoints](#saved-state). Include the entry in opening priority assignment, then omit it. Additions and reordered states can still shift sequential assignments.
+Freeze the card's ordering properties at permanent removal and retain its entry through run end. Include it in opening priority assignment, then omit it from the shuffle. Additions and rank changes can still shift sequence positions.
 
 #### Source-based assignment — Acts 1–2
 
