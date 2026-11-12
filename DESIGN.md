@@ -1791,31 +1791,34 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 
 ### Potions
 
-**Potion drops:** one shared probability starts at 40%; a generated drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 percentage points to the check. No act/Ancient reset. Checks use shared `Rewards` RNG; forced drops skip both RNG advancement for the check and the probability update.
+**Potion drops:** the shared probability starts at 40%; a drop subtracts 10 percentage points, a miss adds 10. Elites add 12.5 points to the check. Checks use `Rewards`; forced drops skip the roll and probability update. Act and Ancient entry preserve the probability.
 
-**Potion generation:** ordinary generation rolls rarity at 65% Common / 25% Uncommon / 10% Rare, then draws an identity. Factory batches exclude duplicate identities within the batch; separate calls can repeat them. Generation precedes acquisition; failed acquisition does not restore consumed RNG state.
+**Potion factories:** roll 65% Common / 25% Uncommon / 10% Rare, then draw an identity. Batches have distinct identities; separate calls can repeat them. Generation consumes RNG even if acquisition later fails through full slots or Sozu.
 
 | Source | Mechanics |
 |---|---|
 | Ranwid / Stone of All Time | Select one owned potion uniformly in occupied-slot order using event RNG. |
-| White Beast Statue | Forces combat potion rewards and is normally tradable at Relic Trader. Freezes the stored drop probability while owned; removal resumes it without a reset. The final boss generates no ordinary reward set and performs no drop check. |
+| White Beast Statue | Forces combat potion rewards, freezing drop probability until removed. Normally tradable at Relic Trader. The final boss generates no ordinary rewards or drop check. |
 | Alchemize | Generates one potion, excluding Fairy in a Bottle, Fruit Juice and Regen Potion. Attempts generation even with full slots. |
-| Entropic Brew | Fills empty slots with unrestricted potion generation, including outside combat. Generates only while slots are open and stops on the first failed acquisition. |
-| Delicate Frond | Fills empty potion slots before combat. Uses unrestricted potion generation, generates only while slots are open and stops on the first failed acquisition. |
+| Entropic Brew / Delicate Frond | Fill empty slots with unrestricted generation, stopping on the first failed acquisition. Brew works outside combat; Frond triggers before combat. |
 | Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. |
 | Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
-| Potion factory batches | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. These are the three multi-potion factory callers. |
+| Multi-potion factory calls | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. |
 | Phial Holster | Adds one slot but generates two potions, so its second grant can fail. |
 | Cauldron | Shop relic offering five separate potion rewards on acquisition. |
-| Potion acquisition failures | Full slots or Sozu can reject acquisition after generation. |
 
 #### Potion card generation
 
-Attack/Skill/Power Potions offer three distinct eligible own-character cards of the specified type; Colorless Potion offers three distinct eligible colorless cards. The player may skip or choose one, which becomes free this turn. Cosmic Concoction adds three distinct upgraded colorless cards; Orobic Acid adds one own-character Attack, Skill and Power, each free this turn.
+These six combat-only potions use the [combat-card factories](#combat-card-generation-and-transformations-1), with pools unchanged by Dingy Rug or Prismatic Gem:
 
-These six potions and Snecko Oil are combat-only.
+| Potion | Result |
+|---|---|
+| Attack / Skill / Power | Offer three distinct own-character cards of the specified type. Choose one free this turn, or skip. |
+| Colorless | Same choice, from three distinct colorless cards. |
+| Cosmic Concoction | Add three distinct upgraded colorless cards. |
+| Orobic Acid | Add one own-character Attack, Skill and Power, each free this turn. |
 
-All six use the [combat-card factory mechanics](#combat-card-generation-and-transformations-1). Dingy Rug and Prismatic Gem do not expand these potions' eligible card pools.
+Snecko Oil is also combat-only; see [random energy costs](#random-energy-costs-1).
 
 ### Combat gold
 
