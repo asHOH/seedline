@@ -1640,18 +1640,16 @@ Front bias can affect several later positions, depending on bag composition.
 |---|---|
 | Chests | Relics are generated on room entry; base gold uses `Rewards` on opening. Pool and consumption rules: [relic bags](#relic-bags). |
 | Neow — Silver Crucible | First treasure room is empty, with neither gold nor relics. |
-| Wongos | Act 2; all players have ≥100 gold. Featured Rare: 200 gold; hidden Common: 100 gold. Leaving downgrades a random upgraded card, if any. Featured Rare is generated and consumed from stock on offer, even if declined. This also occurs below 200 gold and is **harmful to same-seed consistency**. Hidden Common is generated on purchase. Both require `IsAllowedInShops`. |
+| Wongos | Act 2; all players have ≥100 gold. Featured Rare costs 200 gold and is removed from stock when offered, even when unaffordable or declined, harming same-seed consistency. Hidden Common costs 100 gold and is generated on purchase. Both require `IsAllowedInShops`. Leaving downgrades a random upgraded card, if any. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |
 | Ranwid — relic sacrifice | Offers one uniformly selected tradable owned relic using event RNG; sacrificing it grants two hidden random relics, generated after removal. |
-| Relic Trader | Offers three trades, using an event-RNG shuffle of tradable owned relics. Generates all three displayed replacements from the player bag's front with player `Rewards` rarity rolls, independently of outgoing rarity; consumes them before choice. Choose one; normally no leave. |
-| Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics use the [vanilla relic rarity roll](#relic-bags) even in the Shop slot. Shop ordinal does not advance. Potion restocks do not guarantee Uncommon. |
+| Relic Trader | Shuffles tradable owned relics with event RNG to offer three trades. Generates and consumes all three replacements before choice, drawing from the player bag's front with `Rewards` rarity rolls independent of outgoing rarity. Choose one; normally no leave. |
+| Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Potions use ordinary rarity odds. Restocking stays within the same shop ordinal. |
 | Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
 
 #### Shop and Courier RNG
 
-**Cards:** initial colorless slots request Uncommon/Rare. Character cards fall back to the next available rarity. Generation excludes displayed cards, including the just-purchased card during restocking.
-
-Initial stock and restocks share these player RNGs. Each listed random operation advances its RNG once; relic identity follows bag order. The counts and interactions below exclude additional item effects.
+**Shared RNGs couple stock across categories.** Initial stock and restocks use the same player `Rewards` and `Shops` RNGs. Each listed operation advances its RNG once; relic identity follows bag order. Counts exclude additional item effects.
 
 | Restock | `Rewards` advances | `Shops` advances |
 |---|---|---|
@@ -1660,14 +1658,12 @@ Initial stock and restocks share these player RNGs. Each listed random operation
 | Relic | 1: rarity | 1: price |
 | Potion | 0 | 3: rarity, identity, price |
 
-Ordinary shop cards suppress random upgrades but still advance the RNG once for the check.
+**Cards:** initial colorless slots request Uncommon/Rare; character cards fall back to the next available rarity. Generation excludes displayed cards, including the just-purchased card during restocking. Suppressed random upgrades still consume a check.
 
-**Harmful to same-seed consistency — later restock effects:**
+**Later restock effects:** even one restock per category can shift later stock, harming same-seed consistency.
 
 - **Card → relic; relic → character card:** rarity, identity and price can change. Both also shift potion rarity, identity and price; relics shift fixed-rarity colorless card identity/price.
 - **Potion → card:** identity and price can change. **Potion → relic:** price only; rarity and bag order stay unchanged.
-
-Thus even one restock per category can interfere. Identical RNG state, requests and ordered candidate lists reproduce outcomes. Events may consume shared rewards/bags despite having event RNG.
 
 ### Cards
 
