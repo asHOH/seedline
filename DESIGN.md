@@ -1126,13 +1126,13 @@ Baseline: [enemy AI mechanics](#enemy-ai-1).
 
 ### Card shuffling
 
-**Intent:** align cards by source-based shuffle key in Acts 1–2 and usefulness rank in Act 3, accepting rank-based shifts.
+**Intent:** align cards by source in Acts 1–2 and usefulness rank in Act 3.
 
-**Scope:** opening and later shuffles use the assignment below and cards' current logical associations. Shuffle outcomes must be independent of original deck sequence.
+**Scope:** opening and later shuffles, using cards' current [logical associations](#routing). Results are independent of input pile order.
 
-Assign independent uniform priorities on a common scale, sort all participating cards by priority, then apply opening-hand and shuffle modifiers.
+Assign independent uniform priorities on a common scale, sort cards by priority, then apply opening-hand and shuffle modifiers.
 
-Address opening shuffles by [combat address](#combat-addresses) + `purpose = opening shuffle`; later shuffles by combat address + `purpose = later shuffle` + combat-local shuffle ordinal. All later-shuffle triggers share this ordinal. Every executed shuffle consumes one opportunity, including empty and single-card shuffles.
+Address each shuffle by `purpose = shuffle` + [combat address](#combat-addresses) + combat-local shuffle ordinal. All triggers share this ordinal. Advance once per shuffle, including empty and single-card shuffles.
 
 #### Priority assignment
 
