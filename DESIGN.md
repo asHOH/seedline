@@ -1544,11 +1544,13 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 #### Enemy HP
 
-Enemy creation samples uniformly with `Niche` from the inclusive initial HP range, excluding `MaxHp` values in the enemy list; an empty candidate set restores the full range (`Creature.SetUniqueMonsterHpValue`). Each creation consumes a roll, including fixed ranges and filtered singletons. Startup creates/adds enemies sequentially; summons share this path. Death-triggered spawns precede source removal, so dying enemies still count.
+**Generation:** `Niche` samples uniformly from the inclusive initial HP range, excluding `MaxHp` values already in the enemy list. An empty candidate set restores the full range. Every creation advances RNG once, including fixed ranges and singletons (`Creature.SetUniqueMonsterHpValue`).
 
-**Special cases:** Tough Egg's hatch samples its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter RNG.
+**Order:** enemies are normally created and added sequentially, including summons. Death-triggered spawns roll before the dying enemy is removed. Gremlin Merc instead creates Fat, creates/adds Sneaky, then adds Fat: neither excludes the other's HP.
 
-**Summons:** ordinary sampling covers Fabricator's bots, Two-Tailed Rats, Ovicopter's eggs and Phrog Parasite's four sequential Wrigglers. Eye with Teeth (6), Parafright (21) and Gas Bomb (7/8 by ascension) have fixed HP. Gremlin Merc creates Fat, creates/adds Sneaky, then adds Fat: each rolls before the other joins the enemy list (`SurprisePower.AfterDeath`).
+**Special cases:** Tough Egg's hatch rerolls its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter RNG.
+
+**Fixed-HP summons:** Eye with Teeth (6), Parafright (21), and Gas Bomb (7/8 by ascension).
 
 #### Enemy AI
 
