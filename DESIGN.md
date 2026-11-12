@@ -1150,16 +1150,14 @@ Freeze the card's ordering properties at permanent removal and retain its entry 
 
 #### Source-based assignment — Acts 1–2
 
-Use [offer groups](#offer-groups) and [permanent-card sequences](#permanent-transformations-and-direct-card-additions) to identify shared supplies. Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
+Other starting Basics receive distinct [initial-source keys](#card-occurrence-addresses).
 
-- **Reward offers:** one shuffle key per eligible own-character shared triple. Exclude colorless, other-character and type-specific rewards.
-- **Direct additions:** one shuffle key per shared generation entry; allow only unfiltered, rarity-only or transformation-filter-only generation.
-- **Triple key assignment:** if one acquired card belongs to the triple, assign it the key. If several do, select the lowest priority derived from event ID + `purpose = assignment` + card ID. Freeze that choice at acquisition; the others enter the remaining group.
+- **Reward offers:** one shuffle key per shared triple from the [own-character offer groups](#offer-groups).
+- **Triple key assignment:** give the key to the acquired card from the triple with the lowest [fixed priority](#fixed-selection-priorities), addressed by `purpose = assignment` + event ID + card ID. Freeze the assignment at acquisition; other acquired cards from that triple enter the remaining group.
+- **Direct additions:** one shuffle key per [shared generation entry](#permanent-transformations-and-direct-card-additions); allow only unfiltered, rarity-only or transformation-filter-only generation.
 - **Transformations:** treat as deletion plus direct addition.
 - **Copies and event-local supplementary cards:** enter the remaining group.
 - **A0–6 extra-Rare replacements:** follow the [replacement-state rule](#a06-multiple-rares).
-
-These assignments also initialize [combat selection clocks](#combat-card-selection-state). [Card reward selection-key aliases](#card-reward-selection-key-aliases) retain their scopes.
 
 #### Shuffle deviations
 
