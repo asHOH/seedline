@@ -1429,17 +1429,19 @@ Vanilla mechanics; [Catfood differences](#catfood-addressing-and-combat-rewards)
 
 #### Event and encounter identities
 
+**Upfront generation:** `UpFront` builds each act's event and encounter lists and selects its Ancient. Event lists uniformly shuffle act-specific plus shared identities. Later acts receive disjoint subsets of shared Ancients before selection.
+
+**Events:** scan the shuffled list for the next eligible identity absent from the run-wide visited set, advancing past failed entries. Forced-event replacement follows this scan.
+
+**Wrapping:** retain list order and visits. Skipped entries can qualify on later passes; a full unsuccessful scan returns the cursor's event, even if repeated or ineligible.
+
+**Normal encounters:** take the next normal encounter whether the map marker was `?` or a normal fight.
+
+**Capacity:** act event lists contain 25–31 entries before filtering, versus 13–15 ordinary floors per act.
+
 **Event RNG:** in single-player, seeded by run seed + deterministic event ID hash (`EventModel.BeginEvent`).
 
-**Event / encounter identity selection:** per-act lists are generated upfront with `UpFront` RNG; event lists shuffle act-specific plus shared identities without explicit weights. Room type is resolved first. An Event advances through its act's pre-shuffled list to the next `IsAllowed` identity not in the run-wide visited-event set; skipped entries are passed over, not retained for the next eligible pull. A normal fight uses the next entry in the act's normal encounter list, regardless of whether its map marker was `?` or a normal-fight marker. Forced-event replacement occurs after ordinary event eligibility scanning.
-
-**Event-list wrapping (vanilla):** the cursor indexes `events[cursor % events.Count]`; the list wraps without reshuffling or clearing visits, and skipped entries remain in it. Skips advance the cursor too. A skipped event can qualify after wrapping; a full unsuccessful scan instead returns the cursor's event anyway, potentially repeated or ineligible.
-
-**Event-pool capacity:** act lists contain 25–31 entries before eligibility/visited filtering, versus 13–15 ordinary floors per act.
-
-**Event skipping and probability:** assume a uniform hidden shuffle, fixed other eligibility and no wrapping. While condition K is false, skipping passes hidden K entries alongside encountered non-K entries; their exchangeable positions preserve K's odds when it becomes true. With two K events and three others, zero, one or two non-K encounters leave the next K chance at `2/5`. Encounters while K is true have the usual without-replacement effect. Individual-seed outcomes can differ; changing other eligibility can change the odds.
-
-**Ancient identity:** selected during upfront room generation, using `UpFront` RNG. Shared Ancients are divided between later acts before each act selects its Ancient. Earlier room visits leave these selections unchanged.
+**Skipping and probability:** with a uniform hidden shuffle, fixed other eligibility and no wrapping, skipping hidden ineligible entries preserves their later odds. With two K events and three others, encountering zero, one or two non-K events while K is ineligible leaves the next K chance at `2/5` once K becomes eligible. Encounters while K is eligible have the usual without-replacement effect.
 
 #### Ancient offerings
 
