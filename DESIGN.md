@@ -1822,23 +1822,30 @@ Snecko Oil is also combat-only; see [random energy costs](#random-energy-costs-1
 
 ### Combat gold
 
-Combat gold uses shared `Rewards` RNG, uniformly over default inclusive ranges: normal fights 10–20, elites 35–45. Poverty (A3+) multiplies each endpoint by 0.75 and truncates before rolling, giving 7–15 and 26–33.
+Combat gold uses the player's shared `Rewards` RNG to sample uniformly from inclusive ranges: **10–20 normal, 35–45 elite**. Poverty (A3+) multiplies endpoints by 0.75 and truncates before rolling: **7–15 normal, 26–33 elite**.
 
-**Bowler Hat:** multiplies gold gained by 1.25; `PlayerCmd.GainGold` truncates the modified amount to an integer for each payout.
+**Bowler Hat:** multiplies each payout by 1.25; `PlayerCmd.GainGold` then truncates to an integer.
 
-**Combat-gold exceptions:** Fake Merchant grants a fixed 300 gold, unaffected by Poverty. Battleworn Dummy's three event combats grant no normal combat rewards. Gremlin Merc grants normal gold unless Fat Gremlin escapes: the gold proportion becomes one-half if no gold was stolen, or zero otherwise; vanilla rounds the reduced range endpoints before rolling and generates no gold reward at zero. Non-final bosses grant fixed 100 gold (75 with Poverty); the final boss grants no ordinary reward set. Fixed extra payouts, including recovered stolen gold, Royalties and Amethyst Aubergine, are separate from the normal combat-gold roll.
+| Exception | Gold |
+|---|---|
+| Fake Merchant | Fixed 300, unaffected by Poverty. |
+| Battleworn Dummy | All three event combats omit normal combat rewards. |
+| Gremlin Merc | Normal gold unless Fat Gremlin escapes: halve the range if no gold was stolen, otherwise omit the gold reward. Round reduced endpoints before rolling. |
+| Bosses | Fixed 100 (75 with Poverty); the final boss omits ordinary rewards. |
+
+Recovered stolen gold, Royalties and Amethyst Aubergine are separate fixed payouts.
 
 ### Run-save checkpoints
 
+**Loading uses the last checkpoint.** `Save and Quit` returns to the menu without taking a new snapshot.
+
 | Situation | Save timing |
 |---|---|
-| Map-node entry, all room types | After exiting the previous room, before resolving `?`, selecting the event/encounter or generating room contents. Loading regenerates the destination. |
-| Ordinary event, shop, rest site, chest | No additional checkpoint for choices, purchases, rewards or completion. Results reach disk at the next checkpoint. |
-| Normal, elite and boss combat | Additional checkpoint after victory hooks, before ordinary room-end reward generation and selection. Loading regenerates those rewards. |
-| Ancient | Additional checkpoint when the Ancient finishes. Loading restores it as finished. |
-| Event-created combat | Starting combat adds no checkpoint; victory creates one with information needed to reconstruct the parent event. |
-
-`Save and Quit` returns to the menu without taking a new snapshot; loading uses the last checkpoint.
+| Map-node entry, all room types | After exiting the previous room, before resolving `?`, selecting the event/encounter or generating contents. Loading regenerates the destination. |
+| Ordinary event, shop, rest site, chest | No checkpoint for choices, purchases, rewards or completion. |
+| Normal, elite and boss combat | After victory hooks, before ordinary room-end reward generation and selection. Loading regenerates those rewards. |
+| Ancient | On completion; loading restores it as finished. |
+| Event-created combat | Victory saves the parent-event reconstruction data; starting combat adds no checkpoint. |
 
 ### Catfood addressing and combat rewards
 
