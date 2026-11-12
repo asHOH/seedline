@@ -1089,12 +1089,11 @@ Use [combat-local sequences](#combat-addresses), partitioned by enemy identity e
 
 | Source | Local rules |
 |---|---|
-| Types limited to one occurrence in the combat, including Fabricator | Personal random-branch count, including singleton/all-zero branches; use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities) with move IDs as selection keys. Deterministic transitions consume zero. |
-| Inklets | Two continuous effective-decision sequences: one for the middle, one shared by both outers. Sample in vanilla declaration order; retain these scopes after deaths. |
-| Exoskeletons / Scrolls of Biting | One continuous effective-decision sequence per type, shared across copies and rounds; sample in vanilla declaration order. [Baseline choice points](#enemy-ai-1). |
-| Small Leaf Slimes | Independent type-local opening entries in creation order; preserve subsequent forced alternation without advancing intent sequences. |
-| Decimillipede | One continuous revival-selection sequence shared by front, middle and back; choose uniformly among the three attacks. |
-| Deterministic intent graphs | Preserve transitions and setup-assigned starting phases. |
+| Inklets | Two effective-decision sequences: one for the middle, one shared by the outers. Use vanilla percentile sampling; retain scopes after deaths. |
+| Exoskeletons / Scrolls of Biting | One effective-decision sequence per type, shared by all copies. Use vanilla percentile sampling. |
+| Small Leaf Slimes | One opening sequence; consume one entry per enemy in creation order. |
+| Decimillipede | One revival-selection sequence shared by all segments. |
+| Other enemies with random intents, excluding [rats](#rat-sampling) | Use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities), addressed by the enemy's random-branch ordinal, with move IDs as selection keys. Count singleton/all-zero branches. |
 
 #### Rat sampling
 
