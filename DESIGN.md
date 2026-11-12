@@ -1081,13 +1081,9 @@ Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 **Intent:** align intent decisions across move histories.
 
-**Scope:** random intent selection and Fabricator's bot identities. Encounter-assigned starting moves use [combat setup](#combat-setup).
+Use [combat-local sequences](#combat-addresses), partitioned by enemy identity except for Decimillipede. Keep move history and eligibility outside addresses.
 
-Address independent sequences by purpose + [combat address](#combat-addresses) + sharing scope. Partition by enemy identity, except for Decimillipede. Consume entries in vanilla selection order; keep move history and eligibility outside addresses.
-
-Use [vanilla effective weights](#enemy-ai-1). Temporary states and resuming an intent consume zero.
-
-**Effective decision:** at least two moves have positive effective weight. A sequence using effective decisions advances only for these choices; singleton and all-zero branches leave it unchanged. All-zero branches retain vanilla's first-listed result.
+**Effective-decision sequences:** advance only when at least two moves have positive effective weight.
 
 #### Intent sequences
 
