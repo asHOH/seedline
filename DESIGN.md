@@ -1043,15 +1043,17 @@ Baseline: [potion sacrifice selection](#potions-1).
 
 #### Permanent upgrades and downgrades
 
-**Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement (shared clocks replace `CombatCardSelection`).
+**Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement.
 **Downgrade sources:** Wongos and Reflections.
 
-- **Upgrade-clock refill:** after a random downgrade, retain a nonzero upgrade clock; otherwise take the next value from one run-wide refill sequence, shared only by Wongos and Reflections. This sequence is consumed at most three times per run.
-- **Downgrade-clock refill:** Wongos refreshes the downgraded card's downgrade clock using event RNG. Reflections leaves consumed downgrade clocks at zero; no later permanent downgrade source can use them.
+- **Upgrade-clock refill:** after a random downgrade, refill a zero upgrade clock with the next entry from the run-wide `purpose = upgrade refill` sequence; retain nonzero clocks.
+- **Downgrade-clock refill:** renew the downgraded card's clock using event RNG.
 
-Reflections applies downgrades in ascending pre-selection downgrade-clock order: first downgraded, first refilled. It then determines upgrade candidates; downgraded cards may qualify.
+Reflections processes downgrades and refills in ascending pre-selection downgrade-clock order, then determines upgrade candidates.
 
-**Vanilla deviation — SL 4A(↓):** random upgrades, such as Whetstone and War Paint, lose target rerolls caused by unrelated RNG consumption. Eligibility histories can change survivor rankings under the [clock rules](#persistent-clocks).
+**Vanilla deviation — SL 4A(↓):** removes rerolls of upgrade targets through unrelated RNG consumption. In vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `Niche` RNG.
+
+Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests-and-relic-events).
 
 #### Fixed-priority card selection
 
@@ -1658,6 +1660,8 @@ Thus even one restock per category can interfere. Identical RNG state, requests 
 **Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
 
 **Mad Science:** after combat, permanently upgrades random eligible deck cards without replacement, one per power stack, using `CombatCardSelection`.
+
+**Reflections:** Act 3; uses event RNG to downgrade up to two distinct upgraded cards, then upgrade up to four distinct upgradable cards, including those just downgraded.
 
 **Thieving Hopper:** appears at most once in supported runs and steals once. Select uniformly from draw/discard copies with `DeckVersion`, using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThievingHopper.ThieveryMove`). Theft removes the deck card; Hopper's death restores that same object (`SwipePower`).
 
