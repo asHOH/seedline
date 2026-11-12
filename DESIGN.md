@@ -1406,7 +1406,7 @@ For one eligible relic removed/substituted and three distinct replacements match
 
 ## Appendix: existing mechanics
 
-Vanilla mechanics; [Catfood differences](#catfood-addressing-and-combat-rewards) are labeled.
+Vanilla mechanics; [Catfood differences](#catfood-randomness-changes) are labeled.
 
 ### Rooms, events and combat
 
@@ -1847,24 +1847,24 @@ Recovered stolen gold, Royalties and Amethyst Aubergine are separate fixed payou
 | Ancient | On completion; loading restores it as finished. |
 | Event-created combat | Victory saves the parent-event reconstruction data; starting combat adds no checkpoint. |
 
-### Catfood addressing and combat rewards
+### Catfood randomness changes
 
-**Room addressing:** cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; options stay independently seeded, while Ancient card overrides use `ancientVisited`. Room reward RNG uses room-type counts, a normal-fight fallback and event-card overrides. Combat entry re-seeds shared `Rewards` using run seed and cumulative combat-category count, with different multipliers for normal fights and elites; gold ranges and rounding are unchanged. Chests have no ordinal: entry re-seeds `Rewards` with the normal-fight count for gold. Silver Crucible's suppression is unchanged.
+**Room addressing:** uses cumulative normal-fight/elite/boss/shop/event/Ancient counters. Ancients increment both `eventEntered` and `ancientVisited`; menus keep vanilla seeds. Event card-reward overrides use `eventEntered`, or `ancientVisited` for Ancients. Room entry re-seeds player `Rewards` from run seed and room-type count, with different multipliers by type and a normal-fight fallback. Chests use that fallback for gold, without a chest ordinal. Gold ranges, rounding and Silver Crucible's suppression remain vanilla.
 
-**Ancient option pools:** with `MassAuditionMode` enabled, Catfood removes Winged Boots from Neow's positive pool and Fur Coat from Nonupeipe's pool. The menu RNG retains vanilla addressing.
+**Ancient options:** `MassAuditionMode` removes Winged Boots from Neow's positive pool and Fur Coat from Nonupeipe's pool.
 
-**Shops:** track shop ordinal and use the separate card-rarity state below. Card identities/prices and relic bags/rarity rolls retain vanilla generators; potion batches use the factory addressing below.
+**Shops:** use shop ordinal and separate card-rarity state. Card identities/prices and relic bags retain vanilla generators; relic rarity and potion batches follow the changes below.
 
-**Relic draws:** retain shared bags but precompute 400 rarity rolls; roll 401 would fail (code finding, not reproduced).
+**Relic rarity:** consumes a precomputed list of 400 rolls; roll 401 would fail (source finding; unreproduced in gameplay).
 
-**Potions:** drop checks use `player seed` + `cumulative check index`, starting at 0, with vanilla's changing probability. Forced drops also advance this index. Potion factories seed each batch with a shared call index.
+**Potions:** drop-check seeds depend on player seed and a cumulative index starting at 0, retaining vanilla's changing probability. Forced drops advance the index. Factories seed batches with a separate shared call index.
 
-**Combat card rewards:** identities/upgrades use room type, count and offer position, separating normal-fight and elite offers. Rarity is rolled before drawing an identity; a Rare still advances the current slot's identity RNG once. There are no independent per-rarity identity sequences. Later identities can still change through rarity-offset resets and offer duplicate exclusion. The initial offer uses the RNG intended for rerolls: a code-confirmed wrong-RNG bug; gameplay impact has not been reproduced.
+**Combat card rewards:** identity/upgrade RNGs use room type, count and offer position. Rarity rolls precede identity draws, including for Rares; identities share one sequence across rarities. Rarity-offset resets and duplicate exclusion can change later identities. Initial and reroll options share one object, so assigning the reroll RNG overwrites the initial offer's RNG; gameplay impact remains unreproduced.
 
-**Card rarity:** normal fights and elites have separate offsets with vanilla base probabilities, non-rare growth and post-Rare reset value. Shops have a separate offset that does not grow, leaving their Rare roll chance at 0% (4% without Scarcity). Ancient entry, including Neow, resets these offsets to `-0.05`. The separately stored boss offset has no effect; boss rewards no longer reset normal-fight or elite offsets. Combat rerolls update their room type's rarity state, potentially shifting later offers; non-Rare rerolls raise the offset, as in vanilla.
+**Card rarity:** normal fights and elites have separate offsets with vanilla base odds, growth and Rare resets. Shops keep a fixed offset, giving 0% Rare chance (4% at A0–6). Ancient entry, including Neow, resets all offsets to `-0.05`. Boss rewards neither use their stored offset nor reset normal/elite offsets. Combat rerolls update their room type's offset, potentially shifting later offers.
 
-**Direct/event generation:** card factories seed by adding room/event count to a per-room options-call index. Seed collisions exist; harmful gameplay impact remains unverified. Transformations retain caller-supplied RNGs. Neither uses shared identity sequences by pool.
+**Direct/event generation:** card-factory seeds combine room/event count with a per-room options-call index. Equal sums collide, e.g. count 1/call 1 and count 2/call 0; harmful gameplay impact remains unverified. Transformations retain caller-supplied RNGs. Neither shares identity sequences by pool.
 
-**Combat setup:** inherits vanilla event/encounter identity selection; cumulative room counters do not select identities. Encounter ID + room-type ordinal controls variable composition/setup, not ordinary HP. No visible setup mismatch has been reproduced. Lantern Key's forced event is counted normally.
+**Combat setup:** event/encounter identities retain vanilla selection. Encounter ID + room-type ordinal controls variable composition/setup; ordinary HP is unchanged. Visible setup mismatch remains unreproduced. Lantern Key's forced event counts normally.
 
 **Shuffles:** re-seeds shuffle RNG at combat start; later shuffles continue it.
