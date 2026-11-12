@@ -1310,13 +1310,15 @@ Baseline: [random energy costs](#random-energy-costs-1).
 
 ### Random orb types
 
-**Intent:** isolate random-orb generation by combat; preserve uniform sampling.
+**Intent:** isolate random-orb generation by combat.
 
-All sources share one sequence addressed by [combat address](#combat-addresses) + `purpose = orb type`.
+Chaos and Trash to Treasure share one sequence addressed by `purpose = orb type` + [combat address](#combat-addresses).
 
-Failed channeling consumes zero.
+Consume one entry per successfully channeled random orb.
 
-**Vanilla deviation — SL 4A(↓):** retaining entries after failed channeling removes SL rerolls through wasted draws. **Frequency:** rare — require losing all orb slots, regaining, then exploring later random-orb outcomes.
+**Vanilla deviation — SL 4A(↓):** failed channeling no longer rerolls later orb types. **Frequency:** rare — Defect must lose all orb slots, attempt random channeling, then regain slots and channel random orbs in the same combat.
+
+Baseline: [random orb generation](#random-orb-generation).
 
 ### Potion-generated cards
 
@@ -1708,6 +1710,10 @@ Confused, Slither and Snecko Oil are the only gameplay consumers of the run-wide
 | Snecko Oil | Draws seven, then iterates the resulting hand in hand order. Rerolls non-X cards with nonnegative unmodified energy cost until turn end or next play, whichever comes first. |
 
 Draw hooks resolve powers before cards and their enchantments: Confused rolls first, Kingly Kick applies its −1 draw discount, then Slither overwrites it with a separate roll. Hellraiser's earlier draw hook can play a drawn Strike before Slither checks hand presence.
+
+#### Random orb generation
+
+Chaos and Trash to Treasure sample uniformly from Lightning, Frost, Dark, Plasma and Glass using run-wide `CombatOrbGeneration`. They roll before channeling, so failed attempts advance the RNG. Defect cannot channel with zero slots; characters with no base orb slots automatically gain one (`OrbModel.GetRandomOrb`, `OrbCmd.Channel`).
 
 #### Slippery Bridge selection
 
