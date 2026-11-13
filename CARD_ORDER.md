@@ -20,11 +20,25 @@ Evaluate stages 1–6 in order. Within a stage, compare its rows from top to bot
 
 ### 1. Category
 
-Curses and Quests < Status < Strike < Mighty Weapon < Defend < Mighty Shield < Other Basic < Other Attack < Other Skill < Power.
+Curses and Quests < Status < Strike < Mighty Weapon < Defend < Mighty Shield < Other Basic < Other Attack < Other Skill < Conditionals < Power.
 
 Strike/Defend means starter identities. With replay >= 1, they promote to Other Attack/Skill.
 
-Rank these Skills as **Other Attack**: Blade Dance, Bouncing Flask, Bubble Bubble, Corrosive Wave, Darkness, Deadly Poison, Death, End of Days, God Byrd, Judgement, Knife Trap, No Escape, Oblivion, Outbreak, Snakebite, Tempest, The Bomb, The Moon, Voltaic, Zap.
+Rank these Skills as **Other Attack**: Blade Dance, Bouncing Flask, Darkness, Deadly Poison, Death, End of Days, God Byrd, Knife Trap, No Escape, Oblivion, Outbreak, Snakebite, Tempest, The Bomb, The Moon, Zap.
+
+**Conditionals:** an authored category for setup-dependent payoffs, combo enablers and selected conditional discounts. The list below defines membership, which stays fixed as combat state changes.
+
+| Pool | Conditional identities |
+|---|---|
+| Ironclad | Body Slam, Feed, Fiend Fire, Forgotten Ritual, One-Two Punch, Pact's End, Primal Force, Rage, Second Wind, Stoke, Stomp, Tear Asunder |
+| Silent | Anticipate, Bubble Bubble, Bullet Time, Calculated Gamble, Corrosive Wave, Finisher, Grand Finale, Mirage, Murder, Nightmare, Pinpoint, Shadow Step, Shadowmeld, The Hunt |
+| Regent | "Decisions, Decisions", Lunar Blast, Monologue, Radiate, Supermassive |
+| Necrobinder | Eidolon, Pull from Below, Sacrifice, Transfigure |
+| Defect | Barrage, Flak Cannon, Helix Drill, Multi-Cast, Quadcast, Signal Boost, Synchronize, Voltaic |
+| Fool | Bounce, Florescence, Growth, Harmonic Shield, Ki Verse, Nail, Quietus, Uproot, Wrest |
+| Colorless | Anointed, Beat Down, Gold Axe, Hand of Greed, Hidden Gem, Impatience, Mind Blast, Prolong, Restlessness |
+| Event | Clash, Dual Wield, Enlightenment, Entrench, Feeding Frenzy, Stack |
+| Token | Judgement, The Devil |
 
 ### 2. Replay
 
@@ -38,11 +52,12 @@ Curses, Quests and Statuses use the authored identity lists below; all other cat
 |---|---|---|
 | 1 | Retain | absent < present; includes qualifying inherent, enchanted and added Retain. |
 | 2 | Star cost | `(absent = 0) < X < 1 < 2 < ...` |
-| 3 | Energy cost | `0 < X < 1 < 2 < Slither < 3 < ...`; Slither always uses this fixed tier in this row. |
-| 4 | Draw effect | absent < present; an effect with zero amount still qualifies. Compile Driver and active Swift qualify; expired Swift contributes no draw. |
-| 5 | Rarity | Authored rarity order below. |
-| 6 | Pool | character < colorless; Event and Token pools count as colorless. |
-| 7 | Identity | Fixed English alphabetical order, then card ID. |
+| 3 | Rarity band | Below Rare < Rare or higher in the authored rarity rank. |
+| 4 | Energy cost | `0 < X < 1 < 2 < Slither < 3 < ...`; Slither always uses this fixed tier in this row. |
+| 5 | Draw effect | absent < present; an effect with zero amount still qualifies. Compile Driver and active Swift qualify; expired Swift contributes no draw. |
+| 6 | Rarity | Authored rarity order below. |
+| 7 | Pool | character < colorless; Event and Token pools count as colorless. |
+| 8 | Identity | Fixed English alphabetical order, then card ID. |
 
 ### 4. Copy state
 
