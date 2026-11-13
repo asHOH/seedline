@@ -1211,6 +1211,8 @@ Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker
 
 **Whole-set ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one shared RNG addressed by `purpose = incidental shuffle` + [combat address](#combat-addresses).
 
+**Power Cell:** apply selection rules per tier, non-Innate first. Fill remaining slots from Innate candidates using whole-set ordering, preserving their clocks and renewal counts.
+
 **Seeker Strike:** clocks select the offer; [routing](#combat-card-routing) resolves the player's choice within it. Keep vanilla offer display order.
 
 **Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through unrelated sources, forced selections or discard order.
