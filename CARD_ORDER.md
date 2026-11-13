@@ -32,11 +32,7 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 
 ### 3. Within-category order
 
-| Category | Compare before proceeding to stage 4 |
-|---|---|
-| Curse / Status | Position in the authored identity lists below. |
-| Starter Strike / Defend | Proceed directly to stage 4. |
-| Other Basic / Other Attack / Other Skill / Power | Apply all seven rows below. |
+Curse/Status use the authored identity lists below; all other categories use these rows.
 
 | Order | Property | Ascending rule |
 |---|---|---|
@@ -81,11 +77,13 @@ Slither uses the resulting energy cost under [lasting properties](#property-scop
 
 Resolve the `=` group in [enchantment rank](#enchantment-rank) using its written order as `<`. Within the expired-enchantment member, use the original active enchantment order.
 
-If still tied, compare active star modifiers, then energy modifiers.
+If still tied, compare star effects, then energy effects:
 
-Compare modifier lists entry by entry in application order. For each pair, compare expiration (turn-or-play < turn-only < until-played < combat-long), operation (set < add), value ascending, then reduce-only flag (false < true); star modifiers use expiration and value. If all paired entries tie, compare list lengths, shorter first. Include active modifiers whose effects are currently masked; cleared modifiers and acquisition history stay outside this comparison.
+1. Reduce equivalent histories to the same remaining effects, removing redundant repeats and permanent overrides. Preserve differences after play, turn end, upgrades and later cost changes.
+2. Keep effect order where it changes behavior; otherwise sort by the fields below.
+3. Compare lists entry by entry, shorter tied lists first.
 
-Equal current costs can diverge as their modifiers expire.
+**Fields:** expiration (`turn-or-play < turn-only < until-played < combat-long`), operation (`set < add`), value ascending, then reduce-only (`false < true`). Star effects use expiration and value.
 
 ### 6. Origin
 
