@@ -1,8 +1,6 @@
 # Card processing order
 
-**Status:** preliminarily settled — ready for use, with fine-tuning remaining.
-
-Detailed ranking for the [card processing order policy](DESIGN.md#card-processing-order).
+Ranking for the [card processing order policy](DESIGN.md#card-processing-order).
 
 ## Property scope
 
@@ -22,7 +20,7 @@ Evaluate stages 1–6 in order. Within a stage, compare its rows from top to bot
 
 ### 1. Category
 
-Curse (including Quests beside Injury) < Status < Strike < Defend < Other Basic < Other Attack < Other Skill < Power.
+Curses and Quests < Status < Strike < Defend < Other Basic < Other Attack < Other Skill < Power.
 
 Strike/Defend means starter identities. With replay >= 1, they promote to Other Attack/Skill.
 
@@ -32,7 +30,7 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 
 ### 3. Within-category order
 
-Curse/Status use the authored identity lists below; all other categories use these rows.
+Curses, Quests and Statuses use the authored identity lists below; all other categories use these rows.
 
 | Order | Property | Ascending rule |
 |---|---|---|
@@ -91,9 +89,9 @@ Combat-only cards rank before permanent cards and their linked combat instances.
 
 ## Identity and rarity ranks
 
-Usefulness motivated the initial Curse/Status ranking; comparisons follow the written rules.
+Usefulness motivated the initial Curse/Quest/Status ranking; comparisons follow the written rules.
 
-**Curses:** Bad Luck < Enthralled < Normality < Regret < Debt < Shame < Doubt < Decay < Writhe < Curse of the Bell < Greed < Injury < Quests < Guilty < Spore Mind < Poor Sleep < Ascender's Bane < Folly < Clumsy.
+**Curses and Quests:** Bad Luck < Enthralled < Normality < Regret < Debt < Shame < Doubt < Decay < Writhe < Curse of the Bell < Greed < Injury < Quests < Guilty < Spore Mind < Poor Sleep < Ascender's Bane < Folly < Clumsy.
 
 **Quests:** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map.
 
