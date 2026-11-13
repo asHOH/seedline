@@ -1203,7 +1203,7 @@ Use [combat-card selection state](#combat-card-selection-state). Renew consumed 
 | Exhaust | Cinder, unupgraded True Grit |
 | Upgrade | Drain Power, Stone Cracker |
 | Return | Anointed, Jeweled Mask, Power Cell, The World |
-| Attack auto-play | Beat Down, Uproar, Stampede |
+| Auto-play | Beat Down, Uproar, Stampede, Simpleton, The Fool |
 | Sadness conversion | Punch of Joy, Ecstasy |
 
 Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker Strike each use a separate scope.
@@ -1687,6 +1687,8 @@ Front bias can affect several later positions, depending on bag composition.
 **Beautiful Bracelet:** enchants up to four random Swift-eligible deck cards with Swift 2, using `NonCombatGeneration` RNG.
 
 **Power Cell:** samples zero-cost non-Innate cards before zero-cost Innate cards, shuffling each tier separately.
+
+**Simpleton / The Fool:** re-evaluate hand candidates before each selection. Simpleton selects the lowest energy-cost tier without Unplayable (X last); The Fool prefers cards without Unplayable, falling back to the whole hand.
 
 #### Combat card generation and transformations
 
