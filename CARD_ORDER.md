@@ -62,16 +62,17 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 | 8 | Ethereal | `none < Ethereal`. |
 | 9 | Sly | `none < Sly`. |
 | 10 | Fetch / pending-return availability | Fetch's first-play draw this turn: spent < available. Bolas / Thrumming Hatchet's return at the next hand draw: none pending < pending. |
-| 11a | Turn-effect presence | `none < turn effect`. |
-| 11b | Star cost with turn effects | If both have turn effects, compare resulting star costs: `(absent = 0) < X < 1 < 2 < ...`. |
-| 11c | Energy cost with turn effects | If both have turn effects, compare resulting energy costs: `0 < X < 1 < 2 < 3 < ...`, including Slither's actual cost. |
-| 12 | Temporary keywords | `none < temporary Retain / temporary Sly`. Either or both satisfy the present tier; stage 6 resolves their internal order. |
+| 11 | Dampen restoration level | Lower < higher; none = 0. |
+| 12a | Turn-effect presence | `none < turn effect`. |
+| 12b | Star cost with turn effects | If both have turn effects, compare resulting star costs: `(absent = 0) < X < 1 < 2 < ...`. |
+| 12c | Energy cost with turn effects | If both have turn effects, compare resulting energy costs: `0 < X < 1 < 2 < 3 < ...`, including Slither's actual cost. |
+| 13 | Temporary keywords | `none < temporary Retain / temporary Sly`. Either or both satisfy the present tier; stage 6 resolves their internal order. |
 
 Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage accumulated by The Scythe, Sovereign Blade, The Shot, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
-**Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending; upgraded = currently upgraded. This includes Dampen's stored restoration. Exact current upgrade level breaks ties within the upgraded tier.
+**Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending; upgraded = currently upgraded. Exact current upgrade level breaks ties within the upgraded tier.
 
-Rows 11b–11c recalculate costs with turn-limited modifiers included, preserving modifier application order. Row 12 covers Expertise's temporary Retain and Hand Trick's temporary Sly.
+Rows 12b–12c recalculate costs with turn-limited modifiers included, preserving modifier application order. Row 13 covers Expertise's temporary Retain and Hand Trick's temporary Sly.
 
 ### 5. Deferred tie-breaks
 

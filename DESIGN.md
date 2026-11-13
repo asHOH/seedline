@@ -1049,7 +1049,7 @@ Baseline: [potion sacrifice selection](#potions-1).
 **Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement.
 **Downgrade sources:** Wongos and Reflections.
 
-- **Upgrade-clock refill:** after a random downgrade, refill a zero upgrade clock with the next entry from the run-wide `purpose = upgrade refill` sequence; retain nonzero clocks.
+- **Upgrade-clock refill:** after a random downgrade, refill a zero upgrade clock with the next entry from the run-wide `purpose = upgrade refill` sequence; retain nonzero clocks. Also refill Dingy Dagger after it is chosen by a random upgrade.
 - **Downgrade-clock refill:** renew the downgraded card's clock using event RNG.
 
 Reflections processes downgrades and refills in ascending pre-selection downgrade-clock order, then determines upgrade candidates.
