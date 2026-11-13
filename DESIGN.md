@@ -1349,11 +1349,11 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
 
-Written in **v0.111.0**.
-
-[Event workbook](references/StS2_Events.xlsx): vanilla offers and eligibility for **56 ordinary events, forced War Historian Repy and 8 Ancients**.
+[Event workbook](references/StS2_Events.xlsx): v0.113.0 vanilla offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
 
 ### Rarity calibration
+
+Measured in **v0.111.0**.
 
 Calibration keeps [displayed Uncommon counts](#uncommon-probabilities) and [shop Rare counts](#stock-and-prices) close to vanilla averages, while spreading shop Rares across more visits.
 
