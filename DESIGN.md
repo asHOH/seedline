@@ -1263,7 +1263,7 @@ Address sequences by `purpose = card generation` + [combat address](#combat-addr
 
 | Group | Pools and sources |
 |---|---|
-| Ordinary costs | One sequence per character pool, plus colorless, curse and status; shared by ordinary-cost generation (including Jackpot) and Entropy. |
+| Ordinary costs | One sequence per character pool, plus colorless, curse, status, Tarot (Mythic Form) and combined other-character cards (The Lovers); shared by ordinary-cost generation (including Jackpot and The Hierophant) and Entropy. |
 | Free this turn | Own-character pool; shared by generators making cards free this turn. |
 | Free this combat | Own-character Attacks; Metamorphosis. |
 | Splash | Combined other-character Attacks, uniform across identities. |
@@ -1692,7 +1692,7 @@ Front bias can affect several later positions, depending on bag composition.
 
 #### Combat card generation and transformations
 
-**Uniform identity draws:** these generators and the [seven card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`. Mythic Form samples its separate Tarot pool through `CombatCardSelection`.
+**Uniform identity draws:** these generators and the [seven card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`. Mythic Form samples eligible identities from its 22-card Tarot pool through `CombatCardSelection`, allowing repeats and upgrading the first results according to its upgraded-stack count.
 
 | Pool / filter | Ordinary costs | Free this turn |
 |---|---|---|
@@ -1703,11 +1703,11 @@ Front bias can affect several later positions, depending on bag composition.
 | Own-character Common | Hello World | — |
 | Own-character zero-cost non-X | Jackpot | — |
 | Own-character Ethereal | Big Hat | — |
-| Colorless | Bundle of Joy, Jack of All Trades, Manifest Authority, Quasar, Spectrum Shift, Orange Dough, Toolbox | — |
+| Colorless | Bundle of Joy, Jack of All Trades, Manifest Authority, Quasar, Spectrum Shift, Orange Dough, Toolbox; The Hierophant (−1 cost until turn end or play) | — |
 
-Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. Jack of All Trades excludes itself.
+Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. The Lovers fills the hand from the same combined character pools, across card types. Jack of All Trades excludes itself.
 
-**Duplicates:** Stoke, Jackpot, Metamorphosis and Calamity allow repeats within a batch. Other factory batches require distinct identities; Creative AI and Call of the Void allow repeats across their separate single-card draws.
+**Duplicates:** Stoke, Jackpot, Metamorphosis, Calamity and The Lovers allow repeats within a batch. Other factory batches require distinct identities; Creative AI and Call of the Void allow repeats across their separate single-card draws.
 
 **Entropy:** the random combat transformation source. It transforms selected hand cards in returned selection order using `CombatCardGeneration` and the [default transformation pool](#permanent-transformations-and-direct-additions). Different originals can have different eligible lists, so order can change results. Coverage excludes fixed-result transformations and multiplayer Largesse.
 
