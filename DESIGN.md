@@ -47,11 +47,22 @@ Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal,
 
 Rare deviations include a **Frequency:** field.
 
-#### Loss of future outcome steering
+The deviations below are shared across policies.
 
-This deviation is shared across policies.
+#### Future steering loss
 
 **Vanilla deviation — SL 5↓(↓):** applies when changes remove planning decisions based on steering later outcomes through earlier consumption of shared randomness. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favored orb sequence for the next battle.
+
+#### Within-room reroll loss
+
+**Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** fewer alternatives from replaying a room through:
+
+- Unrelated random consumption, forced selections or failed operations.
+- Click/enumeration order or equivalent-copy choices.
+
+#### Changed eligible-set alternatives
+
+**Vanilla deviation — SL 4A:** preserving each selection's probabilities can still change the outcomes available when SL explores different eligible sets. Alternatives may improve or disappear.
 
 ## Scope
 
@@ -365,7 +376,7 @@ Ordinary combats use combat category + act-local combat ordinal + encounter ID, 
 
 Event-created battles outside ordinary encounter lists use event-local battle ordinal + encounter ID, leaving ordinary combat counters unchanged.
 
-Combat-local random state derives from purpose + combat address and resets each combat. The [steering deviation](#loss-of-future-outcome-steering) applies where this removes cross-combat outcome steering.
+Combat-local random state derives from purpose + combat address and resets each combat. The [steering deviation](#future-steering-loss) applies where this removes cross-combat outcome steering.
 
 ##### Enemy occurrence addresses
 
@@ -483,7 +494,7 @@ Use [card processing order](#card-processing-order)'s state comparisons for equi
 
 Within each equivalence class, route the logical occurrence as a unit, including its selection state, shuffle assignment, [Oil hand-entry assignment](#random-energy-costs), copy relationships and any deck link outside the protected cases above. Keep live references with their logical targets.
 
-**Vanilla deviation — SL 4A(↓):** within a routed class, trying different clicks on reload selects the same hidden state for later combat selection, shuffles and Oil costs.
+**[Reroll loss](#within-room-reroll-loss):** equivalent-copy clicks select the same hidden state for later combat selection, shuffles and Oil costs.
 
 #### Card processing order
 
@@ -601,7 +612,7 @@ Each source has Common/Uncommon/Rare identity sequences over the full eligible p
 
 **Batches:** consume per potion and retain [source duplicate rules](#potions-1); regrouping `A | BCD` yields `ABC | D`, subject to filtering.
 
-**Vanilla deviation — SL 5(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
+**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
 
 **Vanilla deviation — SL 5:** Brew/Frond and Alchemize now share a sequence.
 
@@ -627,9 +638,9 @@ Derive each drop-check roll from the drop-check ordinal.
 
 **Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
-**Vanilla deviation — SL 4A(↓):** partitioned restock sequences remove restock manipulation through interleaved purchase categories and effects.
+**[Reroll loss](#within-room-reroll-loss):** restocks through interleaved purchase categories and effects.
 
-**Vanilla deviation — SL 4A(↓):** entry-bound prices remove price manipulation through unrelated purchase order.
+**[Reroll loss](#within-room-reroll-loss):** prices through unrelated purchase order.
 
 Baseline: [shop mechanics](#shop-and-courier-rng).
 
@@ -835,7 +846,7 @@ For random results, transformations and additions share one uniform identity seq
 - **Transformations:** draw directly, filtering out the original identity; follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
 - **Direct additions:** roll rarity at vanilla base odds using Fried Eel's sequence or Infested Automaton's event RNG; otherwise use the fixed rarity. Apply unavailable-rarity fallback within the source's eligible pool, then filter the identity sequence by rarity and source restrictions.
 
-**Vanilla deviation — SL 5(↓):** processing batches in [identity order](#transformation-batches) removes order-dependent alternatives.
+**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** processing transformation batches in identity order removes order-dependent alternatives.
 
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions).
 
@@ -998,7 +1009,7 @@ For each random offer, advance past ineligible entries, offer the first eligible
 
 Fixed Seapunk Salad displays consume zero sequence entries.
 
-**Vanilla deviation — SL 4A(↓):** changing only potion-slot availability can switch the next random offer only to or from Suspicious Condiment.
+**[Eligible-set alternatives](#changed-eligible-set-alternatives):** changing only potion-slot availability can switch the next random offer only to or from Suspicious Condiment.
 
 Baseline: [dish selection](#endless-conveyor-dishes).
 
@@ -1058,7 +1069,7 @@ Baseline: [potion sacrifice selection](#potions-1).
 
 Reflections processes downgrades and refills in ascending pre-selection downgrade-clock order, then determines upgrade candidates.
 
-**Vanilla deviation — SL 4A(↓):** removes rerolls of upgrade targets through unrelated RNG consumption. In vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `NonCombatGeneration` RNG.
+**[Reroll loss](#within-room-reroll-loss):** in vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `NonCombatGeneration` RNG.
 
 Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests-and-relic-events).
 
@@ -1125,9 +1136,9 @@ Use `purpose = bot generation` + [Fabricator occurrence](#enemy-occurrence-addre
 
 #### Vanilla deviations
 
-**Vanilla deviation — SL 4A(↓):** fewer reroll opportunities. In the [small-slime example](#enemy-ai-1), killing either small slime gives Twig M the same next intent.
+**[Reroll loss](#within-room-reroll-loss):** in the [small-slime example](#enemy-ai-1), killing either small slime gives Twig M the same next intent.
 
-**Vanilla deviation — SL 4A:** changed survivor alternatives. In the [reference examples](#enemy-ai-1), Flyconid/Twig M lose vanilla's guaranteed non-attacking option; trying both rat survivors finds Screech with probability `2/3`, up from `1/2`.
+**[Eligible-set alternatives](#changed-eligible-set-alternatives):** in the [reference examples](#enemy-ai-1), Flyconid/Twig M lose vanilla's guaranteed non-attacking option; trying both rat survivors finds Screech with probability `2/3`, up from `1/2`.
 
 Baseline: [enemy AI mechanics](#enemy-ai-1).
 
@@ -1169,7 +1180,7 @@ Other starting Basics receive distinct [initial-source keys](#card-occurrence-ad
 
 #### Vanilla deviations
 
-**Vanilla deviation — SL 5(↓):** fewer shuffle rerolls through draw/discard choices. Reordering the same discarded cards gives the same shuffle, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)). This can weaken all cards with a draw effect.
+**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** fewer draw/discard alternatives can weaken all cards with a draw effect. Reordering the same discarded cards gives the same shuffle, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)).
 
 ### Random pile insertion
 
@@ -1193,7 +1204,7 @@ Advance once per inserted card, including into an empty pile.
 
 In Dread mode, Soul Fysh's Dominion uses the Soul Fysh group; Aeonglass boss Wither targets draw pile instead.
 
-**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other insertion groups, piles or shuffles.
+**[Reroll loss](#within-room-reroll-loss):** other insertion groups, piles or shuffles.
 
 Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
@@ -1223,9 +1234,9 @@ Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker
 
 **Seeker Strike:** clocks select the offer; [routing](#combat-card-routing) resolves the player's choice within it. Keep vanilla offer display order.
 
-**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through unrelated sources, forced selections or discard order.
+**[Reroll loss](#within-room-reroll-loss):** unrelated sources, forced selections or discard order.
 
-**Vanilla deviation — SL 4A:** persistent clocks change the alternatives available across eligible sets.
+**[Eligible-set alternatives](#changed-eligible-set-alternatives):** persistent clocks.
 
 Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#combat-setup-and-shuffles).
 
@@ -1235,7 +1246,7 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = Thieving Hopper` + the linked permanent-deck card's selection key, including [reward aliases](#card-reward-selection-key-aliases).
 
-**Vanilla deviation — SL 4A(↓):** removes within-combat theft rerolls through pile order and other card-selection rolls.
+**[Reroll loss](#within-room-reroll-loss):** pile order and other card-selection rolls.
 
 Baseline: [theft eligibility and recovery](#card-state-and-selection).
 
@@ -1254,9 +1265,9 @@ Address sequences by `purpose = targeting` + [combat address](#combat-addresses)
 
 Use [opportunity-specific selection priorities](#opportunity-specific-selection-priorities) with equal weights: opportunity = sequence address + group-local selection ordinal; selection key = [enemy occurrence address](#enemy-occurrence-addresses). Advance the ordinal only when at least two targets are eligible.
 
-**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other groups or forced targets.
+**[Reroll loss](#within-room-reroll-loss):** other groups or forced targets.
 
-**Vanilla deviation — SL 4A:** priorities change the alternatives available across eligible sets.
+**[Eligible-set alternatives](#changed-eligible-set-alternatives):** selection priorities.
 
 Baseline: [random enemy targeting](#random-enemy-targeting).
 
@@ -1281,11 +1292,11 @@ Use [identity sequences](#rarity-and-identity-sequences) without rarity rolls. C
 
 For Entropy, follow [transformation batch rules](#transformation-batches); apply replacements in vanilla execution order.
 
-**Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other pools, cost groups or unrelated sources.
+**[Reroll loss](#within-room-reroll-loss):** other pools, cost groups or unrelated sources.
 
 **Vanilla deviation — SL 4A:** ordinary-cost generation and Entropy now share a sequence.
 
-**Vanilla deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls.
+**[Reroll loss](#within-room-reroll-loss):** Entropy's identity-order batch processing.
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
@@ -1313,11 +1324,11 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 
 Apply [combat-card routing](#combat-card-routing) to Oil's hand-entry assignment.
 
-The [steering deviation](#loss-of-future-outcome-steering) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or Oil hand sizes.
+The [steering deviation](#future-steering-loss) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or Oil hand sizes.
 
-**Vanilla deviation — SL 4A(↓):** source and category partitions, X skipping and overlap reuse remove consumption-based rerolls.
+**[Reroll loss](#within-room-reroll-loss):** source/category partitions, X skipping and Confused/Slither overlap reuse.
 
-**Vanilla deviation — SL 4A(↓):** processing order within unordered entry batches removes click/enumeration-order Oil rerolls.
+**[Reroll loss](#within-room-reroll-loss):** Oil's processing order within unordered hand-entry batches.
 
 Baseline: [random energy costs](#random-energy-costs-1).
 
@@ -1329,7 +1340,7 @@ Chaos, Trash to Treasure and The Magician share one sequence addressed by `purpo
 
 Consume one entry per successfully channeled random orb.
 
-**Vanilla deviation — SL 4A(↓):** failed channeling no longer rerolls later orb types. **Frequency:** rare — Defect must lose all orb slots, attempt random channeling, then regain slots and channel random orbs in the same combat.
+**[Reroll loss](#within-room-reroll-loss):** failed channeling. **Frequency:** rare — Defect must lose all orb slots, attempt random channeling, then regain slots and channel random orbs in the same combat.
 
 Baseline: [random orb generation](#random-orb-generation).
 
@@ -1343,7 +1354,7 @@ Address each batch by `purpose = potion card generation` + potion type + [effect
 
 Use one [identity sequence](#rarity-and-identity-sequences) per batch.
 
-**Vanilla deviation — SL 5(↓):** other potion types no longer change a potion's generated cards.
+**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** other potion types no longer change a potion's generated cards.
 
 Baseline: [potion card-generation mechanics](#potion-card-generation).
 
