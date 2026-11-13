@@ -97,13 +97,13 @@ Usefulness motivated the initial Curse/Quest/Status ranking; comparisons follow 
 
 **Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed < Sadness < Dazed < Frantic Escape.
 
-**Rarity rank:** Basic < Trash Heap < Common < Other Token < Dingy Dagger (+0/+1) < Uncommon < Exterminate/Squash < Rare < Sovereign Blade < Other Event < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later comparisons.
+**Rarity rank:** Basic < Peck < Trash Heap < Toric Toughness < Common < Other Token < Dingy Dagger (+0/+1) < Uncommon < Other Event A < Rare < Sovereign Blade < Other Event B < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later comparisons.
 
 | Event tier | Identities |
 |---|---|
 | Trash Heap | Caltrops, Clash, Distraction, Dual Wield, Entrench, Hello World, Outmaneuver, Rebound, Rip and Tear, Stack |
-| Exterminate/Squash | Exterminate, Squash |
-| Other Event | Byrd Swoop, Dingy Dagger (+2 or higher), Enlightenment, Feeding Frenzy, God Byrd, Mad Science, Metamorphosis, Peck, Toric Toughness |
+| Other Event A | Exterminate, Squash, Enlightenment, Feeding Frenzy |
+| Other Event B | Byrd Swoop, Dingy Dagger (+2 or higher), God Byrd, Mad Science, Metamorphosis |
 
 ## Enchantment rank
 
