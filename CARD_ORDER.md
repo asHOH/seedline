@@ -24,6 +24,8 @@ Curses and Quests < Status < Strike < Mighty Weapon < Defend < Mighty Shield < O
 
 Strike/Defend means starter identities. With replay >= 1, they promote to Other Attack/Skill.
 
+Rank these Skills as **Other Attack**: Blade Dance, Bouncing Flask, Bubble Bubble, Corrosive Wave, Darkness, Deadly Poison, Death, End of Days, God Byrd, Judgement, Knife Trap, No Escape, Oblivion, Outbreak, Snakebite, Tempest, The Bomb, The Moon, Voltaic, Zap.
+
 ### 2. Replay
 
 Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted starter Strikes/Defends. Preserve fractions: `1, 2, 3` becomes `0, 0.5, 1`.
