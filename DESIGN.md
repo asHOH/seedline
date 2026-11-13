@@ -215,7 +215,7 @@ Rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 
 | Sources | Rarity | Identity supply |
 |---|---|---|
-| [Permanent transformations / direct additions](#permanent-transformations-and-direct-card-additions) | Transformations: no rarity roll. Random-rarity additions: per-pool sequences; Infested Automaton uses event RNG. | One shared uniform identity sequence per pool. |
+| [Permanent transformations / direct additions](#permanent-transformations-and-direct-card-additions) | Transformations: no rarity roll. Fried Eel: own sequence; Infested Automaton: event RNG. | One shared uniform identity sequence per pool. |
 | [Potion-generated cards](#potion-generated-cards) | No rarity roll. | Uniform draws per potion-type effect batch. |
 | [Combat generation / Entropy](#combat-card-generation-and-transformations) | No rarity roll. | Uniform combat-local sequences by group and pool. |
 
@@ -829,7 +829,7 @@ Lasting Candy draws from the inherited pool's Power sequences while retaining it
 For random results, transformations and additions share one uniform identity sequence per pool: the six characters, colorless and curse. Keep these separate from card reward offers and combat transformations.
 
 - **Transformations:** draw directly, filtering out the original identity; follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
-- **Direct additions:** preserve fixed rarities; random rarities use per-pool rarity sequences at vanilla base odds, except Infested Automaton's Study and Touch Core use event RNG. Apply unavailable-rarity fallback within the source's eligible pool, then filter the identity sequence by rarity and source restrictions.
+- **Direct additions:** roll rarity at vanilla base odds using Fried Eel's sequence or Infested Automaton's event RNG; otherwise use the fixed rarity. Apply unavailable-rarity fallback within the source's eligible pool, then filter the identity sequence by rarity and source restrictions.
 
 **Vanilla deviation — SL 5(↓):** processing batches in [identity order](#transformation-batches) removes order-dependent alternatives.
 
