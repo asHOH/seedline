@@ -55,11 +55,11 @@ This deviation is shared across policies.
 
 ## Scope
 
-Standalone StS2 v0.113.0 (`public-beta`) mod for everyday play, also suited to competition. Catfood comparisons use v1.1.2.
+Standalone StS2 v0.113.0 (`public-beta`) mod for everyday play, also suited to competition.
 
-Compare single-player runs with matching seeds, versions and rules, and all content unlocked.
+Compare single-player runs, including [Dread](#dread), with matching seeds, versions and rules, and all content unlocked.
 
-**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
+**Exclude:** Blitz mode, tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.
 
@@ -1184,11 +1184,14 @@ Address sequences by `purpose = insertion` + [combat address](#combat-addresses)
 | Dazed | Blessed Antler, Tea of Discourtesy, Noisebot and Entomancer's Personal Hive. |
 | Biiig Hug | Soot. |
 | Soul Fysh | Beckon. |
+| Aeonglass | Wither. |
 | The Insatiable | Frantic Escape. |
 
 For each insertion in generation order, take the next uniform `u ∈ [0,1)` and choose zero-based gap `floor(u × (n + 1))`, where `n` is the target pile's current size.
 
 Advance once per inserted card, including into an empty pile.
+
+In Dread mode, Soul Fysh's Dominion uses the Soul Fysh group; Aeonglass boss Wither targets draw pile instead.
 
 **Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other insertion groups, piles or shuffles.
 
@@ -1418,7 +1421,7 @@ For one eligible relic removed/substituted and three distinct replacements match
 
 ## Appendix: existing mechanics
 
-Vanilla mechanics; [Catfood differences](#catfood-randomness-changes) are labeled.
+Vanilla mechanics; [Catfood (v1.1.2) differences](#catfood-randomness-changes) are labeled.
 
 ### Rooms, events and combat
 
