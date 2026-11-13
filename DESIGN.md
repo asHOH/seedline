@@ -1202,12 +1202,13 @@ Use [combat-card selection state](#combat-card-selection-state). Renew consumed 
 |---|---|
 | Exhaust | Cinder, unupgraded True Grit |
 | Upgrade | Drain Power, Stone Cracker |
-| Return | Anointed, Jeweled Mask, Power Cell |
+| Return | Anointed, Jeweled Mask, Power Cell, The World |
 | Attack auto-play | Beat Down, Uproar, Stampede |
+| Sadness conversion | Punch of Joy, Ecstasy |
 
 Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker Strike each use a separate scope.
 
-**Consumption exceptions:** preserve clocks and renewal counts for empty or forced-singleton selections, and whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression and Power Cell. Whole-set hand returns qualify only when every selected card fits.
+**Consumption exceptions:** preserve clocks and renewal counts for empty or forced-singleton selections, and whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression, Power Cell, The World and Ecstasy. Whole-set hand returns qualify only when every selected card fits.
 
 **Whole-set ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one shared RNG addressed by `purpose = incidental shuffle` + [combat address](#combat-addresses).
 
