@@ -53,7 +53,7 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 | Order | Property | Ascending rule |
 |---|---|---|
 | 1 | Bound | `Bound < none`. |
-| 2 | Carried card value | Higher carried damage or Block ranks later; includes accumulated in-combat gains. Enchantment-owned bonuses use the enchantment rows. |
+| 2 | Carried card value | Higher carried damage, Block or Aim ranks later; includes accumulated in-combat gains. Enchantment-owned bonuses use the enchantment rows. |
 | 3 | Enchantment rank | Authored enchantment order below. |
 | 4 | Enchantment amount | Lower < higher. |
 | 5 | Momentum's carried bonus | Within either Momentum rank, lower accumulated damage < higher. |
@@ -67,7 +67,7 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 | 11c | Energy cost with turn effects | If both have turn effects, compare resulting energy costs: `0 < X < 1 < 2 < 3 < ...`, including Slither's actual cost. |
 | 12 | Temporary keywords | `none < temporary Retain / temporary Sly`. Either or both satisfy the present tier; stage 6 resolves their internal order. |
 
-Carried values include Genetic Algorithm's Block and damage accumulated by The Scythe, Sovereign Blade, Rampage, Claw, Maul, Kingly Punch and Thrash.
+Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage accumulated by The Scythe, Sovereign Blade, The Shot, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
 **Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending; upgraded = currently upgraded. This includes Dampen's stored restoration. Exact current upgrade level breaks ties within the upgraded tier.
 

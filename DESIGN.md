@@ -55,7 +55,7 @@ This deviation is shared across policies.
 
 ## Scope
 
-Standalone StS2 v0.111.0 mod for everyday play, also suited to competition. Catfood comparisons use v1.1.2.
+Standalone StS2 v0.113.0 (`public-beta`) mod for everyday play, also suited to competition. Catfood comparisons use v1.1.2.
 
 Compare single-player runs with matching seeds, versions and rules, and all content unlocked.
 
@@ -459,7 +459,7 @@ Equivalence requires the same identity and gameplay-relevant status. Hidden sele
 
 #### Out-of-combat card routing
 
-**Out-of-combat equivalence key:** compare card identity, upgrade level, enchantment identity/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
+**Out-of-combat equivalence key:** compare card identity, upgrade level, enchantment identity/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Show Off's `IncreasedAim`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
 For the out-of-combat operations below, sources share [routing clocks](#routing) by operation and card identity:
 
@@ -479,7 +479,7 @@ Partition routing clocks by card identity. Play, discard, exhaust, retrieval int
 
 Use [card processing order](#card-processing-order)'s state comparisons for equivalence, excluding origin rank; include consequential pending effects on particular copies.
 
-**Permanent-deck correspondence:** group Genetic Algorithm, The Scythe and Goopy copies by their exact linked permanent-deck occurrence, with a separate group for combat-only copies. While Thieving Hopper's steal is pending, apply this grouping to every card identity.
+**Permanent-deck correspondence:** group Genetic Algorithm, The Scythe, Show Off and Goopy copies by their exact linked permanent-deck occurrence, with a separate group for combat-only copies. While Thieving Hopper's steal is pending, apply this grouping to every card identity.
 
 Within each equivalence class, route the logical occurrence as a unit, including its selection state, shuffle assignment, [Oil hand-entry assignment](#random-energy-costs), copy relationships and any deck link outside the protected cases above. Keep live references with their logical targets.
 
@@ -824,9 +824,9 @@ Lasting Candy draws from the inherited pool's Power sequences while retaining it
 
 **Intent:** align same-pool transformations and direct additions while preserving source rarity odds.
 
-**Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, and Distinguished Cape.
+**Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, Distinguished Cape, Museum of Torture's curse and Waterfall of Obvious Secrets' Rare card.
 
-For random results, transformations and additions share one uniform identity sequence per pool: the five characters, colorless and curse. Keep these separate from card reward offers and combat transformations.
+For random results, transformations and additions share one uniform identity sequence per pool: the six characters, colorless and curse. Keep these separate from card reward offers and combat transformations.
 
 - **Transformations:** draw directly, filtering out the original identity; follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
 - **Direct additions:** preserve fixed rarities; random rarities use per-pool rarity sequences at vanilla base odds, except Infested Automaton's Study and Touch Core use event RNG. Apply unavailable-rarity fallback within the source's eligible pool, then filter the identity sequence by rarity and source restrictions.
@@ -877,7 +877,10 @@ Baseline: [room restrictions and chance updates](#unknown-room-resolution-1).
 
 **Scope:** ordinary events, excluding [Ancients](#ancient-offerings) and [Lantern Key's forced event](#lantern-key).
 
+
 **Conditions:** group event IDs by equivalent eligibility predicates, excluding act availability and [late eligibility checks](#event-eligibility), with one key per condition. Act availability determines participating IDs; evaluate late checks when selecting an ID.
+
+Before grouping, exclude Shrine of the Warlord for Act 3 Tanx and Thermae Nonupeipe for Nonupeipe.
 
 #### Act entry and carryover
 
@@ -1043,7 +1046,7 @@ Baseline: [potion sacrifice selection](#potions-1).
 
 #### Permanent upgrades and downgrades
 
-**Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Doors of Light and Dark, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement.
+**Upgrade sources:** Whetstone, War Paint, Fragrant Mushroom, Sand Castle, War Hammer, Fishing Rod, Battleworn Dummy, Endless Conveyor, Tablet of Truth, Reflections, and Mad Science's Improvement.
 **Downgrade sources:** Wongos and Reflections.
 
 - **Upgrade-clock refill:** after a random downgrade, refill a zero upgrade clock with the next entry from the run-wide `purpose = upgrade refill` sequence; retain nonzero clocks.
@@ -1051,7 +1054,7 @@ Baseline: [potion sacrifice selection](#potions-1).
 
 Reflections processes downgrades and refills in ascending pre-selection downgrade-clock order, then determines upgrade candidates.
 
-**Vanilla deviation — SL 4A(↓):** removes rerolls of upgrade targets through unrelated RNG consumption. In vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `Niche` RNG.
+**Vanilla deviation — SL 4A(↓):** removes rerolls of upgrade targets through unrelated RNG consumption. In vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `NonCombatGeneration` RNG.
 
 Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests-and-relic-events).
 
@@ -1312,7 +1315,7 @@ Baseline: [random energy costs](#random-energy-costs-1).
 
 **Intent:** isolate random-orb generation by combat.
 
-Chaos and Trash to Treasure share one sequence addressed by `purpose = orb type` + [combat address](#combat-addresses).
+Chaos, Trash to Treasure and The Magician share one sequence addressed by `purpose = orb type` + [combat address](#combat-addresses).
 
 Consume one entry per successfully channeled random orb.
 
@@ -1324,17 +1327,19 @@ Baseline: [random orb generation](#random-orb-generation).
 
 **Intent:** align random card generation.
 
-**Scope:** Attack, Skill, Power and Colorless Potions, Cosmic Concoction and Orobic Acid.
+**Scope:** Attack, Skill, Power and Colorless Potions, Cosmic Concoction, Orobic Acid and Bottled Song.
 
-Address each batch by `purpose = potion card generation` + potion type + [effect ordinal](#potion-effect-opportunities). Orobic Acid's Attack, Skill and Power share one batch.
+Address each batch by `purpose = potion card generation` + potion type + [effect ordinal](#potion-effect-opportunities). Orobic Acid's Attack, Skill and Power share one batch. Bottled Song's Wah → Cho → Ki draws share one batch.
 
 Use one [identity sequence](#rarity-and-identity-sequences) per batch.
 
-**Vanilla deviation — SL 5(↓):** thieving hopper stealing and other potion types no longer change a potion's generated cards.
+**Vanilla deviation — SL 5(↓):** other potion types no longer change a potion's generated cards.
 
 Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
+
+Written in **v0.111.0**.
 
 [Event workbook](references/StS2_Events.xlsx): vanilla offers and eligibility for **56 ordinary events, forced War Historian Repy and 8 Ancients**.
 
@@ -1423,7 +1428,7 @@ Vanilla mechanics; [Catfood differences](#catfood-randomness-changes) are labele
 | Source | Mechanics |
 |---|---|
 | Shop exclusion | Excluded when the previous visited map point contained a shop, or all next nodes are shops (at least one). |
-| Juzu Bracelet | Excludes normal fights. |
+| Juzu Bracelet / Dowsing's 4th `?` | Excludes normal fights. |
 | Golden Compass | Forces Event during its affected act. |
 | Lantern Key | In Act 3, forces Event and replaces the selected event with War Historian Repy. The ordinary event-list cursor still advances. |
 
@@ -1437,7 +1442,7 @@ Vanilla mechanics; [Catfood differences](#catfood-randomness-changes) are labele
 
 **Normal encounters:** take the next normal encounter whether the map marker was `?` or a normal fight.
 
-**Capacity:** act event lists contain 25–31 entries before filtering, versus 13–15 ordinary floors per act.
+**Capacity:** act event lists contain 28–32 entries before filtering, versus 13–15 ordinary floors per act.
 
 **Event RNG:** in single-player, seeded by run seed + deterministic event ID hash (`EventModel.BeginEvent`).
 
@@ -1458,13 +1463,13 @@ Ancient menus use [event RNG](#event-and-encounter-identities). Matching seed, A
 | Vakuu | One choice from each of three fixed pools. |
 | Nonupeipe | Three choices from a shuffled pool; Beautiful Bracelet joins with ≥4 Swift-eligible cards. |
 
-**Shared RNG use:** acquiring Neow's Bones shuffles its relic candidates with `Rewards`. Offering Dusty Tome advances `Rewards` once, even if declined; its single eligible card per character makes the result fixed.
+**Shared RNG use:** acquiring Neow's Bones shuffles its relic candidates and generates its curse with `NonCombatGeneration`. Offering Dusty Tome advances `Rewards` once, even if declined; its single eligible card per character makes the result fixed.
 
 **Fur Coat:** marks normal-fight/elite map nodes using its own run seed + player slot + relic ID RNG and saves their coordinates. Matching maps reproduce the marks.
 
 #### Event eligibility
 
-The tables cover **56 ordinary events**, combining act availability with entry checks. Checks guaranteed by scope are omitted; run-wide visited exclusions also apply.
+The tables cover **61 ordinary events**, combining act availability with entry checks. Checks guaranteed by scope are omitted; run-wide visited exclusions also apply.
 
 Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 
@@ -1475,22 +1480,23 @@ Act 1 is Overgrowth or Underdocks; Act 2 is Hive; Act 3 is Glory.
 | 1 (Overgrowth) | Gold ≥ 100 | 1 | Morphic Grove |
 | 1 (Overgrowth) | Gold ≥ 149 | 1 | Luminous Choir |
 | 1 (Overgrowth) | HP ≤ 70% of maximum | 1 | Unrest Site |
-| 1 (Underdocks) | None | 5 | Abyssal Baths; Doors of Light and Dark; Drowning Beacon; Spiraling Whirlpool; Sunken Treasury |
+| 1 (Underdocks) | None | 7 | Abyssal Baths; Doors of Light and Dark; Drowning Beacon; Spiraling Whirlpool; Sunken Treasury; Waterfall of Obvious Secrets; Wuppy in Trouble |
 | 1 (Underdocks) | Gold ≥ 55 | 1 | Waterlogged Scriptorium |
 | 1 (Underdocks) | Gold ≥ 120 | 1 | Endless Conveyor |
 | 1 (Underdocks) | HP > 5 | 1 | Trash Heap |
 | 1 (Underdocks) | Total floor ≥ 6 | 1 | Punch-Off |
 | 1 | None | 1 | Sunken Statue |
 | 1 | HP ≥ 10 | 1 | The Legends Were True |
-| 2 | None | 8 | Bugslayer; Colorful Philosophers; Doll Room; Field of Man-Sized Holes; Infested Automaton; Lost Wisp; Spirit Grafter; The Lantern Key |
+| 2 | None | 9 | Bugslayer; Colorful Philosophers; Doll Room; Field of Man-Sized Holes; Infested Automaton; Lost Wisp; Museum of Torture; Spirit Grafter; The Lantern Key |
 | 2 | Gold ≥ 100 | 1 | Welcome to Wongos |
 | 2 | Gold ≥ 125 | 1 | Zen Weaver |
 | 2 | HP ≥ 19 | 1 | Colossal Flower |
 | 2 | ≥ 2 removable Basic Strikes and ≥ 2 removable Basic Defends | 1 | Amalgamator |
 | 2 | ≥ 1 potion | 1 | Stone of All Time |
-| 3 | None | 5 | Battleworn Dummy; Hungry for Mushrooms; Reflections; Tinker Time; Trial |
+| 3 | None | 6 | Battleworn Dummy; Hungry for Mushrooms; Reflections; Shrine of the Warlord; Tinker Time; Trial |
 | 3 | HP ≥ 12 | 1 | Round Tea Party |
 | 3 | A card eligible for Soul's Power | 1 | Grave of the Forgotten |
+| 3 | Gold > 175, HP ≤ 75% of maximum | 1 | Thermae Nonupeipe |
 | 1–2 | None | 2 | Brain Leech; Room Full of Cheese |
 | 1–2 | Gold ≥ 150 | 1 | Tea Master |
 | 2–3 | None | 2 | Potion Courier; Symbiote |
@@ -1536,7 +1542,7 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 **Shuffle RNG:** opening shuffles, reshuffles and random pile insertions share `Shuffle` across combats.
 
-**Shuffling:** opening shuffles start from deck-order clones. Reshuffles first sort combined discard/draw cards by identity and upgrade level (`StableShuffle`). Both use Fisher–Yates, then apply modifiers. Sorting leaves copies tied despite different enchantments, persistent progress or combat state, so input order can affect results.
+**Shuffling:** opening shuffles start from deck-order clones. Reshuffles first sort combined discard/draw cards by identity and upgrade level (`StableShuffle`). Each shuffle, including empty/singleton lists, seeds a child RNG from one parent `NextUnsignedLong` call, then uses Fisher–Yates and applies modifiers. Candidate count changes leave parent consumption unchanged. Sorting leaves copies tied despite different enchantments, persistent progress or combat state, so input order can affect results.
 
 **Discard order:** affects All for One with limited hand space and the shuffles used by Aggression and Drain Power. Frantic Escape's +1 combat cost per play can leave tied copies with different costs, changing which cost is drawn earlier.
 
@@ -1548,7 +1554,7 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 **Order:** enemies are normally created and added sequentially, including summons. Death-triggered spawns roll before the dying enemy is removed. Gremlin Merc instead creates Fat, creates/adds Sneaky, then adds Fat: neither excludes the other's HP.
 
-**Special cases:** Tough Egg's hatch rerolls its full hatchling range with `Niche`. Axebot's range rises by 10 per replacement. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter RNG.
+**Special cases:** Tough Egg's hatch rerolls its full hatchling range with `Niche`. Decimillipede segments adjust HP to distinct even values. Punch-Off's starting reductions use encounter RNG.
 
 **Fixed-HP summons:** Eye with Teeth (6), Parafright (21), and Gas Bomb (7/8 by ascension).
 
@@ -1601,7 +1607,7 @@ Direct random effects and automatic enemy targeting share run-wide `CombatTarget
 
 **Two overlapping bags:** the player bag contains **122 ordinary relics** — 26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag shuffles its per-rarity lists separately.
 
-**Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare, normally using player `Rewards`; chests use `TreasureRoomRelics`. Fixed-rarity requests skip the roll, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front.
+**Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare, using player `Rewards` for ordinary rewards, event RNG for event rewards, `Shops` for shops and `TreasureRoomRelics` for chests. Fixed-rarity requests skip the roll, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front.
 
 **Consumption:** ordinary reward/shop generation removes the identity from both bags, even if declined or unbought. Chest generation removes it only from the chest bag. Acquiring a non-stackable relic removes it from both bags, preserving survivors' order; skipping a chest leaves the player bag unchanged.
 
@@ -1628,7 +1634,7 @@ Front bias can affect several later positions, depending on bag composition.
 
 **Chest probability:** with a uniform unseen player-bag order, acquiring an independently selected shared identity raises the character-specific chance at every remaining position from `C/N` to `C/(N-1)`; e.g. `5/100` → `5/99`. Here `N` counts remaining identities of one rarity and `C` its character-specific identities. These marginal probabilities assume no further observations or restrictions; preceding filtered draws can invalidate uniformity.
 
-**Floor eligibility:** these 17 relics require `TotalFloor < 41` in single-player or `< 38` in multiplayer (`IsBeforeAct3TreasureChest`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited.
+**Floor eligibility:** these 17 relics require `TotalFloor < 41` in standard single-player or `< 38` in multiplayer (`RelicLists` and `RelicModel.IsAllowed`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited.
 
 **Depletion:** search from the requested rarity along Shop → Common → Uncommon → Rare, then multiplayer fallback, then Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this fallback.
 
@@ -1643,27 +1649,15 @@ Front bias can affect several later positions, depending on bag composition.
 | Wongos | Act 2; all players have ≥100 gold. Featured Rare costs 200 gold and is removed from stock when offered, even when unaffordable or declined, harming same-seed consistency. Hidden Common costs 100 gold and is generated on purchase. Both require `IsAllowedInShops`. Leaving downgrades a random upgraded card, if any. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |
 | Ranwid — relic sacrifice | Offers one uniformly selected tradable owned relic using event RNG; sacrificing it grants two hidden random relics, generated after removal. |
-| Relic Trader | Shuffles tradable owned relics with event RNG to offer three trades. Generates and consumes all three replacements before choice, drawing from the player bag's front with `Rewards` rarity rolls independent of outgoing rarity. Choose one; normally no leave. |
+| Relic Trader | Shuffles tradable owned relics with event RNG to offer three trades. Generates and consumes all three replacements before choice, drawing from the player bag's front with event-RNG rarity rolls independent of outgoing rarity. Choose one; normally no leave. |
 | Courier | 20% discount; removal never restocks; sale clears on restock. Restocked character cards retain type, colorless cards retain rarity. Relics roll ordinary rarity even in the Shop slot. Potions use ordinary rarity odds. Restocking stays within the same shop ordinal. |
 | Trash Heap | Dive In costs 8 HP and grants a random relic from its special list; Grab grants 100 gold and directly adds a random card from its special ten-card list. |
 
 #### Shop and Courier RNG
 
-**Shared RNGs couple stock across categories.** Initial stock and restocks use the same player `Rewards` and `Shops` RNGs. Each listed operation advances its RNG once; relic identity follows bag order. Counts exclude additional item effects.
-
-| Restock | `Rewards` advances | `Shops` advances |
-|---|---|---|
-| Character card | 2: rarity, upgrade check | 2: identity, price |
-| Fixed-rarity colorless card | 1: upgrade check | 2: identity, price |
-| Relic | 1: rarity | 1: price |
-| Potion | 0 | 3: rarity, identity, price |
+**Shared RNG:** initial stock and Courier restocks use player `Shops` for rarity, card/potion identity and prices. Any restock can change later stock across categories. Relic identities follow bag order within the selected rarity.
 
 **Cards:** initial colorless slots request Uncommon/Rare; character cards fall back to the next available rarity. Generation excludes displayed cards, including the just-purchased card during restocking. Suppressed random upgrades still consume a check.
-
-**Later restock effects:** even one restock per category can shift later stock, harming same-seed consistency.
-
-- **Card → relic; relic → character card:** rarity, identity and price can change. Both also shift potion rarity, identity and price; relics shift fixed-rarity colorless card identity/price.
-- **Potion → card:** identity and price can change. **Potion → relic:** price only; rarity and bag order stay unchanged.
 
 ### Cards
 
@@ -1671,27 +1665,29 @@ Front bias can affect several later positions, depending on bag composition.
 
 #### Card state and selection
 
-**Combat card selection:** random selection normally uses `CombatCardSelection`; random auto-play selection uses `Shuffle`. `NextItem` advances once even for singletons. `TakeRandom` and shuffle-then-take callers shuffle the full input; see [shuffle mechanics](#combat-setup-and-shuffles) for `StableShuffle` ordering.
+**Combat card selection:** random selection, including random auto-play selection, normally uses `CombatCardSelection`. `NextItem` consumes zero for empty input and one for singletons. `TakeRandom` shuffles before taking, even for zero requested cards; see [shuffle mechanics](#combat-setup-and-shuffles) for parent consumption and `StableShuffle` ordering.
 
 **Player-selected batches outside combat:** deck selectors and reward grids collect an unordered selection before applying effects. Enumeration can affect acquisition order (e.g. Sea Glass).
 
 **Deck-selection operations:** upgrade (Smith), enchant (Gnarled Hammer), remove (Empty Cage), transform (Astrolabe, Claws, Wood Carvings), replace multiple cards with one (Amalgamator), store for return (Pael's Tooth), or copy (Dolly's Mirror). Wongos and Reflections downgrade randomly; reward selections acquire new occurrences. Inspected Catfood patches add no operation category.
 
-**Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
+**Persistent card state:** `SerializableCard.Equals` compares identity, upgrade level and enchantment while omitting card-specific saved properties. Genetic Algorithm maintains `CurrentBlock = 1 + IncreasedBlock`; The Scythe maintains `CurrentDamage = 13 + IncreasedDamage`. Show Off saves `IncreasedAim` and writes gains through its linked deck card; its power retains the played copy until an enemy dies or the turn ends. Tinker Time grants one configured Mad Science; later copies inherit its type/rider configuration. Dolly's Mirror excludes Quest cards, including Spoils Map.
 
 **Mad Science — Improvement:** after combat, permanently upgrades distinct eligible deck cards, one per power stack, using `CombatCardSelection`.
 
 **Reflections:** uses event RNG to downgrade up to two distinct upgraded cards, then upgrade up to four distinct upgradable cards, including those just downgraded.
 
-**Thieving Hopper:** appears at most once per supported run and steals once. Selects uniformly with `CombatCardGeneration` from draw/discard copies linked to a deck card (`DeckVersion`), using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThieveryMove`). Theft removes the deck card; Hopper's death offers that same object as a skippable reward (`SwipePower`, `SpecialCardReward`). Escape or skipping leaves it removed.
+**Thieving Hopper:** appears at most once per supported run and steals once. Selects uniformly with `CombatCardSelection` from non-Quest draw/discard copies linked to a deck card (`DeckVersion`), using the first nonempty rarity/enchantment preference tier, or all candidates if every tier is empty (`ThieveryMove`). Theft removes the deck card; Hopper's death offers that same object as a skippable reward (`SwipePower`, `SpecialCardReward`). Escape or skipping leaves it removed.
 
 **Pael's Tooth:** stores five player-selected removable, upgradable cards. After each combat, returns one random stored card upgraded, using `Rewards` RNG.
 
-**Beautiful Bracelet:** enchants up to four random Swift-eligible deck cards with Swift 2, using `Niche` RNG.
+**Beautiful Bracelet:** enchants up to four random Swift-eligible deck cards with Swift 2, using `NonCombatGeneration` RNG.
+
+**Power Cell:** samples zero-cost non-Innate cards before zero-cost Innate cards, shuffling each tier separately.
 
 #### Combat card generation and transformations
 
-**Uniform identity draws:** these generators and the [six card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`.
+**Uniform identity draws:** these generators and the [seven card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`. Mythic Form samples its separate Tarot pool through `CombatCardSelection`.
 
 | Pool / filter | Ordinary costs | Free this turn |
 |---|---|---|
@@ -1706,9 +1702,9 @@ Front bias can affect several later positions, depending on bag composition.
 
 Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. Jack of All Trades excludes itself.
 
-**Duplicates:** Stoke, Jackpot, Metamorphosis and Calamity allow repeats within a batch. Other factory batches require distinct identities; Creative AI and Call of the Void allow repeats across their separate single-card draws. Thieving Hopper's theft and random affliction selection also advance this RNG.
+**Duplicates:** Stoke, Jackpot, Metamorphosis and Calamity allow repeats within a batch. Other factory batches require distinct identities; Creative AI and Call of the Void allow repeats across their separate single-card draws.
 
-**Entropy:** the sole random combat transformation source. It transforms selected hand cards in returned selection order using `CombatCardSelection` and the [default transformation pool](#permanent-transformations-and-direct-additions). Different originals can have different eligible lists, so order can change results. Coverage excludes fixed-result transformations and multiplayer Largesse.
+**Entropy:** the random combat transformation source. It transforms selected hand cards in returned selection order using `CombatCardGeneration` and the [default transformation pool](#permanent-transformations-and-direct-additions). Different originals can have different eligible lists, so order can change results. Coverage excludes fixed-result transformations and multiplayer Largesse.
 
 #### Random energy costs
 
@@ -1724,7 +1720,7 @@ Confused, Slither and Snecko Oil share run-wide `CombatEnergyCosts`, rolling uni
 
 #### Random orb generation
 
-Chaos and Trash to Treasure use run-wide `CombatOrbGeneration` to sample uniformly from Lightning, Frost, Dark, Plasma and Glass. They roll before channeling, so failed attempts consume RNG. With zero current slots, characters with no base slots gain one; Defect cannot channel (`OrbModel.GetRandomOrb`, `OrbCmd.Channel`).
+Chaos, Trash to Treasure and The Magician use run-wide `CombatOrbGeneration` to sample uniformly from Lightning, Frost, Dark, Plasma and Glass. They roll before channeling, so failed attempts consume RNG. With zero current slots, characters with no base slots gain one; Defect cannot channel (`OrbModel.GetRandomOrb`, `OrbCmd.Channel`).
 
 #### Slippery Bridge selection
 
@@ -1764,19 +1760,19 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 | Sea Glass | Three five-card batches (Common, Uncommon, Rare) from one featured other character, processed separately by Wing Charm. Take any number from the combined display. No random upgrades. |
 | Prismatic Gem / Dingy Rug | Gem adds unlocked character pools unless the original pools are all colorless; Rug adds colorless Uncommon/Rare cards. Both require the card-reward flag and permitted pool modification, preserving filters. After any rarity roll, selection is uniform over eligible identities. Share Knowledge and Room Full of Cheese lack the flag; The Future of Potions blocks pool modification. |
 | Lasting Candy | Adds a Power on alternating qualifying combat rewards from the parent reward's modified pool, using the combat source's base rarity odds without its offset. Excludes existing offer identities unless no eligible alternative remains. |
-| Wing Charm / earlier enchantments | Its late reward-options hook uses `Niche` to select one Swift-eligible card per generation batch, including direct generation. Existing enchantments block Swift, including earlier Glitter's Glam and Fresnel Lens's Nimble on Block cards. Ordinary modifiers precede late modifiers; late modifiers follow relic-list order. |
+| Wing Charm / earlier enchantments | Its late reward-options hook uses `Rewards` to select one Swift-eligible card per generation batch, including direct generation. Existing enchantments block Swift, including earlier Glitter's Glam and Fresnel Lens's Nimble on Block cards. Ordinary modifiers precede late modifiers; late modifiers follow relic-list order. |
 
 #### Permanent transformations and direct additions
 
 **Random transformation results:** use the original card's pool; Quest cards and Event/Ancient/Token rarities use colorless. Token is the generated-card rarity of Shiv, Soul and similar cards. Ordinary results are Common/Uncommon/Rare; curses share one curse pool. Retain unlock/player restrictions and exclude the original identity. Combat transformations also require `CanBeGeneratedInCombat` and may use the Status pool.
 
-`CardFactory` preserves pool order through filtering and selects a uniform eligible index, consuming one roll per card. Batches allow repeats. Permanent-transformation callers supply event RNG, `Niche` or player `Transformations`.
+`CardFactory` preserves pool order through filtering and selects a uniform eligible index, consuming one roll per card. Batches allow repeats. Permanent-transformation callers supply event RNG or player `Transformations`.
 
 **Batch order:** Astrolabe, Morphic Grove and Trial use returned selection order; Pandora's Box uses deck order; Leafy Poultice uses Strike then Defend. `CardCmd.Transform` resolves results before sorting by recorded pile position. Different eligible lists can make the result multiset order-dependent, even when only one original can replace another. Identical ordered lists preserve the multiset, as with own-character Basic Strike/Defend batches such as Pandora's Box.
 
 **Inherited attributes:** Claws copies the original upgrade state and compatible enchantment to Maul (`Claws.CreateMaulFromOriginal`).
 
-**Direct additions:** use `Rewards`, `Niche` or event RNG. Infested Automaton and Fried Eel roll [base rarity odds](#card-reward-offers-1) before identity, independently of combat offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from eligible identities.
+**Direct additions:** use `Rewards`, `NonCombatGeneration` or event RNG. Infested Automaton and Fried Eel roll [base rarity odds](#card-reward-offers-1) before identity, independently of combat offsets. Unavailable rarities advance Common → Uncommon → Rare → Common. Arcane Scroll and random curse grants select uniformly from eligible identities.
 
 | Source | Mechanics |
 |---|---|
@@ -1788,6 +1784,8 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 | Neow — Arcane Scroll | Directly adds one random own-character Rare card. |
 | Neow — Neow's Bones | Grants two random eligible Neow relics and directly adds one random curse eligible for modifier generation. |
 | Vakuu — Distinguished Cape | Directly adds two distinct random eligible curses. |
+| Museum of Torture | Directly adds one random modifier-eligible curse using `NonCombatGeneration`. |
+| Waterfall of Obvious Secrets | Directly adds one own-character Rare card using `Rewards`, with no rarity or random-upgrade roll. |
 
 ### Potions
 
@@ -1809,7 +1807,7 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 
 #### Potion card generation
 
-These six combat-only potions use the [combat-card factories](#combat-card-generation-and-transformations-1), with pools unchanged by Dingy Rug or Prismatic Gem:
+These seven combat-only potions use the [combat-card factories](#combat-card-generation-and-transformations-1), with pools unchanged by Dingy Rug or Prismatic Gem:
 
 | Potion | Result |
 |---|---|
@@ -1817,6 +1815,7 @@ These six combat-only potions use the [combat-card factories](#combat-card-gener
 | Colorless | Same choice, from three distinct colorless cards. |
 | Cosmic Concoction | Add three distinct upgraded colorless cards. |
 | Orobic Acid | Add one own-character Attack, Skill and Power, each free this turn. |
+| Bottled Song | Add one Wah, then Cho, then Ki card from unlocked character pools, each free this turn. Separate draws permit a multi-tag identity to repeat across tags. |
 
 Snecko Oil is also combat-only; see [random energy costs](#random-energy-costs-1).
 
