@@ -525,6 +525,8 @@ Without [borrowing](#borrowing), generic reward opportunities must eventually ex
 
 By default, hidden random relic rewards use the generic rewards source, including paid rewards and relic-triggered grants. Classify deferred payoffs separately from their granting relic.
 
+**Vanilla deviation — SL 5↑:** events now allow foreseeing future relic rewards.
+
 #### Borrowing
 
 **Consistency boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
@@ -600,6 +602,8 @@ Each source has Common/Uncommon/Rare identity sequences over the full eligible p
 **Batches:** consume per potion and retain [source duplicate rules](#potions-1); regrouping `A | BCD` yields `ABC | D`, subject to filtering.
 
 **Vanilla deviation — SL 5(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
+
+**Vanilla deviation — SL 5:** Brew/Frond and Alchemize now share a sequence.
 
 #### Drop checks
 
@@ -1228,7 +1232,7 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = Thieving Hopper` + the linked permanent-deck card's selection key, including [reward aliases](#card-reward-selection-key-aliases).
 
-**Vanilla deviation — SL 5(↓):** fewer within-combat theft rerolls through card generation or pile order. This can remove a reason to carry a card-generating potion into Act 2 or on Act 2 Ancient to change theft target.
+**Vanilla deviation — SL 4A(↓):** removes within-combat theft rerolls through pile order and other card-selection rolls.
 
 Baseline: [theft eligibility and recovery](#card-state-and-selection).
 
@@ -1276,7 +1280,7 @@ For Entropy, follow [transformation batch rules](#transformation-batches); apply
 
 **Vanilla deviation — SL 4A(↓):** fewer within-combat rerolls through other pools, cost groups or unrelated sources.
 
-**Vanilla deviation — SL 4A:** ordinary-cost generation and Entropy now advance each other's identity supply within a pool.
+**Vanilla deviation — SL 4A:** ordinary-cost generation and Entropy now share a sequence.
 
 **Vanilla deviation — SL 4A(↓):** processing Entropy batches in [identity order](#transformation-batches) removes selection-order rerolls.
 
@@ -1802,8 +1806,8 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 |---|---|
 | Ranwid / Stone of All Time | Select one owned potion uniformly in occupied-slot order using event RNG. |
 | White Beast Statue | Forces combat potion rewards, freezing drop probability until removed. Normally tradable at Relic Trader. The final boss generates no ordinary rewards or drop check. |
-| Alchemize | Generates one potion, excluding Fairy in a Bottle, Fruit Juice and Regen Potion. Attempts generation even with full slots. |
-| Entropic Brew / Delicate Frond | Fill empty slots with unrestricted generation, stopping on the first failed acquisition. Brew works outside combat; Frond triggers before combat. |
+| Alchemize | Generates one potion using `CombatPotionGeneration`, excluding Fairy in a Bottle, Fruit Juice and Regen Potion. Attempts generation even with full slots. |
+| Entropic Brew / Delicate Frond | Fill empty slots with unrestricted generation using `NonCombatGeneration`, stopping on the first failed acquisition. Brew works outside combat; Frond triggers before combat. |
 | Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. |
 | Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
 | Multi-potion factory calls | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. |
