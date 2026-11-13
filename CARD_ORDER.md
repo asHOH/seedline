@@ -20,7 +20,7 @@ Evaluate stages 1–6 in order. Within a stage, compare its rows from top to bot
 
 ### 1. Category
 
-Curses and Quests < Status < Strike < Defend < Other Basic < Other Attack < Other Skill < Power.
+Curses and Quests < Status < Strike < Mighty Weapon < Defend < Mighty Shield < Other Basic < Other Attack < Other Skill < Power.
 
 Strike/Defend means starter identities. With replay >= 1, they promote to Other Attack/Skill.
 
@@ -93,17 +93,17 @@ Usefulness motivated the initial Curse/Quest/Status ranking; comparisons follow 
 
 **Curses and Quests:** Bad Luck < Enthralled < Normality < Regret < Debt < Shame < Doubt < Decay < Writhe < Curse of the Bell < Greed < Injury < Quests < Guilty < Spore Mind < Poor Sleep < Ascender's Bane < Folly < Clumsy.
 
-**Quests:** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map.
+**Quests (alphabetical):** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map.
 
-**Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed < Dazed < Frantic Escape.
+**Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed < Sadness < Dazed < Frantic Escape.
 
-**Rarity rank:** Basic < Trash Heap < Common < Other Token < Uncommon < Exterminate/Squash < Rare < Sovereign Blade < Other Event < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later comparisons.
+**Rarity rank:** Basic < Trash Heap < Common < Other Token < Dingy Dagger (+0/+1) < Uncommon < Exterminate/Squash < Rare < Sovereign Blade < Other Event < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later comparisons.
 
 | Event tier | Identities |
 |---|---|
 | Trash Heap | Caltrops, Clash, Distraction, Dual Wield, Entrench, Hello World, Outmaneuver, Rebound, Rip and Tear, Stack |
 | Exterminate/Squash | Exterminate, Squash |
-| Other Event | Byrd Swoop, Enlightenment, Feeding Frenzy, Mad Science, Metamorphosis, Peck, Toric Toughness |
+| Other Event | Byrd Swoop, Dingy Dagger (+2 or higher), Enlightenment, Feeding Frenzy, God Byrd, Mad Science, Metamorphosis, Peck, Toric Toughness |
 
 ## Enchantment rank
 
