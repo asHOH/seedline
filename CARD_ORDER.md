@@ -8,7 +8,7 @@ Detailed ranking for the [card processing order policy](DESIGN.md#card-processin
 
 **Lasting properties** are current card properties with modifiers that survive turn boundaries until this instance's next play within the combat. Include card-specific effects such as Bookmark and upgraded Enlightenment, and persistent shared effects such as Spiked Gauntlets' +1 Power cost and Corruption's free Skills. Exclude shared charges another card can consume, including Pounce's next-Skill discount. Burst and Echo Form contribute no replay; Ringing Triangle contributes no Retain.
 
-**Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stage 4 compares their presence, costs and temporary keywords separately from Bound and card-specific availability. Stage 6 also includes turn-limited state.
+**Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stage 4 compares their presence, costs and temporary keywords separately from Bound and card-specific availability. Stage 5 also includes turn-limited state.
 
 Other comparisons use lasting properties. Apply the [scope exclusions](#scope-exclusions) throughout.
 
@@ -18,7 +18,7 @@ Evaluate stages 1–3 using each identity's unupgraded, unenchanted base propert
 
 ## Comparison order
 
-Evaluate stages 1–7 in order. Within a stage, compare its rows from top to bottom. The first strict difference decides; cards equal under all seven stages remain tied.
+Evaluate stages 1–6 in order. Within a stage, compare its rows from top to bottom. The first strict difference decides; cards equal under all six stages remain tied.
 
 ### 1. Category
 
@@ -66,7 +66,8 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 | 12a | Turn-effect presence | `none < turn effect`. |
 | 12b | Star cost with turn effects | If both have turn effects, compare resulting star costs: `(absent = 0) < X < 1 < 2 < ...`. |
 | 12c | Energy cost with turn effects | If both have turn effects, compare resulting energy costs: `0 < X < 1 < 2 < 3 < ...`, including Slither's actual cost. |
-| 13 | Temporary keywords | `none < temporary Retain / temporary Sly`. Either or both satisfy the present tier; stage 6 resolves their internal order. |
+| 13 | Temporary keywords | `none < temporary Retain < temporary Sly < both`. |
+| 14 | Slither card's lasting energy cost | Lower < higher. |
 
 Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage accumulated by The Scythe, Sovereign Blade, The Shot, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
@@ -74,27 +75,19 @@ Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage acc
 
 Rows 12b–12c recalculate costs with turn-limited modifiers included, preserving modifier application order. Row 13 covers Expertise's temporary Retain and Hand Trick's temporary Sly.
 
-### 5. Deferred tie-breaks
+Slither uses the resulting energy cost under [lasting properties](#property-scope), including before its first roll and after later overrides.
 
-If stages 1–4 tie, resolve the `=` group in [enchantment rank](#enchantment-rank) using its written order as `<`. Within the expired-enchantment member, use the original active enchantment order.
+### 5. Tie-breaks
 
-For example, `none = Spiral` lets upgrade level and later copy-state rows decide first; only a remaining tie uses the written `none < Spiral` fallback.
+Resolve the `=` group in [enchantment rank](#enchantment-rank) using its written order as `<`. Within the expired-enchantment member, use the original active enchantment order.
 
-### 6. State tie-breaks
-
-After deferred tie-breaks, use these deterministic tie-breakers in order:
-
-| Order | Property | Ascending rule |
-|---|---|---|
-| 1 | Temporary-keyword combination | temporary Retain < temporary Sly < both. Absence was resolved in stage 4. |
-| 2 | Slither card's lasting energy cost | Lower < higher; stage 3 retains its fixed Slither tier. |
-| 3 | Active cost modifiers | Compare star modifiers, then energy modifiers, using the rule below. |
+If still tied, compare active star modifiers, then energy modifiers.
 
 Compare modifier lists entry by entry in application order. For each pair, compare expiration (turn-or-play < turn-only < until-played < combat-long), operation (set < add), value ascending, then reduce-only flag (false < true); star modifiers use expiration and value. If all paired entries tie, compare list lengths, shorter first. Include active modifiers whose effects are currently masked; cleared modifiers and acquisition history stay outside this comparison.
 
-Slither uses the resulting energy cost under [lasting properties](#property-scope), including before its first roll and after later overrides. Equal current costs can diverge as their modifiers expire.
+Equal current costs can diverge as their modifiers expire.
 
-### 7. Origin
+### 6. Origin
 
 Combat-only cards rank before permanent cards and their linked combat instances.
 
