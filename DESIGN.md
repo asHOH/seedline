@@ -326,7 +326,7 @@ Derive independent uniform priorities from purpose + sharing scope + candidate I
 
 ### Persistent clocks
 
-**Main idea:** for uniform occurrence selection across opportunities, retain residual exponential clocks and correct eligible survivors after each random selection. The [persistent-selection](#persistent-selection), [combat-selection](#random-combat-card-selection) and [combat-card routing](#combat-card-routing) policies specify sharing and local clock rules.
+**Main idea:** for uniform occurrence selection across opportunities, retain exponential clocks and correct eligible survivors after each random selection. The [persistent-selection](#persistent-selection), [combat-selection](#random-combat-card-selection) and [combat-card routing](#combat-card-routing) policies specify sharing and local clock rules.
 
 **Address and state:** each logical occurrence starts with a clock `e_i = -ln(U_i)`, with independent `U_i ∈ (0, 1)` derived from purpose + sharing scope + selection key.
 
@@ -353,10 +353,10 @@ Use [persistent clocks](#persistent-clocks) for selection. An already randomly s
 
 **Routing boundary:** preserve display order. Apply effects at the clicked copies' pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
 
-**Batch association:** use the clock mechanism's eligibility snapshot and freeze presentation order with it. Only classes containing a clicked copy participate in reassignment and routing-clock updates.
+**Batch association:** capture presentation order with the eligibility snapshot. Only classes containing a clicked copy participate in reassignment and routing-clock updates.
 
-1. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in frozen presentation order.
-2. Assign each participating class's remaining logical occurrences in address order to its unclicked copies in frozen presentation order.
+1. In each participating class, pair selected occurrences in ascending pre-selection routing-clock order with clicked copies in presentation order.
+2. Assign each participating class's remaining logical occurrences in address order to its unclicked copies in presentation order.
 3. Apply effects after selection is complete.
 
 Commit the association permutation and clock update with the action. Renew each selected routing clock once if its logical occurrence survives, using its per-occurrence renewal count. Singleton and whole-class player selections follow this rule.
@@ -371,7 +371,7 @@ Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportun
 
 ### Addressing and state
 
-**Selection state:** an occurrence's address, card key and any local selection keys, [residual clocks and renewal counts](#persistent-clocks).
+**Selection state:** an occurrence's address, card key and any local selection keys, [clocks and renewal counts](#persistent-clocks).
 
 #### Shared addresses
 
@@ -409,7 +409,7 @@ The `m` cards acquired from a card reward offer receive keys `O/1…O/m`, using 
 
 Assign keys after picks commit and before deck-add hooks, using [pair-priority assignment](#pair-priority-assignment) with `purpose = card-key assignment` + `O`: card ID + copy number → key number. Number same-identity copies across the full offer in entry order before presentation swaps.
 
-Freeze keys per occurrence. Other new permanent cards use occurrence addresses; returns follow [lifetime rules](#out-of-combat-card-lifetime).
+Other new permanent cards use occurrence addresses; returns follow [lifetime rules](#out-of-combat-card-lifetime).
 
 #### Out-of-combat card lifetime
 
@@ -426,7 +426,7 @@ Freeze keys per occurrence. Other new permanent cards use occurrence addresses; 
 
 #### Combat-card selection state
 
-For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [persistent clocks](#persistent-clocks) with one frozen selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
+For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [persistent clocks](#persistent-clocks) with one fixed selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
 **At combat start:** before selection effects, use each card's [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling.
 
@@ -438,7 +438,7 @@ For combat [selection](#random-combat-card-selection) and [routing](#combat-card
 | Fixed token creation | Token ID + its creation ordinal in this combat. Count each new token of that identity admitted to combat once across all granting sources. |
 | Other grants | Granting-source ID + committed grant ordinal within that source for this combat + copy index. Copies of the source share its count. Assign batch indices in [processing order](#card-processing-order). |
 
-Pile movement and status or eligibility changes themselves preserve keys, residual clocks and renewal counts. A copy starts fresh. A transformation retires the input's combat state and initializes the replacement under the rules above.
+Pile movement and status or eligibility changes themselves preserve keys, clocks and renewal counts. A copy starts fresh. A transformation retires the input's combat state and initializes the replacement under the rules above.
 
 #### Potion effect opportunities
 
@@ -467,7 +467,7 @@ When a source rolls rarity, consume one value from its **rarity-roll sequence**;
 
 **Generation and lifetime:** potion/card identity and rarity-roll sequences generate on demand indefinitely, using independent RNGs for the specified source and pool partitions. Each newly generated potion/card identity entry is an independent uniform draw with replacement from its sequence's pool unless the source specifies otherwise, such as weighted or grouped generation. Only finite relic allocations [borrow](#borrowing).
 
-Apply the filtered-draw mechanism to identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [relic tail draws](#relic-tail-draws) and [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
+Apply [filtered draws](#filtered-draws) to identity sequences, including shop-batch duplicate filtering, without additional rarity rolls, except for [relic tail draws](#relic-tail-draws) and [Wongos's identity removal](#wongos). Skipped entries remain available to eligible draws and borrowing.
 
 Triple sequences retain each slot's rarity while rejecting duplicate identity candidates within that triple during generation. Other card sequences apply source-required duplicate exclusions through filtered draws.
 
@@ -521,7 +521,7 @@ Preserve display order and intentionally sequential effects; reward offers use t
 
 A transformation batch comprises the originals selected together.
 
-Generate replacements for selected originals in [identity-only order](CARD_ORDER.md#identity-only-order). Within each input identity, pair replacements in generation order with originals in frozen presentation order.
+Generate replacements for selected originals in [identity-only order](CARD_ORDER.md#identity-only-order). Within each input identity, pair replacements in generation order with originals in pre-transformation presentation order.
 
 ## Source policies — Rewards
 

@@ -6,17 +6,17 @@ Ranking for the [card processing order policy](DESIGN.md#card-processing-order).
 
 **Lasting properties** are current card properties with modifiers that survive turn boundaries until this instance's next play within the combat. Include card-specific effects such as Bookmark and upgraded Enlightenment, and persistent shared effects such as Spiked Gauntlets' +1 Power cost and Corruption's free Skills. Exclude shared charges another card can consume, including Pounce's next-Skill discount. Burst and Echo Form contribute no replay; Ringing Triangle contributes no Retain.
 
-**Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stage 4 compares their presence, costs and temporary keywords separately from Bound and card-specific availability. Stage 5 also includes turn-limited state.
+**Turn effects** expire at a turn boundary, such as unupgraded Enlightenment. Stages 4–5 include them explicitly.
 
 Other comparisons use lasting properties. Apply the [scope exclusions](#scope-exclusions) throughout.
 
 ## Identity-only order
 
-Evaluate stages 1–3 using each identity's unupgraded, unenchanted base properties, excluding instance state and combat effects. Resolve any remaining tie between distinct identities with stage 3's identity row; copies of the same identity remain tied.
+For [transformation batches](DESIGN.md#transformation-batches), evaluate stages 1–3 using each identity's unupgraded, unenchanted base properties, excluding instance state and combat effects. Break remaining ties between distinct identities with stage 3's identity row.
 
 ## Comparison order
 
-Evaluate stages 1–6 in order. Within a stage, compare its rows from top to bottom. The first strict difference decides; cards equal under all six stages remain tied.
+Compare stages 1–6 in order, reading rows from top to bottom. The first difference decides; cards equal under all six stages remain tied.
 
 ### 1. Category
 
@@ -26,7 +26,7 @@ Strike/Defend means starter identities. With replay >= 1, they promote to Other 
 
 Rank these Skills as **Other Attack**: Blade Dance, Bouncing Flask, Darkness, Deadly Poison, Death, End of Days, God Byrd, Knife Trap, No Escape, Oblivion, Outbreak, Snakebite, Tempest, The Bomb, The Moon, Zap.
 
-**Conditionals:** an authored category for setup-dependent payoffs, combo enablers and selected conditional discounts. The list below defines membership, which stays fixed as combat state changes.
+**Conditionals:** setup-dependent payoffs, combo enablers and selected conditional discounts. Membership follows this fixed list, regardless of combat state:
 
 | Pool | Conditional identities |
 |---|---|
@@ -46,16 +46,16 @@ Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promot
 
 ### 3. Within-category order
 
-Curses, Quests and Statuses use the authored identity lists below; all other categories use these rows.
+Curses, Quests and Statuses use the [identity ranks](#identity-and-rarity-ranks); all other categories use these rows.
 
 | Order | Property | Ascending rule |
 |---|---|---|
 | 1 | Retain | absent < present; includes qualifying inherent, enchanted and added Retain. |
 | 2 | Star cost | `(absent = 0) < X < 1 < 2 < ...` |
-| 3 | Rarity band | Below Rare < Rare or higher in the authored rarity rank. |
-| 4 | Energy cost | `0 < X < 1 < 2 < Slither < 3 < ...`; Slither always uses this fixed tier in this row. |
+| 3 | Rarity band | Below Rare < Rare or higher in the rarity rank. |
+| 4 | Energy cost | `0 < X < 1 < 2 < Slither < 3 < ...`; Slither uses this fixed tier. |
 | 5 | Draw effect | absent < present; an effect with zero amount still qualifies. Compile Driver and active Swift qualify; expired Swift contributes no draw. |
-| 6 | Rarity | Authored rarity order below. |
+| 6 | Rarity | [Rarity rank](#identity-and-rarity-ranks). |
 | 7 | Pool | character < colorless; Event and Token pools count as colorless. |
 | 8 | Identity | Fixed English alphabetical order, then card ID. |
 
@@ -65,9 +65,9 @@ Curses, Quests and Statuses use the authored identity lists below; all other cat
 |---|---|---|
 | 1 | Bound | `Bound < none`. |
 | 2 | Carried card value | Higher carried damage, Block or Aim ranks later; includes accumulated in-combat gains. Enchantment-owned bonuses use the enchantment rows. |
-| 3 | Enchantment rank | Authored enchantment order below. |
+| 3 | Enchantment rank | [Enchantment rank](#enchantment-rank). |
 | 4 | Enchantment amount | Lower < higher. |
-| 5 | Momentum's carried bonus | Within either Momentum rank, lower accumulated damage < higher. |
+| 5 | Momentum's carried bonus | Lower bonus < higher. |
 | 6 | Upgrade state | `unupgraded < temporarily downgraded < upgraded`; definitions below. |
 | 7 | Guilty combat count | Guilty: fewer combats completed < more. Ignore Dowsing's room progress. |
 | 8 | Ethereal | `none < Ethereal`. |
@@ -82,11 +82,11 @@ Curses, Quests and Statuses use the authored identity lists below; all other cat
 
 Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage accumulated by The Scythe, Sovereign Blade, The Shot, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
-**Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending; upgraded = currently upgraded. Exact current upgrade level breaks ties within the upgraded tier.
+**Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending. Exact current upgrade level breaks ties within the upgraded tier.
 
 Rows 12b–12c recalculate costs with turn-limited modifiers included, preserving modifier application order. Row 13 covers Expertise's temporary Retain and Hand Trick's temporary Sly.
 
-Slither uses the resulting energy cost under [lasting properties](#property-scope), including before its first roll and after later overrides.
+Row 14 uses Slither's resulting energy cost under [lasting properties](#property-scope), including before its first roll and after later overrides.
 
 ### 5. Tie-breaks
 
@@ -106,15 +106,13 @@ Combat-only cards rank before permanent cards and their linked combat instances.
 
 ## Identity and rarity ranks
 
-Usefulness motivated the initial Curse/Quest/Status ranking; comparisons follow the written rules.
-
 **Curses and Quests:** Bad Luck < Enthralled < Normality < Regret < Debt < Shame < Doubt < Decay < Writhe < Curse of the Bell < Greed < Injury < Quests < Guilty < Spore Mind < Poor Sleep < Ascender's Bane < Folly < Clumsy.
 
 **Quests (alphabetical):** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map.
 
 **Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed < Sadness < Dazed < Frantic Escape.
 
-**Rarity rank:** Basic < Peck < Trash Heap < Toric Toughness < Common < Other Token < Dingy Dagger (+0/+1) < Uncommon < Other Event A < Rare < Sovereign Blade < Other Event B < Ancient. Other Token includes every Token-rarity card except Sovereign Blade; Shiv and Soul share this tier. Slash-separated cards share a tier and continue to later comparisons.
+**Rarity rank:** Basic < Peck < Trash Heap < Toric Toughness < Common < Other Token < Dingy Dagger (+0/+1) < Uncommon < Other Event A < Rare < Sovereign Blade < Other Event B < Ancient. Other Token includes every Token-rarity card except Sovereign Blade.
 
 | Event tier | Identities |
 |---|---|
@@ -140,6 +138,4 @@ Exclude these encounter effects at every stage:
 | Tainted | Infested Prism's Vital Spark; Skill cards. |
 | Hex-derived Ethereal | Spectral Knight's Hex. |
 
-Galvanic and Vital Spark also affect new combat entries; each has one source enemy.
-
-**Scope limits:** Knowledge Demon's menu-only Status cards and multiplayer-only cards.
+**Excluded cards:** Knowledge Demon's menu-only Status cards and multiplayer-only cards.
