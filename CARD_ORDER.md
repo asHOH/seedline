@@ -35,7 +35,7 @@ Rank these Skills as **Other Attack**: Blade Dance, Bouncing Flask, Darkness, De
 | Regent | "Decisions, Decisions", Lunar Blast, Monologue, Radiate, Supermassive |
 | Necrobinder | Eidolon, Pull from Below, Sacrifice, Transfigure |
 | Defect | Barrage, Flak Cannon, Helix Drill, Multi-Cast, Quadcast, Signal Boost, Synchronize, Voltaic |
-| Fool | Bounce, Florescence, Growth, Harmonic Shield, Ki Verse, Nail, Quietus, Uproot, Wrest |
+| Fool | Bounce, Cho Limbs, Coda, Florescence, Growth, Harmonic Shield, Ki Verse, Nail, Quietus, Uproot, Wrest |
 | Colorless | Anointed, Beat Down, Gold Axe, Hand of Greed, Hidden Gem, Impatience, Mind Blast, Prolong, Restlessness |
 | Event | Clash, Dual Wield, Enlightenment, Entrench, Feeding Frenzy, Stack |
 | Token | Judgement, The Devil |
