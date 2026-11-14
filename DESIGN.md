@@ -53,6 +53,8 @@ The deviations below are shared across policies.
 
 **Vanilla deviation — SL 5↓(↓):** applies when changes remove planning decisions based on steering later outcomes through earlier consumption of shared randomness. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favored orb sequence for the next battle.
 
+This deviation applies implicitly wherever its definition holds.
+
 #### Within-room reroll loss
 
 **Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** fewer alternatives from replaying a room through:
@@ -1323,8 +1325,6 @@ Baseline: [combat generation and transformation mechanics](#combat-card-generati
 - Sequential draws and explicitly ordered returns, including All for One, preserve source order.
 
 Apply [combat-card routing](#combat-card-routing) to Oil's hand-entry assignment.
-
-The [steering deviation](#future-steering-loss) covers lost cross-combat steering of later Oil batches through earlier Confused/Slither rolls or Oil hand sizes.
 
 **[Reroll loss](#within-room-reroll-loss):** source/category partitions, X skipping and Confused/Slither overlap reuse.
 
