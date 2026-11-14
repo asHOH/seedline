@@ -92,13 +92,13 @@ Slither uses the resulting energy cost under [lasting properties](#property-scop
 
 Resolve the `=` group in [enchantment rank](#enchantment-rank) using its written order as `<`. Within the expired-enchantment member, use the original active enchantment order.
 
-If still tied, compare star effects, then energy effects:
+If still tied, compare stored star-modifier lists, then energy-modifier lists, in application order. Retain stored duplicates and overridden entries.
 
-1. Reduce equivalent histories to the same remaining effects, removing redundant repeats and permanent overrides. Preserve differences after play, turn end, upgrades and later cost changes.
-2. Keep effect order where it changes behavior; otherwise sort by the fields below.
-3. Compare lists entry by entry, shorter tied lists first.
+Compare records lexicographically: stars by `(expiration, value)`; energy by `(expiration, operation, value, reduce-only)`. Shorter tied lists rank first.
 
-**Fields:** expiration (`turn-or-play < turn-only < until-played < combat-long`), operation (`set < add`), value ascending, then reduce-only (`false < true`). Star effects use expiration and value.
+Use `turn-or-play < turn-only < until-played < combat-long`, `set < add`, ascending numeric values, and `false < true`.
+
+**Tradeoff:** ordering and [combat-routing equivalence](DESIGN.md#combat-card-routing) can depend on modifier history even when future cost behavior is identical, such as two `−1` modifiers versus one `−2` with the same expiration.
 
 ### 6. Origin
 
