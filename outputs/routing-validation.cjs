@@ -334,18 +334,18 @@ function rewardOffer(ids) {
     return {...card(entry, `entry/${entry}`, id), entry, duplicate};
   });
 }
-const pairPriority = (group, c, number) => clock('card-key assignment', group, c.game.id, c.duplicate, number);
-function acquireReward(group, picked, score = pairPriority) {
+const pairPriority = (offerAddress, c, number) => clock('card-key assignment', offerAddress, c.game.id, c.duplicate, number);
+function acquireReward(offerAddress, picked, score = pairPriority) {
   const acquired = clone(picked);
   assert.equal(new Set(acquired.map(c => c.logical.key)).size, acquired.length);
   const pairs = acquired.flatMap(c => Array.from({length: acquired.length}, (_, i) =>
-    ({c, number: i + 1, priority: score(group, c, i + 1)})));
+    ({c, number: i + 1, priority: score(offerAddress, c, i + 1)})));
   pairs.sort((a, b) => a.priority - b.priority || compare(a.c.game.id, b.c.game.id) ||
     a.c.duplicate - b.c.duplicate || a.number - b.number);
   const usedCards = new Set(), usedNumbers = new Set();
   for (const {c, number} of pairs) {
     if (usedCards.has(c) || usedNumbers.has(number)) continue;
-    c.logical = {...occurrence(c.logical.key, `${group}/${number}`), provenance: c.logical.provenance};
+    c.logical = {...occurrence(c.logical.key, `${offerAddress}/${number}`), provenance: c.logical.provenance};
     usedCards.add(c); usedNumbers.add(number);
   }
   assert.equal(usedCards.size, acquired.length);
@@ -410,7 +410,7 @@ for (const order of permutations(pairOffer)) {
     .map(c => c.logical.cardKey), ['tie/1', 'tie/2']);
 }
 const scores = {A: [4, 1], B: [2, 3]};
-const fixtureScore = (group, c, number) => scores[c.game.id][number - 1];
+const fixtureScore = (offerAddress, c, number) => scores[c.game.id][number - 1];
 const alone = acquireReward('fixture', [pairOffer[0]], fixtureScore);
 const together = acquireReward('fixture', pairOffer, fixtureScore);
 assert.equal(alone[0].logical.cardKey, 'fixture/1');
@@ -449,11 +449,11 @@ console.log(JSON.stringify({
     'progress distinctions', 'split/merge lifecycle and model replay', 'copy/transform occurrence lifetime',
     'random-target bypass', 'Tooth reconstruction', 'different-payoff potion departures', 'canonical batch additions including Claws',
     'reward key prefixes, duplicates and acquisition-order invariance', 'all card selection scopes and renewal',
-    'pair-priority ties and greedy collisions', 'group and reroll separation', 'frozen keys after removal and return',
+    'pair-priority ties and greedy collisions', 'offer and reroll separation', 'frozen keys after removal and return',
     'assignment before deck-add hooks', 'routed source-key shuffle invariance'],
   matchedNestedAgreement: `${nestedMatches}/6`, duplicateIdentitySelection: `${duplicateWins}/6`,
   independentOneStepMarginals: {fixedChoiceLaw, routedChoiceLaw},
   limits: ['abstract model only', 'production canonical ranking and rank-based shuffles are unmodeled',
-    'reward group addresses are supplied by fixtures', 'no game hooks or engine serialization',
+    'reward offer addresses are supplied by fixtures', 'no game hooks or engine serialization',
     'no production RNG or floating-point portability validation']
 }, null, 2));

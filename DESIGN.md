@@ -130,7 +130,7 @@ A source policy may cover:
 ### Items and rewards
 
 - **Generation / acquisition:** generation determines an item; acquisition means receiving it.
-- **Card reward offer:** cards offered together for selection. **Card slot:** one position within an offer.
+- **Card reward offer:** cards offered together for selection, including supplementary cards and alternative bundles. **Card slot:** one position within an offer.
 - **Reward skipping:** an acquisition opportunity ends with its reward unclaimed.
 - **Direct card addition:** a card added without an identity choice or an opportunity to skip after seeing it.
 - **Ordinary relics:** Common, Uncommon, Rare and Shop rarities.
@@ -153,7 +153,7 @@ A source policy may cover:
 - **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
 - **Occurrence address:** a logical occurrence's source ID, distinct for each copy.
-- **Card key:** a persistent ID aligning acquired cards across runs, used by selection and source-based shuffling.
+- **Card key:** a persistent card ID for selection and source-based shuffling.
 - **Selection key:** a candidate's ID for a selection purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
 - **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
@@ -320,9 +320,9 @@ Calculate each candidate's independent uniform priority `U_i ∈ (0, 1)` only at
 
 ### Pair-priority assignment
 
-**Scope:** match candidates to distinct slots. Source policies define candidate and slot IDs and any preliminary selection.
+Assign candidates to distinct slots.
 
-Give each candidate–slot pair an independent uniform priority from purpose + sharing scope + candidate ID + slot ID, excluding set sizes and enumeration order. Repeatedly assign the lowest-priority available pair and remove its candidate and slot, stopping when either set is empty. Break equal priorities by candidate ID, then slot ID.
+Derive independent uniform priorities from purpose + sharing scope + candidate ID + slot ID. Repeatedly assign the lowest-priority available pair, then remove its candidate and slot. Break ties by candidate ID, then slot ID.
 
 ### Persistent clocks
 
@@ -405,11 +405,11 @@ Cards with generation entries use their [entry addresses](#entry-addresses). Oth
 
 #### Card keys
 
-**Reward acquisitions:** a **reward group** `G` contains all options in one choice, including supplementary cards and alternative bundles; its source defines the [group address](#reward-group-addresses).
+The `m` cards acquired from a card reward offer receive keys `O/1…O/m`, using its [offer address](#reward-offer-addresses) `O`.
 
-After all picks commit, assign the `m` acquired cards keys `G/1…G/m` before deck-add hooks; an empty choice assigns none. Use [pair-priority assignment](#pair-priority-assignment) at `purpose = card-key assignment` + `G`, pairing card ID + duplicate-copy number with key number. Number copies within each identity across the full offer in entry order before presentation-only swaps.
+Assign keys after picks commit and before deck-add hooks, using [pair-priority assignment](#pair-priority-assignment) with `purpose = card-key assignment` + `O`: card ID + copy number → key number. Number same-identity copies across the full offer in entry order before presentation swaps.
 
-Freeze keys and retain occurrence addresses. Other new permanent cards use their occurrence addresses; returns retain existing state under the [lifetime rules](#out-of-combat-card-lifetime).
+Freeze keys per occurrence. Other new permanent cards use occurrence addresses; returns follow [lifetime rules](#out-of-combat-card-lifetime).
 
 #### Out-of-combat card lifetime
 
@@ -703,17 +703,17 @@ Lasting Candy and The Future of Potions share own-character Uncommon and Rare Po
 - **Lasting Candy:** separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback; boss triggers request Rare.
 - **The Future of Potions:** request the option's rarity; Attack/Skill identities use event RNG addressed by rarity and type.
 
-#### Reward group addresses
+#### Reward offer addresses
 
-Address each [reward group](#card-keys) before presentation:
+Address each card reward offer before presentation:
 
-| Reward | Group address `G` |
+| Reward offer | Offer address `O` |
 |---|---|
-| Backed by one shared triple | Triple sequence address + triple index, including expanded pools. |
-| Other rewards starting with a shared generation entry | First offered entry's original address, frozen before presentation-only swaps. |
+| Backed by one shared triple | Triple sequence address + triple index. |
+| Other rewards starting with a shared generation entry | First offered entry's original address. |
 | Event-only rewards, including Scroll Boxes' triple-Claw branch | Source opportunity address + reward-choice ordinal within it + reroll ordinal. |
 
-Scroll Boxes' ordinary branch uses its Common triple for both bundles. Sea Glass combines its three generation batches into one group; Lasting Candy belongs to its parent reward. Rerolls use newly consumed entries or a distinct reroll ordinal; taking or skipping cards leaves group addressing unchanged.
+Scroll Boxes' ordinary bundles use their Common triple's offer address. Sea Glass's three batches form one offer; Lasting Candy joins its parent offer.
 
 #### Upgrade rolls
 
@@ -818,7 +818,7 @@ Own-character random-rarity offers share one extra-Rare identity sequence per ch
 
 Replace the first Common in offer entry order, or the first Uncommon if no Common remains, for each extra Rare. Apply this across the entire offer, including Brain Leech's two event-generated cards: `R,U,U | C,C` becomes `R,U,U | R,C` for two Rares. Replaced companions remain consumed.
 
-**Replacement state:** identity and [upgrade roll](#upgrade-rolls) come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership and its reward group.
+**Replacement state:** identity and [upgrade roll](#upgrade-rolls) come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership and its offer address.
 
 **Accepted tradeoff:** prior Rare counts and companion composition can weaken alignment between offers built from the same triple.
 
@@ -1193,10 +1193,10 @@ Freeze the card's ordering properties at permanent removal and retain its entry 
 
 #### Source-based assignment — Acts 1–2
 
-Use the occurrence's [card key](#card-keys) for:
+Use [card keys](#card-keys) for:
 
 - Other starting Basics.
-- All newly acquired reward cards, including supplementary cards and bundles.
+- New reward cards, including supplementary cards and bundles.
 - [Transformations and direct additions](#permanent-transformations-and-direct-card-additions) with shared generation entries, allowing only unfiltered, rarity-only or transformation-filter-only generation.
 
 Copies enter the remaining group.
@@ -1267,7 +1267,7 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 **Intent:** align theft targets across decks.
 
-Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = Thieving Hopper` + the linked permanent-deck card's card key.
+Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = Thieving Hopper` + the linked permanent-deck [card key](#card-keys).
 
 **[Reroll loss](#within-room-reroll-loss):** pile order and other card-selection rolls.
 
