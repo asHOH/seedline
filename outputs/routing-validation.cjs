@@ -4,15 +4,14 @@ const assert = require('node:assert/strict');
 const {createHash} = require('node:crypto');
 const clone = value => JSON.parse(JSON.stringify(value));
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const scopes = ['upgrade', 'enchant', 'remove', 'departure', 'randomUpgrade', 'bridge', 'sacrifice'];
+const scopes = ['upgrade', 'enchant', 'remove', 'departure', 'randomUpgrade', 'randomDowngrade', 'bridge', 'sacrifice'];
 const digest = (...address) => createHash('sha256').update(JSON.stringify(address)).digest();
 const clock = (...address) => -Math.log((digest(...address).readUIntBE(0, 6) + 0.5) / 2 ** 48);
-const progress = {GeneticAlgorithm: 'IncreasedBlock', TheScythe: 'IncreasedDamage', Dowsing: 'RoomsEntered', Guilty: 'CombatsSeen'};
+const progress = {GeneticAlgorithm: 'IncreasedBlock', TheScythe: 'IncreasedDamage', ShowOff: 'IncreasedAim', Dowsing: 'RoomsEntered', Guilty: 'CombatsSeen'};
 
-function occurrence(key, sourceAliases = {}) {
-  const aliases = {tooth: `anchor/${key}`, bracelet: `anchor/${key}`, bridge: `anchor/${key}`, ...sourceAliases};
-  return {key, provenance: ['offer', key], aliases,
-    clocks: Object.fromEntries(scopes.map(scope => [scope, clock(aliases[scope] ?? key, scope, 0)])),
+function occurrence(key, cardKey = key) {
+  return {key, provenance: ['offer', key], cardKey,
+    clocks: Object.fromEntries(scopes.map(scope => [scope, clock(scope, cardKey, 0)])),
     counts: Object.fromEntries(scopes.map(scope => [scope, 0]))};
 }
 function card(position, key, id = 'Strike', upgrade = 0) {
@@ -24,14 +23,13 @@ function equivalence(c) {
     [c.game.upgrade, c.game.enchant?.id ?? null, c.game.enchant?.amount ?? null,
       c.game.props[progress[c.game.id]] ?? null])]);
 }
-const selectionKey = (logical, scope) => logical.aliases[scope] ?? logical.key;
 function priority(scope) {
   return (a, b) => a.clocks[scope] - b.clocks[scope] ||
-    compare(selectionKey(a, scope), selectionKey(b, scope)) ||
+    compare(a.cardKey, b.cardKey) ||
     compare(a.key, b.key);
 }
 function renew(logical, scope) {
-  logical.clocks[scope] = clock(selectionKey(logical, scope), scope, ++logical.counts[scope]);
+  logical.clocks[scope] = clock(scope, logical.cardKey, ++logical.counts[scope]);
 }
 function logicalView(cards) {
   return cards.map(c => ({game: equivalence(c), logical: c.logical})).sort((a, b) => compare(a.logical.key, b.logical.key));
@@ -95,9 +93,9 @@ function choices(n) {
   return result;
 }
 
-const tiedAliases = [occurrence('a', {upgrade: 'z'}), occurrence('b', {upgrade: 'a'}), occurrence('c', {upgrade: 'a'})];
-tiedAliases.forEach(c => { c.clocks.upgrade = 1; });
-for (const order of permutations(tiedAliases)) {
+const tiedKeys = [occurrence('a', 'z'), occurrence('b', 'b'), occurrence('c', 'c')];
+tiedKeys.forEach(c => { c.clocks.upgrade = 1; });
+for (const order of permutations(tiedKeys)) {
   assert.deepEqual(order.sort(priority('upgrade')).map(c => c.key), ['b', 'c', 'a']);
 }
 
@@ -139,7 +137,7 @@ for (const scope of ['enchant', 'remove', 'departure']) {
     assert.deepEqual(cards[4], originals[4]);
     for (const c of cards) {
       const original = originals.find(o => o.logical.key === c.logical.key).logical;
-      assert.deepEqual(c.logical.aliases, original.aliases);
+      assert.equal(c.logical.cardKey, original.cardKey);
       assert.deepEqual(c.logical.provenance, original.provenance);
       for (const other of scopes.filter(s => s !== scope)) {
         assert.equal(c.logical.clocks[other], original.clocks[other]);
@@ -224,13 +222,13 @@ for (const last of [false, true]) for (const reload of [false, true]) assert.dee
 function tooth(clicked, reload) {
   let cards = Array.from({length: 6}, (_, i) => card(i, `tooth/${i}`, i < 3 ? 'Strike' : 'Defend'));
   const targets = route(cards, clicked, 'upgrade');
-  let stored = targets.map(c => ({game: clone(c.game), logical: c.logical, returnPriority: clock(c.logical.aliases.tooth, 'return')}));
+  let stored = targets.map(c => ({game: clone(c.game), logical: c.logical, returnPriority: clock('tooth', c.logical.cardKey)}));
   const saved = clone(stored);
   cards = cards.filter(c => !targets.includes(c));
   const returns = [];
   while (stored.length) {
     if (reload) { stored = clone(stored); cards = clone(cards); }
-    stored.sort((a, b) => a.returnPriority - b.returnPriority || compare(a.logical.key, b.logical.key));
+    stored.sort((a, b) => a.returnPriority - b.returnPriority || compare(a.logical.cardKey, b.logical.cardKey));
     const next = stored.shift();
     const returned = card(100 + returns.length, 'unused');
     returned.game = clone(next.game); returned.game.upgrade++;
@@ -286,15 +284,11 @@ route(history, [0], 'upgrade', true, c => c.position !== 1);
 assert.equal(history[1].logical.clocks.upgrade, 6);
 assert.equal(history[2].logical.clocks.upgrade, 2);
 
-// Reproduced boundary failures are evidence of open work, not passing guarantees.
-const shuffleInputs = [0, 1].map(clicked => {
-  const cards = [card(0, 'a'), card(1, 'b'), card(2, 'c', 'Defend')];
-  act(cards, [clicked], 'upgrade', c => { c.game.upgrade++; });
-  // Any common permutation keeps the upgraded card at different output positions.
-  return [2, 0, 1].map(i => equivalence(cards[i]));
-});
-assert.notDeepEqual(shuffleInputs[0], shuffleInputs[1]);
-
+// Source-key shuffles follow routed logical associations, independently of physical order.
+function sourceShuffle(cards) {
+  return [...cards].sort((a, b) => clock('shuffle', 0, a.logical.cardKey) - clock('shuffle', 0, b.logical.cardKey) ||
+    compare(a.logical.cardKey, b.logical.cardKey)).map(equivalence);
+}
 // Sources without generation entries allocate addresses after gameplay properties, including Claws inheritance.
 const additions = Array.from({length: 6}, (_, i) => card(i, `old/${i}`, i < 4 ? 'Maul' : 'GeneticAlgorithm'));
 additions[2].game.upgrade = 1;
@@ -302,14 +296,14 @@ additions[3].game.enchant = {id: 'Swift', amount: 2};
 additions[4].game.props.IncreasedBlock = 4;
 additions[5].game.props.IncreasedBlock = 5;
 const additionClasses = [...new Set(additions.map(equivalence))];
-let canonicalAdditionCases = 0, sourceAliasCases = 0, rewardAcquisitionCases = 0;
+let canonicalAdditionCases = 0;
 // Test rankings exercise order independence without choosing the production usefulness ranking.
 for (const ranked of [additionClasses, [...additionClasses].reverse(), [...additionClasses.slice(2), ...additionClasses.slice(0, 2)]]) {
   const rank = new Map(ranked.map((key, i) => [key, i]));
   function initializeBatch(inputs) {
     const result = clone(inputs);
     [...result].sort((a, b) => rank.get(equivalence(a)) - rank.get(equivalence(b)))
-      .forEach((c, i) => { c.logical = occurrence(c.generationEntry ? JSON.stringify(c.generationEntry) : `addition/batch/0/${i}`, c.sourceAliases); });
+      .forEach((c, i) => { c.logical = occurrence(c.generationEntry ? JSON.stringify(c.generationEntry) : `addition/batch/0/${i}`); });
     return result;
   }
   const baseline = logicalView(initializeBatch(additions));
@@ -320,6 +314,7 @@ for (const ranked of [additionClasses, [...additionClasses].reverse(), [...addit
     for (const c of added) {
       assert.deepEqual(c.game, additions[c.position].game);
       assert.equal(c.acquired, additions[c.position].acquired);
+      assert.equal(c.logical.cardKey, c.logical.key);
       assert(Object.values(c.logical.counts).every(count => count === 0));
     }
     const chosen = [...added].sort((a, b) => priority('bridge')(a.logical, b.logical))[0];
@@ -328,56 +323,137 @@ for (const ranked of [additionClasses, [...additionClasses].reverse(), [...addit
     assert.deepEqual(logicalView(clone(added)), baseline);
     canonicalAdditionCases++;
   }
-  // Reward-choice aliases apply to acquisitions permitting at most one card.
-  for (const original of additions) {
-    const input = {...clone(original), generationEntry: ['reward', original.position],
-      sourceAliases: {tooth: 'reward/0', bracelet: 'reward/0', bridge: 'reward/0'}};
-    const added = initializeBatch([input])[0];
-    assert.deepEqual(added.game, original.game);
-    assert.deepEqual(added.generationEntry, input.generationEntry);
-    assert.deepEqual(added.logical.aliases, input.sourceAliases);
-    assert.equal(added.logical.clocks.bridge, clock('reward/0', 'bridge', 0));
-    renew(added.logical, 'bridge');
-    assert.equal(added.logical.clocks.bridge, clock('reward/0', 'bridge', 1));
-    assert.equal(added.logical.counts.bridge, 1);
-    sourceAliasCases++;
-  }
-  // Acquiring different subsets or permuting tied copies preserves complete source-key associations.
-  const offered = additions.slice(0, 2).map((c, i) => {
-    const generationEntry = ['reward', i], key = JSON.stringify(generationEntry);
-    return {...clone(c), generationEntry, sourceAliases: {tooth: key, bracelet: key, bridge: key}};
-  });
-  const acquiredBaseline = initializeBatch(offered);
-  for (const indices of choices(offered.length)) {
-    const acquired = initializeBatch(indices.map(i => offered[i]));
-    for (const c of acquired) {
-      assert.deepEqual(c.logical, acquiredBaseline.find(b => b.position === c.position).logical);
-      assert.deepEqual(c.generationEntry, offered[c.position].generationEntry);
-    }
-    rewardAcquisitionCases++;
-  }
-  act(acquiredBaseline, [0], 'upgrade', c => { c.game.upgrade++; });
-  const expectedBridge = [...acquiredBaseline].sort((a, b) => priority('bridge')(a.logical, b.logical))[0];
-  for (const order of permutations(offered)) for (const clicked of [0, 1]) {
-    const acquired = initializeBatch(order);
-    act(acquired, [clicked], 'upgrade', c => { c.game.upgrade++; });
-    assert.deepEqual(logicalView(acquired), logicalView(acquiredBaseline));
-    const bridge = [...acquired].sort((a, b) => priority('bridge')(a.logical, b.logical))[0];
-    assert.equal(equivalence(bridge), equivalence(expectedBridge));
-    rewardAcquisitionCases++;
-  }
 }
 
+// Freeze duplicate numbers over the whole offer before presentation swaps or picks.
+function rewardOffer(ids) {
+  const counts = new Map();
+  return ids.map((id, entry) => {
+    const duplicate = (counts.get(id) ?? 0) + 1;
+    counts.set(id, duplicate);
+    return {...card(entry, `entry/${entry}`, id), entry, duplicate};
+  });
+}
+const pairPriority = (group, c, number) => clock('card-key assignment', group, c.game.id, c.duplicate, number);
+function acquireReward(group, picked, score = pairPriority) {
+  const acquired = clone(picked);
+  assert.equal(new Set(acquired.map(c => c.logical.key)).size, acquired.length);
+  const pairs = acquired.flatMap(c => Array.from({length: acquired.length}, (_, i) =>
+    ({c, number: i + 1, priority: score(group, c, i + 1)})));
+  pairs.sort((a, b) => a.priority - b.priority || compare(a.c.game.id, b.c.game.id) ||
+    a.c.duplicate - b.c.duplicate || a.number - b.number);
+  const usedCards = new Set(), usedNumbers = new Set();
+  for (const {c, number} of pairs) {
+    if (usedCards.has(c) || usedNumbers.has(number)) continue;
+    c.logical = {...occurrence(c.logical.key, `${group}/${number}`), provenance: c.logical.provenance};
+    usedCards.add(c); usedNumbers.add(number);
+  }
+  assert.equal(usedCards.size, acquired.length);
+  return acquired;
+}
+const keySet = cards => cards.map(c => c.logical.cardKey).sort(compare);
+let rewardAcquisitionCases = 0;
+// Entries may come from triples, supplements, bundles, or multiple generation batches.
+for (const ids of [['A', 'B', 'C', 'Power'], ['Claw', 'Claw', 'Claw', 'B']]) {
+  const offered = rewardOffer(ids);
+  const before = clone(offered);
+  for (const picks of choices(offered.length)) {
+    const selected = picks.map(i => offered[i]);
+    const baseline = acquireReward('reward/0', selected);
+    assert.deepEqual(keySet(baseline), picks.map((_, i) => `reward/0/${i + 1}`));
+    for (const order of permutations(offered)) {
+      // Vary both collection enumeration and displayed positions, retaining entry identity.
+      const displayed = order.map((c, position) => ({...c, position}));
+      const acquired = acquireReward('reward/0', displayed.filter(c => picks.includes(c.entry)));
+      assert.deepEqual(logicalView(acquired), logicalView(baseline));
+      assert.deepEqual(logicalView(clone(acquired)), logicalView(baseline));
+      for (const c of acquired) {
+        const original = offered[c.entry];
+        assert.equal(c.logical.key, original.logical.key);
+        assert.deepEqual(c.logical.provenance, original.logical.provenance);
+        assert.deepEqual(c.game, original.game);
+        assert.equal(c.duplicate, original.duplicate);
+        for (const scope of scopes) {
+          assert.equal(c.logical.clocks[scope], clock(scope, c.logical.cardKey, 0));
+          renew(c.logical, scope);
+          assert.equal(c.logical.clocks[scope], clock(scope, c.logical.cardKey, 1));
+          assert.equal(c.logical.counts[scope], 1);
+        }
+      }
+      rewardAcquisitionCases++;
+    }
+  }
+  assert.deepEqual(offered, before);
+}
+
+// All post-acquisition purposes share correspondence, while their randomness stays separate.
+const singleOffer = rewardOffer(['A', 'B', 'C']);
+const singleStates = singleOffer.map(c => acquireReward('single', [c])[0].logical);
+for (const logical of singleStates) {
+  assert.deepEqual(logical.clocks, singleStates[0].clocks);
+  for (const purpose of ['tooth', 'bracelet', 'hopper', 'shuffle']) {
+    assert.equal(clock(purpose, logical.cardKey), clock(purpose, singleStates[0].cardKey));
+  }
+}
+assert.equal(new Set(['tooth', 'bracelet', 'hopper', 'shuffle'].map(p => clock(p, singleStates[0].cardKey))).size, 4);
+const rerolled = acquireReward('single/reroll/1', [singleOffer[0]])[0];
+assert.notEqual(rerolled.logical.cardKey, singleStates[0].cardKey);
+assert.notDeepEqual(rerolled.logical.clocks, singleStates[0].clocks);
+assert.deepEqual(acquireReward('skipped', [], () => assert.fail('Skipped rewards consume no pair priorities')), []);
+const seaGlass = acquireReward('sea-glass', rewardOffer(Array.from({length: 15}, (_, i) => `Card${i}`)));
+assert.deepEqual(keySet(seaGlass), Array.from({length: 15}, (_, i) => `sea-glass/${i + 1}`).sort(compare));
+
+// Exact tie and greedy-collision fixtures; every completed choice owns the full key prefix.
+const pairOffer = rewardOffer(['A', 'B']);
+for (const order of permutations(pairOffer)) {
+  assert.deepEqual(acquireReward('tie', order, () => 0).sort((a, b) => compare(a.game.id, b.game.id))
+    .map(c => c.logical.cardKey), ['tie/1', 'tie/2']);
+}
+const scores = {A: [4, 1], B: [2, 3]};
+const fixtureScore = (group, c, number) => scores[c.game.id][number - 1];
+const alone = acquireReward('fixture', [pairOffer[0]], fixtureScore);
+const together = acquireReward('fixture', pairOffer, fixtureScore);
+assert.equal(alone[0].logical.cardKey, 'fixture/1');
+assert.equal(together[0].logical.cardKey, 'fixture/2');
+assert.equal(together[1].logical.cardKey, 'fixture/1');
+// Later removal leaves the survivor's key intact; returning an existing occurrence bypasses assignment.
+const survivor = act(clone(together), [1], 'remove', () => {}, true)[0];
+renew(survivor.logical, 'bridge');
+const returned = card(7, 'unused-return');
+returned.game = clone(survivor.game);
+returned.logical = clone(survivor.logical);
+assert.deepEqual(returned.logical, survivor.logical);
+assert.equal(returned.logical.cardKey, 'fixture/2');
+const copied = card(8, 'copy/source'); copied.game = clone(survivor.game);
+assert.equal(copied.logical.cardKey, 'copy/source');
+assert.notEqual(copied.logical.cardKey, survivor.logical.cardKey);
+
+// Complete assignment precedes sequential deck-add hooks, which see final keys and clocks.
+const hookRecords = together.map(c => ({key: c.logical.cardKey, clock: c.logical.clocks.randomUpgrade}));
+assert.deepEqual(hookRecords, [{key: 'fixture/2', clock: clock('randomUpgrade', 'fixture/2', 0)},
+  {key: 'fixture/1', clock: clock('randomUpgrade', 'fixture/1', 0)}]);
+// A bundle of identical cards keeps all three keys; later equivalent-copy clicks route whole state.
+const claws = rewardOffer(['Claw', 'Claw', 'Claw']);
+const routedRewards = [0, 1, 2].map(clicked => {
+  const acquired = acquireReward('scroll', claws);
+  act(acquired, [clicked], 'upgrade', c => { c.game.upgrade++; });
+  return {state: logicalView(acquired), shuffle: sourceShuffle(acquired)};
+});
+assert.deepEqual(routedRewards[0], routedRewards[1]);
+assert.deepEqual(routedRewards[0], routedRewards[2]);
+
 console.log(JSON.stringify({
-  exhaustiveCases, canonicalAdditionCases, sourceAliasCases, rewardAcquisitionCases,
+  exhaustiveCases, canonicalAdditionCases, rewardAcquisitionCases,
   checks: ['batch/countdown oracle', 'click and enumeration invariance', 'visible selected positions',
     'ties, cancellation, singleton and whole-class consumption', 'scope isolation and retirement',
     'progress distinctions', 'split/merge lifecycle and model replay', 'copy/transform occurrence lifetime',
     'random-target bypass', 'Tooth reconstruction', 'different-payoff potion departures', 'canonical batch additions including Claws',
-    'single-card reward aliases through initialization and renewal', 'reward subset and tied-alias acquisition invariance'],
+    'reward key prefixes, duplicates and acquisition-order invariance', 'all card selection scopes and renewal',
+    'pair-priority ties and greedy collisions', 'group and reroll separation', 'frozen keys after removal and return',
+    'assignment before deck-add hooks', 'routed source-key shuffle invariance'],
   matchedNestedAgreement: `${nestedMatches}/6`, duplicateIdentitySelection: `${duplicateWins}/6`,
   independentOneStepMarginals: {fixedChoiceLaw, routedChoiceLaw},
-  reproducedOpenBoundaries: ['physical-order opening shuffle'],
-  limits: ['abstract model only', 'production canonical ranking remains open', 'no game hooks or engine serialization',
+  limits: ['abstract model only', 'production canonical ranking and rank-based shuffles are unmodeled',
+    'reward group addresses are supplied by fixtures', 'no game hooks or engine serialization',
     'no production RNG or floating-point portability validation']
 }, null, 2));
