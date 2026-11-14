@@ -289,6 +289,43 @@ function sourceShuffle(cards) {
   return [...cards].sort((a, b) => clock('shuffle', 0, a.logical.cardKey) - clock('shuffle', 0, b.logical.cardKey) ||
     compare(a.logical.cardKey, b.logical.cardKey)).map(equivalence);
 }
+
+// Synthetic ranks isolate tied-position assignment from the production usefulness ranking.
+function processingPositions(cards, rank, direction = 1) {
+  return [...cards].sort((a, b) => direction * (rank(a) - rank(b)) || compare(a.logical.key, b.logical.key));
+}
+const tiedStrikes = [card(0, 'a'), card(1, 'b')];
+tiedStrikes.forEach((c, i) => {
+  c.logical.cardKey = ['z', 'y'][i];
+  c.logical.clocks.exhaust = [0.1, 0.9][i];
+});
+const higherRank = card(2, 'c', 'Defend', 1);
+for (const order of permutations([...tiedStrikes, higherRank])) {
+  for (const direction of [1, -1]) {
+    const positions = processingPositions(order, c => c.game.upgrade, direction);
+    assert.deepEqual(positions.map(c => c.logical.key), direction === 1 ? ['a', 'b', 'c'] : ['c', 'a', 'b']);
+    positions.forEach(c => assert.strictEqual(c, order.find(x => x.logical.key === c.logical.key)));
+  }
+}
+for (const order of permutations(tiedStrikes)) {
+  // Shuffle priorities draw one Strike; Armaments upgrades it before the other is drawn.
+  const cards = clone(order), before = logicalView(cards);
+  const positions = processingPositions(cards, () => 0);
+  assert.deepEqual(logicalView(cards), before);
+  const drawn = positions.map((c, i) => ({c, priority: [0.8, 0.2][i]})).sort((a, b) => a.priority - b.priority);
+  drawn[0].c.game.upgrade++;
+  const exhausted = [...cards].sort((a, b) => priority('exhaust')(a.logical, b.logical))[0];
+  assert.equal(exhausted.logical.key, 'a');
+  assert.equal(exhausted.game.upgrade, 0);
+
+  // Freeze unordered hand-entry positions, then assign distinct Oil costs to the same occurrences.
+  const hand = clone(order), logicalBefore = logicalView(hand);
+  const entries = processingPositions(hand, () => 0);
+  assert.deepEqual(logicalView(hand), logicalBefore);
+  entries.forEach((c, i) => { c.oilCost = [0, 3][i]; });
+  assert.deepEqual(hand.sort((a, b) => compare(a.logical.key, b.logical.key)).map(c => c.oilCost), [0, 3]);
+}
+
 // Sources without generation entries allocate addresses after gameplay properties, including Claws inheritance.
 const additions = Array.from({length: 6}, (_, i) => card(i, `old/${i}`, i < 4 ? 'Maul' : 'GeneticAlgorithm'));
 additions[2].game.upgrade = 1;
@@ -450,10 +487,11 @@ console.log(JSON.stringify({
     'random-target bypass', 'Tooth reconstruction', 'different-payoff potion departures', 'canonical batch additions including Claws',
     'reward key prefixes, duplicates and acquisition-order invariance', 'all card selection scopes and renewal',
     'pair-priority ties and greedy collisions', 'offer and reroll separation', 'frozen keys after removal and return',
-    'assignment before deck-add hooks', 'routed source-key shuffle invariance'],
+    'assignment before deck-add hooks', 'routed source-key shuffle invariance',
+    'tied shuffle positions through upgrade and exhaust', 'tied Oil hand-entry positions'],
   matchedNestedAgreement: `${nestedMatches}/6`, duplicateIdentitySelection: `${duplicateWins}/6`,
   independentOneStepMarginals: {fixedChoiceLaw, routedChoiceLaw},
-  limits: ['abstract model only', 'production canonical ranking and rank-based shuffles are unmodeled',
+  limits: ['abstract model only', 'production canonical ranking and full rank-based shuffles are unmodeled',
     'reward offer addresses are supplied by fixtures', 'no game hooks or engine serialization',
     'no production RNG or floating-point portability validation']
 }, null, 2));

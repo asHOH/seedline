@@ -16,7 +16,7 @@ For [transformation batches](DESIGN.md#transformation-batches), evaluate stages 
 
 ## Comparison order
 
-Compare stages 1–6 in order, reading rows from top to bottom. The first difference decides; cards equal under all six stages remain tied.
+Compare stages 1–6 from top to bottom. The first difference decides rank; ties follow the [card processing order policy](DESIGN.md#card-processing-order).
 
 ### 1. Category
 

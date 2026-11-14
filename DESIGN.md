@@ -509,11 +509,9 @@ Within each equivalence class, route the logical occurrence as a unit, including
 
 #### Card processing order
 
-**Intent:** improve same-seed consistency across different card sets and keep unordered batch outcomes independent of click or enumeration order.
-
 Apply the [identity and gameplay-relevant status ranking](CARD_ORDER.md) to random-operation processing of unordered card batches. Source policies specify applicable comparisons.
 
-Preserve ties regardless of selection state, acquisition order or physical position; retain every copy. Tied-copy permutations must leave gameplay outcomes and subsequent random state equivalent under [card equivalence](#card-equivalence).
+Order tied existing occurrences by ascending [occurrence address](#card-occurrence-addresses), keeping their state attached.
 
 Preserve display order and intentionally sequential effects; reward offers use their entry order before presentation-only swaps.
 
