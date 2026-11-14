@@ -1260,7 +1260,7 @@ Address sequences by `purpose = targeting` + [combat address](#combat-addresses)
 
 | Sharing group | Sources |
 |---|---|
-| Forgotten Soul | All Forgotten Soul selections. |
+| Forgotten Soul / Obsidian Vice | All selections from either relic. |
 | Lightning | All Lightning copies, passive activations and evokes. |
 | Direct damage | Remaining effects that inherently cause damage, poison, or immediate HP loss, even at zero damage; includes power and relic damage, Knife Trap and auto-played damaging cards (including through Beat Down). |
 | Other | Remaining effects, including Countdown and automatically played debuffs. |
