@@ -12,10 +12,12 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.TestSupport;
 using MegaCrit.Sts2.Core.Unlocks;
 using MegaCrit.Sts2.Core.Context;
@@ -223,11 +225,54 @@ public static partial class Checks
                 .Select(c => CardOccurrences.Info(c).Address).ToArray();
             Assert(copyAddresses.All(a => a.StartsWith("[\"card copy\",\"REFLECTIONS\",0,", StringComparison.Ordinal)),
                 "all Reflections copies share one committed source opportunity through asynchronous waits");
+            RunManager.Instance.CleanUp();
+            await CheckTransformationReload();
         }
         finally
         {
             RunManager.Instance.CleanUp();
             TestMode.IsOn = previous;
         }
+    }
+
+    private static async Task CheckTransformationReload()
+    {
+        var run = StartGoldRun();
+        var player = run.Players[0];
+        var originals = player.Deck.Cards.Where(c => c.IsTransformable).Take(3).ToArray();
+        var retired = originals.Select(c => CardOccurrences.Info(c).Address).ToHashSet();
+        var random = player.PlayerRng.Transformations;
+        var before = random.ToSerializable().counter;
+        var replacements = (await CardCmd.Transform(originals.Take(2).Select(c => new CardTransformation(c)), random,
+            CardPreviewStyle.None)).Select(r => r.cardAdded).ToArray();
+        player.AddRelicInternal(ModelDb.Relic<MoltenEgg>().ToMutable());
+        var fixedCard = run.CreateCard<Bash>(player);
+        var fixedResult = (await CardCmd.Transform(originals[2], fixedCard, CardPreviewStyle.None))!.Value.cardAdded;
+        Assert(replacements.Length == 2 && random.ToSerializable().counter == before + 2 &&
+            fixedResult is Bash && fixedResult.IsUpgraded && !ReferenceEquals(fixedCard, fixedResult),
+            "random transformations retain vanilla draw consumption and fixed transformations retain egg modifiers");
+        Assert(replacements.Append(fixedResult).All(c => CardOccurrences.Find(c) is { } info &&
+            info.Address == info.Key && !retired.Contains(info.Address)) &&
+            CardOccurrences.Info(fixedCard).Address == CardOccurrences.Info(fixedResult).Address,
+            "random and fixed transformation replacements receive fresh occurrence metadata before modifier cloning");
+        var expected = player.Deck.Cards.Select(c => (c.Id, c.CurrentUpgradeLevel,
+            CardOccurrences.Info(c).Address, CardOccurrences.Info(c).Key)).ToArray();
+        Assert(expected.Select(c => c.Address).Distinct().Count() == expected.Length &&
+            expected.All(c => !retired.Contains(c.Address)), "transformed originals are retired from the live deck");
+
+        await SaveManager.Instance.SaveRun(null, saveProgress: false);
+        var loaded = SaveManager.Instance.LoadRunSave();
+        Assert(loaded.Success && loaded.SaveData != null, "transformed deck passes checkpoint write and validation");
+        RunManager.Instance.CleanUp();
+        run = RunState.FromSerializable(loaded.SaveData!);
+        await RunManager.Instance.SetUpSavedSingleplayer(run, loaded.SaveData!);
+        player = run.Players[0];
+        Assert(expected.SequenceEqual(player.Deck.Cards.Select(c => (c.Id, c.CurrentUpgradeLevel,
+            CardOccurrences.Info(c).Address, CardOccurrences.Info(c).Key))),
+            "reload preserves transformed identities, upgrades, deck order, occurrences and keys");
+        await CardCmd.TransformToRandom(player.Deck.Cards.First(c => c.IsTransformable), player.PlayerRng.Transformations,
+            CardPreviewStyle.None);
+        Assert(RunCheckpoints.Encode(RunManager.Instance.ToSave(null)).Length > 0,
+            "transformation after reload allocates a distinct occurrence and remains saveable");
     }
 }

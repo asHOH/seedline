@@ -13,6 +13,7 @@ Implements the design's relic/chest, potion-generation, shop and card-offer poli
 | Shops | `MerchantInventory.CreateForNormalMerchant` allocates the shop ordinal. Card generation, sale selection and entry prices derive independently; restocks use Courier supplies. Price and reward modifiers retain their game hooks. Fake Merchant stock and prices use event RNG. |
 | Card offers | `CardFactory.CreateForReward` builds shared triples or individual-entry offers, simulates Rare timing, applies upgrades and existing reward hooks, then performs presentation swaps. Lasting Candy uses Power supplies and joins its parent offer. Scroll Boxes handles substitution before triple consumption. Kaleidoscope and Neow's Bones use event RNG for their event-specific choices. |
 | Card acquisition | Generated cards carry entry occurrences. Grid/bundle selections assign offer keys to committed picks; ordinary single-pick rewards assign their key at deck addition, before deck-add hooks. Starting cards receive occurrences after ascension setup. |
+| Transformations | `Hook.ModifyCardBeingAddedToDeck` initializes missing replacement occurrences before modifiers can clone them, using the existing fallback grant addresses. Random and fixed transformations remain saveable; supply alignment and batch ordering belong to stage 5. |
 | Copies and storage | Physical recreation retains occurrence metadata. Permanent copies receive new source addresses; Reflections and Clone rest-site batches assign copy indices in permanent-card processing order while preserving effect order. Pael's Tooth saves and restores the original occurrence and removes the returned serialized object by reference. |
 
 ## Checkpoint contract
@@ -23,9 +24,9 @@ Capture freezes reward state and card metadata with the vanilla snapshot. Restor
 
 ## Coverage and remaining stages
 
-Automated checks cover filtered advancement against an eager model, marker collisions and expiry, borrowing through exhaustion, shop isolation and stable prices, potion commitment/failure, chest entry/skips, rarity deferral, reward modifiers, all six characters at A0/A7, expanded-pool rerolls, Scroll Boxes, card copies, stored-card returns and checkpoint replay.
+Automated checks cover filtered advancement against an eager model, marker collisions and expiry, borrowing through exhaustion, shop isolation and stable prices, potion commitment/failure, chest entry/skips, rarity deferral, reward modifiers, all six characters at A0/A7, expanded-pool rerolls, Scroll Boxes, card copies, stored-card returns, random/fixed transformation metadata through modifier cloning and reload, and checkpoint replay.
 
-Final validation passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 197 standalone engine checks and 251 RitsuLib checks in each initialization order. Evidence: `.cache/stage1-checks/0ca9a4ef-7166-4dca-9598-30d88d32d8a7/result.json`, `.cache/ritsu-checks/c80b60bd-ed0b-4e8b-9b47-0f94548e3df7/result.json` and `.cache/ritsu-checks/85aeffe7-147c-485f-b22b-48984659f6e9/result.json`.
+Final validation passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 203 standalone engine checks and 257 RitsuLib checks in each initialization order. Evidence: `.cache/stage1-checks/3c1d4b21-f3a3-4cc7-a74f-b31cc0d7b479/result.json`, `.cache/ritsu-checks/98ea6ef5-1a75-4fe3-a1f2-43d5cf46fb0a/result.json` and `.cache/ritsu-checks/8d5fbdcd-bb7f-49cf-a615-b94683638b5f/result.json`.
 
 Permanent-card comparisons establish the applicable portion of `CARD_ORDER.md`; combat-only comparisons arrive with stage 6. Permanent transformation/direct-addition supplies, selection clocks, player-choice routing and Pael's Tooth's aligned return selection remain stage 5 work. Potion effect ordinals and combat-card lifetimes accompany their stage 6 consumers.
 

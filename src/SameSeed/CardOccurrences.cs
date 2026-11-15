@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.RestSite;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Events;
@@ -134,6 +135,13 @@ internal static class CardOccurrences
     private static class DeckAdd
     {
         private static void Prefix(IEnumerable<CardModel> cards, CardPile newPile, AbstractModel? clonedBy) => Prepare(cards, newPile, clonedBy);
+    }
+
+    [HarmonyPatch(typeof(Hook), nameof(Hook.ModifyCardBeingAddedToDeck))]
+    private static class DeckModifiers
+    {
+        // Transformations bypass CardPileCmd.Add; initialize before modifiers can clone the replacement.
+        private static void Prefix(CardModel card) => Prepare([card], card.Owner.Deck, null);
     }
 
     [HarmonyPatch(typeof(RunState), nameof(RunState.CloneCard))]
