@@ -46,6 +46,9 @@ public static class Checks
             var state = RunState.CreateForNewRun([player], ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "STAGE1CHECK");
             var manager = RunManager.Instance;
             manager.SetUpNewSingleplayer(state, true);
+            var address = RandomAddress.For("foundation check", "reward");
+            var live = RunCheckpoints.Require(state).Random;
+            var openingRoll = live.NextUInt64(address);
             var snapshot = manager.ToSave(null);
             var provenance = RunCheckpoints.Require(snapshot);
             var schema = snapshot.SchemaVersion;
@@ -53,18 +56,37 @@ public static class Checks
             Assert(provenance.Seed == "STAGE1CHECK" && provenance.RunId != Guid.Empty, "new run receives provenance before initialization");
 
             await SaveManager.Instance.SaveRun(null, saveProgress: false);
+            var regeneratedRoll = live.NextUInt64(address);
+            Assert(RunCheckpoints.Encode(snapshot).SequenceEqual(original), "capture freezes random state before later generation");
             var loaded = SaveManager.Instance.LoadRunSave();
             Assert(loaded.Success && loaded.SaveData != null, "real Godot file checkpoint write/read");
             manager.CleanUp();
             var restored = RunState.FromSerializable(loaded.SaveData!);
             await manager.SetUpSavedSingleplayer(restored, loaded.SaveData!);
-            Assert(RunCheckpoints.Require(manager.ToSave(null)) == provenance, "live run restoration retains state");
+            Assert(SameState(RunCheckpoints.Require(manager.ToSave(null)), provenance), "live run restoration retains state");
             var rewritten = SaveManager.Instance.LoadRunSave().SaveData!;
-            Assert(rewritten.NumReloads == snapshot.NumReloads + 1 && RunCheckpoints.Require(rewritten) == provenance, "real reload-count rewrite keeps checkpoint state");
+            Assert(rewritten.NumReloads == snapshot.NumReloads + 1 && SameState(RunCheckpoints.Require(rewritten), provenance), "real reload-count rewrite keeps checkpoint state");
+            var restoredRandom = RunCheckpoints.Require(restored).Random;
+            Assert(restoredRandom.NextUInt64(address) == regeneratedRoll && restoredRandom.Position(address) == 2,
+                "pre-generation checkpoint replays one draw without double consumption");
+            Assert(SameState(RunCheckpoints.Require(loaded.SaveData!), provenance), "restored run cannot mutate its loaded snapshot");
+            await SaveManager.Instance.SaveRun(null, saveProgress: false);
+            var committed = SaveManager.Instance.LoadRunSave().SaveData!;
+            var followingRoll = restoredRandom.NextUInt64(address);
+            manager.CleanUp();
+            var continued = RunState.FromSerializable(committed);
+            await manager.SetUpSavedSingleplayer(continued, committed);
+            var continuedRandom = RunCheckpoints.Require(continued).Random;
+            Assert(continuedRandom.Position(address) == 2 && continuedRandom.NextUInt64(address) == followingRoll,
+                "post-generation checkpoint continues from the next draw");
+            Assert(RunCheckpoints.Require(committed).Random.Position(address) == 2 &&
+                RunCheckpoints.Require(SaveManager.Instance.LoadRunSave().SaveData!).Random.Position(address) == 2,
+                "reload rewrite preserves frozen positions after live advancement");
             manager.CleanUp();
 
             await CheckStores(snapshot, schema, original, provenance);
             CheckRejections(snapshot, schema, original);
+            CheckStageOneMigration(original, schema, provenance);
             await CheckCloud(snapshot, schema);
             await CheckDisk(snapshot, schema);
 
@@ -72,6 +94,8 @@ public static class Checks
                 ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "STAGE1CHECK");
             manager.SetUpNewSingleplayer(fresh, true);
             Assert(RunCheckpoints.Require(manager.ToSave(null)).RunId != provenance.RunId, "same-seed new runs have independent provenance");
+            Assert(RunCheckpoints.Require(fresh).Random.NextUInt64(address) == openingRoll && live.Position(address) == 2,
+                "same-seed runs reproduce rolls independently of UUID and other run consumption");
             manager.CleanUp();
             await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
             ((SceneTree)Engine.GetMainLoop()).Quit();
@@ -98,10 +122,10 @@ public static class Checks
             await manager.SaveRun(snapshot, false);
             Assert(manager.HasRunSave && savedEvents == 1, $"{synchronous}: save discovery and notification");
             var loaded = manager.LoadRunSave().SaveData!;
-            Assert(RunCheckpoints.Require(loaded) == provenance && RunCheckpoints.Encode(loaded).SequenceEqual(original), $"{synchronous}: complete snapshot round-trip");
+            Assert(SameState(RunCheckpoints.Require(loaded), provenance) && RunCheckpoints.Encode(loaded).SequenceEqual(original), $"{synchronous}: complete snapshot round-trip");
             loaded.NumReloads++;
             await manager.SaveRun(loaded, false);
-            Assert(RunCheckpoints.Require(manager.LoadRunSave().SaveData!) == provenance, $"{synchronous}: rewrite without active run");
+            Assert(SameState(RunCheckpoints.Require(manager.LoadRunSave().SaveData!), provenance), $"{synchronous}: rewrite without active run");
             Assert(store.ReadFile(path + ".backup") == Encoding.UTF8.GetString(original), $"{synchronous}: backup contains both halves");
             store.WriteFile(path, "{torn");
             Assert(manager.LoadRunSave().SaveData!.NumReloads == snapshot.NumReloads + 1, $"{synchronous}: torn primary recovers paired backup");
@@ -136,8 +160,15 @@ public static class Checks
         Action<JsonObject>[] mutations =
         [
             root => root.Remove("same_seed"),
-            root => root["same_seed"]!["schema_version"] = 2,
+            root => root["same_seed"]!["schema_version"] = RunCheckpoints.SchemaVersion + 1,
+            root => root["same_seed"]!["schema_version"] = 1,
             root => root["same_seed"]!["schema_version"] = "invalid",
+            root => root["same_seed"]!.AsObject().Remove("random_positions"),
+            root => root["same_seed"]!["random_positions"] = null,
+            root => root["same_seed"]!["random_positions"] = new JsonArray(),
+            root => root["same_seed"]!["random_positions"] = new JsonObject { ["invalid address"] = 1 },
+            root => root["same_seed"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = -1 },
+            root => root["same_seed"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = "1" },
             root => root["same_seed"]!["game_build"] = "another build",
             root => root["same_seed"]!["run_id"] = Guid.Empty.ToString(),
             root => root["same_seed"]!["seed"] = "another seed",
@@ -199,6 +230,35 @@ public static class Checks
             catch (InvalidDataException) { Assert(true, $"{mode} rejected"); }
         }
         snapshot.GameMode = GameMode.Standard;
+    }
+
+    private static void CheckStageOneMigration(byte[] original, int schema, CheckpointState provenance)
+    {
+        var legacy = JsonNode.Parse(original)!.AsObject();
+        legacy["same_seed"]!["schema_version"] = 1;
+        legacy["same_seed"]!.AsObject().Remove("random_positions");
+        var loaded = RunCheckpoints.Decode(legacy.ToJsonString(), schema);
+        var state = RunCheckpoints.Require(loaded);
+        Assert(state.RunId == provenance.RunId && state.Seed == provenance.Seed &&
+            state.Random.Position(RandomAddress.For("foundation check", "reward")) == 0, "stage 1 upgrades retain provenance and initialize empty randomness");
+        var rewritten = JsonNode.Parse(RunCheckpoints.Encode(loaded))!;
+        Assert(rewritten["same_seed"]!["schema_version"]!.GetValue<int>() == RunCheckpoints.SchemaVersion &&
+            rewritten["same_seed"]!["random_positions"]!.AsObject().Count == 0, "legacy checkpoint rewrites use current schema");
+    }
+
+    private static bool SameState(CheckpointState left, CheckpointState right) =>
+        left.RunId == right.RunId && left.Seed == right.Seed && RandomJson(left.Random) == RandomJson(right.Random);
+
+    private static string RandomJson(RandomState state)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new System.Text.Json.Utf8JsonWriter(stream))
+        {
+            writer.WriteStartObject();
+            state.Write(writer);
+            writer.WriteEndObject();
+        }
+        return Encoding.UTF8.GetString(stream.ToArray());
     }
 
     private static async Task CheckCloud(SerializableRun snapshot, int schema)

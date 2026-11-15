@@ -15,16 +15,18 @@ New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
 '@ | Set-Content -LiteralPath (Join-Path $settingsDir 'settings.save') -Encoding utf8
 
 # Keep the installed game and its saves outside the test host.
-Copy-Item -LiteralPath (Join-Path $game 'SlayTheSpire2.exe'), (Join-Path $game 'release_info.json') -Destination $hostDir -Force
-foreach ($file in Get-ChildItem -LiteralPath $game -File | Where-Object Extension -In '.dll', '.pck') {
-    $target = Join-Path $hostDir $file.Name
-    if (!(Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $file.FullName -Destination $target }
-}
-$managed = Join-Path $hostDir 'data_sts2_windows_x86_64'
-New-Item -ItemType Directory -Path $managed -Force | Out-Null
-foreach ($file in Get-ChildItem -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64') -File) {
-    $target = Join-Path $managed $file.Name
-    if (!(Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $file.FullName -Destination $target }
+if ($game -ne [System.IO.Path]::GetFullPath($hostDir)) {
+    Copy-Item -LiteralPath (Join-Path $game 'SlayTheSpire2.exe'), (Join-Path $game 'release_info.json') -Destination $hostDir -Force
+    foreach ($file in Get-ChildItem -LiteralPath $game -File | Where-Object Extension -In '.dll', '.pck') {
+        $target = Join-Path $hostDir $file.Name
+        if (!(Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $file.FullName -Destination $target }
+    }
+    $managed = Join-Path $hostDir 'data_sts2_windows_x86_64'
+    New-Item -ItemType Directory -Path $managed -Force | Out-Null
+    foreach ($file in Get-ChildItem -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64') -File) {
+        $target = Join-Path $managed $file.Name
+        if (!(Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $file.FullName -Destination $target }
+    }
 }
 foreach ($name in 'SameSeed', 'SameSeed.Checks') {
     $modDir = Join-Path $hostDir "mods/$name"

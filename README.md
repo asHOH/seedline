@@ -1,8 +1,8 @@
 # Same-Seed Consistency
 
-Stage 1 integrates a standalone Windows mod with Slay the Spire 2 **v0.113.0, build 16ac0fe3**. It establishes run ownership and combined vanilla/mod checkpoints. Gameplay alignment begins in later stages.
+Windows mod for Slay the Spire 2 **v0.113.0, build 16ac0fe3**. Steps 1–2 provide combined checkpoints and deterministic random state. Gameplay alignment begins with combat gold in step 3.
 
-Gameplay requirements: [DESIGN.md](DESIGN.md). Delivery order: [IMPLEMENTATION.md](IMPLEMENTATION.md). Save integration and validation: [Stage 1](docs/stage-1.md).
+Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md).
 
 ## Build and validate
 
@@ -12,7 +12,7 @@ Install the .NET SDK pinned in [global.json](global.json). Use PowerShell 7:
 ./scripts/verify.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. The command restores framework reference packs, checks formatting, builds with nullable checking and analyzers, and runs assertions inside an isolated headless copy of the game. It requires local space for that copy. Test saves, logs and results stay under `.cache/stage1-checks/`; Steam is disabled for the test process.
+Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. The command restores dependencies, checks formatting and analyzers, runs xUnit tests, then checks integration in an isolated headless game copy. Allow disk space for that copy. Test evidence stays under `.cache/stage1-checks/`; Steam is disabled for testing.
 
 The package at `artifacts/SameSeed/` contains only `SameSeed.dll` and `SameSeed.json`. The game supplies Harmony and its other assemblies.
 

@@ -5,13 +5,15 @@ using MegaCrit.Sts2.Core.Saves;
 
 namespace SameSeed;
 
-// Stage 1 records provenance only; Foundation adds gameplay state to this snapshot.
-internal sealed record CheckpointState(Guid RunId, string Seed);
+internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Random)
+{
+    internal CheckpointState Copy() => this with { Random = Random.Copy() };
+}
 
 internal static class RunCheckpoints
 {
     internal const string FileName = "same_seed_run.save";
-    internal const int SchemaVersion = 1;
+    internal const int SchemaVersion = 2;
     private static readonly ConditionalWeakTable<RunState, CheckpointState> runs = new();
     private static readonly ConditionalWeakTable<SerializableRun, CheckpointState> snapshots = new();
 
@@ -19,13 +21,13 @@ internal static class RunCheckpoints
     {
         ModEntry.CheckOtherMods();
         CheckScope(run.GameMode, run.IsCustomGame, run.Players.Count, run.Modifiers.Count);
-        runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed));
+        runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed)));
     }
 
     internal static void Capture(RunState run, SerializableRun save)
     {
         if (runs.TryGetValue(run, out var state))
-            snapshots.Add(save, state);
+            snapshots.Add(save, state.Copy());
     }
 
     internal static void Restore(RunState run, SerializableRun save)
@@ -34,8 +36,11 @@ internal static class RunCheckpoints
         var state = Require(save);
         if (run.Rng.StringSeed != state.Seed)
             throw new InvalidDataException("SameSeed checkpoint belongs to another run.");
-        runs.Add(run, state);
+        runs.Add(run, state.Copy());
     }
+
+    internal static CheckpointState Require(RunState run) => runs.TryGetValue(run, out var state)
+        ? state : throw new InvalidOperationException("SameSeed state is missing from this run.");
 
     internal static CheckpointState Require(SerializableRun save)
     {
@@ -59,6 +64,7 @@ internal static class RunCheckpoints
             writer.WriteString("game_build", ModEntry.GameBuild);
             writer.WriteString("run_id", state.RunId);
             writer.WriteString("seed", state.Seed);
+            state.Random.Write(writer);
             writer.WriteEndObject();
             writer.WriteEndObject();
         }
@@ -72,7 +78,7 @@ internal static class RunCheckpoints
         if (root.ValueKind != JsonValueKind.Object ||
             !root.TryGetProperty("same_seed", out var state) || state.ValueKind != JsonValueKind.Object ||
             !state.TryGetProperty("schema_version", out var version) ||
-            !version.TryGetInt32(out var number) || number != SchemaVersion ||
+            version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out var number) || number is not (1 or SchemaVersion) ||
             !state.TryGetProperty("game_build", out var build) || build.GetString() != ModEntry.GameBuild ||
             !state.TryGetProperty("run_id", out var id) || !id.TryGetGuid(out var runId) || runId == Guid.Empty ||
             !state.TryGetProperty("seed", out var seed) || seed.ValueKind != JsonValueKind.String)
@@ -90,7 +96,12 @@ internal static class RunCheckpoints
         }
         if (save.SchemaVersion != gameSchema)
             throw new InvalidDataException("Unsupported vanilla checkpoint schema. Save preserved.");
-        var restored = new CheckpointState(runId, seed.GetString()!);
+        var hasPositions = state.TryGetProperty("random_positions", out var positions);
+        // Stage 1 never consumed mod randomness, so its provenance-only saves start with empty state.
+        var random = number == 1 && !hasPositions ? new RandomState(seed.GetString()!)
+            : number == SchemaVersion && hasPositions ? RandomState.Read(seed.GetString()!, positions)
+            : throw new InvalidDataException("Missing or incompatible SameSeed random state. Save preserved.");
+        var restored = new CheckpointState(runId, seed.GetString()!, random);
         Validate(save, restored);
         snapshots.Add(save, restored);
         return save;
