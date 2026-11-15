@@ -6,14 +6,15 @@
 
 - C# `net9.0`, pinned .NET 10 SDK, built-in loader and bundled Harmony; prefer prefixes/postfixes.
 - Use local game assemblies, platform JSON and game logging. Package only the mod DLL and manifest; deploy explicitly.
-- Save vanilla and mod state in one versioned checkpoint through game save facilities, under a dedicated filename.
+- Save vanilla and mod state in one versioned checkpoint at the standard modded save path, using game save and cloud facilities. [Accepted contract and pending integration](docs/stage-1.md).
+- Keep RitsuLib optional, with identical SameSeed RNG behavior and state format in both configurations.
 - Support Windows and the scoped game build. Require SameSeed throughout the run; reject Catfood and incompatible state while preserving saves.
 
 ## Delivery order
 
 For each operation, record its interception point, state owner, commitment point and restoration path.
 
-1. **Integration:** complete. [Checkpoint integration and limits](docs/stage-1.md).
+1. **Integration:** dedicated-file baseline complete; standard-path and RitsuLib revision pending. Complete the [integration work and checks](docs/stage-1.md#remaining-work-and-checks) before step 3.
 2. **Foundation:** complete. Stable addresses, independent randomness and run-owned state, with deterministic-roll, snapshot-isolation and replay checks. [Foundation contract](docs/stage-2.md).
 3. **First playable path:** combat-gold generation, acquisition and reload, including parent-event reconstruction after event combat.
 4. **Rewards:** shared supplies, relics/chests, potions, shops and card rewards. Establish card processing order, occurrence lifetime, keys and checkpoint rebinding before dependent policies, including starting and temporarily stored cards.
@@ -22,6 +23,6 @@ For each operation, record its interception point, state owner, commitment point
 
 ## Validation
 
-Run [one command](README.md#build-and-validate) for formatting, analyzers, xUnit v3 tests and isolated in-engine checks. Require automated and relevant gameplay checks at each stage.
+Run [one command](README.md#build-and-validate) for formatting, analyzers, xUnit v3 tests and isolated in-engine checks. Require automated and relevant gameplay checks at each stage. Explain failures, their impact and remaining limits in validation reports.
 
 Track coverage against the design's architecture overview. Check matching seeds, changed routes, equivalent-copy choices and reloads against preservation rules and declared deviations. See [verification limits](docs/stage-1.md#cloud-and-verification-limits).
