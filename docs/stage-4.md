@@ -20,13 +20,17 @@ Implements the design's relic/chest, potion-generation, shop and card-offer poli
 
 Schema 3 stores reward supplies, frozen filters, chest exclusions and Rare timing in `same_seed.rewards`. Card addresses and keys travel with each `SerializableCard` in a reserved `SavedProperties` string, including cards stored by Pael's Tooth. The game ignores that property during ordinary field restoration; SameSeed rebinds it when reconstructing the physical card.
 
+SameSeed registers `SameSeedOccurrence` during the game's property-cache initialization, including its numeric ID, reverse mapping and compatibility hash before the bit width is finalized. Single-player combat checksums and replay saving use this binary format; existing schema 3 JSON checkpoints retain their format.
+
 Capture freezes reward state and card metadata with the vanilla snapshot. Restore completes before reward regeneration. Validation rejects missing/duplicate live card occurrences and malformed supply state while preserving checkpoint files. Schema 1/2 saves require a fresh run because their prior reward consumption cannot be reconstructed. RitsuLib remains optional with the same SameSeed format and RNG behavior.
 
 ## Coverage and remaining stages
 
 Automated checks cover filtered advancement against an eager model, marker collisions and expiry, borrowing through exhaustion, shop isolation and stable prices, potion commitment/failure, chest entry/skips, rarity deferral, reward modifiers, all six characters at A0/A7, expanded-pool rerolls, Scroll Boxes, card copies, stored-card returns, random/fixed transformation metadata through modifier cloning and reload, and checkpoint replay.
 
-Final validation passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 203 standalone engine checks and 257 RitsuLib checks in each initialization order. Run the [validation command](../README.md#build-and-validate) to check the current suite.
+Combat serialization checks explicitly enable checksums and replay recording, which test mode normally disables. They exercise the opening player turn, binary combat-state round-trip, stable checksums and replay saving through run cleanup, then decode the saved replay and validate deck and Pael's Tooth occurrences. The same checks run standalone and with RitsuLib in both initialization orders.
+
+Validation on v0.113.1 passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 211 standalone engine checks and 265 RitsuLib checks in each initialization order. Run the [validation command](../README.md#build-and-validate) to check the current suite.
 
 Permanent-card comparisons establish the applicable portion of `CARD_ORDER.md`; combat-only comparisons arrive with stage 6. Permanent transformation/direct-addition supplies, selection clocks, player-choice routing and Pael's Tooth's aligned return selection remain stage 5 work. Potion effect ordinals and combat-card lifetimes accompany their stage 6 consumers.
 

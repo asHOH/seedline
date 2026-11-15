@@ -1,5 +1,7 @@
+using System.IO.Hashing;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using HarmonyLib;
@@ -12,6 +14,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
@@ -42,6 +45,22 @@ internal static class CardOccurrences
     }
     private static readonly AsyncLocal<CopyGrant?> copyGrant = new();
     internal const string SavedName = "SameSeedOccurrence";
+
+    [HarmonyPatch(typeof(ModelIdSerializationCache), "CachePropertiesForType")]
+    private static class RegisterSavedName
+    {
+        private static void Postfix(XxHash32? hasher, Dictionary<string, int> ____propertyNameToNetIdMap,
+            List<string> ____netIdToPropertyNameMap)
+        {
+            if (hasher == null || ____propertyNameToNetIdMap.ContainsKey(SavedName))
+                return;
+            // Register during initialization so the game's final bit width and hash include our property.
+            ____propertyNameToNetIdMap.Add(SavedName, ____netIdToPropertyNameMap.Count);
+            ____netIdToPropertyNameMap.Add(SavedName);
+            hasher.Append(Encoding.UTF8.GetBytes(SavedName));
+        }
+    }
+
     private static readonly ConditionalWeakTable<CardModel, CardOccurrence> cards = new();
     internal static CardOccurrence Info(CardModel card) => cards.TryGetValue(card, out var info)
         ? info : throw new InvalidOperationException($"Missing card occurrence: {card.Id}.");
