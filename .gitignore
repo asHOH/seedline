@@ -12,3 +12,8 @@ node_modules/
 # Local reference code; never distribute with this repository.
 /sts2-decompiled/
 /catfood-decompiled/
+
+# Build outputs and local packages.
+**/bin/
+**/obj/
+/artifacts/

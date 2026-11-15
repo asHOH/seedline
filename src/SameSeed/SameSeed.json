@@ -1,0 +1,11 @@
+{
+  "id": "SameSeed",
+  "name": "Same-Seed Consistency",
+  "author": "SameSeed contributors",
+  "description": "Stage 1: isolated, versioned run checkpoints. Gameplay alignment follows in later stages.",
+  "version": "0.1.0",
+  "has_dll": true,
+  "has_pck": false,
+  "affects_gameplay": true,
+  "min_game_version": "0.113.0"
+}

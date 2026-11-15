@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>SameSeed</AssemblyName>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="SameSeed.json" CopyToOutputDirectory="PreserveNewest" />
+    <InternalsVisibleTo Include="SameSeed.Checks" />
+  </ItemGroup>
+</Project>

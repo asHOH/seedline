@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/SameSeed/SameSeed.csproj" />
+  <Project Path="tests/SameSeed.Checks/SameSeed.Checks.csproj" />
+</Solution>

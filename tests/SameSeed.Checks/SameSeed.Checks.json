@@ -1,0 +1,11 @@
+{
+  "id": "SameSeed.Checks",
+  "name": "SameSeed Stage 1 checks",
+  "author": "SameSeed contributors",
+  "version": "0.1.0",
+  "has_dll": true,
+  "has_pck": false,
+  "affects_gameplay": false,
+  "min_game_version": "0.113.0",
+  "dependencies": [{ "id": "SameSeed", "min_version": "0.1.0" }]
+}

@@ -24,6 +24,8 @@ For each implemented operation, identify its interception point from reference c
 
 ## Validation gates
 
+**Stage 1:** implemented; [integration checks and cloud limits](docs/stage-1.md). Live Steam synchronization remains unverified.
+
 Use one formatting/build/test command with nullable checking and analyzers; add xUnit v3 in Foundation. Require passing automated and in-game checks for each stage.
 
 Track coverage against the design's architecture overview. Reuse existing checks; exercise matching-seed runs, changed routes, equivalent-copy choices and checkpoint reloads. Compare against preservation rules and deviations.
