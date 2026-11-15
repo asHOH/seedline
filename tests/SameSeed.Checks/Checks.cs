@@ -57,6 +57,9 @@ public static partial class Checks
             var provenance = RunCheckpoints.Require(snapshot);
             var schema = snapshot.SchemaVersion;
             var original = RunCheckpoints.Encode(snapshot);
+            var release = JsonNode.Parse(System.IO.File.ReadAllText(Path.Combine(Path.GetDirectoryName(OS.GetExecutablePath())!, "release_info.json")))!;
+            Assert(JsonNode.Parse(original)!["same_seed"]!["game_build"]!.GetValue<string>() == $"{release["version"]}/{release["commit"]}",
+                "checkpoint records the loaded game build");
             Assert(provenance.Seed == "STAGE1CHECK" && provenance.RunId != Guid.Empty, "new run receives provenance before initialization");
 
             await SaveManager.Instance.SaveRun(null, saveProgress: false);
@@ -181,6 +184,7 @@ public static partial class Checks
             root => root["same_seed"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = -1 },
             root => root["same_seed"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = "1" },
             root => root["same_seed"]!["game_build"] = "another build",
+            root => root["same_seed"]!["game_build"] = ModEntry.GameBuild == "v0.113.0/16ac0fe3" ? "v0.113.1/d09d48e5" : "v0.113.0/16ac0fe3",
             root => root["same_seed"]!["run_id"] = Guid.Empty.ToString(),
             root => root["same_seed"]!["seed"] = "another seed",
             root => root["schema_version"] = schema + 1,

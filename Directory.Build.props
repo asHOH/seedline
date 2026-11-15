@@ -15,6 +15,6 @@
     <Reference Include="GodotSharp" HintPath="$(GameManagedDir)/GodotSharp.dll" Private="false" />
   </ItemGroup>
   <Target Name="CheckGameReferences" BeforeTargets="ResolveReferences">
-    <Error Condition="!Exists('$(GameManagedDir)/sts2.dll')" Text="Set STS2_GAME_DIR to the v0.113.0 game directory, or pass -p:GameManagedDir=... ." />
+    <Error Condition="!Exists('$(GameManagedDir)/sts2.dll')" Text="Set STS2_GAME_DIR to a supported game directory, or pass -p:GameManagedDir=... ." />
   </Target>
 </Project>

@@ -8,7 +8,7 @@
 - Use local game assemblies, platform JSON and game logging. Package only the mod DLL and manifest; deploy explicitly.
 - Save vanilla and mod state in one versioned checkpoint at the standard modded save path, using game save and cloud facilities. [Checkpoint contract](docs/stage-1.md).
 - Keep RitsuLib optional, with identical SameSeed RNG behavior and state format in both configurations.
-- Support Windows and the scoped game build. Require SameSeed throughout the run; reject Catfood and incompatible state while preserving saves.
+- Support Windows and the scoped game builds. Require SameSeed throughout the run; reject Catfood and incompatible state while preserving saves.
 
 ## Delivery order
 

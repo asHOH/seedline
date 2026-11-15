@@ -10,8 +10,7 @@ namespace SameSeed;
 public static class ModEntry
 {
     public const string Id = "SameSeed";
-    internal const string GameBuild = "v0.113.0/16ac0fe3";
-    internal const string AssemblyHash = "A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7";
+    internal static string GameBuild { get; private set; } = "";
     private static bool initialized;
 
     public static void Initialize()
@@ -23,8 +22,12 @@ public static class ModEntry
             throw new PlatformNotSupportedException("SameSeed requires Windows.");
         using (var file = File.OpenRead(typeof(RunManager).Assembly.Location))
         {
-            if (Convert.ToHexString(SHA256.HashData(file)) != AssemblyHash)
-                throw new InvalidOperationException($"SameSeed requires game build {GameBuild}.");
+            GameBuild = Convert.ToHexString(SHA256.HashData(file)) switch
+            {
+                "A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7" => "v0.113.0/16ac0fe3",
+                "62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3" => "v0.113.1/d09d48e5",
+                _ => throw new InvalidOperationException("SameSeed requires v0.113.0 build 16ac0fe3 or v0.113.1 build d09d48e5.")
+            };
         }
 
         var harmony = new Harmony(Id);

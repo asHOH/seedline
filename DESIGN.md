@@ -68,7 +68,7 @@ This deviation applies implicitly wherever its definition holds.
 
 ## Scope
 
-Standalone StS2 v0.113.0 (`public-beta`) mod for everyday play, also suited to competition.
+Standalone StS2 v0.113.0–v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
 
 Compare single-player runs, including [Dread](#dread), with matching seeds, versions and rules, and all content unlocked.
 

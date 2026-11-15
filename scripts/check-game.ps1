@@ -6,8 +6,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $game = (Resolve-Path -LiteralPath $GameDir).Path
-if ((Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash -ne 'A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7') {
-    throw 'Checks require v0.113.0 build 16ac0fe3.'
+$assemblyHash = (Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash
+if ($assemblyHash -notin @('A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7', '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3')) {
+    throw 'Checks require v0.113.0 build 16ac0fe3 or v0.113.1 build d09d48e5.'
 }
 $suite = if ($RitsuLibDir) { 'ritsu' } else { 'stage1' }
 $hostDir = Join-Path $repo ".cache/$suite-host"
@@ -30,14 +31,17 @@ if ($game -ne [System.IO.Path]::GetFullPath($hostDir)) {
     Copy-Item -LiteralPath (Join-Path $game 'SlayTheSpire2.exe'), (Join-Path $game 'release_info.json') -Destination $hostDir -Force
     foreach ($file in Get-ChildItem -LiteralPath $game -File | Where-Object Extension -In '.dll', '.pck') {
         $target = Join-Path $hostDir $file.Name
-        if (!(Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $file.FullName -Destination $target }
+        Copy-Item -LiteralPath $file.FullName -Destination $target -Force
     }
     $managed = Join-Path $hostDir 'data_sts2_windows_x86_64'
     New-Item -ItemType Directory -Path $managed -Force | Out-Null
     foreach ($file in Get-ChildItem -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64') -File) {
         $target = Join-Path $managed $file.Name
-        if (!(Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $file.FullName -Destination $target }
+        Copy-Item -LiteralPath $file.FullName -Destination $target -Force
     }
+}
+if ((Get-FileHash -LiteralPath (Join-Path $hostDir 'data_sts2_windows_x86_64/sts2.dll')).Hash -ne $assemblyHash) {
+    throw 'Test-host assembly differs from the selected game.'
 }
 foreach ($name in 'SameSeed', 'SameSeed.Checks') {
     $modDir = Join-Path $hostDir "mods/$name"
