@@ -9,7 +9,7 @@ internal static class CheckpointStore
 {
     internal static async Task Write(ISaveStore store, string path, SerializableRun save, bool synchronous, Action? saved)
     {
-        // Freeze both halves before the first await, including reload-count rewrites.
+        // Freeze the complete checkpoint before the first await, including reload-count rewrites.
         var bytes = RunCheckpoints.Encode(save);
         if (synchronous)
             store.WriteFile(path, bytes);

@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$GameDir,
-    [string]$Dotnet = 'dotnet'
+    [string]$Dotnet = 'dotnet',
+    [string]$RitsuLibDir
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
@@ -20,6 +21,10 @@ if ($LASTEXITCODE) { throw 'Build failed.' }
 & $Dotnet run --project tests/SameSeed.Tests -c Release --no-build -- -noLogo
 if ($LASTEXITCODE) { throw 'Foundation tests failed.' }
 & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR
+if ($RitsuLibDir) {
+    & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR -RitsuLibDir $RitsuLibDir
+    & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR -RitsuLibDir $RitsuLibDir -RitsuFirst
+}
 
 $package = Join-Path $repo 'artifacts/SameSeed'
 New-Item -ItemType Directory -Path $package -Force | Out-Null

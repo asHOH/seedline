@@ -1,18 +1,18 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 
 namespace SameSeed;
 
-internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Random)
+internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Random, JsonObject? Ritsu = null)
 {
-    internal CheckpointState Copy() => this with { Random = Random.Copy() };
+    internal CheckpointState Copy() => this with { Random = Random.Copy(), Ritsu = Ritsu?.DeepClone().AsObject() };
 }
 
 internal static class RunCheckpoints
 {
-    internal const string FileName = "same_seed_run.save";
     internal const int SchemaVersion = 2;
     private static readonly ConditionalWeakTable<RunState, CheckpointState> runs = new();
     private static readonly ConditionalWeakTable<SerializableRun, CheckpointState> snapshots = new();
@@ -21,13 +21,13 @@ internal static class RunCheckpoints
     {
         ModEntry.CheckOtherMods();
         CheckScope(run.GameMode, run.IsCustomGame, run.Players.Count, run.Modifiers.Count);
-        runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed)));
+        runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed), RitsuBridge.Capture(run)));
     }
 
     internal static void Capture(RunState run, SerializableRun save)
     {
         if (runs.TryGetValue(run, out var state))
-            snapshots.Add(save, state.Copy());
+            snapshots.Add(save, state.Copy() with { Ritsu = RitsuBridge.Capture(run) });
     }
 
     internal static void Restore(RunState run, SerializableRun save)
@@ -36,6 +36,7 @@ internal static class RunCheckpoints
         var state = Require(save);
         if (run.Rng.StringSeed != state.Seed)
             throw new InvalidDataException("SameSeed checkpoint belongs to another run.");
+        RitsuBridge.ValidateRestored(run, state.Ritsu);
         runs.Add(run, state.Copy());
     }
 
@@ -66,6 +67,11 @@ internal static class RunCheckpoints
             writer.WriteString("seed", state.Seed);
             state.Random.Write(writer);
             writer.WriteEndObject();
+            if (state.Ritsu is { } ritsu)
+            {
+                writer.WritePropertyName("_ritsulib");
+                ritsu.WriteTo(writer);
+            }
             writer.WriteEndObject();
         }
         return stream.ToArray();
@@ -101,7 +107,7 @@ internal static class RunCheckpoints
         var random = number == 1 && !hasPositions ? new RandomState(seed.GetString()!)
             : number == SchemaVersion && hasPositions ? RandomState.Read(seed.GetString()!, positions)
             : throw new InvalidDataException("Missing or incompatible SameSeed random state. Save preserved.");
-        var restored = new CheckpointState(runId, seed.GetString()!, random);
+        var restored = new CheckpointState(runId, seed.GetString()!, random, RitsuBridge.Read(root, save));
         Validate(save, restored);
         snapshots.Add(save, restored);
         return save;
@@ -109,6 +115,7 @@ internal static class RunCheckpoints
 
     private static void Validate(SerializableRun save, CheckpointState state)
     {
+        RitsuBridge.CheckConfiguration(state.Ritsu != null);
         if (string.IsNullOrEmpty(state.Seed) || save.SerializableRng?.Seed != state.Seed || save.Players == null ||
             save.Modifiers == null || save.Acts == null || save.SerializableOdds == null ||
             save.SerializableSharedRelicGrabBag == null || save.ExtraFields == null ||

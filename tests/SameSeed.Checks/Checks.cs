@@ -38,13 +38,8 @@ public static partial class Checks
         try
         {
             await (NGame.Instance ?? throw new InvalidOperationException("Game has not started.")).GameStartupComplete;
-            if (System.Environment.GetEnvironmentVariable("SAMESEED_RITSU_PROTOTYPE") == "1")
-            {
-                await CheckRitsuPrototype();
-                await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
-                ((SceneTree)Engine.GetMainLoop()).Quit();
-                return;
-            }
+            if (System.Environment.GetEnvironmentVariable("SAMESEED_RITSU_CHECKS") == "1")
+                await CheckRitsu();
             Assert(ModManager.GetLoadedMods().Any(m => m.manifest?.id == ModEntry.Id && m.errors is not { Count: > 0 }), "built-in loader and explicit initializer");
             Assert(Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer)))?.Owners.Contains(ModEntry.Id) == true &&
                 Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer)))?.Owners.Contains(ModEntry.Id) == true, "both multiplayer entry guards installed");
@@ -56,6 +51,8 @@ public static partial class Checks
             var address = RandomAddress.For("foundation check", "reward");
             var live = RunCheckpoints.Require(state).Random;
             var openingRoll = live.NextUInt64(address);
+            Assert(AddressRandom.UInt64("SAMESEED", RandomAddress.For("gold reward", "normal").At(0)) == 6329520721204281019UL,
+                "standalone and combined configurations match the fixed random vector");
             var snapshot = manager.ToSave(null);
             var provenance = RunCheckpoints.Require(snapshot);
             var schema = snapshot.SchemaVersion;
@@ -121,9 +118,14 @@ public static partial class Checks
             var store = new MockGodotFileIo("checks");
             var profiles = new StaticProfileIdProvider(1);
             var manager = new RunSaveManager(store, new MigrationManager(store), profiles, synchronous);
-            var path = RunSaveManager.GetRunSavePath(1, RunCheckpoints.FileName, true);
-            var vanillaPath = RunSaveManager.GetRunSavePath(1, "current_run.save", true);
-            store.WriteFile(vanillaPath, "vanilla sentinel");
+            var path = RunSaveManager.GetRunSavePath(1, RunSaveManager.runSaveFileName);
+            var legacyPath = RunSaveManager.GetRunSavePath(1, "same_seed_run.save", true);
+            store.WriteFile(legacyPath, "development sentinel");
+            var ordinary = JsonSerializationUtility.ToJson(snapshot);
+            store.WriteFile(path, ordinary);
+            store.WriteFile(path + ".backup", "ordinary backup sentinel");
+            Assert(manager.LoadRunSave().Status == ReadSaveStatus.ValidationFailed && store.ReadFile(path) == ordinary &&
+                store.ReadFile(path + ".backup") == "ordinary backup sentinel", "ordinary modded save rejected with both files preserved");
             var savedEvents = 0;
             manager.Saved += () => savedEvents++;
             await manager.SaveRun(snapshot, false);
@@ -145,7 +147,7 @@ public static partial class Checks
             Assert(savedEvents == 2 && store.FileExists(path + ".backup"), $"{synchronous}: failed write preserves checkpoint and suppresses Saved");
             store.ShouldFailWrites = false;
             manager.DeleteCurrentRun();
-            Assert(!manager.HasRunSave && store.ReadFile(vanillaPath) == "vanilla sentinel", $"{synchronous}: completion/abandon deletes only mod checkpoints");
+            Assert(!manager.HasRunSave && store.ReadFile(legacyPath) == "development sentinel", $"{synchronous}: completion/abandon deletes standard checkpoints and preserves development saves");
         }
         snapshot.PreFinishedRoom = new SerializableRoom
         {
@@ -162,10 +164,11 @@ public static partial class Checks
 
     private static void CheckRejections(SerializableRun snapshot, int schema, byte[] original)
     {
-        var path = RunSaveManager.GetRunSavePath(1, RunCheckpoints.FileName, true);
+        var path = RunSaveManager.GetRunSavePath(1, RunSaveManager.runSaveFileName);
         var json = Encoding.UTF8.GetString(original);
         Action<JsonObject>[] mutations =
         [
+            root => { if (!root.Remove("_ritsulib")) root["_ritsulib"] = new JsonObject { ["version"] = 1, ["run_saved_data"] = new JsonObject() }; },
             root => root.Remove("same_seed"),
             root => root["same_seed"]!["schema_version"] = RunCheckpoints.SchemaVersion + 1,
             root => root["same_seed"]!["schema_version"] = 1,
@@ -273,9 +276,9 @@ public static partial class Checks
         var local = new MockGodotFileIo("local") { getCurrentTime = () => DateTimeOffset.UtcNow };
         var remote = new MockCloudGodotFileIo("remote") { getCurrentTime = () => DateTimeOffset.UtcNow };
         var store = new CloudSaveStore(local, remote);
-        var path = RunSaveManager.GetRunSavePath(1, RunCheckpoints.FileName, true);
+        var path = RunSaveManager.GetRunSavePath(1, RunSaveManager.runSaveFileName);
         for (var profile = 1; profile <= 3; profile++)
-            await CheckpointStore.Write(store, RunSaveManager.GetRunSavePath(profile, RunCheckpoints.FileName, true), snapshot, false, null);
+            await CheckpointStore.Write(store, RunSaveManager.GetRunSavePath(profile, RunSaveManager.runSaveFileName), snapshot, false, null);
         Assert(local.ReadFile(path) == remote.ReadFile(path), "cloud receives one combined snapshot");
         remote.ShouldFailWrites = true;
         snapshot.NumReloads++;
@@ -291,7 +294,7 @@ public static partial class Checks
         await downloadManager.SyncCloudToLocal();
         for (var profile = 1; profile <= 3; profile++)
         {
-            var profilePath = RunSaveManager.GetRunSavePath(profile, RunCheckpoints.FileName, true);
+            var profilePath = RunSaveManager.GetRunSavePath(profile, RunSaveManager.runSaveFileName);
             Assert(CheckpointStore.Read(downloadStore, profilePath, schema).Success && downloaded.ReadFile(profilePath) == remote.ReadFile(profilePath),
                 $"SaveManager startup downloads profile {profile} checkpoint");
         }
@@ -299,27 +302,30 @@ public static partial class Checks
         remote.DeleteFile(path);
         await downloadManager.SyncCloudToLocal();
         Assert(!downloaded.FileExists(path) && !downloaded.FileExists(path + ".backup"), "vanilla cloud-authoritative deletion includes primary and backup");
+        downloaded.WriteFile(path + ".backup", System.Text.Encoding.UTF8.GetString(RunCheckpoints.Encode(snapshot)));
+        await downloadManager.SyncCloudToLocal();
+        Assert(downloaded.FileExists(path + ".backup"), "cloud synchronization preserves a lone local backup");
 
-        var secondPath = RunSaveManager.GetRunSavePath(2, RunCheckpoints.FileName, true);
+        var secondPath = RunSaveManager.GetRunSavePath(2, RunSaveManager.runSaveFileName);
         var historyPath = RunHistorySaveManager.GetHistoryPath(2) + $"/{snapshot.StartTime}.run";
         downloaded.WriteFile(historyPath, "{}");
         AccessTools.Method(typeof(SaveManager), "CleanupStaleCurrentRunSaves").Invoke(downloadManager, null);
         Assert(!downloaded.FileExists(secondPath), "completed mod run is removed by history-based cleanup");
 
-        var thirdPath = RunSaveManager.GetRunSavePath(3, RunCheckpoints.FileName, true);
+        var thirdPath = RunSaveManager.GetRunSavePath(3, RunSaveManager.runSaveFileName);
         var invalid = JsonNode.Parse(downloaded.ReadFile(thirdPath)!)!.AsObject();
         invalid.Remove("same_seed");
         downloaded.WriteFile(thirdPath, invalid.ToJsonString());
         downloaded.WriteFile(RunHistorySaveManager.GetHistoryPath(3) + $"/{snapshot.StartTime}.run", "{}");
         AccessTools.Method(typeof(SaveManager), "CleanupStaleCurrentRunSaves").Invoke(downloadManager, null);
-        Assert(downloaded.FileExists(thirdPath), "stale cleanup preserves incompatible checkpoint");
+        Assert(!downloaded.FileExists(thirdPath), "game cleanup removes completed ordinary saves through the standard path");
     }
 
     private static async Task CheckDisk(SerializableRun snapshot, int schema)
     {
         const string directory = "user://stage1-disk";
         var store = new GodotFileIo(directory);
-        const string path = "same_seed_run.save";
+        const string path = "current_run.save";
         await CheckpointStore.Write(store, path, snapshot, false, null);
         var first = store.ReadFile(path);
         snapshot.NumReloads++;

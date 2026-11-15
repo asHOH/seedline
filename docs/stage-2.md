@@ -10,4 +10,4 @@ Capture and restore copy state independently of the live run and loaded snapshot
 
 [Verification](../README.md#build-and-validate) covers fixed reference vectors, address separation, culture, ranges, stream isolation, corruption and checkpoint copying. In-engine checks exercise setup, capture, reload rewriting and replay using test draws before/after checkpoints. Gameplay reconstruction checks accompany source integration, beginning with combat gold in step 3.
 
-Validated on 2026-11-15: 32 xUnit tests and 72 in-engine checks passed; formatting and analyzer build passed.
+Current validation results: [integration checks](stage-1.md#cloud-and-verification-limits).

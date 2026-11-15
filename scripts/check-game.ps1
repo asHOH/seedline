@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$GameDir,
-    [string]$RitsuLibDir
+    [string]$RitsuLibDir,
+    [switch]$RitsuFirst
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
@@ -8,15 +9,21 @@ $game = (Resolve-Path -LiteralPath $GameDir).Path
 if ((Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash -ne 'A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7') {
     throw 'Checks require v0.113.0 build 16ac0fe3.'
 }
-$suite = if ($RitsuLibDir) { 'ritsu-prototype' } else { 'stage1' }
+$suite = if ($RitsuLibDir) { 'ritsu' } else { 'stage1' }
 $hostDir = Join-Path $repo ".cache/$suite-host"
 $runDir = Join-Path $repo (".cache/$suite-checks/" + [guid]::NewGuid().ToString())
 New-Item -ItemType Directory -Path $hostDir, $runDir -Force | Out-Null
 $settingsDir = Join-Path $runDir 'SlayTheSpire2/default/1'
 New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
-@'
-{"schema_version":8,"mod_settings":{"mods_enabled":true},"skip_intro_logo":true,"seen_ea_disclaimer":true,"language":"eng"}
-'@ | Set-Content -LiteralPath (Join-Path $settingsDir 'settings.save') -Encoding utf8
+$modOrder = if ($RitsuFirst) { @('STS2-RitsuLib', 'SameSeed', 'SameSeed.Checks') } else { @('SameSeed', 'STS2-RitsuLib', 'SameSeed.Checks') }
+$settings = @{
+    schema_version = 8
+    mod_settings = @{ mods_enabled = $true; mod_list = @($modOrder | ForEach-Object { @{ id = $_; source = 1; is_enabled = $true } }) }
+    skip_intro_logo = $true
+    seen_ea_disclaimer = $true
+    language = 'eng'
+}
+$settings | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $settingsDir 'settings.save') -Encoding utf8
 
 # Keep the installed game and its saves outside the test host.
 if ($game -ne [System.IO.Path]::GetFullPath($hostDir)) {
@@ -43,7 +50,7 @@ if ($RitsuLibDir) {
     $ritsuPackage = (Resolve-Path -LiteralPath $RitsuLibDir).Path
     $manifest = Get-Content -LiteralPath (Join-Path $ritsuPackage 'mod_manifest.json') -Raw | ConvertFrom-Json
     if ($manifest.id -ne 'STS2-RitsuLib' -or $manifest.version -ne '0.6.13' -or $manifest.min_game_version -ne '0.113.0') {
-        throw 'Prototype requires the official RitsuLib v0.6.13 package for StS2 v0.113.0.'
+        throw 'Checks require the official RitsuLib v0.6.13 package for StS2 v0.113.0.'
     }
     $ritsuTarget = Join-Path $hostDir 'mods/STS2-RitsuLib'
     New-Item -ItemType Directory -Path $ritsuTarget -Force | Out-Null
@@ -59,7 +66,8 @@ $start.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
 $start.Environment['APPDATA'] = $runDir
 $start.Environment['LOCALAPPDATA'] = $runDir
 $start.Environment['SAMESEED_CHECK_ROOT'] = $runDir
-$start.Environment['SAMESEED_RITSU_PROTOTYPE'] = if ($RitsuLibDir) { '1' } else { '0' }
+$start.Environment['SAMESEED_RITSU_CHECKS'] = if ($RitsuLibDir) { '1' } else { '0' }
+$start.Environment['SAMESEED_RITSU_FIRST'] = if ($RitsuFirst) { '1' } else { '0' }
 foreach ($argument in '--headless', '--audio-driver', 'Dummy', '--force-steam=off', '--log-file', (Join-Path $runDir 'game.log')) {
     $start.ArgumentList.Add($argument)
 }
