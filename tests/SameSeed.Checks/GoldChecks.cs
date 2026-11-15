@@ -24,7 +24,7 @@ public static partial class Checks
     private static readonly RandomAddress normalGold = RandomAddress.For("gold reward", "normal");
     private static readonly RandomAddress eliteGold = RandomAddress.For("gold reward", "elite");
 
-    private static async Task CheckCombatGold()
+    private static async Task CheckGameplayRewards()
     {
         var wasTestMode = TestMode.IsOn;
         var localId = LocalContext.NetId;
@@ -45,6 +45,8 @@ public static partial class Checks
             await CheckGoldReload(ModelDb.Encounter<DenseVegetationEventEncounter>(), ModelDb.Event<DenseVegetation>());
             await CheckDummyReload(false);
             await CheckDummyReload(true);
+            await CheckRewardSupplies();
+            await CheckCardRewards();
         }
         finally
         {

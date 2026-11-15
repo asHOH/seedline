@@ -8,6 +8,8 @@ internal sealed class RandomState(string seed)
 
     internal long Position(RandomAddress address) => positions.GetValueOrDefault(address.Key);
 
+    internal void Commit(RandomAddress address, RandomState preview) => positions[address.Key] = preview.Position(address);
+
     // Call only when the source policy commits an opportunity; addresses remain zero-based.
     internal long Advance(RandomAddress address)
     {

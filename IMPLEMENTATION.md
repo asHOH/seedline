@@ -17,7 +17,7 @@ For each operation, record its interception point, state owner, commitment point
 1. **Integration:** standard-path checkpoints and optional RitsuLib v0.6.13 bridge. [Boundaries and verification](docs/stage-1.md).
 2. **Foundation:** complete. Stable addresses, independent randomness and run-owned state, with deterministic-roll, snapshot-isolation and replay checks. [Foundation contract](docs/stage-2.md).
 3. **First playable path:** combat-gold generation, acquisition and reload implemented, including parent-event reconstruction checks. [Coverage and pending gameplay checks](docs/stage-3.md).
-4. **Rewards:** shared supplies, relics/chests, potions, shops and card rewards. Establish card processing order, occurrence lifetime, keys and checkpoint rebinding before dependent policies, including starting and temporarily stored cards.
+4. **Rewards:** shared supplies, relics/chests, potions, shops and card offers implemented, with permanent-card processing order, occurrence lifetime, keys and checkpoint rebinding. [Coverage and gameplay checks](docs/stage-4.md).
 5. **Non-combat:** clocks and deck routing, then transformations and remaining policies.
 6. **Combat:** combat policies and card-lifetime rules.
 

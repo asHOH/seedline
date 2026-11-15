@@ -8,12 +8,13 @@ namespace SameSeed;
 
 internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Random, JsonObject? Ritsu = null)
 {
-    internal CheckpointState Copy() => this with { Random = Random.Copy(), Ritsu = Ritsu?.DeepClone().AsObject() };
+    internal RewardState Rewards { get; init; } = new();
+    internal CheckpointState Copy() => this with { Random = Random.Copy(), Rewards = Rewards.Copy(), Ritsu = Ritsu?.DeepClone().AsObject() };
 }
 
 internal static class RunCheckpoints
 {
-    internal const int SchemaVersion = 2;
+    internal const int SchemaVersion = 3;
     private static readonly ConditionalWeakTable<RunState, CheckpointState> runs = new();
     private static readonly ConditionalWeakTable<SerializableRun, CheckpointState> snapshots = new();
 
@@ -43,6 +44,8 @@ internal static class RunCheckpoints
     internal static CheckpointState Require(RunState run) => runs.TryGetValue(run, out var state)
         ? state : throw new InvalidOperationException("SameSeed state is missing from this run.");
 
+    internal static CheckpointState? Find(RunState run) => runs.TryGetValue(run, out var state) ? state : null;
+
     internal static CheckpointState Require(SerializableRun save)
     {
         if (!snapshots.TryGetValue(save, out var state))
@@ -66,6 +69,7 @@ internal static class RunCheckpoints
             writer.WriteString("run_id", state.RunId);
             writer.WriteString("seed", state.Seed);
             state.Random.Write(writer);
+            state.Rewards.Write(writer);
             writer.WriteEndObject();
             if (state.Ritsu is { } ritsu)
             {
@@ -84,7 +88,7 @@ internal static class RunCheckpoints
         if (root.ValueKind != JsonValueKind.Object ||
             !root.TryGetProperty("same_seed", out var state) || state.ValueKind != JsonValueKind.Object ||
             !state.TryGetProperty("schema_version", out var version) ||
-            version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out var number) || number is not (1 or SchemaVersion) ||
+            version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out var number) || number != SchemaVersion ||
             !state.TryGetProperty("game_build", out var build) || build.GetString() != ModEntry.GameBuild ||
             !state.TryGetProperty("run_id", out var id) || !id.TryGetGuid(out var runId) || runId == Guid.Empty ||
             !state.TryGetProperty("seed", out var seed) || seed.ValueKind != JsonValueKind.String)
@@ -102,12 +106,13 @@ internal static class RunCheckpoints
         }
         if (save.SchemaVersion != gameSchema)
             throw new InvalidDataException("Unsupported vanilla checkpoint schema. Save preserved.");
-        var hasPositions = state.TryGetProperty("random_positions", out var positions);
-        // Stage 1 never consumed mod randomness, so its provenance-only saves start with empty state.
-        var random = number == 1 && !hasPositions ? new RandomState(seed.GetString()!)
-            : number == SchemaVersion && hasPositions ? RandomState.Read(seed.GetString()!, positions)
-            : throw new InvalidDataException("Missing or incompatible SameSeed random state. Save preserved.");
-        var restored = new CheckpointState(runId, seed.GetString()!, random, RitsuBridge.Read(root, save));
+        if (!state.TryGetProperty("random_positions", out var positions) || !state.TryGetProperty("rewards", out var rewards))
+            throw new InvalidDataException("Missing SameSeed random or reward state. Save preserved.");
+        var random = RandomState.Read(seed.GetString()!, positions);
+        var restored = new CheckpointState(runId, seed.GetString()!, random, RitsuBridge.Read(root, save))
+        {
+            Rewards = RewardState.Read(rewards)
+        };
         Validate(save, restored);
         snapshots.Add(save, restored);
         return save;
@@ -123,6 +128,7 @@ internal static class RunCheckpoints
             save.CurrentActIndex < 0 || save.CurrentActIndex >= save.Acts.Count)
             throw new InvalidDataException("SameSeed checkpoint is incomplete or belongs to another run.");
         CheckScope(save.GameMode, save.IsCustomGame, save.Players.Count, save.Modifiers.Count);
+        CardOccurrences.Validate(save);
     }
 
     private static void CheckScope(GameMode mode, bool custom, int players, int modifiers)

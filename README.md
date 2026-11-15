@@ -1,8 +1,8 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.0, build 16ac0fe3**. Steps 1–3 provide standard-path combined checkpoints, optional RitsuLib v0.6.13 compatibility, deterministic random state and independently aligned normal-fight/elite gold rewards.
+Windows mod for Slay the Spire 2 **v0.113.0, build 16ac0fe3**. Steps 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.13 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards.
 
-Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md).
+Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md), [reward supplies and card occurrences](docs/stage-4.md).
 
 ## Build and validate
 
@@ -30,6 +30,6 @@ Enable mods through the game's loader. Start a new standard or Dread single-play
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep SameSeed and the same RitsuLib setup enabled throughout each run: continuing with SameSeed disabled can discard its state. Back up both the checkpoint and its `.backup`.
 
-Start fresh after upgrading from the dedicated `same_seed_run.save` build. Development saves remain untouched.
+Start fresh after upgrading to v0.4.0. Schema 3 requires reward history and card occurrences that earlier saves lack; incompatible saves remain untouched. The v0.3.0 comparison package is retained at `artifacts/SameSeed-v0.3.0/`.
 
-For stage 3, start a fresh run and perform the [focused gameplay checks](docs/stage-3.md#gameplay-checks) before proceeding to later stages.
+Perform the [stage 4 gameplay checks](docs/stage-4.md#gameplay-checks), including the pending [stage 3 smoke test](docs/stage-3.md#gameplay-checks), before proceeding to later stages.

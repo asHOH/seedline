@@ -43,6 +43,8 @@ internal static class LoadPatch
 [HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewSingleplayer))]
 internal static class NewRunPatch
 {
+    private static void Postfix(RunState state) => CardOccurrences.Initialize(state);
+
     private static void Prefix(RunManager __instance, RunState state)
     {
         if (__instance.IsInProgress)

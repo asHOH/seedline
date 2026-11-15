@@ -90,7 +90,7 @@ public static partial class Checks
 
             await CheckStores(snapshot, schema, original, provenance);
             CheckRejections(snapshot, schema, original);
-            CheckStageOneMigration(original, schema, provenance);
+            CheckEarlierSchemas(original, schema);
             await CheckCloud(snapshot, schema);
             await CheckDisk(snapshot, schema);
 
@@ -101,7 +101,7 @@ public static partial class Checks
             Assert(RunCheckpoints.Require(fresh).Random.NextUInt64(address) == openingRoll && live.Position(address) == 2,
                 "same-seed runs reproduce rolls independently of UUID and other run consumption");
             manager.CleanUp();
-            await CheckCombatGold();
+            await CheckGameplayRewards();
             await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
             ((SceneTree)Engine.GetMainLoop()).Quit();
         }
@@ -243,18 +243,16 @@ public static partial class Checks
         snapshot.GameMode = GameMode.Standard;
     }
 
-    private static void CheckStageOneMigration(byte[] original, int schema, CheckpointState provenance)
+    private static void CheckEarlierSchemas(byte[] original, int schema)
     {
-        var legacy = JsonNode.Parse(original)!.AsObject();
-        legacy["same_seed"]!["schema_version"] = 1;
-        legacy["same_seed"]!.AsObject().Remove("random_positions");
-        var loaded = RunCheckpoints.Decode(legacy.ToJsonString(), schema);
-        var state = RunCheckpoints.Require(loaded);
-        Assert(state.RunId == provenance.RunId && state.Seed == provenance.Seed &&
-            state.Random.Position(RandomAddress.For("foundation check", "reward")) == 0, "stage 1 upgrades retain provenance and initialize empty randomness");
-        var rewritten = JsonNode.Parse(RunCheckpoints.Encode(loaded))!;
-        Assert(rewritten["same_seed"]!["schema_version"]!.GetValue<int>() == RunCheckpoints.SchemaVersion &&
-            rewritten["same_seed"]!["random_positions"]!.AsObject().Count == 0, "legacy checkpoint rewrites use current schema");
+        foreach (var version in new[] { 1, 2 })
+        {
+            var legacy = JsonNode.Parse(original)!.AsObject();
+            legacy["same_seed"]!["schema_version"] = version;
+            legacy["same_seed"]!.AsObject().Remove("rewards");
+            try { RunCheckpoints.Decode(legacy.ToJsonString(), schema); throw new Exception("Earlier reward history was accepted."); }
+            catch (InvalidDataException) { Assert(true, $"schema {version} requires a fresh run for reward history"); }
+        }
     }
 
     private static bool SameState(CheckpointState left, CheckpointState right) =>
