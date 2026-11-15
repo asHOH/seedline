@@ -1,12 +1,16 @@
-param([Parameter(Mandatory = $true)][string]$GameDir)
+param(
+    [Parameter(Mandatory = $true)][string]$GameDir,
+    [string]$RitsuLibDir
+)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $game = (Resolve-Path -LiteralPath $GameDir).Path
 if ((Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash -ne 'A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7') {
     throw 'Checks require v0.113.0 build 16ac0fe3.'
 }
-$hostDir = Join-Path $repo '.cache/stage1-host'
-$runDir = Join-Path $repo ('.cache/stage1-checks/' + [guid]::NewGuid().ToString())
+$suite = if ($RitsuLibDir) { 'ritsu-prototype' } else { 'stage1' }
+$hostDir = Join-Path $repo ".cache/$suite-host"
+$runDir = Join-Path $repo (".cache/$suite-checks/" + [guid]::NewGuid().ToString())
 New-Item -ItemType Directory -Path $hostDir, $runDir -Force | Out-Null
 $settingsDir = Join-Path $runDir 'SlayTheSpire2/default/1'
 New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
@@ -35,6 +39,17 @@ foreach ($name in 'SameSeed', 'SameSeed.Checks') {
     Copy-Item -LiteralPath (Join-Path $repo "$sourceDir/bin/Release/net9.0/$name.dll"), (Join-Path $repo "$sourceDir/$name.json") -Destination $modDir -Force
 }
 
+if ($RitsuLibDir) {
+    $ritsuPackage = (Resolve-Path -LiteralPath $RitsuLibDir).Path
+    $manifest = Get-Content -LiteralPath (Join-Path $ritsuPackage 'mod_manifest.json') -Raw | ConvertFrom-Json
+    if ($manifest.id -ne 'STS2-RitsuLib' -or $manifest.version -ne '0.6.13' -or $manifest.min_game_version -ne '0.113.0') {
+        throw 'Prototype requires the official RitsuLib v0.6.13 package for StS2 v0.113.0.'
+    }
+    $ritsuTarget = Join-Path $hostDir 'mods/STS2-RitsuLib'
+    New-Item -ItemType Directory -Path $ritsuTarget -Force | Out-Null
+    Get-ChildItem -LiteralPath $ritsuPackage | Copy-Item -Destination $ritsuTarget -Recurse -Force
+}
+
 $start = [System.Diagnostics.ProcessStartInfo]::new()
 $start.FileName = Join-Path $hostDir 'SlayTheSpire2.exe'
 $start.WorkingDirectory = $hostDir
@@ -44,6 +59,7 @@ $start.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
 $start.Environment['APPDATA'] = $runDir
 $start.Environment['LOCALAPPDATA'] = $runDir
 $start.Environment['SAMESEED_CHECK_ROOT'] = $runDir
+$start.Environment['SAMESEED_RITSU_PROTOTYPE'] = if ($RitsuLibDir) { '1' } else { '0' }
 foreach ($argument in '--headless', '--audio-driver', 'Dummy', '--force-steam=off', '--log-file', (Join-Path $runDir 'game.log')) {
     $start.ArgumentList.Add($argument)
 }

@@ -21,7 +21,7 @@ using MegaCrit.Sts2.Core.Unlocks;
 namespace SameSeed.Checks;
 
 [ModInitializer(nameof(Initialize))]
-public static class Checks
+public static partial class Checks
 {
     private static readonly List<string> passed = [];
 
@@ -38,6 +38,13 @@ public static class Checks
         try
         {
             await (NGame.Instance ?? throw new InvalidOperationException("Game has not started.")).GameStartupComplete;
+            if (System.Environment.GetEnvironmentVariable("SAMESEED_RITSU_PROTOTYPE") == "1")
+            {
+                await CheckRitsuPrototype();
+                await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
+                ((SceneTree)Engine.GetMainLoop()).Quit();
+                return;
+            }
             Assert(ModManager.GetLoadedMods().Any(m => m.manifest?.id == ModEntry.Id && m.errors is not { Count: > 0 }), "built-in loader and explicit initializer");
             Assert(Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer)))?.Owners.Contains(ModEntry.Id) == true &&
                 Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer)))?.Owners.Contains(ModEntry.Id) == true, "both multiplayer entry guards installed");

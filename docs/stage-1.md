@@ -43,6 +43,6 @@ The baseline uses `same_seed_run.save`. These boundaries remain the starting poi
 
 The game store writes locally before uploading; failed remote writes retain the local checkpoint. At startup, remote data can replace newer local data when timestamps differ. If the remote file is absent and a local primary exists, synchronization deletes the local primary and backup. A lone local backup survives. Retain these game-store semantics.
 
-Current [verification](../README.md#build-and-validate) exercises the loader, serializers, run managers and disk writer, plus simulated cloud operations. Evidence: `.cache/stage1-checks/<run>/result.json` and `game.log`. Combined RitsuLib checks remain pending.
+Current [verification](../README.md#build-and-validate) exercises the loader, serializers, run managers and disk writer, plus simulated cloud operations. Evidence: `.cache/stage1-checks/<run>/result.json` and `game.log`. The [bounded RitsuLib prototype](ritsu-prototype.md) tests backup pairing and restoration rejection; production integration remains pending.
 
 Live Steam synchronization and normal-UI disable/re-enable remain unverified; second-device checks are outside the available setup. Headless runs emit rendering/preload and shutdown diagnostics.
