@@ -34,7 +34,7 @@ Writing the captured envelope directly avoids RitsuLib's fallible injection path
 
 The game store writes locally before uploading; failed uploads retain the local checkpoint. In v0.113.1, ordinary writes and directory synchronization keep `.backup`/`.pre-repair` files local and directory synchronization removes stale cloud copies. At startup, differing timestamps can replace newer local data. An absent remote primary deletes its local primary and backup; a lone local backup survives.
 
-The [validation command](../README.md#build-and-validate) exercises standard-path discovery, profile isolation, deletion, completed-run cleanup, paired backup recovery, rejected ordinary saves, snapshot isolation, disk failure and simulated cloud operations. Combined runs add [RitsuLib checks](ritsulib.md); both configurations exercise the foundation and replay checks. Evidence: `.cache/stage1-checks/<run>/result.json`, `.cache/ritsu-checks/<run>/result.json` and their `game.log` files.
+The [validation command](../README.md#build-and-validate) exercises standard-path discovery, profile isolation, deletion, completed-run cleanup, paired backup recovery, rejected ordinary saves, snapshot isolation, disk failure and simulated cloud operations. Combined runs add [RitsuLib checks](ritsulib.md); both configurations exercise the foundation and replay checks. Each run writes `result.json` and `game.log` under `.cache/stage1-checks/<run>/` or `.cache/ritsu-checks/<run>/`.
 
 Validation: [build compatibility review](../references/v0.113.1-review.md).
 

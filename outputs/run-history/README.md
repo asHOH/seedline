@@ -10,9 +10,10 @@ Data: [Spire Codex](https://github.com/ptrlrd/spire-codex#api-endpoints), Novemb
 
 ## Reproduce
 
-Requires Node.js and the local v0.111.0 reference code. From the repository root:
+Requires Node.js, a v0.111.0 game installation, and ILSpyCmd 9.1.0.7988 with its .NET 8 runtime. From the repository root, extract the reference code and download the dataset:
 
 ```powershell
+ilspycmd -p -o sts2-decompiled '<v0.111.0 game>/data_sts2_windows_x86_64/sts2.dll'
 New-Item -ItemType Directory -Force .cache/run-history | Out-Null
 Invoke-WebRequest https://spire-codex.com/api/exports/runs/manifest -OutFile .cache/run-history/source-manifest.json -ErrorAction Stop
 curl.exe --fail --location --output .cache/run-history/runs-v0.111.0.jsonl.gz https://spire-codex.com/exports/runs-v0.111.0.jsonl.gz

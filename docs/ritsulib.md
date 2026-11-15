@@ -12,4 +12,4 @@ The isolated checks use the production bridge and real RitsuLib in both initiali
 
 The earlier bounded prototype established that comparing retained JSON could hide failed imports. The production guard checks live slot values before run setup. [Checkpoint contract and boundaries](stage-1.md).
 
-Evidence resides under `.cache/ritsu-checks/<run>/`; Steam is disabled in these tests. Live Steam synchronization and normal-UI disable/re-enable remain unverified.
+Each run writes its results under `.cache/ritsu-checks/<run>/`; Steam is disabled in these tests. Live Steam synchronization and normal-UI disable/re-enable remain unverified.

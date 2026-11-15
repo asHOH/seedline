@@ -19,7 +19,7 @@ Parent-event reconstruction uses the game's saved `ParentEventId`, resume flag, 
 
 The [validation command](../README.md#build-and-validate) includes engine checks for A0/A7 ranges, independent category consumption, route reordering, cross-act and Dread behavior, Bowler Hat acquisition, fixed/custom rewards, Gremlin Merc, final bosses, repeated reloads and next-room continuation. Event checks restore Dense Vegetation's gold reward and Battleworn Dummy's victory/timeout state through the real room-stack reconstruction and parent-resume paths.
 
-Validated 2026-11-15: formatting and analyzer build, 32 unit tests, 139 standalone engine checks and 193 RitsuLib checks in each initialization order passed. Evidence: `.cache/stage1-checks/7d6f47da-f96b-4f84-9ca3-d8a34c98569f/`, `.cache/ritsu-checks/396d18d9-8c97-49aa-bf5d-6559d1e749f8/` and `.cache/ritsu-checks/9abebbd5-1e85-4e3a-9830-1260f9bbda29/` (`result.json`, `game.log`).
+Validated 2026-11-15: formatting and analyzer build, 32 unit tests, 139 standalone engine checks and 193 RitsuLib checks in each initialization order passed.
 
 These checks use the game's test mode for reward interaction and construct completed battles at the checkpoint boundary. UI notifications retain normal-game behavior for RitsuLib's subscribers. The checks exercise production generation, selection, save/load and reconstruction code; the visible combat-to-reward transition requires gameplay verification.
 

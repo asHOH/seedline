@@ -18,6 +18,17 @@ Add `-RitsuLibDir '<extracted RitsuLib v0.6.13 package>'` to also run the combin
 
 The package at `artifacts/SameSeed/` contains only `SameSeed.dll` and `SameSeed.json`. The game supplies Harmony and its other assemblies.
 
+## Event workbook
+
+The [workbook](references/StS2_Events.xlsx) records v0.113.0. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`). From the repository root:
+
+```powershell
+ilspycmd -p -o .cache/sts2-v0.113.0/decompiled '<v0.113.0 game>/data_sts2_windows_x86_64/sts2.dll'
+& '<Codex bundled Node executable>' scripts/build-events.mjs
+```
+
+The [generator](scripts/build-events.mjs) reads the committed workbook as its template and checks event coverage against the extracted source. Review its export in `outputs/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game-source inputs and generated previews remain local.
+
 ## Deploy
 
 Close the game, then explicitly deploy the validated package:
@@ -30,6 +41,6 @@ Enable mods through the game's loader. Start a new standard or Dread single-play
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state. Back up both the checkpoint and its `.backup`.
 
-Start fresh after upgrading to v0.4.0. Schema 3 requires reward history and card occurrences that earlier saves lack; incompatible saves remain untouched. The v0.3.0 comparison package is retained at `artifacts/SameSeed-v0.3.0/`.
+Start fresh after upgrading to v0.4.0. Schema 3 requires reward history and card occurrences that earlier saves lack; incompatible saves remain untouched.
 
 Perform the [stage 4 gameplay checks](docs/stage-4.md#gameplay-checks), including the pending [stage 3 smoke test](docs/stage-3.md#gameplay-checks), before proceeding to later stages.

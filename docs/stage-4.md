@@ -26,7 +26,7 @@ Capture freezes reward state and card metadata with the vanilla snapshot. Restor
 
 Automated checks cover filtered advancement against an eager model, marker collisions and expiry, borrowing through exhaustion, shop isolation and stable prices, potion commitment/failure, chest entry/skips, rarity deferral, reward modifiers, all six characters at A0/A7, expanded-pool rerolls, Scroll Boxes, card copies, stored-card returns, random/fixed transformation metadata through modifier cloning and reload, and checkpoint replay.
 
-Final validation passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 203 standalone engine checks and 257 RitsuLib checks in each initialization order. Evidence: `.cache/stage1-checks/3c1d4b21-f3a3-4cc7-a74f-b31cc0d7b479/result.json`, `.cache/ritsu-checks/98ea6ef5-1a75-4fe3-a1f2-43d5cf46fb0a/result.json` and `.cache/ritsu-checks/8d5fbdcd-bb7f-49cf-a615-b94683638b5f/result.json`.
+Final validation passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 203 standalone engine checks and 257 RitsuLib checks in each initialization order. Run the [validation command](../README.md#build-and-validate) to check the current suite.
 
 Permanent-card comparisons establish the applicable portion of `CARD_ORDER.md`; combat-only comparisons arrive with stage 6. Permanent transformation/direct-addition supplies, selection clocks, player-choice routing and Pael's Tooth's aligned return selection remain stage 5 work. Potion effect ordinals and combat-card lifetimes accompany their stage 6 consumers.
 
