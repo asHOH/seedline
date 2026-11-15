@@ -4,11 +4,15 @@ Standard-path checkpoints combine vanilla, SameSeed and optional RitsuLib state.
 
 The initializer verifies the [supported builds](../README.md)' assembly hashes before installing Harmony patches. Run entry rejects Catfood, multiplayer, daily, Blitz and custom runs.
 
+New runs receive the game's full unlock snapshot before initialization. Grants stay in the run; profile unlocks, Ascension limits and selected difficulty are preserved. Standard and Dread Start buttons list missing content with Proceed focused and Cancel available. Act selection also uses full unlocks. New-run compatibility checks remain at setup, after the UI fades out.
+
+The full snapshot also supplies encounter-discovery flags and mature-run content rules. Character selection and tutorial prompts retain their profile rules.
+
 ## Checkpoint contract
 
 Use `modded/profileN/saves/current_run.save` and its local `.backup`. The game handles discovery, deletion, cloud synchronization and completed-run cleanup. Continuing through this ordinary modded slot with SameSeed disabled can discard SameSeed state.
 
-Keep the game build and mod setup fixed throughout each run. RitsuLib is optional; compatibility covers v0.6.13 and [current-schema run/player slots](ritsulib.md). Other-mod compatibility is outside scope. SameSeed retains its RNG behavior and state format with or without RitsuLib.
+Keep the game build and mod setup fixed throughout each run. RitsuLib is optional; compatibility covers v0.6.14 and [current-schema run/player slots](ritsulib.md). Other-mod compatibility is outside scope. SameSeed retains its RNG behavior and state format with or without RitsuLib.
 
 One checkpoint contains the game's `SerializableRun`, versioned `same_seed` state and any RitsuLib payload. Capture freezes all payloads; reload-count rewrites preserve the loaded snapshot. Required payload capture, injection or restoration failures abort the operation and preserve the prior checkpoint. Restore required state before room regeneration, preserving vanilla checkpoint timing and reconstruction payloads.
 

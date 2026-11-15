@@ -23,6 +23,26 @@ internal static class RelicRewards
     internal static IEnumerable<RelicModel> Pool(Player player) => ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(player.UnlockState)
         .Concat(player.Character.RelicPool.GetUnlockedRelics(player.UnlockState)).Where(r => rarities.Contains(r.Rarity));
 
+    private static int[] AllocationCounts(RelicRarity rarity, int poolSize) => rarity switch
+    {
+        RelicRarity.Common => [12, 9, 5],
+        RelicRarity.Uncommon => [14, 11, 7],
+        RelicRarity.Rare => [17, 13, 8],
+        _ => [0, poolSize, 0]
+    };
+
+    internal static void ValidateFullPool(CharacterModel character)
+    {
+        var pool = ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(MegaCrit.Sts2.Core.Unlocks.UnlockState.all)
+            .Concat(character.RelicPool.GetUnlockedRelics(MegaCrit.Sts2.Core.Unlocks.UnlockState.all)).ToArray();
+        foreach (var rarity in rarities)
+        {
+            var count = pool.Count(r => r.Rarity == rarity);
+            if (AllocationCounts(rarity, count).Sum() != count)
+                throw new InvalidOperationException($"SameSeed content compatibility error: {character.Title.GetFormattedText()} has an unexpected {rarity} relic pool.");
+        }
+    }
+
     internal static void Initialize(Player player)
     {
         var state = RunCheckpoints.Require((RunState)player.RunState);
@@ -32,13 +52,7 @@ internal static class RelicRewards
         {
             var pool = Pool(player).Where(r => r.Rarity == rarity).OrderBy(r => r.Id.Entry, StringComparer.Ordinal).ToArray();
             Shuffle(pool, state.Seed, RandomAddress.For("relic allocation", rarity.ToString()));
-            var counts = rarity switch
-            {
-                RelicRarity.Common => new[] { 12, 9, 5 },
-                RelicRarity.Uncommon => new[] { 14, 11, 7 },
-                RelicRarity.Rare => new[] { 17, 13, 8 },
-                _ => new[] { 0, pool.Length, 0 }
-            };
+            var counts = AllocationCounts(rarity, pool.Length);
             if (counts.Sum() != pool.Length)
                 throw new InvalidOperationException($"SameSeed requires the fully unlocked {rarity} relic pool.");
             var start = 0;

@@ -33,10 +33,11 @@ public static partial class Checks
         uiNotifications.Patch(AccessTools.Method(typeof(CombatStateTracker), "NotifyCombatStateChanged"),
             prefix: new HarmonyMethod(typeof(Checks), nameof(BeginGoldUiNotification)),
             finalizer: new HarmonyMethod(typeof(Checks), nameof(EndGoldUiNotification)));
-        TestMode.IsOn = true;
         LocalContext.NetId = 1;
         try
         {
+            await CheckRunContent();
+            TestMode.IsOn = true;
             foreach (var ascension in new[] { 0, 7 })
                 await CheckGoldGeneration(ascension);
             await CheckGoldRouteOrder();

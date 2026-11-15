@@ -72,6 +72,8 @@ Standalone StS2 v0.113.0–v0.113.1 (`public-beta`) mod for everyday play, also 
 
 Compare single-player runs, including [Dread](#dread), with matching seeds, versions and rules, and all content unlocked.
 
+Grant full content within new runs using this mod, preserving profile unlocks and Ascension limits.
+
 **Exclude:** Blitz mode, tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.

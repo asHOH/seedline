@@ -22,6 +22,7 @@ internal static class RunCheckpoints
     {
         ModEntry.CheckOtherMods();
         CheckScope(run.GameMode, run.IsCustomGame, run.Players.Count, run.Modifiers.Count);
+        RunContent.Grant(run);
         runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed), RitsuBridge.Capture(run)));
     }
 

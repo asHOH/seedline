@@ -39,10 +39,10 @@ public static partial class Checks
     private static async Task CheckRitsu()
     {
         var mod = ModManager.GetLoadedMods().Single(m => m.manifest?.id == "STS2-RitsuLib");
-        Assert(mod.manifest?.version == "0.6.13" && mod.errors is not { Count: > 0 }, "official RitsuLib v0.6.13 loaded");
+        Assert(mod.manifest?.version == "0.6.14" && mod.errors is not { Count: > 0 }, "official RitsuLib v0.6.14 loaded");
         var framework = RitsuType("RitsuLibFramework");
         Assert((bool)AccessTools.Property(framework, "IsActive").GetValue(null)! &&
-            framework.Assembly.GetName().Version == new Version(0, 6, 13, 0), "RitsuLib runtime initialized at pinned version");
+            framework.Assembly.GetName().Version == new Version(0, 6, 14, 0), "RitsuLib runtime initialized at pinned version");
         var order = ModManager.GetLoadedMods().Select(m => m.manifest?.id).ToList();
         Assert((order.IndexOf("STS2-RitsuLib") < order.IndexOf(ModEntry.Id)) ==
             (System.Environment.GetEnvironmentVariable("SAMESEED_RITSU_FIRST") == "1"), "requested initializer order exercised");

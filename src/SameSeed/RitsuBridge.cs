@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Saves;
 
 namespace SameSeed;
 
-// shortcut: v0.6.13 run/player slots only; extend when another compatibility target is accepted.
+// shortcut: v0.6.14 run/player slots only; extend when another compatibility target is accepted.
 internal static class RitsuBridge
 {
     internal const string PatchId = "com.ritsukage.sts2-RitsuLib.framework-core";
@@ -21,9 +21,9 @@ internal static class RitsuBridge
         if (framework == null && !ModManager.Mods.Any(m => m.manifest?.id == "STS2-RitsuLib" &&
             m.state is ModLoadState.Loaded or ModLoadState.Failed))
             return false;
-        if (framework?.Assembly.GetName().Version != new Version(0, 6, 13, 0) ||
+        if (framework?.Assembly.GetName().Version != new Version(0, 6, 14, 0) ||
             AccessTools.Property(framework, "IsActive").GetValue(null) is not true)
-            throw new InvalidDataException("SameSeed requires active RitsuLib v0.6.13 when installed.");
+            throw new InvalidDataException("SameSeed requires active RitsuLib v0.6.14 when installed.");
         return true;
     }
 

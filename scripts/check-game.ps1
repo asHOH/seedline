@@ -53,8 +53,9 @@ foreach ($name in 'SameSeed', 'SameSeed.Checks') {
 if ($RitsuLibDir) {
     $ritsuPackage = (Resolve-Path -LiteralPath $RitsuLibDir).Path
     $manifest = Get-Content -LiteralPath (Join-Path $ritsuPackage 'mod_manifest.json') -Raw | ConvertFrom-Json
-    if ($manifest.id -ne 'STS2-RitsuLib' -or $manifest.version -ne '0.6.13' -or $manifest.min_game_version -ne '0.113.0') {
-        throw 'Checks require the official RitsuLib v0.6.13 package for StS2 v0.113.0.'
+    if ($manifest.id -ne 'STS2-RitsuLib' -or $manifest.version -ne '0.6.14' -or
+        !(Test-Path -LiteralPath (Join-Path $ritsuPackage 'compat/0.113.0/STS2-RitsuLib.dll'))) {
+        throw 'Checks require the official RitsuLib v0.6.14 package with its StS2 v0.113.0 runtime.'
     }
     $ritsuTarget = Join-Path $hostDir 'mods/STS2-RitsuLib'
     New-Item -ItemType Directory -Path $ritsuTarget -Force | Out-Null
