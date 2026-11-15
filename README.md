@@ -1,8 +1,8 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.0, build 16ac0fe3**. Steps 1–2 provide standard-path combined checkpoints, optional RitsuLib v0.6.13 compatibility and deterministic random state. Gameplay alignment begins with combat gold in step 3.
+Windows mod for Slay the Spire 2 **v0.113.0, build 16ac0fe3**. Steps 1–3 provide standard-path combined checkpoints, optional RitsuLib v0.6.13 compatibility, deterministic random state and independently aligned normal-fight/elite gold rewards.
 
-Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md).
+Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md).
 
 ## Build and validate
 
@@ -31,3 +31,5 @@ Enable mods through the game's loader. Start a new standard or Dread single-play
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep SameSeed and the same RitsuLib setup enabled throughout each run: continuing with SameSeed disabled can discard its state. Back up both the checkpoint and its `.backup`.
 
 Start fresh after upgrading from the dedicated `same_seed_run.save` build. Development saves remain untouched.
+
+For stage 3, start a fresh run and perform the [focused gameplay checks](docs/stage-3.md#gameplay-checks) before proceeding to later stages.

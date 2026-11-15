@@ -32,7 +32,7 @@ public static class ModEntry
         {
             harmony.PatchAll(typeof(ModEntry).Assembly);
             initialized = true;
-            Log.Info($"{Id}: Foundation initialized for {GameBuild}.");
+            Log.Info($"{Id}: Combat gold and checkpoints initialized for {GameBuild}.");
         }
         catch
         {

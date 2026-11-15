@@ -101,6 +101,7 @@ public static partial class Checks
             Assert(RunCheckpoints.Require(fresh).Random.NextUInt64(address) == openingRoll && live.Position(address) == 2,
                 "same-seed runs reproduce rolls independently of UUID and other run consumption");
             manager.CleanUp();
+            await CheckCombatGold();
             await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
             ((SceneTree)Engine.GetMainLoop()).Quit();
         }
