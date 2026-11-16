@@ -11,19 +11,21 @@ internal static class RewardEntries
 
     internal static void Attach(AbstractModel model, SupplyEntry entry)
     {
-        entries.Remove(model);
-        entries.Add(model, entry);
         if (model is CardModel card)
-            CardOccurrences.Generated(card, entry);
+            CardOccurrences.Create(card, entry.Address);
+        else
+            entries.AddOrUpdate(model, entry);
     }
 
-    internal static SupplyEntry? Find(AbstractModel model) => entries.TryGetValue(model, out var entry) ? entry : null;
+    internal static SupplyEntry? Find(AbstractModel model) => model is CardModel card
+        ? CardOccurrences.Find(card) is { } occurrence ? new(card.Id.Entry, occurrence.Address) : null
+        : entries.TryGetValue(model, out var entry) ? entry : null;
 
     private static void Postfix(AbstractModel __instance, AbstractModel __result)
     {
-        if (Find(__instance) is { } entry)
-            Attach(__result, entry);
         if (__instance is CardModel original && __result is CardModel copy)
-            CardOccurrences.Clone(original, copy);
+            CardOccurrences.Recreate(original, copy);
+        else if (Find(__instance) is { } entry)
+            Attach(__result, entry);
     }
 }

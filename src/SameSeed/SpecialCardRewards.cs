@@ -32,15 +32,15 @@ internal static class SpecialCardRewards
             }
             var state = RunCheckpoints.Require((RunState)player.RunState);
             var candidates = eligible;
-            var candy = eligible.Where(c => CardOccurrences.Info(c.Card).Candy).ToArray();
+            var candy = eligible.Where(c => CardOffers.Find(c.Card)?.Candy == true).ToArray();
             if (eligible.Length > 1 && candy.Length > 0)
                 candidates = CardRewards.Unit(state, "Wing Charm", CardOccurrences.Info(candy[0].Card).Address) < 1d / eligible.Length
                     ? candy : eligible.Except(candy).ToArray();
-            var supplementary = candidates.Where(c => CardOccurrences.Info(c.Card).Supplementary).ToArray();
+            var supplementary = candidates.Where(c => CardOffers.Find(c.Card)?.Supplementary == true).ToArray();
             if (candidates.Length > 1 && supplementary.Length > 0)
             {
                 var triple = candidates.Except(supplementary).ToArray();
-                var rare = cardRewards.Any(c => !CardOccurrences.Info(c.Card).Candy && c.Card.Rarity == CardRarity.Rare);
+                var rare = cardRewards.Any(c => CardOffers.Find(c.Card)?.Candy != true && c.Card.Rarity == CardRarity.Rare);
                 if (triple.Length == 0 || (rare && CardRewards.EventRng(player).NextFloat() < (double)supplementary.Length / candidates.Length))
                 {
                     var index = rare ? AddressRandom.IntInclusive(state.Seed, RandomAddress.For("Wing Charm supplementary selection", "BRAIN_LEECH"), 0, supplementary.Length - 1)
@@ -50,7 +50,7 @@ internal static class SpecialCardRewards
                 else
                     candidates = triple;
             }
-            var chosen = candidates.OrderBy(c => CardRewards.Unit(state, "Wing Charm", CardOccurrences.Info(c.Card).WingAddress))
+            var chosen = candidates.OrderBy(c => CardRewards.Unit(state, "Wing Charm", CardOffers.Find(c.Card)?.WingAddress ?? CardOccurrences.Info(c.Card).Address))
                 .ThenBy(c => CardOccurrences.Info(c.Card).Address, StringComparer.Ordinal).First();
             var card = player.RunState.CloneCard(chosen.Card);
             CardCmd.Enchant<Swift>(card, __instance.DynamicVars["SwiftAmount"].BaseValue);
@@ -86,7 +86,7 @@ internal static class SpecialCardRewards
         var commons = claws.Any(c => c) ? [] : CardFactory.CreateForReward(player, 3,
             CardCreationOptions.ForNonCombatWithUniformOdds([player.Character.CardPool], c => c.Rarity == CardRarity.Common)
                 .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoModifyHooks)).Select(c => c.Card).ToList();
-        var offer = commons.Count == 0 ? opportunity.Key : CardOccurrences.Info(commons[0]).Offer!;
+        var offer = commons.Count == 0 ? opportunity.Key : CardOffers.Info(commons[0]).Offer!;
         var ordinary = player.Character.CardPool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
             .Where(c => c.IsAllowedInRun(player.RunState)).ToArray();
         var used = commons.Select(c => c.Id).ToHashSet();
@@ -110,12 +110,12 @@ internal static class SpecialCardRewards
                     if (!claws[bundle])
                         used.Add(canonical.Id);
                 }
-                CardOccurrences.Offer(card, offer, bundle * 3 + slot);
+                CardOffers.Attach(card, offer, bundle * 3 + slot);
                 cards.Add(card);
             }
             bundles.Add(cards);
         }
-        CardOccurrences.NumberOffer(bundles.SelectMany(b => b));
+        CardOffers.NumberOffer(bundles.SelectMany(b => b));
         return bundles;
     }
 

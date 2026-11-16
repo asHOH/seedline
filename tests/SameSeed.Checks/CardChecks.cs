@@ -42,12 +42,19 @@ public static partial class Checks
             Assert(player.Deck.Cards.All(c => CardOccurrences.Find(c) != null) &&
                 player.Deck.Cards.Select(c => CardOccurrences.Info(c).Address).Distinct().Count() == player.Deck.Cards.Count,
                 "starting deck and Ascender's Bane have distinct permanent occurrences");
+            CheckCardAssociations(player);
             var start = RunManager.Instance.ToSave(null);
             var bytes = RunCheckpoints.Encode(start);
             CardModel[] Offer(RoomType room) => CardFactory.CreateForReward(player, 3, CardCreationOptions.ForRoom(player, room)).Select(c => c.Card).ToArray();
             var normal = Offer(RoomType.Monster);
             Assert(normal.Length == 3 && normal.All(c => c.Rarity != CardRarity.Rare) && normal.Select(c => c.Id).Distinct().Count() == 3,
                 "first Scarcity normal reward is a distinct non-Rare triple");
+            var modifierCopy = run.CloneCard(normal[0]);
+            CardOffers.AssignKeys([modifierCopy]);
+            Assert(CardOccurrences.Info(modifierCopy).Address == CardOccurrences.Info(normal[0]).Address &&
+                CardOccurrences.Info(modifierCopy).Key != CardOccurrences.Info(normal[0]).Key &&
+                !CardOffers.Info(normal[0]).KeyAssigned,
+                "recreated reward cards preserve provenance while key assignment and offer state stay independent");
             var next = Offer(RoomType.Monster);
             Assert(next.All(c => c.Rarity != CardRarity.Rare) && state.Rewards.Rare.NonRareTriples == 2,
                 "opening two triples preserve zero Rare chance and shared progression");
@@ -62,7 +69,8 @@ public static partial class Checks
                 "serialized physical recreation preserves occurrence and card key");
             var copy = run.CloneCard(chosen);
             await CardPileCmd.Add(copy, PileType.Deck, skipVisuals: true);
-            Assert(CardOccurrences.Info(copy).Address != chosenEntry && CardOccurrences.Info(copy).Key != CardOccurrences.Info(chosen).Key,
+            Assert(CardOccurrences.Info(copy).Address != chosenEntry && CardOccurrences.Info(copy).Key != CardOccurrences.Info(chosen).Key &&
+                CardOffers.Find(copy) == null && RewardEntries.Find(copy)!.Address == CardOccurrences.Info(copy).Address,
                 "a permanent copy starts a distinct occurrence and selection key");
             var tooth = (PaelsTooth)ModelDb.Relic<PaelsTooth>().ToMutable();
             player.AddRelicInternal(tooth);
@@ -92,7 +100,7 @@ public static partial class Checks
             player = run.Players[0];
             state = RunCheckpoints.Require(run);
             var baseOffer = CardFactory.CreateForReward(player, 5, CardCreationOptions.ForNonCombatWithDefaultOdds([player.Character.CardPool])).Select(c => c.Card).ToArray();
-            var shared = baseOffer.Where(c => !CardOccurrences.Info(c).Supplementary).OrderBy(c => CardOccurrences.Info(c).EntryOrder).ToArray();
+            var shared = baseOffer.Where(c => !CardOffers.Info(c).Supplementary).OrderBy(c => CardOffers.Info(c).EntryOrder).ToArray();
             Assert(normal.Select(c => c.Id).SequenceEqual(shared.Select(c => c.Id)), "Brain Leech shares the same first non-Rare triple across offer sizes");
             Assert(baseOffer.Select(c => c.Id).Distinct().Count() == 5, "supplementary event cards exclude triple and earlier identities");
             var fixedOptions = CardCreationOptions.ForNonCombatWithUniformOdds([player.Character.CardPool], c => c.Rarity == CardRarity.Common);
@@ -102,12 +110,12 @@ public static partial class Checks
                 "Scroll Boxes produces two distinct Common/Common/Uncommon bundles");
             var commonCounter = RandomAddress.For("card triple", player.Character.CardPool.Id.Entry, "Common");
             Assert(state.Random.Position(commonCounter) == 2, "Scroll Boxes consumes exactly one Common triple");
-            CardOccurrences.AssignKeys(bundles[0]);
+            CardOffers.AssignKeys(bundles[0]);
             var keySet = bundles[0].Select(c => CardOccurrences.Info(c).Key).Order().ToArray();
-            CardOccurrences.AssignKeys(bundles[0].Reverse());
+            CardOffers.AssignKeys(bundles[0].Reverse());
             Assert(keySet.SequenceEqual(bundles[0].Select(c => CardOccurrences.Info(c).Key).Order()), "bundle key assignment ignores selection enumeration order");
             var mapping = bundles[0].ToDictionary(c => c.Id, c => CardOccurrences.Info(c).Key);
-            CardOccurrences.AssignKeys(bundles[0].Reverse());
+            CardOffers.AssignKeys(bundles[0].Reverse());
             Assert(bundles[0].All(c => mapping[c.Id] == CardOccurrences.Info(c).Key), "pair priorities preserve identity-to-key mapping under reordered picks");
             var wing = ModelDb.Relic<WingCharm>().ToMutable();
             player.AddRelicInternal(wing);
@@ -130,7 +138,7 @@ public static partial class Checks
             var candyOffer = CardFactory.CreateForReward(player, 3, CardCreationOptions.ForRoom(player, RoomType.Monster)
                 .WithFlags(CardCreationFlags.IsCardReward | CardCreationFlags.IsFromCombat)).ToArray();
             Assert(candyOffer.Length == 4 && candyOffer[^1].Card.Type == CardType.Power &&
-                CardOccurrences.Info(candyOffer[^1].Card).Offer == CardOccurrences.Info(candyOffer[0].Card).Offer,
+                CardOffers.Info(candyOffer[^1].Card).Offer == CardOffers.Info(candyOffer[0].Card).Offer,
                 "Lasting Candy inherits expanded Power supply and parent offer address");
             var otherOptions = CardCreationOptions.ForNonCombatWithUniformOdds([ModelDb.Character<Silent>().CardPool], c => c.Rarity == CardRarity.Rare)
                 .WithFlags(CardCreationFlags.NoCardPoolModifications);
@@ -205,7 +213,7 @@ public static partial class Checks
                             "Defect's triple-Claw substitution consumes no Common triple");
                         Assert(clawBundles[1][0] is Claw && clawBundles[1].Select(c => c.Id).Distinct().Count() == 3,
                             "a substituted Claw bundle preserves Claw eligibility in the ordinary bundle");
-                        CardOccurrences.AssignKeys(clawBundles[0]);
+                        CardOffers.AssignKeys(clawBundles[0]);
                         Assert(clawBundles[0].Select(c => CardOccurrences.Info(c).Key).Distinct().Count() == 3,
                             "identical Claws in one chosen bundle receive distinct offer keys");
                     }
@@ -233,6 +241,31 @@ public static partial class Checks
             RunManager.Instance.CleanUp();
             TestMode.IsOn = previous;
         }
+    }
+
+    private static void CheckCardAssociations(Player player)
+    {
+        var copies = player.Deck.Cards.Where(c => c.Id.Entry == "STRIKE_IRONCLAD").Take(3).ToArray();
+        var before = copies.Select(CardOccurrences.Info).ToArray();
+        var saved = copies.Select(c => c.ToSerializable()).ToArray();
+        CardOccurrences.Reassociate(copies, [copies[1], copies[2], copies[0]]);
+        Assert(copies.Select(CardOccurrences.Info).SequenceEqual([before[1], before[2], before[0]]) &&
+            copies.Select(c => RewardEntries.Find(c)!.Address).SequenceEqual([before[1].Address, before[2].Address, before[0].Address]),
+            "batch reassociation moves complete occurrence records and entry addresses without sequential overwrite");
+        try
+        {
+            CardOccurrences.Reassociate(copies, [copies[0], copies[0], copies[2]]);
+            throw new InvalidOperationException("Duplicate reassociation input was accepted.");
+        }
+        catch (ArgumentException)
+        {
+            Assert(copies.Select(CardOccurrences.Info).SequenceEqual([before[1], before[2], before[0]]),
+                "invalid reassociation leaves the entire batch unchanged");
+        }
+        CardOccurrences.Reassociate(copies, [copies[2], copies[0], copies[1]]);
+        Assert(copies.Select(CardOccurrences.Info).SequenceEqual(before) &&
+            saved.Select(c => CardOccurrences.Info(CardModel.FromSerializable(c))).SequenceEqual(before),
+            "reassociation preserves captured card snapshots and can restore the original bindings");
     }
 
     private static async Task CheckTransformationReload()

@@ -22,6 +22,8 @@ Schema 3 stores reward supplies, frozen filters, chest exclusions and Rare timin
 
 SameSeed registers `SameSeedOccurrence` during the game's property-cache initialization, including its numeric ID, reverse mapping and compatibility hash before the bit width is finalized. Single-player combat checksums and replay saving use this binary format; existing schema 3 JSON checkpoints retain their format.
 
+`CardOccurrences` owns immutable occurrence records, physical bindings and validated batch reassociation. Recreation retains the record; permanent copies receive fresh records. `CardOffers` owns transient offer metadata and key assignment. Card generation entries read their addresses from the occurrence binding, so reassociation has one address owner. Selection clocks and removed-card reservations arrive with their stage 5–6 policies.
+
 Capture freezes reward state and card metadata with the vanilla snapshot. Restore completes before reward regeneration. Validation rejects missing/duplicate live card occurrences and malformed supply state while preserving checkpoint files. Schema 1/2 saves require a fresh run because their prior reward consumption cannot be reconstructed. RitsuLib remains optional with the same SameSeed format and RNG behavior.
 
 ## Coverage and remaining stages

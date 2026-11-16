@@ -15,27 +15,15 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
-using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Runs;
 
 namespace SameSeed;
 
-internal sealed class CardOccurrence(string address, string key)
-{
-    [JsonRequired] public string Address { get; set; } = address;
-    [JsonRequired] public string Key { get; set; } = key;
-    [JsonIgnore] internal string? Offer { get; set; }
-    [JsonIgnore] internal int EntryOrder { get; set; }
-    [JsonIgnore] internal int CopyNumber { get; set; }
-    [JsonIgnore] internal bool Supplementary { get; set; }
-    [JsonIgnore] internal bool Candy { get; set; }
-    [JsonIgnore] internal int RareOrder { get; set; } = -1;
-    [JsonIgnore] internal string WingAddress { get; set; } = address;
-    [JsonIgnore] internal bool KeyAssigned { get; set; }
-    internal CardOccurrence Copy() => (CardOccurrence)MemberwiseClone();
-}
+internal sealed record CardOccurrence(
+    [property: JsonRequired] string Address,
+    [property: JsonRequired] string Key);
 
 internal static class CardOccurrences
 {
@@ -65,56 +53,37 @@ internal static class CardOccurrences
     internal static CardOccurrence Info(CardModel card) => cards.TryGetValue(card, out var info)
         ? info : throw new InvalidOperationException($"Missing card occurrence: {card.Id}.");
     internal static CardOccurrence? Find(CardModel card) => cards.TryGetValue(card, out var info) ? info : null;
-    private static void Attach(CardModel card, CardOccurrence info)
+    private static void Attach(CardModel card, CardOccurrence info) => cards.AddOrUpdate(card, info);
+    private static void Forget(CardModel card)
     {
         cards.Remove(card);
-        cards.Add(card, info);
+        CardOffers.Forget(card);
     }
-    internal static void Generated(CardModel card, SupplyEntry entry) => Attach(card, new(entry.Address, entry.Address));
-    internal static void Clone(CardModel original, CardModel copy)
+    internal static void Create(CardModel card, string address)
+    {
+        CardOffers.Forget(card);
+        Attach(card, new(address, address));
+    }
+    internal static void AssignKey(CardModel card, string key) => Attach(card, Info(card) with { Key = key });
+    internal static void Recreate(CardModel original, CardModel copy)
     {
         if (Find(original) is { } info)
-            Attach(copy, info.Copy());
+            Attach(copy, info);
+        CardOffers.Recreate(original, copy);
     }
-    internal static void Offer(CardModel card, string offer, int order, bool supplementary = false, string? wing = null)
+
+    internal static void Reassociate(IReadOnlyList<CardModel> copies, IReadOnlyList<CardModel> logicalOrder)
     {
-        var info = Info(card);
-        info.Offer = offer;
-        info.EntryOrder = order;
-        info.Supplementary = supplementary;
-        info.WingAddress = wing ?? info.Address;
-        info.KeyAssigned = false;
-    }
-    internal static void NumberOffer(IEnumerable<CardModel> offered)
-    {
-        foreach (var group in offered.GroupBy(c => c.Id))
+        var participants = new HashSet<CardModel>(copies, ReferenceEqualityComparer.Instance);
+        if (copies.Count != logicalOrder.Count || participants.Count != copies.Count ||
+            logicalOrder.Distinct(ReferenceEqualityComparer.Instance).Count() != copies.Count || !participants.SetEquals(logicalOrder))
+            throw new ArgumentException("Card reassociation requires a permutation of the participating copies.");
+        var occurrences = logicalOrder.Select(Info).ToArray();
+        var offers = logicalOrder.Select(CardOffers.Find).ToArray();
+        for (var i = 0; i < copies.Count; i++)
         {
-            var index = 0;
-            foreach (var card in group.OrderBy(c => Info(c).EntryOrder))
-                Info(card).CopyNumber = ++index;
-        }
-    }
-    internal static void AssignKeys(IEnumerable<CardModel> selected)
-    {
-        foreach (var selection in selected.Where(c => Find(c)?.Offer != null).GroupBy(c => Info(c).Offer!))
-        {
-            var pending = selection.ToList();
-            var slots = Enumerable.Range(1, pending.Count).ToList();
-            var state = RunCheckpoints.Require((RunState)pending[0].Owner.RunState);
-            while (pending.Count > 0)
-            {
-                var pair = (from card in pending
-                            from slot in slots
-                            select (Card: card, Slot: slot, Priority: AddressRandom.UInt64(state.Seed,
-                                RandomAddress.For("card-key assignment").With(selection.Key).With(card.Id.Entry).At(Info(card).CopyNumber).At(slot))))
-                    .OrderBy(p => p.Priority).ThenBy(p => p.Card.Id.Entry, StringComparer.Ordinal)
-                    .ThenBy(p => Info(p.Card).CopyNumber).ThenBy(p => p.Slot).First();
-                var info = Info(pair.Card);
-                info.Key = RandomAddress.For("card key").With(selection.Key).At(pair.Slot).Key;
-                info.KeyAssigned = true;
-                pending.Remove(pair.Card);
-                slots.Remove(pair.Slot);
-            }
+            Attach(copies[i], occurrences[i]);
+            CardOffers.Rebind(copies[i], offers[i]);
         }
     }
     internal static void Initialize(RunState run)
@@ -125,7 +94,7 @@ internal static class CardOccurrences
             foreach (var card in player.Deck.Cards.OrderBy(c => c, CardOrder.Permanent))
             {
                 var address = RandomAddress.For("card occurrence", "starting deck").At(index++).Key;
-                Attach(card, new(address, address));
+                Create(card, address);
             }
         }
     }
@@ -135,8 +104,7 @@ internal static class CardOccurrences
         if (pile.Type != PileType.Deck)
             return;
         var batch = added.ToArray();
-        foreach (var card in batch.Where(c => Find(c)?.Offer != null && !Info(c).KeyAssigned))
-            AssignKeys([card]);
+        CardOffers.PrepareAcquisition(batch);
         var fresh = batch.Where(c => Find(c) == null).OrderBy(c => c, CardOrder.Permanent).ToArray();
         if (fresh.Length == 0 || fresh[0].Owner.RunState is not RunState run || RunCheckpoints.Find(run) is not { } state)
             return;
@@ -145,7 +113,7 @@ internal static class CardOccurrences
         for (var i = 0; i < fresh.Length; i++)
         {
             var occurrence = address.At(grant).At(i).Key;
-            Attach(fresh[i], new(occurrence, occurrence));
+            Create(fresh[i], occurrence);
         }
     }
 
@@ -171,12 +139,12 @@ internal static class CardOccurrences
             // Reward modifiers recreate a generated card; copying a permanent card starts a new occurrence.
             if (mutableCard.Pile?.Type == PileType.Deck)
             {
-                cards.Remove(__result);
+                Forget(__result);
                 if (copyGrant.Value is { } grant)
                 {
                     grant.Ordinal ??= grant.Random.Advance(grant.Address);
                     var address = grant.Address.At(grant.Ordinal.Value).At(grant.Indices?.GetValueOrDefault(mutableCard) ?? 0).Key;
-                    Attach(__result, new(address, address));
+                    Create(__result, address);
                 }
             }
         }
@@ -262,31 +230,6 @@ internal static class CardOccurrences
         }
     }
 
-    [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromSimpleGridForRewards))]
-    private static class GridKeys
-    {
-        private static void Prefix(List<CardCreationResult> cards)
-        {
-            var generated = cards.Select(c => c.Card).Where(c => Find(c)?.Offer != null).ToArray();
-            if (generated.Length == 0)
-                return;
-            var offer = Info(generated[0]).Offer!;
-            for (var i = 0; i < generated.Length; i++)
-            {
-                Info(generated[i]).Offer = offer;
-                Info(generated[i]).EntryOrder = i;
-            }
-            NumberOffer(generated);
-        }
-        private static void Postfix(ref Task<IEnumerable<CardModel>> __result) => __result = CompleteSelection(__result);
-    }
-
-    [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromChooseABundleScreen))]
-    private static class BundleKeys
-    {
-        private static void Postfix(ref Task<IEnumerable<CardModel>> __result) => __result = CompleteSelection(__result);
-    }
-
     [HarmonyPatch]
     private static class StoredReturn
     {
@@ -302,26 +245,6 @@ internal static class CardOccurrences
                 return false;
             stored.RemoveAt(index);
             return true;
-        }
-    }
-    private static async Task<IEnumerable<CardModel>> CompleteSelection(Task<IEnumerable<CardModel>> task)
-    {
-        var selected = (await task).ToArray();
-        AssignKeys(selected);
-        return selected;
-    }
-
-    [HarmonyPatch(typeof(CardReward), nameof(CardReward.Populate))]
-    private static class ManualOffer
-    {
-        private static void Prefix(List<CardCreationResult> ____cards, bool ____cardsWereManuallySet)
-        {
-            if (!____cardsWereManuallySet || ____cards.Count == 0 || ____cards.Any(c => Find(c.Card) == null))
-                return;
-            var offer = Info(____cards[0].Card).Address;
-            for (var i = 0; i < ____cards.Count; i++)
-                Offer(____cards[i].Card, offer, i);
-            NumberOffer(____cards.Select(c => c.Card));
         }
     }
 }

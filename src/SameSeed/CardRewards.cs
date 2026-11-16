@@ -84,7 +84,7 @@ internal static class CardRewards
                     throw new InvalidOperationException("Triple has no distinct eligible card.");
                 Add(eligible[AddressRandom.IntInclusive(state.Seed, RandomAddress.For("card identity").With(entryAddress.Key), 0, eligible.Length - 1)], entryAddress.Key, slot >= 3);
                 if (randomTriple && rareSlots.Count > 0 && slot == 0)
-                    CardOccurrences.Info(cards[^1].Card).RareOrder = 0;
+                    CardOffers.Info(cards[^1].Card).RareOrder = 0;
             }
             for (var slot = 3; slot < cardCount; slot++)
             {
@@ -98,11 +98,11 @@ internal static class CardRewards
                 var index = cards.FindIndex(c => c.Card.Rarity == CardRarity.Common);
                 if (index < 0)
                     index = cards.FindIndex(c => c.Card.Rarity == CardRarity.Uncommon);
-                var displaced = CardOccurrences.Info(cards[index].Card);
+                var displaced = CardOffers.Info(cards[index].Card);
                 var entry = Draw(CardRarity.Rare, "extra Rare", pool.Where(c => c.Rarity == CardRarity.Rare));
                 var card = Create(ModelDb.AllCards.Single(c => c.Id.Entry == entry.Identity), entry);
-                CardOccurrences.Offer(card, offer, displaced.EntryOrder, displaced.Supplementary, displaced.WingAddress);
-                CardOccurrences.Info(card).RareOrder = extra;
+                CardOffers.Attach(card, offer, displaced.EntryOrder, displaced.Supplementary, displaced.WingAddress);
+                CardOffers.Info(card).RareOrder = extra;
                 cards[index] = new(card);
             }
         }
@@ -149,7 +149,7 @@ internal static class CardRewards
             TaskHelper.RunSafely(Hook.AfterModifyingCardRewardOptions(player.RunState, modifiers));
         for (var i = 0; i < rareSlots.Count; i++)
         {
-            var rare = cards.Single(c => CardOccurrences.Info(c.Card).RareOrder == i);
+            var rare = cards.Single(c => CardOffers.Info(c.Card).RareOrder == i);
             var from = cards.IndexOf(rare);
             var to = rareSlots[i];
             (cards[from], cards[to]) = (cards[to], cards[from]);
@@ -163,7 +163,7 @@ internal static class CardRewards
                 (cards[i], cards[j]) = (cards[j], cards[i]);
             }
         }
-        CardOccurrences.NumberOffer(cards.Select(c => c.Card));
+        CardOffers.NumberOffer(cards.Select(c => c.Card));
         __result = cards;
         return false;
 
@@ -176,7 +176,7 @@ internal static class CardRewards
         void Add(CardModel model, string address, bool supplementary)
         {
             var card = Create(model, new(model.Id.Entry, address));
-            CardOccurrences.Offer(card, offer, cards.Count, supplementary);
+            CardOffers.Attach(card, offer, cards.Count, supplementary);
             cards.Add(new(card));
         }
         SupplyEntry Draw(CardRarity rarity, string kind, IEnumerable<CardModel> full) => state.Rewards.Draw(state.Seed,
@@ -204,11 +204,11 @@ internal static class CardRewards
         private static void Prefix(out bool __state) { __state = Candy; Candy = true; }
         private static void Postfix(List<CardCreationResult> rewardOptions, bool __result)
         {
-            if (!__result || rewardOptions.Count < 2 || CardOccurrences.Find(rewardOptions[0].Card)?.Offer is not { } offer)
+            if (!__result || rewardOptions.Count < 2 || CardOffers.Find(rewardOptions[0].Card)?.Offer is not { } offer)
                 return;
             var card = rewardOptions[^1].Card;
-            CardOccurrences.Offer(card, offer, rewardOptions.Count - 1);
-            CardOccurrences.Info(card).Candy = true;
+            CardOffers.Attach(card, offer, rewardOptions.Count - 1);
+            CardOffers.Info(card).Candy = true;
         }
         private static void Finalizer(bool __state) => Candy = __state;
     }
