@@ -44,11 +44,15 @@ Entropy reuses transformation-batch preparation: replacements are generated in i
 
 Checks exercise all insertion groups, draw/discard isolation, empty piles, rejected additions, inactive combat, fixed positions and Metamorphosis's actual play. Mighty Weapon and Mighty Shield join the documented Dazed source list.
 
+## Slice 6: random orb types
+
+Chaos, Trash to Treasure and The Magician preview the next combat-local orb type. Successful channel history commits the roll before channel hooks run; failed channels preserve it. Fixed-type channels retain their existing behavior.
+
 ## Remaining policy coverage
 
 - Combat-card occurrences, shuffle assignment, routing and random selection, including Thieving Hopper.
 - Enemy occurrences, AI and random enemy targeting.
-- Random costs, orb types, potion-effect opportunities and potion-generated cards.
+- Random costs, potion-effect opportunities and potion-generated cards.
 
 ## Validation
 
@@ -63,5 +67,7 @@ Slice 3, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 436 st
 Slice 4, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 458 standalone engine checks and 512 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear after adding an actual Entropy selection-hook regression alongside factory, Ocarina and Mythic Form checks.
 
 Slice 5, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 474 standalone engine checks and 528 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear.
+
+Slice 6, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 482 standalone engine checks and 536 checks in each RitsuLib initialization order passed. Checks cover the three orb generators, failed and fixed channels, and automatic slot creation. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.
