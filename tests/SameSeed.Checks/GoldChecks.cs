@@ -48,6 +48,7 @@ public static partial class Checks
             await CheckDummyReload(true);
             await CheckRewardSupplies();
             await CheckCardRewards();
+            await CheckPermanentSelection();
             await CheckCombatSerialization();
         }
         finally

@@ -36,7 +36,7 @@ Combat serialization checks explicitly enable checksums and replay recording, wh
 
 Validation on v0.113.1 passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 256 standalone engine checks and 310 RitsuLib checks in each initialization order. Run the [validation command](../README.md#build-and-validate) to check the current suite.
 
-`CardOrder` separates permanent processing order, identity-only order, permanent equivalence keys and frozen ordering snapshots. Processing order alone uses occurrence addresses to break ties; Dowsing progress belongs only to equivalence. Combat-only comparisons arrive with stage 6. Permanent transformation/direct-addition supplies, selection clocks, player-choice routing and Pael's Tooth's aligned return selection remain stage 5 work. Potion effect ordinals and combat-card lifetimes accompany their stage 6 consumers.
+`CardOrder` separates permanent processing order, identity-only order, permanent equivalence keys and frozen ordering snapshots. Processing order alone uses occurrence addresses to break ties; Dowsing progress belongs only to equivalence. Combat-only comparisons arrive with stage 6. [Stage 5](stage-5.md) adds persistent selection and deck routing; permanent transformation/direct-addition supplies remain pending. Potion effect ordinals and combat-card lifetimes accompany their stage 6 consumers.
 
 Independent correctness and over-engineering reviews led to preserving Claw eligibility in Scroll Boxes' ordinary bundle after substitution and removing a redundant identity lookup. Permanent ordering also covers draw effects applied through powers. Focused regression checks cover both gameplay fixes; review follow-up found no remaining actionable issues.
 

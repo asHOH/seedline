@@ -9,12 +9,13 @@ namespace SameSeed;
 internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Random, JsonObject? Ritsu = null)
 {
     internal RewardState Rewards { get; init; } = new();
-    internal CheckpointState Copy() => this with { Random = Random.Copy(), Rewards = Rewards.Copy(), Ritsu = Ritsu?.DeepClone().AsObject() };
+    internal SelectionState Selection { get; init; } = new();
+    internal CheckpointState Copy() => this with { Random = Random.Copy(), Rewards = Rewards.Copy(), Selection = Selection.Copy(), Ritsu = Ritsu?.DeepClone().AsObject() };
 }
 
 internal static class RunCheckpoints
 {
-    internal const int SchemaVersion = 3;
+    internal const int SchemaVersion = 4;
     private static readonly ConditionalWeakTable<RunState, CheckpointState> runs = new();
     private static readonly ConditionalWeakTable<SerializableRun, CheckpointState> snapshots = new();
 
@@ -71,6 +72,7 @@ internal static class RunCheckpoints
             writer.WriteString("seed", state.Seed);
             state.Random.Write(writer);
             state.Rewards.Write(writer);
+            state.Selection.Write(writer);
             writer.WriteEndObject();
             if (state.Ritsu is { } ritsu)
             {
@@ -107,12 +109,14 @@ internal static class RunCheckpoints
         }
         if (save.SchemaVersion != gameSchema)
             throw new InvalidDataException("Unsupported vanilla checkpoint schema. Save preserved.");
-        if (!state.TryGetProperty("random_positions", out var positions) || !state.TryGetProperty("rewards", out var rewards))
-            throw new InvalidDataException("Missing SameSeed random or reward state. Save preserved.");
+        if (!state.TryGetProperty("random_positions", out var positions) || !state.TryGetProperty("rewards", out var rewards) ||
+            !state.TryGetProperty("selection", out var selection))
+            throw new InvalidDataException("Missing SameSeed random, reward or selection state. Save preserved.");
         var random = RandomState.Read(seed.GetString()!, positions);
         var restored = new CheckpointState(runId, seed.GetString()!, random, RitsuBridge.Read(root, save))
         {
-            Rewards = RewardState.Read(rewards)
+            Rewards = RewardState.Read(rewards),
+            Selection = SelectionState.Read(selection)
         };
         Validate(save, restored);
         snapshots.Add(save, restored);
