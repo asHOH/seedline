@@ -22,7 +22,7 @@ Schema 3 stores reward supplies, frozen filters, chest exclusions and Rare timin
 
 SameSeed registers `SameSeedOccurrence` during the game's property-cache initialization, including its numeric ID, reverse mapping and compatibility hash before the bit width is finalized. Single-player combat checksums and replay saving use this binary format; existing schema 3 JSON checkpoints retain their format.
 
-`CardOccurrences` owns immutable occurrence records, physical bindings and validated batch reassociation. Recreation retains the record; permanent copies receive fresh records. `CardOffers` owns transient offer metadata and key assignment. Card generation entries read their addresses from the occurrence binding, so reassociation has one address owner. Selection clocks and removed-card reservations arrive with their stage 5–6 policies.
+`CardOccurrences` owns immutable occurrence records, physical bindings and validated batch reassociation. Recreation retains the record; permanent copies receive fresh records. `CardOffers` owns transient offer metadata and key assignment. Card generation entries read their addresses from the occurrence binding, so reassociation has one address owner. Selection clocks and retained entries for removed cards arrive with their stage 5–6 policies.
 
 `CardRewardPatches` intercepts reward displays, Brain Leech, Room Full of Cheese, Hefty Tablet, Lead Paperweight, Kaleidoscope, Sea Glass and Lasting Candy at their generation calls. [Stage 5](stage-5.md) handles direct additions. `CardGeneration` owns shared identity draws, occurrence attachment and entry-addressed upgrades for offers, shops and bundles.
 
@@ -36,7 +36,7 @@ Combat serialization checks explicitly enable checksums and replay recording, wh
 
 Validation on v0.113.1 passed formatting, the analyzer build (zero warnings/errors), 41 unit tests, 256 standalone engine checks and 310 RitsuLib checks in each initialization order. Run the [validation command](../README.md#build-and-validate) to check the current suite.
 
-`CardOrder` separates permanent processing order, identity-only order, permanent equivalence keys and frozen ordering snapshots. Processing order alone uses occurrence addresses to break ties; Dowsing progress belongs only to equivalence. [Stage 5](stage-5.md) adds persistent selection, deck routing and permanent transformation/direct-addition supplies. Combat-only comparisons, potion effect ordinals and combat-card lifetimes accompany stage 6.
+`CardOrder` separates permanent processing order, identity-only order, permanent equivalence and frozen ordering snapshots. Processing order alone uses occurrence addresses to break ties; Dowsing progress belongs only to equivalence. [Stage 5](stage-5.md) adds persistent selection, deck routing and permanent transformation/direct-addition supplies. Combat-only comparisons, potion effect ordinals and combat-card lifetimes accompany stage 6.
 
 Independent correctness and over-engineering reviews led to preserving Claw eligibility in Scroll Boxes' ordinary bundle after substitution and removing a redundant identity lookup. Permanent ordering also covers draw effects applied through powers. Focused regression checks cover both gameplay fixes; review follow-up found no remaining actionable issues.
 

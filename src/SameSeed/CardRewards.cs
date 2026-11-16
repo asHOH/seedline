@@ -38,9 +38,9 @@ internal static class CardRewards
             timing.Offset = -0.05;
         }
         var scarcity = player.RunState.AscensionLevel >= 7;
-        var groupPool = candy ? options.CardPools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
+        var addressPool = candy ? options.CardPools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
             .Where(c => c.Type == CardType.Power && c.IsAllowedInRun(player.RunState)) : pool;
-        var group = string.Join("/", groupPool.Select(c => c.Pool.Id.Entry).Distinct().Order(StringComparer.Ordinal));
+        var poolIds = string.Join("/", addressPool.Select(c => c.Pool.Id.Entry).Distinct().Order(StringComparer.Ordinal));
         var rarities = pool.Select(c => c.Rarity).Distinct().ToArray();
         var types = pool.Select(c => c.Type).Distinct().ToArray();
         var typed = candy || (own && types.Length == 1 && options.CardPoolFilter != null);
@@ -62,7 +62,7 @@ internal static class CardRewards
         if (triple)
         {
             var category = fixedRarity?.ToString() ?? (rareSlots.Count > 0 ? "rare-bearing" : "non-Rare");
-            var address = RandomAddress.For("card triple", group, category);
+            var address = RandomAddress.For("card triple", poolIds, category);
             var ordinal = state.Random.Advance(address);
             offer = address.At(ordinal).Key;
             var opening = randomTriple && rareSlots.Count == 0 ? timing.NonRareTriples++ : -1;
@@ -167,7 +167,7 @@ internal static class CardRewards
             cards.Add(new(card));
         }
         CardModel Draw(CardRarity rarity, string supply, IEnumerable<CardModel> full) => CardGeneration.Draw(player,
-            RandomAddress.For("card identity", supply, group, rarity.ToString()), full,
+            RandomAddress.For("card identity", supply, poolIds, rarity.ToString()), full,
             pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)));
     }
 

@@ -22,8 +22,8 @@ internal sealed class SelectionState
         return clock;
     }
 
-    private static double Roll(string seed, RandomAddress address, long renewal) =>
-        -Math.Log(AddressRandom.OpenUnit(AddressRandom.UInt64(seed, address.At(renewal))));
+    private static double Roll(string seed, RandomAddress address, long renewalCount) =>
+        -Math.Log(AddressRandom.OpenUnit(AddressRandom.UInt64(seed, address.At(renewalCount))));
 
     internal void Renew(string seed, RandomAddress scope, string key)
     {
