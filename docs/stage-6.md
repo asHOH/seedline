@@ -68,9 +68,15 @@ Combat pile admission assigns each new logical occurrence its fixed selection ke
 
 Opening and later shuffles replace the random ordering step while preserving game modifiers and test overrides. Opening assignment includes frozen removed cards and gives Innate its separate priority sequence; ordinary assignment supplies fixed combat selection keys. Later shuffles recalculate priorities from current properties and source/acquisition history, preserving those selection keys. Pending grants include shared combat costs and keywords before their batch indices are assigned.
 
+## Slice 11: random combat-card selection
+
+Named selectors use combat-local persistent clocks in their shared or source-specific groups. Selection commits from one eligibility snapshot and renews selected clocks immediately. Forced and whole-set exceptions preserve clocks; incidental whole-set ordering shares a separate combat-local sequence. Power Cell applies these rules per tier, while Seeker Strike retains the game's offer display path.
+
+Thieving Hopper uses fixed priorities from linked permanent-card keys, preserving its eligibility and recovery behavior.
+
 ## Remaining policy coverage
 
-- Combat-card routing and random selection, including Thieving Hopper.
+- Combat-card routing.
 - Snecko Oil hand-entry costs, potion-effect opportunities and potion-generated cards.
 
 ## Validation
@@ -98,3 +104,5 @@ Interactive acceptance and v0.113.0 runtime checks remain pending.
 Slice 9, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 535 standalone engine checks and 589 checks in each RitsuLib initialization order passed. Tests exercise all four target groups, zero-damage hits, supplied targets, automatic play, and eligibility/order changes. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Slice 10, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 595 standalone engine checks and 649 checks in each RitsuLib initialization order passed. Checks cover opening/removal alignment, Act 3 ordering, fixed selection keys, tokens, copies, rejected admissions, unordered grants, Corruption, and sequential Nightmare/Mythic Form/Entropy batches. The v0.113.0 API build passed. Two independent reviews were clear after fixing pending-grant comparisons and the two missing power batch scopes.
+
+Slice 11, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 619 standalone engine checks and 673 checks in each RitsuLib initialization order passed. Checks exercise shared exhaust progression, filtered batches, forced and whole-set exceptions, incidental order, Power Cell tiers/overflow, Seeker offers and Hopper theft. The v0.113.0 API build passed. Two independent reviews were clear.

@@ -60,6 +60,7 @@ public static partial class Checks
             await CheckCombatCosts();
             await CheckEnemyTargets();
             await CheckCombatShuffle();
+            await CheckCombatSelection();
             await CheckCombatSerialization();
         }
         finally
