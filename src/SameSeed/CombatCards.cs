@@ -146,7 +146,8 @@ internal static class CombatCards
             typeof(Vantom), typeof(TwigSlimeM), typeof(TestSubject), typeof(SlimedBerserker), typeof(PhrogParasite),
             typeof(Chomper), typeof(SoulFyshDominion), typeof(PainfulStabsPower), typeof(WitheringPresencePower), typeof(TheSun)];
 
-        private static IEnumerable<MethodBase> TargetMethods() => CombatGeneration.Sources.TargetMethods().Concat(
+        private static IEnumerable<MethodBase> TargetMethods() => CombatGeneration.Sources.TargetMethods()
+            .Concat(PotionEffects.Sources.TargetMethods()).Concat(
             fixedSources.SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
                 .Where(m => m.GetCustomAttribute<AsyncStateMachineAttribute>() != null)).Distinct();
         private static void Prefix(AbstractModel __instance, out Grant? __state)

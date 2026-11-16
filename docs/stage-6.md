@@ -74,10 +74,16 @@ Named selectors use combat-local persistent clocks in their shared or source-spe
 
 Thieving Hopper uses fixed priorities from linked permanent-card keys, preserving its eligibility and recovery behavior.
 
+## Slice 12: potion opportunities and card generation
+
+Covered potion types retain run-wide effect counters. Committed use, discard/trade and skipped rewards advance once; acquisition and canceled use preserve them. Cauldron offers grant type exemptions before reward interaction, with unused exemptions expiring at the next room entry. These counters use existing checkpoint state.
+
+Each committed potion use supplies its own identity sequence. Orobic Acid and Bottled Song's ordered subdraws share that supply; the source retains choices, attributes and distinctness. Cosmic Concoction's sequential grants share one creation batch for subsequent shuffles.
+
 ## Remaining policy coverage
 
 - Combat-card routing.
-- Snecko Oil hand-entry costs, potion-effect opportunities and potion-generated cards.
+- Snecko Oil hand-entry costs.
 
 ## Validation
 
@@ -106,3 +112,5 @@ Slice 9, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 535 st
 Slice 10, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 595 standalone engine checks and 649 checks in each RitsuLib initialization order passed. Checks cover opening/removal alignment, Act 3 ordering, fixed selection keys, tokens, copies, rejected admissions, unordered grants, Corruption, and sequential Nightmare/Mythic Form/Entropy batches. The v0.113.0 API build passed. Two independent reviews were clear after fixing pending-grant comparisons and the two missing power batch scopes.
 
 Slice 11, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 619 standalone engine checks and 673 checks in each RitsuLib initialization order passed. Checks exercise shared exhaust progression, filtered batches, forced and whole-set exceptions, incidental order, Power Cell tiers/overflow, Seeker offers and Hopper theft. The v0.113.0 API build passed. Two independent reviews were clear.
+
+Slice 12, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 686 standalone engine checks and 740 checks in each RitsuLib initialization order passed. Checks exercise all seven potion generators, choices/skips, type counters, Cauldron exemptions and restoration, Cosmic creation batches, and replay across different combat opportunities. The v0.113.0 API build passed. Two independent reviews were clear after grouping Cosmic Concoction's sequential grants.
