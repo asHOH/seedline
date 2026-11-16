@@ -21,7 +21,7 @@ The [validation command](../README.md#build-and-validate) includes engine checks
 
 Validated 2026-11-15: formatting and analyzer build, 32 unit tests, 139 standalone engine checks and 193 RitsuLib checks in each initialization order passed.
 
-These checks use the game's test mode for reward interaction and construct completed battles at the checkpoint boundary. UI notifications retain normal-game behavior for RitsuLib's subscribers. The checks exercise production generation, selection, save/load and reconstruction code; the visible combat-to-reward transition requires gameplay verification.
+These checks use the game's test mode for reward interaction and construct completed battles at the checkpoint boundary. UI notifications retain normal-game behavior for RitsuLib's subscribers. The checks exercise production generation, selection, save/load and reconstruction code.
 
 ## Gameplay checks
 
@@ -32,4 +32,4 @@ Deploy the validated package for a focused smoke test now; reserve broad full-ru
 - Win an event combat that awards gold, then reload its victory checkpoint. Check the rewards and exit behavior. For Battleworn Dummy, check return to the parent event and the correct victory/timeout outcome.
 - Repeat the essential save/reload checks with RitsuLib if that configuration will be used.
 
-Deployment and manual gameplay remain pending. Live Steam synchronization retains the [stage 1 verification limits](stage-1.md#cloud-and-verification-limits).
+Manual reward reloads passed in the [2026-11-16 run checks](stage-4.md#gameplay-checks). Live Steam synchronization retains the [stage 1 verification limits](stage-1.md#cloud-and-verification-limits).

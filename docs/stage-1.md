@@ -42,4 +42,6 @@ The [validation command](../README.md#build-and-validate) exercises standard-pat
 
 Validation: [build compatibility review](../references/v0.113.1-review.md).
 
-Live Steam synchronization and normal-UI disable/re-enable remain unverified; second-device checks are outside the available setup. Headless runs emit rendering/preload and shutdown diagnostics.
+Live Steam synchronization and normal-UI disable/re-enable remain unverified; second-device checks are outside the available setup.
+
+**Warning baseline — 2026-11-16, v0.113.1 / RitsuLib 0.6.14:** `Invalid Task ID` reproduces with mods disabled. Exit leaks also occur on unmodded timed shutdown; normal-exit ownership remains unresolved. Missing Wuppy/Rocket/Crusher sounds originate in game calls, reported by RitsuLib. LieRenTVmod resource UIDs, IntentGraph states and D3D12 PSO messages belong to their respective components. Recheck these signatures only for changed symptoms or relevant version changes.

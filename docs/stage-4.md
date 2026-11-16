@@ -46,4 +46,4 @@ Deploy v0.4.0 for a focused smoke test on a fresh run. Keep the fixed mod setup 
 - Exercise Courier purchases in different item-category orders and retry failed potion pickups with full slots/Sozu. Check that successful pickups advance the intended supply.
 - Check larger/event card offers, Wing Charm with earlier enchantments, Lasting Candy, Scroll Boxes and Pael's Tooth storage/return. Confirm presentation, selection counts and visible upgrades.
 
-Deployment and manual gameplay remain pending. Automated checks exercise production logic inside the engine with test-mode interaction; visible transitions and live Steam synchronization retain the stage 1/3 verification limits.
+2026-11-16, v0.113.1 + RitsuLib 0.6.14, profile 2: Ironclad A0/A10 wins; 11 menu reloads in A10, with rewards/chests unchanged (user-confirmed) and zero logged SameSeed failures. Other scenarios above remain pending.
