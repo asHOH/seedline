@@ -73,11 +73,11 @@ internal static class ShopRewards
             eligible = eligible.Where(c => c.Rarity == rarity && (type == null || c.Type == type)).OrderBy(c => c.Id.Entry, StringComparer.Ordinal).ToArray();
             if (eligible.Length == 0)
                 throw new InvalidOperationException("No eligible shop card.");
-            SupplyEntry entry;
+            CardModel card;
             if (initial != null)
             {
                 var identity = eligible[AddressRandom.IntInclusive(state.Seed, RandomAddress.For("shop card identity").With(initial.Key), 0, eligible.Length - 1)];
-                entry = new(identity.Id.Entry, initial.Key);
+                card = CardGeneration.Create(player, identity, initial.Key);
             }
             else
             {
@@ -85,28 +85,13 @@ internal static class ShopRewards
                 var full = Hook.ModifyMerchantCardPool(player.RunState, player,
                     basePool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
                     .Where(c => c.Rarity == rarity && (type == null || c.Type == type)).ToArray();
-                entry = state.Rewards.Draw(state.Seed, RandomAddress.For("Courier card identity", type?.ToString() ?? "colorless", rarity.ToString()),
-                    full.Select(c => c.Id.Entry), eligible.Select(c => c.Id.Entry));
+                card = CardGeneration.Draw(player, RandomAddress.For("Courier card identity", type?.ToString() ?? "colorless", rarity.ToString()),
+                    full, eligible);
             }
-            var card = player.RunState.CreateCard(eligible.Single(c => c.Id.Entry == entry.Identity), player);
-            RewardEntries.Attach(card, entry);
-            Upgrade(player, card, -999999999m);
+            CardGeneration.Upgrade(player, card, -999999999m);
             __result = new(card);
             return false;
         }
-    }
-
-    internal static void Upgrade(Player player, CardModel card, decimal baseChance = 0)
-    {
-        var state = RunCheckpoints.Require((RunState)player.RunState);
-        var entry = RewardEntries.Find(card) ?? throw new InvalidOperationException("Missing card generation entry.");
-        var roll = AddressRandom.Unit(AddressRandom.UInt64(state.Seed, RandomAddress.For("upgrade").With(entry.Address)));
-        if (!card.IsUpgradable)
-            return;
-        if (card.Rarity != CardRarity.Rare)
-            baseChance += player.RunState.CurrentActIndex * (player.RunState.AscensionLevel >= 7 ? 0.125m : 0.25m);
-        if ((decimal)roll <= Hook.ModifyCardRewardUpgradeOdds(player.RunState, player, card, baseChance))
-            CardCmd.Upgrade(card);
     }
 
     [HarmonyPatch]

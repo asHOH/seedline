@@ -3,7 +3,6 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -83,9 +82,9 @@ internal static class SpecialCardRewards
         var state = RunCheckpoints.Require((RunState)player.RunState);
         var address = RandomAddress.For("card offer", "SCROLL_BOXES");
         var opportunity = address.At(state.Random.Advance(address));
-        var commons = claws.Any(c => c) ? [] : CardFactory.CreateForReward(player, 3,
+        var commons = claws.Any(c => c) ? [] : CardRewards.Generate(player, 3,
             CardCreationOptions.ForNonCombatWithUniformOdds([player.Character.CardPool], c => c.Rarity == CardRarity.Common)
-                .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoModifyHooks)).Select(c => c.Card).ToList();
+                .WithFlags(CardCreationFlags.NoRarityModification | CardCreationFlags.NoModifyHooks), CardOfferKind.OwnCharacter).Select(c => c.Card).ToList();
         var offer = commons.Count == 0 ? opportunity.Key : CardOffers.Info(commons[0]).Offer!;
         var ordinary = player.Character.CardPool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
             .Where(c => c.IsAllowedInRun(player.RunState)).ToArray();
@@ -105,8 +104,7 @@ internal static class SpecialCardRewards
                     var rarity = slot < 2 ? CardRarity.Common : CardRarity.Uncommon;
                     var eligible = ordinary.Where(c => c.Rarity == rarity && !used.Contains(c.Id)).ToArray();
                     var canonical = claws[bundle] ? ModelDb.Card<Claw>() : eligible[rng.NextInt(eligible.Length)];
-                    card = player.RunState.CreateCard(canonical, player);
-                    RewardEntries.Attach(card, new(canonical.Id.Entry, opportunity.At(bundle * 3 + slot).Key));
+                    card = CardGeneration.Create(player, canonical, opportunity.At(bundle * 3 + slot).Key);
                     if (!claws[bundle])
                         used.Add(canonical.Id);
                 }

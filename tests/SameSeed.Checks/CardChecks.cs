@@ -3,7 +3,6 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -42,7 +41,12 @@ public static partial class Checks
             CheckCardAssociations(player);
             var start = RunManager.Instance.ToSave(null);
             var bytes = RunCheckpoints.Encode(start);
-            CardModel[] Offer(RoomType room) => CardFactory.CreateForReward(player, 3, CardCreationOptions.ForRoom(player, room)).Select(c => c.Card).ToArray();
+            CardModel[] Offer(RoomType room)
+            {
+                var reward = new CardReward(CardCreationOptions.ForRoom(player, room), 3, player);
+                reward.Populate();
+                return reward.Cards.ToArray();
+            }
             var normal = Offer(RoomType.Monster);
             Assert(normal.Length == 3 && normal.All(c => c.Rarity != CardRarity.Rare) && normal.Select(c => c.Id).Distinct().Count() == 3,
                 "first Scarcity normal reward is a distinct non-Rare triple");
@@ -96,12 +100,13 @@ public static partial class Checks
             await RunManager.Instance.SetUpSavedSingleplayer(run, restored);
             player = run.Players[0];
             state = RunCheckpoints.Require(run);
-            var baseOffer = CardFactory.CreateForReward(player, 5, CardCreationOptions.ForNonCombatWithDefaultOdds([player.Character.CardPool])).Select(c => c.Card).ToArray();
+            var baseOffer = CardRewards.Generate(player, 5, CardCreationOptions.ForNonCombatWithDefaultOdds([player.Character.CardPool]),
+                CardOfferKind.OwnCharacter).Select(c => c.Card).ToArray();
             var shared = baseOffer.Where(c => !CardOffers.Info(c).Supplementary).OrderBy(c => CardOffers.Info(c).EntryOrder).ToArray();
             Assert(normal.Select(c => c.Id).SequenceEqual(shared.Select(c => c.Id)), "Brain Leech shares the same first non-Rare triple across offer sizes");
             Assert(baseOffer.Select(c => c.Id).Distinct().Count() == 5, "supplementary event cards exclude triple and earlier identities");
             var fixedOptions = CardCreationOptions.ForNonCombatWithUniformOdds([player.Character.CardPool], c => c.Rarity == CardRarity.Common);
-            var fixedCards = CardFactory.CreateForReward(player, 3, fixedOptions).Select(c => c.Card).ToArray();
+            var fixedCards = CardRewards.Generate(player, 3, fixedOptions, CardOfferKind.OwnCharacter).Select(c => c.Card).ToArray();
             var bundles = SpecialCardRewards.GenerateBundles(player);
             Assert(bundles.SelectMany(b => b).Select(c => c.Id).Distinct().Count() == 6 && bundles.All(b => b.Count == 3 && b[2].Rarity == CardRarity.Uncommon),
                 "Scroll Boxes produces two distinct Common/Common/Uncommon bundles");
@@ -126,20 +131,20 @@ public static partial class Checks
             var before = state.Rewards.Rare.NonRareTriples;
             state.Rewards.Rare.Threshold = 1000;
             var options = (CardCreationOptions)AccessTools.Property(typeof(CardReward), "RerollOptions").GetValue(reward)!;
-            var reroll = CardFactory.CreateForReward(player, 3, options).ToArray();
+            var reroll = CardRewards.Generate(player, 3, options, CardOfferKind.OwnCharacter).ToArray();
             Assert(reroll.Length == 3 && state.Rewards.Rare.NonRareTriples == before + 1 && options.CardPools.Count == 1,
                 "expanded-pool rerolls retain own-character offer classification and opening progression");
             var candy = (LastingCandy)ModelDb.Relic<LastingCandy>().ToMutable();
             player.AddRelicInternal(candy);
             candy.CombatRewardsSeen = 1;
-            var candyOffer = CardFactory.CreateForReward(player, 3, CardCreationOptions.ForRoom(player, RoomType.Monster)
-                .WithFlags(CardCreationFlags.IsCardReward | CardCreationFlags.IsFromCombat)).ToArray();
+            var candyOffer = CardRewards.Generate(player, 3, CardCreationOptions.ForRoom(player, RoomType.Monster)
+                .WithFlags(CardCreationFlags.IsCardReward | CardCreationFlags.IsFromCombat), CardOfferKind.OwnCharacter).ToArray();
             Assert(candyOffer.Length == 4 && candyOffer[^1].Card.Type == CardType.Power &&
                 CardOffers.Info(candyOffer[^1].Card).Offer == CardOffers.Info(candyOffer[0].Card).Offer,
                 "Lasting Candy inherits expanded Power supply and parent offer address");
             var otherOptions = CardCreationOptions.ForNonCombatWithUniformOdds([ModelDb.Character<Silent>().CardPool], c => c.Rarity == CardRarity.Rare)
                 .WithFlags(CardCreationFlags.NoCardPoolModifications);
-            var otherCards = CardFactory.CreateForReward(player, 5, otherOptions).ToArray();
+            var otherCards = CardRewards.Generate(player, 5, otherOptions, CardOfferKind.OtherCharacter).ToArray();
             Assert(otherCards.Length == 5 && otherCards.Select(c => c.Card.Id).Distinct().Count() == 5 && otherCards.All(c => c.Card.Rarity == CardRarity.Rare),
                 "other-character rewards consume distinct individual fixed-rarity entries");
 
@@ -232,6 +237,8 @@ public static partial class Checks
                 "all Reflections copies share one committed source opportunity through asynchronous waits");
             RunManager.Instance.CleanUp();
             await CheckTransformationReload();
+            RunManager.Instance.CleanUp();
+            await CheckCardRewardSources();
         }
         finally
         {
