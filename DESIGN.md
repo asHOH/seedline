@@ -928,7 +928,7 @@ At run start, independently shuffle each condition's IDs using `purpose = ID ord
 
 At act entry, rebuild each condition's sequence using only unvisited IDs available in that act. Preserve survivors' order and insert newly available IDs in their run-start order.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` rolls from independent uniform sequences, addressed by `purpose = insertion` + act + condition key + surviving/incoming + roll index. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform. [Rejected alternatives](#event-selection-alternatives).
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` rolls from independent uniform sequences, addressed by `purpose = insertion` + act + condition key + surviving/incoming. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform. [Rejected alternatives](#event-selection-alternatives).
 
 **Remaining counts:** reset each condition's count to its number of act-available, unvisited IDs, even when the condition currently fails.
 
@@ -936,19 +936,19 @@ At act entry, rebuild each condition's sequence using only unvisited IDs availab
 
 **Priority persistence:**
 
-| Act | Condition priorities and roll indices | Alignment aim |
+| Act | Condition priorities and roll sequences | Alignment aim |
 |---|---|---|
 | 1 | Initialize at act entry; retain between selections. | Match relative event order. |
-| 2–3 | Refresh priorities from remaining counts and reset roll indices at each selection. | Delay the act's first mismatch when earlier visits leave different pools. |
+| 2–3 | Refresh priorities from remaining counts using new sequences at each selection. | Delay the act's first mismatch when earlier visits leave different pools. |
 
 Remaining counts and ID positions carry between selections in every act.
 
-1. Reset per-condition roll indices to zero. For each remaining count `n_c > 0`, initialize priority `-ln(U) / n_c`. Independent uniform `U ∈ (0, 1)` rolls use `purpose = condition selection` + condition key + roll index. In Acts 2–3, also include the act-local ordinary-event ordinal.
+1. At the times above, initialize priority `-ln(U) / n_c` for each remaining count `n_c > 0`. Draw successive independent uniform `U ∈ (0, 1)` rolls from sequences addressed by `purpose = condition selection` + condition key. In Acts 2–3, also include the act-local ordinary-event ordinal.
 2. Decrement the lowest-priority condition's count. If its predicate passes and an unvisited ID remains, try the next unvisited ID and advance the ID position, including on late eligibility failure.
 3. After failure, retire that condition at zero; otherwise add a fresh `-ln(U) / n_c` to its priority. Keep other priorities fixed and repeat step 2.
 4. On success, commit the visit and state changes. In Act 1, update the winning priority as in step 3.
 
-**Wrapping:** when all counts reach zero, refill them from act-available, unvisited IDs and restart priorities, continuing roll indices. ID sequences wrap in their established order, excluding visited IDs.
+**Wrapping:** when all counts reach zero, refill them from act-available, unvisited IDs and restart priorities, continuing the roll sequences. ID sequences wrap in their established order, excluding visited IDs.
 
 **Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
 

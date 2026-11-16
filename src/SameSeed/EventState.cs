@@ -8,9 +8,9 @@ internal sealed class EventCondition
     [JsonRequired] public List<string> Order { get; set; } = [];
     [JsonRequired] public int Position { get; set; }
     [JsonRequired] public int Remaining { get; set; }
-    [JsonRequired] public long Roll { get; set; }
+    [JsonRequired] public long SequencePosition { get; set; }
     [JsonRequired] public double Priority { get; set; }
-    internal EventCondition Copy() => new() { Order = [.. Order], Position = Position, Remaining = Remaining, Roll = Roll, Priority = Priority };
+    internal EventCondition Copy() => new() { Order = [.. Order], Position = Position, Remaining = Remaining, SequencePosition = SequencePosition, Priority = Priority };
 }
 
 internal sealed class EventState
@@ -32,7 +32,7 @@ internal sealed class EventState
         Act = act;
         Ordinal = 0;
         if (act == 0)
-            Initialize(seed, resetRolls: true);
+            InitializePriorities(seed);
     }
 
     internal static string[] Merge(string seed, int act, string condition, string[] survivors, string[] incoming)
@@ -51,7 +51,11 @@ internal sealed class EventState
     {
         Ordinal++;
         if (Act > 0)
-            Initialize(seed, resetRolls: true);
+        {
+            foreach (var condition in Conditions.Values)
+                condition.SequencePosition = 0;
+            InitializePriorities(seed);
+        }
         while (true)
         {
             var next = Conditions.Where(p => p.Value.Remaining > 0).OrderBy(p => p.Value.Priority)
@@ -65,7 +69,7 @@ internal sealed class EventState
                     condition.Position = 0;
                     condition.Remaining = condition.Order.Count(id => !visited.Contains(id));
                 }
-                Initialize(seed, resetRolls: false);
+                InitializePriorities(seed);
                 continue;
             }
             var value = next.Value;
@@ -89,14 +93,10 @@ internal sealed class EventState
         }
     }
 
-    private void Initialize(string seed, bool resetRolls)
+    private void InitializePriorities(string seed)
     {
         foreach (var (key, condition) in Conditions)
-        {
-            if (resetRolls)
-                condition.Roll = 0;
             condition.Priority = condition.Remaining > 0 ? Increment(seed, key, condition) : 0;
-        }
     }
 
     private double Increment(string seed, string key, EventCondition condition)
@@ -104,7 +104,7 @@ internal sealed class EventState
         var address = RandomAddress.For("condition selection", key);
         if (Act > 0)
             address = address.At(Act).At(Ordinal - 1);
-        return -Math.Log(AddressRandom.OpenUnit(AddressRandom.UInt64(seed, address.At(condition.Roll++)))) / condition.Remaining;
+        return -Math.Log(AddressRandom.OpenUnit(AddressRandom.UInt64(seed, address.At(condition.SequencePosition++)))) / condition.Remaining;
     }
 
     internal EventState Copy() => new() { Act = Act, Ordinal = Ordinal, Conditions = new(Conditions.ToDictionary(p => p.Key, p => p.Value.Copy()), StringComparer.Ordinal) };
@@ -123,7 +123,7 @@ internal sealed class EventState
             if (state.Act is < -1 or > 2 || state.Ordinal < 0 || state.Conditions == null || state.Conditions.Any(p =>
                 string.IsNullOrEmpty(p.Key) || p.Value == null || p.Value.Order == null || p.Value.Order.Any(string.IsNullOrEmpty) ||
                 p.Value.Order.Distinct(StringComparer.Ordinal).Count() != p.Value.Order.Count || p.Value.Position < 0 || p.Value.Position > p.Value.Order.Count ||
-                p.Value.Remaining < 0 || p.Value.Remaining > p.Value.Order.Count || p.Value.Roll < 0 || !double.IsFinite(p.Value.Priority) || p.Value.Priority < 0))
+                p.Value.Remaining < 0 || p.Value.Remaining > p.Value.Order.Count || p.Value.SequencePosition < 0 || !double.IsFinite(p.Value.Priority) || p.Value.Priority < 0))
                 throw new InvalidDataException("Invalid event selection state.");
             return state;
         }

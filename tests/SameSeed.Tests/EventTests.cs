@@ -44,7 +44,40 @@ public sealed class EventTests
         HashSet<string> visited = ["c", "d", "e"];
         var next = state.Select("seed", visited, _ => true, _ => true);
         Assert.Equal("a", next);
-        Assert.True(state.Conditions["A"].Roll > 2);
+        Assert.True(state.Conditions["A"].SequencePosition > 2);
+    }
+
+    [Fact]
+    public void ActOneRetainsPrioritiesAndContinuesSequencesBetweenSelections()
+    {
+        var state = Start();
+        state.Conditions["A"].Priority = 0;
+        state.Conditions["A"].SequencePosition = 7;
+        state.Conditions["B"].Priority = 100;
+        state.Conditions["B"].SequencePosition = 11;
+
+        Assert.Equal("a", state.Select("seed", [], _ => true, _ => true));
+        Assert.Equal(8, state.Conditions["A"].SequencePosition);
+        Assert.Equal(11, state.Conditions["B"].SequencePosition);
+        Assert.Equal(100, state.Conditions["B"].Priority);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void LaterActsRefreshPrioritiesAndSequencesBetweenSelections(int act)
+    {
+        var state = Start(act);
+        HashSet<string> visited = [state.Select("seed", [], _ => true, _ => true)!];
+        var expected = state.Copy();
+        foreach (var condition in state.Conditions.Values)
+        {
+            condition.Priority = 100;
+            condition.SequencePosition = 100;
+        }
+
+        Assert.Equal(expected.Select("seed", visited, _ => true, _ => true), state.Select("seed", visited, _ => true, _ => true));
+        Assert.Equal(JsonSerializer.Serialize(expected), JsonSerializer.Serialize(state));
     }
 
     [Fact]
@@ -92,7 +125,7 @@ public sealed class EventTests
     [Theory]
     [InlineData("{}")]
     [InlineData("{\"Act\":0,\"Ordinal\":0,\"Conditions\":null}")]
-    [InlineData("{\"Act\":0,\"Ordinal\":0,\"Conditions\":{\"A\":{\"Order\":[\"a\"],\"Position\":2,\"Remaining\":0,\"Roll\":0,\"Priority\":1}}}")]
+    [InlineData("{\"Act\":0,\"Ordinal\":0,\"Conditions\":{\"A\":{\"Order\":[\"a\"],\"Position\":2,\"Remaining\":0,\"SequencePosition\":0,\"Priority\":1}}}")]
     public void RejectsMalformedSavedEvents(string json)
     {
         using var document = JsonDocument.Parse(json);

@@ -22,7 +22,7 @@ Implements the [non-combat policies](../DESIGN.md#source-policies--encounter--no
 
 Run-owned `SelectionState` stores clocks and renewal counts by scope and selection key. Card reassociation moves the existing occurrence/key metadata; clocks follow those keys through status changes and Tooth storage. New copies and transformation results use new occurrence keys.
 
-Permanent-card supplies reuse `RewardState`; room and dish positions reuse `RandomState`. `EventState` holds act, ordinary-event ordinal, per-condition ID order/position, remaining count, priority and roll index. Checkpoint capture deep-copies all state; restoration precedes room regeneration. Schema 5 rejects earlier development saves without changing their files.
+Permanent-card supplies reuse `RewardState`; room and dish positions reuse `RandomState`. `EventState` holds act, ordinary-event ordinal, per-condition ID order/position, remaining count, priority and roll-sequence position. Checkpoint capture deep-copies all state; restoration precedes room regeneration. Schema 5 rejects earlier development saves without changing their files.
 
 ## Validation
 
