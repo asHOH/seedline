@@ -80,10 +80,15 @@ Covered potion types retain run-wide effect counters. Committed use, discard/tra
 
 Each committed potion use supplies its own identity sequence. Orobic Acid and Bottled Song's ordered subdraws share that supply; the source retains choices, attributes and distinctness. Cosmic Concoction's sequential grants share one creation batch for subsequent shuffles.
 
+## Slice 13: Snecko Oil hand-entry costs
+
+Successful hand entries retain a frozen ordering snapshot on their logical occurrence. Unordered grants, transformations and selected return batches share entry ordinals; draws and explicitly sequential returns retain source order. Creation-batch metadata covers newly admitted cards, while Stratagem groups its sequential return calls. Overflow creates no hand entry; later returns refresh it.
+
+After Oil draws, its eligible category rolls follow frozen hand-entry order and are supplied to the existing cost loop. Effect ordinals isolate uses across combats, and test overrides retain their original behavior.
+
 ## Remaining policy coverage
 
 - Combat-card routing.
-- Snecko Oil hand-entry costs.
 
 ## Validation
 
@@ -114,3 +119,5 @@ Slice 10, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 595 s
 Slice 11, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 619 standalone engine checks and 673 checks in each RitsuLib initialization order passed. Checks exercise shared exhaust progression, filtered batches, forced and whole-set exceptions, incidental order, Power Cell tiers/overflow, Seeker offers and Hopper theft. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Slice 12, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 686 standalone engine checks and 740 checks in each RitsuLib initialization order passed. Checks exercise all seven potion generators, choices/skips, type counters, Cauldron exemptions and restoration, Cosmic creation batches, and replay across different combat opportunities. The v0.113.0 API build passed. Two independent reviews were clear after grouping Cosmic Concoction's sequential grants.
+
+Slice 13, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 740 standalone engine checks and 794 checks in each RitsuLib initialization order passed. Checks cover category rolls, frozen batches, ordered draws/All for One, overflow/re-entry, logical reassociation, Cosmic/Ecstasy/Stratagem batches and different combat opportunities. The v0.113.0 API build passed. Two independent reviews were clear.
