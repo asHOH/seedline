@@ -32,8 +32,9 @@ public static partial class Checks
         var rareTriples = RandomAddress.For("card triple", player.Character.CardPool.Id.Entry, "Rare");
         var initialCount = player.Deck.Cards.Count;
         await Obtain(ModelDb.Relic<ArcaneScroll>().ToMutable());
-        Assert(player.Deck.Cards.Count == initialCount + 1 && state.Random.Position(rareTriples) == 0,
-            "Arcane Scroll direct addition keeps its existing path outside card-offer supplies");
+        Assert(player.Deck.Cards.Count == initialCount + 1 && state.Random.Position(rareTriples) == 0 &&
+            CardOccurrences.Info(player.Deck.Cards.Last()).Address.StartsWith("[\"permanent card identity\",", StringComparison.Ordinal),
+            "Arcane Scroll uses the permanent-card supply outside card offers");
         selector.PrepareToSelect(new[] { 0 });
         await Obtain(ModelDb.Relic<HeftyTablet>().ToMutable());
         Assert(player.Deck.Cards.Count == initialCount + 3 && state.Random.Position(rareTriples) == 1,

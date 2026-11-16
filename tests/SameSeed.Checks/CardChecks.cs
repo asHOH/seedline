@@ -285,9 +285,9 @@ public static partial class Checks
         player.AddRelicInternal(ModelDb.Relic<MoltenEgg>().ToMutable());
         var fixedCard = run.CreateCard<Bash>(player);
         var fixedResult = (await CardCmd.Transform(originals[2], fixedCard, CardPreviewStyle.None))!.Value.cardAdded;
-        Assert(replacements.Length == 2 && random.ToSerializable().counter == before + 2 &&
+        Assert(replacements.Length == 2 && random.ToSerializable().counter == before &&
             fixedResult is Bash && fixedResult.IsUpgraded && !ReferenceEquals(fixedCard, fixedResult),
-            "random transformations retain vanilla draw consumption and fixed transformations retain egg modifiers");
+            "random transformations use the permanent supply and fixed transformations retain egg modifiers");
         Assert(replacements.Append(fixedResult).All(c => CardOccurrences.Find(c) is { } info &&
             info.Address == info.Key && !retired.Contains(info.Address)) &&
             CardOccurrences.Info(fixedCard).Address == CardOccurrences.Info(fixedResult).Address,

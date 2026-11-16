@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>SameSeed</AssemblyName>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.IO.Hashing" HintPath="$(GameManagedDir)/System.IO.Hashing.dll" Private="false" />

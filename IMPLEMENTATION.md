@@ -18,7 +18,7 @@ For each operation, record its interception point, state owner, commitment point
 2. **Foundation:** complete. Stable addresses, independent randomness and run-owned state, with deterministic-roll, snapshot-isolation and replay checks. [Foundation contract](docs/stage-2.md).
 3. **First playable path:** combat-gold generation, acquisition and reload implemented, including parent-event reconstruction checks. [Coverage and pending gameplay checks](docs/stage-3.md).
 4. **Rewards:** shared supplies, relics/chests, potions, shops and card offers implemented, with permanent-card processing order, occurrence lifetime, keys and checkpoint rebinding. [Coverage and gameplay checks](docs/stage-4.md).
-5. **Non-combat:** persistent selection and deck routing implemented. Transformation/direct-addition supplies and remaining policies follow. [Coverage and checks](docs/stage-5.md).
+5. **Non-combat:** persistent selection, deck routing, transformation/direct-addition supplies, room resolution, event selection and event policies implemented. [Coverage and checks](docs/stage-5.md).
 6. **Combat:** combat policies and card-lifetime rules.
 
 ## Validation

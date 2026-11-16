@@ -1,6 +1,6 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.0/16ac0fe3** and **v0.113.1/d09d48e5**. Steps 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. The first [stage 5 increment](docs/stage-5.md) adds persistent selection and deck routing.
+Windows mod for Slay the Spire 2 **v0.113.0/16ac0fe3** and **v0.113.1/d09d48e5**. Stages 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. Stage 5 adds permanent-card supplies and selection, deck routing, room resolution and event policies.
 
 Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md), [reward supplies and card occurrences](docs/stage-4.md).
 
@@ -43,6 +43,6 @@ SameSeed grants full content within new runs. Profile unlocks and Ascension limi
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state. Back up both the checkpoint and its `.backup`.
 
-Start fresh after upgrading to v0.5.0. Schema 4 requires persistent selection history that earlier saves lack; incompatible saves remain untouched.
+Start fresh after upgrading to v0.5.1. Schema 5 requires event-selection history that earlier saves lack; incompatible saves remain untouched.
 
 Perform the [stage 5 gameplay checks](docs/stage-5.md#gameplay-checks) alongside the remaining [stage 4 checks](docs/stage-4.md#gameplay-checks).
