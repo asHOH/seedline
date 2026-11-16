@@ -79,6 +79,13 @@ public static partial class Checks
         Assert(clones.Length == 2 && clones.Select(c => CardOccurrences.Info(c).Acquisition).Distinct().Count() == 1 &&
             clones.All(c => !CardOccurrences.Info(c).SourceKey),
             "source-level copy batches retain one acquisition ordinal across sequential additions");
+        var beforeBundle = player.Deck.Cards.ToArray();
+        var scrolls = (ScrollBoxes)ModelDb.Relic<ScrollBoxes>().ToMutable();
+        player.AddRelicInternal(scrolls);
+        await scrolls.AfterObtained();
+        var bundle = player.Deck.Cards.Except(beforeBundle).ToArray();
+        Assert(bundle.Length == 3 && bundle.Select(c => CardOccurrences.Info(c).Acquisition).Distinct().Count() == 1,
+            "Scroll Boxes acquires the chosen bundle in one batch across sequential additions");
         CardCmd.Upgrade(a);
         await CardPileCmd.RemoveFromDeck(a, false);
         var frozen = state.Cards.Removed[aInfo.Address];

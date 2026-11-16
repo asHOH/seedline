@@ -61,6 +61,7 @@ internal sealed class CardHistory
             AccessTools.Method(typeof(CardCmd), nameof(CardCmd.Transform),
                 [typeof(IEnumerable<CardTransformation>), typeof(Rng), typeof(CardPreviewStyle)]),
             AccessTools.Method(typeof(Astrolabe), nameof(Astrolabe.AfterObtained)),
+            AccessTools.Method(typeof(ScrollBoxes), nameof(ScrollBoxes.AfterObtained)),
             AccessTools.Method(typeof(MorphicGrove), "Group"), AccessTools.Method(typeof(Trial), "NondescriptInnocent"),
             AccessTools.Method(typeof(SeaGlass), nameof(SeaGlass.AfterObtained))]);
         private static void Prefix(MethodBase __originalMethod, out AcquisitionBatch? __state)

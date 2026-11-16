@@ -1304,7 +1304,7 @@ Address sequences by `purpose = card generation` + [combat address](#combat-addr
 
 | Group | Pools and sources |
 |---|---|
-| Ordinary costs | One sequence per character pool, plus colorless, curse, status, Tarot (Mythic Form) and combined other-character cards (The Lovers); shared by ordinary-cost generation (including Jackpot and The Hierophant) and Entropy. |
+| Ordinary costs | One sequence per character pool, plus colorless, curse, status, Tarot (Mythic Form), combined other-character cards (The Lovers), and combined Wah/Cho/Ki cards (Ocarina); shared by ordinary-cost generation (including Jackpot and The Hierophant) and Entropy. |
 | Free this turn | Own-character pool; shared by generators making cards free this turn. |
 | Free this combat | Own-character Attacks; Metamorphosis. |
 | Splash | Combined other-character Attacks, uniform across identities. |
@@ -1745,6 +1745,8 @@ Front bias can affect several later positions, depending on bag composition.
 | Colorless | Bundle of Joy, Jack of All Trades, Manifest Authority, Quasar, Spectrum Shift, Orange Dough, Toolbox; The Hierophant (−1 cost until turn end or play) | — |
 
 Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. The Lovers fills the hand from the same combined character pools, across card types. Jack of All Trades excludes itself.
+
+**Ocarina:** before the first turn's hand draw, adds one ordinary-cost card from unlocked character pools with any Wah, Cho or Ki tag, using `CombatCardGeneration` and the combat factory's eligibility filters. Multi-tag cards appear once in the combined pool.
 
 **Duplicates:** Stoke, Jackpot, Metamorphosis, Calamity and The Lovers allow repeats within a batch. Other factory batches require distinct identities; Creative AI and Call of the Void allow repeats across their separate single-card draws.
 
