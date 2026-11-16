@@ -54,11 +54,15 @@ Initial enemies receive creation-order addresses; summon moves and death-trigger
 
 Random branches retain vanilla effective weights and fallback rules. Effective-decision sequences cover Inklets, Exoskeletons and Scrolls of Biting; Small Leaf Slimes consume only their opening roll. Decimillipede segments share revival choices. Other enemies use move priorities by identity and branch ordinal. Rats separate shared Summon decisions, summoned openings and round-local non-Summon choices.
 
+## Slice 8: Confused and Slither costs
+
+Confused rolls by original starting-deck category, skipping X cards. Slither has a separate combat-local sequence; when Confused already rolled for the same draw, Slither reapplies that value at its usual timing. Draw-hook context prevents reuse on later draws, and existing ownership/hand checks remain in place.
+
 ## Remaining policy coverage
 
 - Combat-card occurrences, shuffle assignment, routing and random selection, including Thieving Hopper.
 - Random enemy targeting.
-- Random costs, potion-effect opportunities and potion-generated cards.
+- Snecko Oil hand-entry costs, potion-effect opportunities and potion-generated cards.
 
 ## Validation
 
@@ -76,6 +80,8 @@ Slice 5, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 474 st
 
 Slice 6, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 482 standalone engine checks and 536 checks in each RitsuLib initialization order passed. Checks cover the three orb generators, failed and fixed channels, and automatic slot creation. The v0.113.0 API build passed. Two independent reviews were clear.
 
-Interactive acceptance and v0.113.0 runtime checks remain pending.
-
 Slice 7, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 505 standalone engine checks and 559 checks in each RitsuLib initialization order passed. Checks exercise branch isolation, forced/all-zero decisions, slime and Inklet scopes, summon/replacement addresses, rat rounds and Fabricator's actual move. The v0.113.0 API build passed. Two independent reviews were clear.
+
+Slice 8, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 511 standalone engine checks and 565 checks in each RitsuLib initialization order passed. Draw-hook checks cover X cards, starter categories, Kingly Kick/Slither reuse, later independent draws and cards outside hand. The v0.113.0 API build passed. Two independent reviews were clear.
+
+Interactive acceptance and v0.113.0 runtime checks remain pending.
