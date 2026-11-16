@@ -58,10 +58,13 @@ Random branches retain vanilla effective weights and fallback rules. Effective-d
 
 Confused rolls by original starting-deck category, skipping X cards. Slither has a separate combat-local sequence; when Confused already rolled for the same draw, Slither reapplies that value at its usual timing. Draw-hook context prevents reuse on later draws, and existing ownership/hand checks remain in place.
 
+## Slice 9: random enemy targets
+
+Random targets use enemy-occurrence priorities and the four design groups. Empty and singleton target sets preserve their group ordinal. Interceptions retain source eligibility, repeated-hit behavior and supplied targets; automatic card play uses the card's inherent effect category.
+
 ## Remaining policy coverage
 
 - Combat-card occurrences, shuffle assignment, routing and random selection, including Thieving Hopper.
-- Random enemy targeting.
 - Snecko Oil hand-entry costs, potion-effect opportunities and potion-generated cards.
 
 ## Validation
@@ -85,3 +88,5 @@ Slice 7, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 505 st
 Slice 8, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 511 standalone engine checks and 565 checks in each RitsuLib initialization order passed. Draw-hook checks cover X cards, starter categories, Kingly Kick/Slither reuse, later independent draws and cards outside hand. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.
+
+Slice 9, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 535 standalone engine checks and 589 checks in each RitsuLib initialization order passed. Tests exercise all four target groups, zero-damage hits, supplied targets, automatic play, and eligibility/order changes. The v0.113.0 API build passed. Two independent reviews were clear.
