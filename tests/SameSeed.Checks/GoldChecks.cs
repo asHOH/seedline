@@ -51,6 +51,7 @@ public static partial class Checks
             await CheckPermanentSelection();
             await CheckNonCombatPolicies();
             await CheckCombatStateFoundation();
+            await CheckCombatOrdering();
             await CheckCombatSerialization();
         }
         finally

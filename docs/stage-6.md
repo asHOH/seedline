@@ -16,10 +16,20 @@ Schema 6 saves acquisition metadata with cards and removed-card history with the
 
 Combat-card keys, full combat ordering, shuffle assignment and gameplay selectors follow in subsequent slices. This slice preserves current combat outcomes.
 
+## Slice 2: combat card comparisons
+
+`CardOrder.Combat` and its frozen snapshots implement the full [processing order](../CARD_ORDER.md). Combat equivalence uses the same state comparisons while omitting origin and occurrence tie-breaks. Permanent and identity-only order retain their existing scopes.
+
+Comparisons read lasting and turn-limited costs separately, preserve modifier application order, include carried values and Dampen restoration, and exclude shared consumable discounts and the named encounter effects. Fetch and pending return availability use combat history. Snapshots freeze values before a batch changes cards.
+
+These comparisons become the common ordering input for subsequent shuffle, routing and hand-entry slices. Bolas/Hatchet hand-draw hooks record when a pending return resolves; ordering inspection preserves gameplay state.
+
 ## Validation
 
 Engine regressions cover combat-counter isolation, event battle ordinals, act changes, replay, acquisition batches, copies, frozen removal, Tooth storage, returns and transformations. The existing checksum/replay suite continues to exercise opening combat with the extended card metadata.
 
 Slice 1, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 370 standalone engine checks and 424 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews identified source batches split by sequential additions; the shared acquisition context and regression check resolved the finding, with both follow-up reviews clear.
+
+Slice 2, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 394 standalone engine checks and 448 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews verified the Tangled cost-scope and pending-return lifecycle fixes; follow-up reviews were clear.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.

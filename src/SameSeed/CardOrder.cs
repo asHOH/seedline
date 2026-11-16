@@ -11,30 +11,32 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 
 namespace SameSeed;
 
-internal sealed class FrozenCardOrder(IComparable[] properties, string? address) : IComparable<FrozenCardOrder>
+internal sealed class FrozenCardOrder(IComparable[] properties, string? address) : IComparable<FrozenCardOrder>, IComparable
 {
     private readonly IComparable[] properties = properties;
     private readonly string? address = address;
+    internal int Category => (int)properties[0];
+    public int CompareTo(object? other) => CompareTo((FrozenCardOrder?)other);
 
     public int CompareTo(FrozenCardOrder? other)
     {
         if (other == null)
             return 1;
-        for (var i = 0; i < properties.Length; i++)
+        for (var i = 0; i < Math.Min(properties.Length, other.properties.Length); i++)
         {
             var result = properties[i] is string text ? StringComparer.Ordinal.Compare(text, (string)other.properties[i])
                 : properties[i].CompareTo(other.properties[i]);
             if (result != 0)
                 return result;
         }
-        return StringComparer.Ordinal.Compare(address, other.address);
+        var length = properties.Length.CompareTo(other.properties.Length);
+        return length != 0 ? length : StringComparer.Ordinal.Compare(address, other.address);
     }
 }
 
 internal sealed record PermanentCardEquivalence(string Identity, int UpgradeLevel, string? Enchantment, int EnchantmentAmount, int Progress);
 
-// Permanent cards have no turn costs, pending combat returns or temporary downgrade restoration.
-internal static class CardOrder
+internal static partial class CardOrder
 {
     internal static readonly IComparer<CardModel> Permanent = Comparer<CardModel>.Create((a, b) => Compare(a, b, CapturePermanent));
     internal static readonly IComparer<CardModel> Identity = Comparer<CardModel>.Create((a, b) => Compare(a, b, CaptureIdentity));
@@ -74,7 +76,7 @@ internal static class CardOrder
         return capture(left).CompareTo(capture(right));
     }
 
-    private static IComparable[] Rank(CardModel card)
+    private static IComparable[] Rank(CardModel card, bool inCombat = false, bool includeOrigin = true)
     {
         var persistent = Equivalence(card);
         var id = persistent.Identity;
@@ -95,21 +97,44 @@ internal static class CardOrder
         if (enchantment is Momentum && momentum > 0)
             enchantRank = 6.5;
         var neutralTie = enchantId == "NONE" ? 0 : expired ? 1 : enchantId == "SPIRAL" ? 2 : enchantId == "CLONE" ? 3 : 4;
-        var energy = card.EnergyCost.CostsX ? 0.5 : card.EnergyCost.GetWithModifiers(CostModifiers.None);
+        var lastingEnergy = inCombat ? CombatEnergy(card, false) : card.EnergyCost.GetWithModifiers(CostModifiers.None);
+        var energy = card.EnergyCost.CostsX ? 0.5 : lastingEnergy;
         if (enchantment is Slither)
             energy = 2.5;
         english ??= JsonSerializer.Deserialize<Dictionary<string, string>>(Godot.FileAccess.GetFileAsString("res://localization/eng/cards.json"))!;
         var title = english.GetValueOrDefault(id + ".title", id).ToUpperInvariant();
         var special = category == 0 ? Array.IndexOf(curses, id) : category == 1 ? Array.IndexOf(statuses, id) : -1;
-        var carried = card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
-        return [category, special, (strike || defend) && replay > 0 ? (replay - 1) / 2d : replay,
-            category < 2 ? false : card.Keywords.Contains(CardKeyword.Retain),
-            category < 2 ? 0d : card.HasStarCostX ? 0.5 : Math.Max(0, card.BaseStarCost), category < 2 ? false : rarity >= 10,
+        var carried = inCombat ? CarriedValue(card) : card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
+        var keywords = inCombat ? CombatKeywords(card) : card.Keywords;
+        var restoration = inCombat ? Restoration(card) : 0;
+        var turnEffects = inCombat && HasTurnEffects(card);
+        var rank = new List<IComparable> {category, special, (strike || defend) && replay > 0 ? (replay - 1) / 2d : replay,
+            category < 2 ? false : keywords.Contains(CardKeyword.Retain),
+            category < 2 ? 0d : card.HasStarCostX ? 0.5 : Math.Max(0, inCombat ? CombatStars(card, false) : card.BaseStarCost), category < 2 ? false : rarity >= 10,
             category < 2 ? 0d : energy, category < 2 ? false : Draws(card), category < 2 ? 0 : rarity,
             category < 2 ? false : card.Pool is ColorlessCardPool || card.Pool.Id.Entry is "EVENT_CARD_POOL" or "TOKEN_CARD_POOL",
-            title, id, carried, enchantRank, persistent.EnchantmentAmount, momentum, persistent.UpgradeLevel,
-            card is Guilty ? persistent.Progress : 0, card.Keywords.Contains(CardKeyword.Ethereal), card.Keywords.Contains(CardKeyword.Sly),
-            neutral ? neutralTie : 0, expired ? Array.IndexOf(enchantments, enchantId) : 0];
+            title, id };
+        if (inCombat)
+            rank.Add(card.Affliction is not MegaCrit.Sts2.Core.Models.Afflictions.Bound);
+        rank.AddRange([carried, enchantRank, persistent.EnchantmentAmount, momentum,
+            inCombat ? card.IsUpgraded ? 2 : restoration > 0 ? 1 : 0 : persistent.UpgradeLevel]);
+        if (inCombat)
+            rank.Add(card.CurrentUpgradeLevel);
+        rank.AddRange([card is Guilty ? persistent.Progress : 0, keywords.Contains(CardKeyword.Ethereal), keywords.Contains(CardKeyword.Sly)]);
+        if (inCombat)
+            rank.AddRange([PendingUse(card), restoration, turnEffects,
+                turnEffects ? card.HasStarCostX ? 0.5 : Math.Max(0, CombatStars(card, true)) : 0d,
+                turnEffects ? card.EnergyCost.CostsX ? 0.5 : CombatEnergy(card, true) : 0d,
+                TemporaryKeywords(card), enchantment is Slither ? lastingEnergy : 0]);
+        rank.AddRange([neutral ? neutralTie : 0, expired ? Array.IndexOf(enchantments, enchantId) : 0]);
+        if (inCombat)
+        {
+            rank.Add(StarModifiers(card));
+            rank.Add(EnergyModifiers(card));
+            if (includeOrigin)
+                rank.Add(card.Pile?.Type == PileType.Deck || card.DeckVersion != null);
+        }
+        return rank.ToArray();
     }
 
     private static int Rarity(CardModel card) => card.Id.Entry switch
