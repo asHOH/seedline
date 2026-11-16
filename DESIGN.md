@@ -143,6 +143,7 @@ A source policy may cover:
 - **[Random state](#rng-derivation-and-addressing):** internal information tracking random processes across operations.
 - **Purpose:** what the randomness determines, such as selection, ordering or upgrading.
 - **Roll:** sampling a random number, or the resulting number.
+- **Renewal:** replacement of a clock or Rare threshold with a fresh value.
 - **Pool / sequence:** a pool defines candidate identities; a sequence is an ordered collection of entries, such as random values or item identities. Repeated values or identities are distinct entries.
 - **Filter:** conditions determining which candidates or entries are eligible.
 - **Draw:** retrieving an item or entry from a pool or sequence.
@@ -152,7 +153,6 @@ A source policy may cover:
 - **Allocation:** finite relic stock assigned to a source and ordered into sequences.
 - **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
-- **Ordinal-addressed generation:** randomness derived from an opportunity's ordinal within its scope.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
 - **Occurrence address:** a logical occurrence's source ID, distinct for each copy.
 - **Card key:** a persistent card ID for selection and source-based shuffling.
@@ -430,7 +430,7 @@ Other new permanent cards use occurrence addresses; returns follow [lifetime rul
 
 For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [persistent clocks](#persistent-clocks) with one fixed selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
-**At combat start:** before selection effects, use each card's [shuffle key](#priority-assignment) under ordinary-card assignment, including opening removed-entry reservations. Innate separation applies only to shuffling.
+**At combat start:** before selection effects, use each card's [shuffle key](#priority-assignment) under ordinary-card assignment, including retained entries for removed cards. Innate separation applies only to shuffling.
 
 **During combat:** take the first applicable key for a new occurrence:
 
@@ -483,7 +483,7 @@ Equivalence requires the same identity and gameplay-relevant status. Hidden sele
 
 #### Out-of-combat card routing
 
-**Out-of-combat equivalence key:** compare card identity, upgrade level, enchantment identity/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Show Off's `IncreasedAim`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
+**Out-of-combat equivalence:** compare card identity, upgrade level, enchantment identity/amount, and applicable persistent progress: Genetic Algorithm's `IncreasedBlock`, The Scythe's `IncreasedDamage`, Show Off's `IncreasedAim`, Dowsing's `RoomsEntered`, and Guilty's `CombatsSeen`. Omit redundant current-value fields, change history, acquisition metadata, Spoils Map's additional fields and Mad Science's type/rider configuration within the supported scope. Baseline: [persistent card state](#card-state-and-selection).
 
 For the out-of-combat operations below, sources share [routing clocks](#routing) by operation and card identity:
 
@@ -739,14 +739,14 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 
 ##### Luck and rarity offset
 
-**State:** luck `L` starts at zero; the combat offset `o` starts at `-0.05`. The threshold is `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Thresholds use an independent sequence addressed by purpose and threshold ordinal.
+**State:** luck `L` starts at zero; the combat offset `o` starts at `-0.05`. The threshold is `T = -ln(U)`, where `U` is uniform on `(0, 1)`. Derive each threshold from purpose + threshold renewal count.
 
 **Per slot:** process card slots in order. Each adds `-ln(1 - p)` to luck, where `p` is its Rare probability:
 
 - Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with the shared combat offset.
 - Fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
 
-**Rare delivery:** subject to the difficulty-specific cap below, a slot reaching the threshold becomes Rare. Reset luck to zero, discard the overshoot and advance to the next threshold.
+**Rare delivery:** subject to the difficulty-specific cap below, a slot reaching the threshold becomes Rare. Reset luck to zero, discard the overshoot and renew the threshold.
 
 **Combat offset updates:**
 
@@ -847,16 +847,16 @@ Rerolls of Kaleidoscope's Neow offers are unreachable.
 
 **Intent:** align rewards from the same expanded pool.
 
-Preserve the [pool-modification boundaries](#card-reward-offers-1). Select the identity group for the complete request:
+Select the identity sequences for the complete request:
 
-- **Unchanged eligible pool:** reuse its existing group, including Rug's fixed-Common or already-colorless offers.
-- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume this group.
+- **Unchanged eligible pool:** reuse its existing sequences, including Rug's fixed-Common or already-colorless offers.
+- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume entries from these sequences.
 
 Changing pools preserves luck state and opening-triple progression.
 
 Lasting Candy draws from the inherited pool's Power sequences while retaining its source rarity-roll sequence position.
 
-**Accepted tradeoff:** separate identity groups sacrifice alignment with the unexpanded pool to avoid rebuilding sequences when the pool expands.
+**Accepted tradeoff:** separate sequences sacrifice alignment with the unexpanded pool to avoid rebuilding sequences when the pool expands.
 
 ### Permanent transformations and direct card additions
 
