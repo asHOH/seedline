@@ -82,7 +82,7 @@ Each committed potion use supplies its own identity sequence. Orobic Acid and Bo
 
 ## Slice 13: Snecko Oil hand-entry costs
 
-Successful hand entries retain a frozen ordering snapshot on their logical occurrence. Unordered grants, transformations and selected return batches share entry ordinals; draws and explicitly sequential returns retain source order. Creation-batch metadata covers newly admitted cards, while Stratagem groups its sequential return calls. Overflow creates no hand entry; later returns refresh it.
+Successful hand entries retain a frozen ordering snapshot on their logical occurrence. Unordered grants, transformations and selected return batches share entry ordinals; draws and explicitly sequential returns retain source order. Creation-batch metadata covers newly admitted cards, while Stratagem and Aggression group their sequential return calls. Overflow creates no hand entry; later returns refresh it.
 
 After Oil draws, its eligible category rolls follow frozen hand-entry order and are supplied to the existing cost loop. Effect ordinals isolate uses across combats, and test overrides retain their original behavior.
 
@@ -123,6 +123,8 @@ Slice 12, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 686 s
 Slice 13, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 740 standalone engine checks and 794 checks in each RitsuLib initialization order passed. Checks cover category rolls, frozen batches, ordered draws/All for One, overflow/re-entry, logical reassociation, Cosmic/Ecstasy/Stratagem batches and different combat opportunities. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Slice 14, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 815 standalone engine checks and 869 checks in each RitsuLib initialization order passed. Checks cover real plays and cancellations, equivalent-copy choices, protected deck links, reference/return-history rebinding, Oil metadata, repeated Decisions plays, and nested Sly/Hologram and Beat Down/Graveblast batches. The v0.113.0 API build passed. Two independent reviews were clear after fixing pending-reference coverage, choice-hook installation order and coexistence with RitsuLib's payment wrapper.
+
+Aggression correction, 2026-11-17: the new Oil regression failed with the original batching and passed after grouping Aggression's returns. Checks cover sampled and whole-set returns, frozen ranks before upgrades, distinct Oil costs across reversed return order, overflow and later separate retrievals. Formatting, analyzer build and 61 unit tests passed; 917 standalone engine checks and 971 checks in each RitsuLib initialization order passed on v0.113.1. The v0.113.0 API build passed. Two independent reviews were clear.
 
 ## Gameplay checks
 

@@ -42,6 +42,17 @@ internal static class HandEntries
         private static void Finalizer(Batch? __state) => batch.Value = __state;
     }
 
+    [HarmonyPatch(typeof(AggressionPower), nameof(AggressionPower.BeforeSideTurnStart))]
+    private static class Aggression
+    {
+        private static void Prefix(AggressionPower __instance, out Batch? __state)
+        {
+            __state = batch.Value;
+            batch.Value = new(__instance.Owner.Player!.PlayerCombatState!.DiscardPile.Cards.Where(c => c.Type == CardType.Attack));
+        }
+        private static void Finalizer(Batch? __state) => batch.Value = __state;
+    }
+
     [HarmonyPatch]
     private static class Batches
     {

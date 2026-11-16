@@ -167,7 +167,79 @@ public static partial class Checks
             Assert(HandEntries.Info(retrieved[2]).Ordinal > retrievalEntry &&
                 HandEntries.Info(retrieved[3]).Ordinal > HandEntries.Info(retrieved[2]).Ordinal,
                 "Stratagem restores its source context before subsequent sequential draws");
+            await CheckAggressionOilCosts(run, combat);
             RunManager.Instance.CleanUp();
         }
+    }
+
+    private static async Task CheckAggressionOilCosts(RunState run, CombatState combat)
+    {
+        var player = run.Players[0];
+        var pcs = player.PlayerCombatState!;
+        var context = new ThrowingPlayerChoiceContext();
+        var state = RunCheckpoints.Require(run);
+        var scope = CombatStateScope.Require(combat);
+        var aggression = (AggressionPower)ModelDb.Power<AggressionPower>().ToMutable();
+        AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Owner)).SetValue(aggression, player.Creature);
+        aggression.SetAmount(2);
+        var witnessedCostReordering = false;
+        for (var iteration = 0; iteration < 8; iteration++)
+        {
+            foreach (var card in pcs.Hand.Cards.Concat(pcs.DrawPile.Cards).Concat(pcs.DiscardPile.Cards).ToArray())
+                card.RemoveFromCurrentPile();
+            CardModel[] attacks = [combat.CreateCard<Anger>(player), combat.CreateCard<PommelStrike>(player)];
+            if (iteration % 2 == 1)
+                attacks = [.. attacks, combat.CreateCard<Headbutt>(player)];
+            await CardPileCmd.AddGeneratedCardsToCombat(attacks.Reverse(), PileType.Discard, player);
+            var ranks = attacks.ToDictionary(c => c, CardOrder.CaptureCombat);
+            var position = scope.Random.Position(scope.For("hand entry"));
+            await aggression.BeforeSideTurnStart(context, CombatSide.Player, [player.Creature], combat);
+            var returned = pcs.Hand.Cards.ToArray();
+            Assert(returned.Length == 2 && returned.All(c => c.IsUpgraded) &&
+                returned.Select(c => HandEntries.Info(c).Ordinal).Distinct().Count() == 1 &&
+                scope.Random.Position(scope.For("hand entry")) == position + 1,
+                "Aggression's sampled and whole-set returns share one successful hand-entry batch and retain upgrades");
+            Assert(returned.All(c => HandEntries.Info(c).Rank.CompareTo(ranks[c]) == 0),
+                "Aggression freezes each entry's rank before its subsequent upgrade");
+            foreach (var card in pcs.DiscardPile.Cards.ToArray())
+                card.RemoveFromCurrentPile();
+            var oil = (SneckoOil)ModelDb.Potion<SneckoOil>().ToMutable();
+            player.AddPotionInternal(oil);
+            oil.RemoveBeforeUse();
+            var vanilla = run.Rng.CombatEnergyCosts.ToSerializable();
+            await (Task)AccessTools.Method(typeof(SneckoOil), "OnUse").Invoke(oil, [context, player.Creature])!;
+            var address = HandEntries.OilAddress(oil, "others");
+            var random = new RandomState(state.Seed);
+            var ordered = returned.OrderBy(c => ranks[c]).ToArray();
+            foreach (var card in ordered)
+                Assert(card.EnergyCost.GetWithModifiers(CostModifiers.Local) == random.NextIntInclusive(address, 0, 3),
+                    "Oil assigns Aggression returns by their frozen processing ranks independently of return order");
+            witnessedCostReordering |= !returned.SequenceEqual(ordered) &&
+                returned[0].EnergyCost.GetWithModifiers(CostModifiers.Local) != returned[1].EnergyCost.GetWithModifiers(CostModifiers.Local);
+            Assert(state.Random.Position(address) == 2 && vanilla.Equals(run.Rng.CombatEnergyCosts.ToSerializable()),
+                "Oil consumes exactly two category rolls after Aggression and preserves vanilla energy RNG");
+            await CardPileCmd.Add(returned, PileType.Discard);
+            await CardPileCmd.Add(returned[0], PileType.Hand);
+            await CardPileCmd.Add(returned[1], PileType.Hand);
+            Assert(HandEntries.Info(returned[0]).Ordinal < HandEntries.Info(returned[1]).Ordinal,
+                "Aggression restores its batch context before later separate retrievals");
+        }
+        Assert(witnessedCostReordering, "Aggression regression exercises a return-order reversal with distinct Oil costs");
+
+        foreach (var card in pcs.Hand.Cards.Concat(pcs.DiscardPile.Cards).ToArray())
+            card.RemoveFromCurrentPile();
+        await CardPileCmd.AddGeneratedCardsToCombat(Enumerable.Range(0, 9).Select(_ => combat.CreateCard<Wound>(player)), PileType.Hand, player);
+        CardModel[] overflow = [combat.CreateCard<Anger>(player), combat.CreateCard<PommelStrike>(player), combat.CreateCard<Headbutt>(player)];
+        await CardPileCmd.AddGeneratedCardsToCombat(overflow, PileType.Discard, player);
+        var beforeOverflow = scope.Random.Position(scope.For("hand entry"));
+        await aggression.BeforeSideTurnStart(context, CombatSide.Player, [player.Creature], combat);
+        Assert(pcs.Hand.Cards.Count == 10 && overflow.Count(c => c.IsUpgraded) == 2 &&
+            overflow.Count(c => HandEntries.Find(c) != null) == 1 &&
+            scope.Random.Position(scope.For("hand entry")) == beforeOverflow + 1,
+            "Aggression preserves overflow upgrades while recording only successful hand entries");
+        await aggression.BeforeSideTurnStart(context, CombatSide.Player, [player.Creature], combat);
+        Assert(overflow.Count(c => HandEntries.Find(c) != null) == 1 &&
+            scope.Random.Position(scope.For("hand entry")) == beforeOverflow + 1,
+            "Aggression with a full hand consumes no hand-entry ordinal");
     }
 }
