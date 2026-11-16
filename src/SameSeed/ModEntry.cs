@@ -33,7 +33,10 @@ public static class ModEntry
         var harmony = new Harmony(Id);
         try
         {
-            harmony.PatchAll(typeof(ModEntry).Assembly);
+            // Install choice entry points before rewritten callers can inline their original async stubs.
+            foreach (var patch in typeof(ModEntry).Assembly.GetTypes().Where(t => t.IsDefined(typeof(HarmonyPatch), false))
+                .OrderByDescending(CombatRouting.IsChoicePatch))
+                harmony.CreateClassProcessor(patch).Patch();
             initialized = true;
             Log.Info($"{Id}: Reward supplies and checkpoints initialized for {GameBuild}.");
         }

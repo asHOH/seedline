@@ -1,6 +1,6 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.0/16ac0fe3** and **v0.113.1/d09d48e5**. Stages 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. Stage 5 adds permanent-card supplies and selection, deck routing, room resolution and event policies.
+Windows mod for Slay the Spire 2 **v0.113.0/16ac0fe3** and **v0.113.1/d09d48e5**. Stages 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. Stage 5 adds permanent-card supplies and selection, deck routing, room resolution and event policies. [Stage 6](docs/stage-6.md) adds combat randomness, enemy behavior, card routing and potion effects.
 
 Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md), [reward supplies and card occurrences](docs/stage-4.md).
 
@@ -45,4 +45,4 @@ Saves use `modded/profileN/saves/current_run.save` within the game's account sto
 
 Start fresh after upgrading to v0.6.0. Schema 6 adds card acquisition and removal history; incompatible saves remain untouched.
 
-Perform the [stage 5 gameplay checks](docs/stage-5.md#gameplay-checks) alongside the remaining [stage 4 checks](docs/stage-4.md#gameplay-checks).
+Perform the [stage 6 gameplay checks](docs/stage-6.md#gameplay-checks) alongside the remaining [stage 5](docs/stage-5.md#gameplay-checks) and [stage 4 checks](docs/stage-4.md#gameplay-checks).

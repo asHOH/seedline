@@ -154,6 +154,12 @@ public static partial class Checks
         Assert(CardOrder.Combat.Compare(returning, idle) > 0, "last-turn play remains pending before the next hand-draw hook");
         await returning.BeforeHandDraw(player, new ThrowingPlayerChoiceContext(), combat);
         Assert(CardOrder.CombatEquivalent(returning, idle), "resolved hand-draw return no longer counts as a future pending return");
+        var routingScope = CombatStateScope.Require(combat);
+        var returnRoute = routingScope.For("combat routing", "return check", returning.Id.Entry);
+        routingScope.Selection.Get(routingScope.Seed, returnRoute, CombatCards.Info(returning).Key).Remaining = 0.25;
+        routingScope.Selection.Get(routingScope.Seed, returnRoute, CombatCards.Info(idle).Key).Remaining = 1;
+        new CombatRouting.Choice([returning, idle], "return check").Commit([idle]);
+        Assert(CardOrder.CombatEquivalent(returning, idle), "routing transfers resolved return history without resurrecting a pending draw");
         Played(returning);
         Assert(!CardOrder.CombatEquivalent(returning, idle), "replaying a returned card makes the following hand-draw return pending again");
 

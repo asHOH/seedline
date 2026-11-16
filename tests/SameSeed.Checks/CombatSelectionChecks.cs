@@ -183,11 +183,13 @@ public static partial class Checks
                 Move(card, pcs.ExhaustPile);
             foreach (var card in offered.Take(2))
                 Move(card, pcs.DrawPile);
-            snapshot = JsonSerializer.Serialize(scope.Selection);
+            string SeekerClocks() => JsonSerializer.Serialize(scope.Selection.Clocks.Where(p =>
+                p.Key.StartsWith(seekerScope.Key[..^1] + ",", StringComparison.Ordinal)));
+            snapshot = SeekerClocks();
             incidental = scope.Random.Position(scope.For("incidental shuffle"));
             using (CardSelectorStack.SetTestSelector(seekerChoice))
                 await Invoke(combat.CreateCard<SeekerStrike>(player));
-            Assert(seekerChoice.Options.SequenceEqual(offered.Take(2)) && snapshot == JsonSerializer.Serialize(scope.Selection) &&
+            Assert(seekerChoice.Options.SequenceEqual(offered.Take(2)) && snapshot == SeekerClocks() &&
                 incidental == scope.Random.Position(scope.For("incidental shuffle")),
                 "Seeker Strike's whole-set offer preserves clocks and display order without incidental shuffling");
 

@@ -28,6 +28,17 @@ internal static partial class CardOrder
     private sealed record ReturnDraw(int Turn);
     private static readonly ConditionalWeakTable<CardModel, ReturnDraw> returnDraws = new();
 
+    internal static void Reassociate(IReadOnlyList<CardModel> physical, IReadOnlyList<CardModel> logical)
+    {
+        var records = logical.Select(c => returnDraws.TryGetValue(c, out var draw) ? draw : null).ToArray();
+        for (var i = 0; i < physical.Count; i++)
+        {
+            returnDraws.Remove(physical[i]);
+            if (records[i] is { } draw)
+                returnDraws.Add(physical[i], draw);
+        }
+    }
+
     private static bool Turn(LocalCostModifier modifier) => modifier.Expiration.HasFlag(LocalCostModifierExpiration.EndOfTurn);
     // Pending grants have no pile yet; frozen removed cards identify themselves as their deck version.
     private static ICombatState? ComparisonCombat(CardModel card) => card.CombatState ??

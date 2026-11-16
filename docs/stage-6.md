@@ -86,9 +86,11 @@ Successful hand entries retain a frozen ordering snapshot on their logical occur
 
 After Oil draws, its eligible category rolls follow frozen hand-entry order and are supplied to the existing cost loop. Effect ordinals isolate uses across combats, and test overrides retain their original behavior.
 
-## Remaining policy coverage
+## Slice 14: combat-card routing
 
-- Combat-card routing.
+Committed player choices and validated plays route equivalent copies through shared operation clocks while preserving clicked objects and pile positions. Reassociation carries card keys, shuffle metadata, hand-entry history, copy relationships and permitted deck links. Growth cards and pending Hopper theft retain their exact permanent correspondence.
+
+Gameplay references and return history follow logical targets. Outstanding Sly and automatic-play batches split equivalence until their queued effects resolve, preserving suspended iterators. Scripted Vakuu choices and already-selected automatic plays retain their target associations. Choice hooks install before rewritten callers to prevent the original async entry points from being inlined.
 
 ## Validation
 
@@ -110,8 +112,6 @@ Slice 7, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 505 st
 
 Slice 8, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 511 standalone engine checks and 565 checks in each RitsuLib initialization order passed. Draw-hook checks cover X cards, starter categories, Kingly Kick/Slither reuse, later independent draws and cards outside hand. The v0.113.0 API build passed. Two independent reviews were clear.
 
-Interactive acceptance and v0.113.0 runtime checks remain pending.
-
 Slice 9, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 535 standalone engine checks and 589 checks in each RitsuLib initialization order passed. Tests exercise all four target groups, zero-damage hits, supplied targets, automatic play, and eligibility/order changes. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Slice 10, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 595 standalone engine checks and 649 checks in each RitsuLib initialization order passed. Checks cover opening/removal alignment, Act 3 ordering, fixed selection keys, tokens, copies, rejected admissions, unordered grants, Corruption, and sequential Nightmare/Mythic Form/Entropy batches. The v0.113.0 API build passed. Two independent reviews were clear after fixing pending-grant comparisons and the two missing power batch scopes.
@@ -121,3 +121,14 @@ Slice 11, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 619 s
 Slice 12, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 686 standalone engine checks and 740 checks in each RitsuLib initialization order passed. Checks exercise all seven potion generators, choices/skips, type counters, Cauldron exemptions and restoration, Cosmic creation batches, and replay across different combat opportunities. The v0.113.0 API build passed. Two independent reviews were clear after grouping Cosmic Concoction's sequential grants.
 
 Slice 13, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 740 standalone engine checks and 794 checks in each RitsuLib initialization order passed. Checks cover category rolls, frozen batches, ordered draws/All for One, overflow/re-entry, logical reassociation, Cosmic/Ecstasy/Stratagem batches and different combat opportunities. The v0.113.0 API build passed. Two independent reviews were clear.
+
+Slice 14, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 815 standalone engine checks and 869 checks in each RitsuLib initialization order passed. Checks cover real plays and cancellations, equivalent-copy choices, protected deck links, reference/return-history rebinding, Oil metadata, repeated Decisions plays, and nested Sly/Hologram and Beat Down/Graveblast batches. The v0.113.0 API build passed. Two independent reviews were clear after fixing pending-reference coverage, choice-hook installation order and coexistence with RitsuLib's payment wrapper.
+
+## Gameplay checks
+
+Interactive acceptance and v0.113.0 runtime checks remain pending:
+
+- Compare corresponding combats across same-seed routes: setup, enemy decisions, generated cards and orb sequences.
+- Play, discard and retrieve different equivalent copies; verify card behavior and pile presentation, including nested Sly/Hologram and Beat Down/Graveblast choices.
+- Compare Oil after retention, generation and retrieval, with hand rearrangement and matching potion opportunities in different combats.
+- Reload before ordinary/event battles and after victory; confirm regenerated outcomes and counters, with and without RitsuLib.
