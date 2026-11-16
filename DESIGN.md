@@ -1738,6 +1738,7 @@ Front bias can affect several later positions, depending on bag composition.
 | Own character | Stoke, Call of the Void, Choices Paradox | Discovery, Mad Science's Chaos effect, Vexing Puzzlebox |
 | Own-character Attack | Calamity | Infernal Blade, Crossbow |
 | Own-character Skill | — | Distraction |
+| Own-character Shoot | — | Blot Out the Sky |
 | Own-character Power | Creative AI | Abundance, White Noise |
 | Own-character Common | Hello World | — |
 | Own-character zero-cost non-X | Jackpot | — |

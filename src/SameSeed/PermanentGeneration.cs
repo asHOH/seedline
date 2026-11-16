@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
@@ -30,15 +31,18 @@ internal static class PermanentGeneration
     {
         var batch = transformations.ToArray();
         var replacements = new Dictionary<CardModel, CardModel>();
-        foreach (var item in batch.Where(t => !t.IsInCombat && t.Replacement == null)
+        foreach (var item in batch.Where(t => t.Replacement == null)
             .OrderBy(t => t.Original, CardOrder.Identity).ThenBy(t => t.Original.Pile!.Cards.IndexOf(t.Original)))
         {
             var original = item.Original;
-            var eligible = item.ReplacementOptions == null ? CardFactory.GetDefaultTransformationOptions(original, false)
+            var eligible = item.ReplacementOptions == null ? CardFactory.GetDefaultTransformationOptions(original, item.IsInCombat)
                 : (CardModel[])AccessTools.Method(typeof(CardFactory), "GetFilteredTransformationOptions")
-                    .Invoke(null, [original, item.ReplacementOptions, false])!;
+                    .Invoke(null, [original, item.ReplacementOptions, item.IsInCombat])!;
             var cards = eligible.ToArray();
-            replacements.Add(original, Draw(original.Owner, cards[0].Pool, cards));
+            var pool = cards[0].Pool;
+            replacements.Add(original, item.IsInCombat
+                ? CombatGeneration.Draw(original.Owner, "ordinary costs", pool.Id.Entry, CombatGeneration.Pool(original.Owner, pool), cards)
+                : Draw(original.Owner, pool, cards));
         }
         return batch.Select(t => replacements.TryGetValue(t.Original, out var replacement)
             ? new CardTransformation(t.Original, replacement) : t).ToArray();
@@ -93,7 +97,8 @@ internal static class PermanentGeneration
     {
         private static IEnumerable<MethodBase> TargetMethods() =>
         [RewardPatches.AsyncMethod(typeof(Astrolabe), nameof(Astrolabe.AfterObtained)),
-            RewardPatches.AsyncMethod(typeof(MorphicGrove), "Group"), RewardPatches.AsyncMethod(typeof(Trial), "NondescriptInnocent")];
+            RewardPatches.AsyncMethod(typeof(MorphicGrove), "Group"), RewardPatches.AsyncMethod(typeof(Trial), "NondescriptInnocent"),
+            RewardPatches.AsyncMethod(typeof(EntropyPower), nameof(EntropyPower.AfterPlayerTurnStart))];
 
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
         {

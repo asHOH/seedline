@@ -15,6 +15,7 @@ internal sealed class CombatStateScope(string seed, RandomAddress address, Rando
     internal string Seed { get; } = seed;
     internal RandomAddress Address { get; } = address;
     internal RandomState Random { get; } = new(seed);
+    internal RewardState Cards { get; } = new();
     internal RandomAddress For(string purpose, params string[] group) => RandomAddress.For(purpose, group).With(Address.Key);
 
     internal static CombatStateScope Require(CombatState combat) => combats.TryGetValue(combat, out var scope)

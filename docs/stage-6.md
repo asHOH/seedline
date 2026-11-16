@@ -32,6 +32,12 @@ These comparisons become the common ordering input for subsequent shuffle, routi
 
 The review of slices 1–2 also found that Scroll Boxes split one acquisition batch across its sequential grants. Its source context now keeps the chosen bundle together. Ocarina's ordinary-cost melody pool is specified in the design for the generation slice.
 
+## Slice 4: combat card generation and Entropy
+
+Combat-local supplies reuse filtered draws and stable entry addresses. Source contexts classify the existing factory calls by cost treatment and pool; vanilla callers retain choice, upgrade, keyword and pile effects. Ocarina uses the combined melody pool, The Lovers and Splash use their combined other-character pools, and Mythic Form draws from Tarot while retaining its ordered upgrades.
+
+Entropy reuses transformation-batch preparation: replacements are generated in identity order, paired within each identity in presentation order, then applied in the source's execution order. Generation consumes every offered identity and preserves distinct-versus-repeat batch rules. Potion factories remain reserved for the potion-effect slice.
+
 ## Validation
 
 Engine regressions cover combat-counter isolation, event battle ordinals, act changes, replay, acquisition batches, copies, frozen removal, Tooth storage, returns and transformations. The existing checksum/replay suite continues to exercise opening combat with the extended card metadata.
@@ -41,5 +47,7 @@ Slice 1, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 370 st
 Slice 2, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 394 standalone engine checks and 448 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews verified the Tangled cost-scope and pending-return lifecycle fixes; follow-up reviews were clear.
 
 Slice 3, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 436 standalone engine checks and 490 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear, including the Scroll Boxes correction and Ocarina policy addition.
+
+Slice 4, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 458 standalone engine checks and 512 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear after adding an actual Entropy selection-hook regression alongside factory, Ocarina and Mythic Form checks.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.
