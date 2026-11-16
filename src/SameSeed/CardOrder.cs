@@ -11,10 +11,48 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 
 namespace SameSeed;
 
+internal sealed class FrozenCardOrder(IComparable[] properties, string? address) : IComparable<FrozenCardOrder>
+{
+    private readonly IComparable[] properties = properties;
+    private readonly string? address = address;
+
+    public int CompareTo(FrozenCardOrder? other)
+    {
+        if (other == null)
+            return 1;
+        for (var i = 0; i < properties.Length; i++)
+        {
+            var result = properties[i] is string text ? StringComparer.Ordinal.Compare(text, (string)other.properties[i])
+                : properties[i].CompareTo(other.properties[i]);
+            if (result != 0)
+                return result;
+        }
+        return StringComparer.Ordinal.Compare(address, other.address);
+    }
+}
+
+internal sealed record PermanentCardEquivalence(string Identity, int UpgradeLevel, string? Enchantment, int EnchantmentAmount, int Progress);
+
 // Permanent cards have no turn costs, pending combat returns or temporary downgrade restoration.
 internal static class CardOrder
 {
-    internal static readonly IComparer<CardModel> Permanent = Comparer<CardModel>.Create(Compare);
+    internal static readonly IComparer<CardModel> Permanent = Comparer<CardModel>.Create((a, b) => Compare(a, b, CapturePermanent));
+    internal static readonly IComparer<CardModel> Identity = Comparer<CardModel>.Create((a, b) => Compare(a, b, CaptureIdentity));
+
+    internal static FrozenCardOrder CapturePermanent(CardModel card) => new(Rank(card), CardOccurrences.Find(card)?.Address);
+    private static FrozenCardOrder CaptureIdentity(CardModel card) => new(Rank(card.CanonicalInstance), null);
+
+    internal static PermanentCardEquivalence Equivalence(CardModel card) => new(card.Id.Entry, card.CurrentUpgradeLevel,
+        card.Enchantment?.Id.Entry, card.Enchantment?.Amount ?? 0, card switch
+        {
+            GeneticAlgorithm c => c.IncreasedBlock,
+            TheScythe c => c.IncreasedDamage,
+            ShowOff c => c.IncreasedAim,
+            Dowsing c => c.RoomsEntered,
+            Guilty c => c.CombatsSeen,
+            _ => 0
+        });
+
     private static readonly HashSet<string> conditionals = Set("BODY_SLAM FEED FIEND_FIRE FORGOTTEN_RITUAL ONE_TWO_PUNCH PACTS_END PRIMAL_FORCE RAGE SECOND_WIND STOKE STOMP TEAR_ASUNDER ANTICIPATE BUBBLE_BUBBLE BULLET_TIME CALCULATED_GAMBLE CORROSIVE_WAVE FINISHER GRAND_FINALE MIRAGE MURDER NIGHTMARE PINPOINT SHADOW_STEP SHADOWMELD THE_HUNT DECISIONS_DECISIONS LUNAR_BLAST MONOLOGUE RADIATE SUPERMASSIVE EIDOLON PULL_FROM_BELOW SACRIFICE TRANSFIGURE BARRAGE FLAK_CANNON HELIX_DRILL MULTI_CAST QUADCAST SIGNAL_BOOST SYNCHRONIZE VOLTAIC BOUNCE CHO_LIMBS CODA FLORESCENCE GROWTH HARMONIC_SHIELD KI_VERSE NAIL QUIETUS UPROOT WREST ANOINTED BEAT_DOWN GOLD_AXE HAND_OF_GREED HIDDEN_GEM IMPATIENCE MIND_BLAST PROLONG RESTLESSNESS CLASH DUAL_WIELD ENLIGHTENMENT ENTRENCH FEEDING_FRENZY STACK JUDGEMENT THE_DEVIL");
     private static readonly HashSet<string> attackingSkills = Set("BLADE_DANCE BOUNCING_FLASK DARKNESS DEADLY_POISON DEATH END_OF_DAYS GOD_BYRD KNIFE_TRAP NO_ESCAPE OBLIVION OUTBREAK SNAKEBITE TEMPEST THE_BOMB THE_MOON ZAP");
     private static readonly string[] curses = "BAD_LUCK ENTHRALLED NORMALITY REGRET DEBT SHAME DOUBT DECAY WRITHE CURSE_OF_THE_BELL GREED INJURY BYRDONIS_EGG DOWSING LANTERN_KEY SPOILS_MAP GUILTY SPORE_MIND POOR_SLEEP ASCENDERS_BANE FOLLY CLUMSY".Split(' ');
@@ -27,26 +65,19 @@ internal static class CardOrder
     private static readonly HashSet<string> delayedDraws = Set("DARK_EMBRACE MACHINE_LEARNING TOOLS_OF_THE_TRADE DEMESNE GLOW GUIDING_STAR ITERATION MOTIF PAGESTORM PLOT PREDATOR RELAX THE_STAR TYRANNY VICIOUS WAH_KI");
     private static Dictionary<string, string>? english;
 
-    private static int Compare(CardModel? left, CardModel? right)
+    private static int Compare(CardModel? left, CardModel? right, Func<CardModel, FrozenCardOrder> capture)
     {
         if (ReferenceEquals(left, right))
             return 0;
         if (left == null || right == null)
             return left == null ? -1 : 1;
-        var a = Rank(left);
-        var b = Rank(right);
-        for (var i = 0; i < a.Length; i++)
-        {
-            var result = a[i] is string text ? StringComparer.Ordinal.Compare(text, (string)b[i]) : a[i].CompareTo(b[i]);
-            if (result != 0)
-                return result;
-        }
-        return StringComparer.Ordinal.Compare(CardOccurrences.Find(left)?.Address, CardOccurrences.Find(right)?.Address);
+        return capture(left).CompareTo(capture(right));
     }
 
     private static IComparable[] Rank(CardModel card)
     {
-        var id = card.Id.Entry;
+        var persistent = Equivalence(card);
+        var id = persistent.Identity;
         var replay = card.GetEnchantedReplayCount();
         var strike = card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Strike);
         var defend = card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Defend);
@@ -70,14 +101,14 @@ internal static class CardOrder
         english ??= JsonSerializer.Deserialize<Dictionary<string, string>>(Godot.FileAccess.GetFileAsString("res://localization/eng/cards.json"))!;
         var title = english.GetValueOrDefault(id + ".title", id).ToUpperInvariant();
         var special = category == 0 ? Array.IndexOf(curses, id) : category == 1 ? Array.IndexOf(statuses, id) : -1;
-        var carried = card switch { GeneticAlgorithm c => c.IncreasedBlock, TheScythe c => c.IncreasedDamage, ShowOff c => c.IncreasedAim, _ => 0 };
+        var carried = card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
         return [category, special, (strike || defend) && replay > 0 ? (replay - 1) / 2d : replay,
             category < 2 ? false : card.Keywords.Contains(CardKeyword.Retain),
             category < 2 ? 0d : card.HasStarCostX ? 0.5 : Math.Max(0, card.BaseStarCost), category < 2 ? false : rarity >= 10,
             category < 2 ? 0d : energy, category < 2 ? false : Draws(card), category < 2 ? 0 : rarity,
             category < 2 ? false : card.Pool is ColorlessCardPool || card.Pool.Id.Entry is "EVENT_CARD_POOL" or "TOKEN_CARD_POOL",
-            title, id, carried, enchantRank, enchantment?.Amount ?? 0, momentum, card.CurrentUpgradeLevel,
-            card is Guilty guilty ? guilty.CombatsSeen : 0, card.Keywords.Contains(CardKeyword.Ethereal), card.Keywords.Contains(CardKeyword.Sly),
+            title, id, carried, enchantRank, persistent.EnchantmentAmount, momentum, persistent.UpgradeLevel,
+            card is Guilty ? persistent.Progress : 0, card.Keywords.Contains(CardKeyword.Ethereal), card.Keywords.Contains(CardKeyword.Sly),
             neutral ? neutralTie : 0, expired ? Array.IndexOf(enchantments, enchantId) : 0];
     }
 

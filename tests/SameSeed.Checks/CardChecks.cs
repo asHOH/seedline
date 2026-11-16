@@ -35,10 +35,7 @@ public static partial class Checks
             var run = StartGoldRun();
             var player = run.Players[0];
             var state = RunCheckpoints.Require(run);
-            var draws = AccessTools.Method(typeof(CardOrder), "Draws");
-            Assert(new CardModel[] { ModelDb.Card<MachineLearning>(), ModelDb.Card<DarkEmbrace>(), ModelDb.Card<ToolsOfTheTrade>(), ModelDb.Card<Predator>(), ModelDb.Card<Acrobatics>() }
-                    .All(c => (bool)draws.Invoke(null, [c])!) && !(bool)draws.Invoke(null, [ModelDb.Card<Bash>()])!,
-                "permanent processing order recognizes immediate and power-mediated draw effects");
+            CheckCardOrdering(player);
             Assert(player.Deck.Cards.All(c => CardOccurrences.Find(c) != null) &&
                 player.Deck.Cards.Select(c => CardOccurrences.Info(c).Address).Distinct().Count() == player.Deck.Cards.Count,
                 "starting deck and Ascender's Bane have distinct permanent occurrences");
