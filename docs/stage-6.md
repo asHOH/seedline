@@ -38,6 +38,18 @@ Combat-local supplies reuse filtered draws and stable entry addresses. Source co
 
 Entropy reuses transformation-batch preparation: replacements are generated in identity order, paired within each identity in presentation order, then applied in the source's execution order. Generation consumes every offered identity and preserves distinct-versus-repeat batch rules. Potion factories remain reserved for the potion-effect slice.
 
+## Slice 5: random pile insertion
+
+`CardPileCmd.Add` replaces only its random gap roll and final insertion call, retaining the game's validation, movement and hooks. Each covered group and actual destination pile has its own combat-local sequence. The next roll chooses a relative gap in the current pile, including empty piles; rejected and fixed-position additions consume zero. Metamorphosis uses its existing generation-source context.
+
+Checks exercise all insertion groups, draw/discard isolation, empty piles, rejected additions, inactive combat, fixed positions and Metamorphosis's actual play. Mighty Weapon and Mighty Shield join the documented Dazed source list.
+
+## Remaining policy coverage
+
+- Combat-card occurrences, shuffle assignment, routing and random selection, including Thieving Hopper.
+- Enemy occurrences, AI and random enemy targeting.
+- Random costs, orb types, potion-effect opportunities and potion-generated cards.
+
 ## Validation
 
 Engine regressions cover combat-counter isolation, event battle ordinals, act changes, replay, acquisition batches, copies, frozen removal, Tooth storage, returns and transformations. The existing checksum/replay suite continues to exercise opening combat with the extended card metadata.
@@ -49,5 +61,7 @@ Slice 2, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 394 st
 Slice 3, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 436 standalone engine checks and 490 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear, including the Scroll Boxes correction and Ocarina policy addition.
 
 Slice 4, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 458 standalone engine checks and 512 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear after adding an actual Entropy selection-hook regression alongside factory, Ocarina and Mythic Form checks.
+
+Slice 5, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 474 standalone engine checks and 528 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.

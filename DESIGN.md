@@ -1215,7 +1215,7 @@ Address sequences by `purpose = insertion` + [combat address](#combat-addresses)
 |---|---|
 | Soul | Capture Spirit, Dirge, Grave Warden, Reave, Severance and Funerary Mask. |
 | Metamorphosis | Generated attacks. |
-| Dazed | Blessed Antler, Tea of Discourtesy, Noisebot and Entomancer's Personal Hive. |
+| Dazed | Blessed Antler, Tea of Discourtesy, Mighty Weapon, Mighty Shield, Noisebot and Entomancer's Personal Hive. |
 | Biiig Hug | Soot. |
 | Soul Fysh | Beckon. |
 | Aeonglass | Wither. |

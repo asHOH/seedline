@@ -54,6 +54,7 @@ public static partial class Checks
             await CheckCombatOrdering();
             await CheckCombatEnvironment();
             await CheckCombatGeneration();
+            await CheckCombatInsertion();
             await CheckCombatSerialization();
         }
         finally

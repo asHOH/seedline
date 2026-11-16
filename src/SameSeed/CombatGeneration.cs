@@ -16,6 +16,7 @@ namespace SameSeed;
 internal static class CombatGeneration
 {
     private static readonly AsyncLocal<Type?> source = new();
+    internal static bool IsMetamorphosis => source.Value == typeof(Metamorphosis);
     private static readonly Type[] sources =
     [typeof(Stoke), typeof(CallOfTheVoidPower), typeof(ChoicesParadox), typeof(CalamityPower), typeof(CreativeAiPower),
         typeof(HelloWorldPower), typeof(Jackpot), typeof(BigHat), typeof(BundleOfJoy), typeof(JackOfAllTrades),

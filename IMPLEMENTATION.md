@@ -19,7 +19,7 @@ For each operation, record its interception point, state owner, commitment point
 3. **First playable path:** combat-gold generation, acquisition and reload implemented, including parent-event reconstruction checks. [Coverage and pending gameplay checks](docs/stage-3.md).
 4. **Rewards:** shared supplies, relics/chests, potions, shops and card offers implemented, with permanent-card processing order, occurrence lifetime, keys and checkpoint rebinding. [Coverage and gameplay checks](docs/stage-4.md).
 5. **Non-combat:** persistent selection, deck routing, transformation/direct-addition supplies, room resolution, event selection and event policies implemented. [Coverage and checks](docs/stage-5.md).
-6. **Combat:** delivered in reviewed slices. Combat addresses, permanent-card history, card comparisons, encounter setup, enemy HP and card generation/Entropy implemented; remaining combat policies follow. [Coverage and checks](docs/stage-6.md).
+6. **Combat:** delivered in reviewed slices. Combat addresses, permanent-card history, card comparisons, encounter setup, enemy HP, card generation/Entropy and random pile insertion implemented. [Coverage, remaining policies and checks](docs/stage-6.md).
 
 ## Validation
 
