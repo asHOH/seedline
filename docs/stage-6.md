@@ -24,6 +24,14 @@ Comparisons read lasting and turn-limited costs separately, preserve modifier ap
 
 These comparisons become the common ordering input for subsequent shuffle, routing and hand-entry slices. Bolas/Hatchet hand-draw hooks record when a pending return resolves; ordering inspection preserves gameplay state.
 
+## Slice 3: encounter setup and enemy HP
+
+`EncounterModel.GenerateMonstersWithSlots` prepares the combat address and seeds encounter setup. Event layouts can prepare before a fight is chosen; combat entry commits that address once. Declined layouts and finished-room reconstruction leave combat counters unchanged.
+
+`CombatState.CreateCreature` supplies the scope while initial enemies, summons and replacements roll HP. HP selection retains current exclusions and full-range fallback, uses ascending eligible values, and advances the combat-local HP ordinal once per sampling call. Fixed ranges consume zero. Tough Egg's hatch uses the same ordinal while preserving its animation, scaling and HP hooks.
+
+The review of slices 1–2 also found that Scroll Boxes split one acquisition batch across its sequential grants. Its source context now keeps the chosen bundle together. Ocarina's ordinary-cost melody pool is specified in the design for the generation slice.
+
 ## Validation
 
 Engine regressions cover combat-counter isolation, event battle ordinals, act changes, replay, acquisition batches, copies, frozen removal, Tooth storage, returns and transformations. The existing checksum/replay suite continues to exercise opening combat with the extended card metadata.
@@ -31,5 +39,7 @@ Engine regressions cover combat-counter isolation, event battle ordinals, act ch
 Slice 1, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 370 standalone engine checks and 424 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews identified source batches split by sequential additions; the shared acquisition context and regression check resolved the finding, with both follow-up reviews clear.
 
 Slice 2, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 394 standalone engine checks and 448 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews verified the Tangled cost-scope and pending-return lifecycle fixes; follow-up reviews were clear.
+
+Slice 3, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 436 standalone engine checks and 490 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews were clear, including the Scroll Boxes correction and Ocarina policy addition.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.

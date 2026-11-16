@@ -1,14 +1,17 @@
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace SameSeed;
 
-internal sealed class CombatStateScope(string seed, RandomAddress address)
+internal sealed class CombatStateScope(string seed, RandomAddress address, RandomAddress counter, long ordinal)
 {
     private static readonly ConditionalWeakTable<CombatState, CombatStateScope> combats = new();
+    private static readonly ConditionalWeakTable<EncounterModel, CombatStateScope> encounters = new();
+    private bool committed;
     internal string Seed { get; } = seed;
     internal RandomAddress Address { get; } = address;
     internal RandomState Random { get; } = new(seed);
@@ -19,11 +22,27 @@ internal sealed class CombatStateScope(string seed, RandomAddress address)
 
     internal static CombatStateScope Begin(CombatState combat)
     {
-        if (combats.TryGetValue(combat, out var existing))
-            return existing;
-        var run = (RunState)combat.RunState;
+        var scope = Prepare(combat);
+        if (!scope.committed)
+        {
+            var random = RunCheckpoints.Require((RunState)combat.RunState).Random;
+            if (random.Position(scope.Counter) != scope.Ordinal)
+                throw new InvalidOperationException("Prepared combat opportunity changed before entry.");
+            random.Advance(scope.Counter);
+            scope.committed = true;
+        }
+        return scope;
+    }
+
+    private RandomAddress Counter { get; } = counter;
+    private long Ordinal { get; } = ordinal;
+
+    internal static CombatStateScope Prepare(CombatState combat) => combats.GetValue(combat, c =>
+        Prepare(c.Encounter ?? throw new InvalidOperationException("Combat has no encounter."), (RunState)c.RunState));
+
+    internal static CombatStateScope Prepare(EncounterModel encounter, RunState run) => encounters.GetValue(encounter, _ =>
+    {
         var state = RunCheckpoints.Require(run);
-        var encounter = combat.Encounter ?? throw new InvalidOperationException("Combat has no encounter.");
         RandomAddress counter;
         if (run.Acts.Any(a => a.AllEncounters.Any(e => e.Id == encounter.Id)))
             counter = RandomAddress.For("combat", encounter.RoomType.ToString()).At(run.CurrentActIndex);
@@ -33,10 +52,9 @@ internal sealed class CombatStateScope(string seed, RandomAddress address)
                 ?? throw new InvalidOperationException($"Missing event source for combat {encounter.Id}.");
             counter = RandomAddress.For("event combat", parent.Entry);
         }
-        var scope = new CombatStateScope(state.Seed, counter.At(state.Random.Advance(counter)).With(encounter.Id.Entry));
-        combats.Add(combat, scope);
-        return scope;
-    }
+        var ordinal = state.Random.Position(counter);
+        return new(state.Seed, counter.At(ordinal).With(encounter.Id.Entry), counter, ordinal);
+    });
 
     [HarmonyPatch(typeof(CombatRoom), "StartCombat")]
     private static class RoomStart

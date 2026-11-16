@@ -52,6 +52,7 @@ public static partial class Checks
             await CheckNonCombatPolicies();
             await CheckCombatStateFoundation();
             await CheckCombatOrdering();
+            await CheckCombatEnvironment();
             await CheckCombatSerialization();
         }
         finally
@@ -108,8 +109,11 @@ public static partial class Checks
             Assert(random.Position(address) == 1, $"A{ascension}: repeat population and skipping consume no additional gold opportunity");
         }
 
+        var previousAct = run.Act;
+        run.SetActDebug(ModelDb.Act<MegaCrit.Sts2.Core.Models.Acts.Underdocks>().ToMutable());
         var merc = new CombatRoom(ModelDb.Encounter<GremlinMercNormal>().ToMutable(), run);
         var fat = merc.CombatState.CreateCreature(ModelDb.Monster<FatGremlin>().ToMutable(), CombatSide.Enemy, "fat");
+        run.SetActDebug(previousAct);
         merc.CombatState.AddCreature(fat);
         merc.CombatState.CreatureEscaped(fat);
         merc.OnCombatEnded();
