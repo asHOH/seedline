@@ -56,6 +56,7 @@ public static partial class Checks
             await CheckCombatGeneration();
             await CheckCombatInsertion();
             await CheckCombatOrbs();
+            await CheckEnemyAi();
             await CheckCombatSerialization();
         }
         finally

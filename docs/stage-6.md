@@ -48,10 +48,16 @@ Checks exercise all insertion groups, draw/discard isolation, empty piles, rejec
 
 Chaos, Trash to Treasure and The Magician preview the next combat-local orb type. Successful channel history commits the roll before channel hooks run; failed channels preserve it. Fixed-type channels retain their existing behavior.
 
+## Slice 7: enemy occurrences and AI
+
+Initial enemies receive creation-order addresses; summon moves and death-triggered replacements assign children beneath their source occurrence. Revivals retain the existing occurrence. These addresses also identify Fabricator's bot supply and summoned-rat openings.
+
+Random branches retain vanilla effective weights and fallback rules. Effective-decision sequences cover Inklets, Exoskeletons and Scrolls of Biting; Small Leaf Slimes consume only their opening roll. Decimillipede segments share revival choices. Other enemies use move priorities by identity and branch ordinal. Rats separate shared Summon decisions, summoned openings and round-local non-Summon choices.
+
 ## Remaining policy coverage
 
 - Combat-card occurrences, shuffle assignment, routing and random selection, including Thieving Hopper.
-- Enemy occurrences, AI and random enemy targeting.
+- Random enemy targeting.
 - Random costs, potion-effect opportunities and potion-generated cards.
 
 ## Validation
@@ -71,3 +77,5 @@ Slice 5, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 474 st
 Slice 6, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 482 standalone engine checks and 536 checks in each RitsuLib initialization order passed. Checks cover the three orb generators, failed and fixed channels, and automatic slot creation. The v0.113.0 API build passed. Two independent reviews were clear.
 
 Interactive acceptance and v0.113.0 runtime checks remain pending.
+
+Slice 7, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 505 standalone engine checks and 559 checks in each RitsuLib initialization order passed. Checks exercise branch isolation, forced/all-zero decisions, slime and Inklet scopes, summon/replacement addresses, rat rounds and Fabricator's actual move. The v0.113.0 API build passed. Two independent reviews were clear.
