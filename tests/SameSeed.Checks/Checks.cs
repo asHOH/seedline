@@ -257,7 +257,7 @@ public static partial class Checks
 
     private static void CheckEarlierSchemas(byte[] original, int schema)
     {
-        foreach (var version in new[] { 1, 2 })
+        foreach (var version in Enumerable.Range(1, RunCheckpoints.SchemaVersion - 1))
         {
             var legacy = JsonNode.Parse(original)!.AsObject();
             legacy["same_seed"]!["schema_version"] = version;

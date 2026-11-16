@@ -43,6 +43,6 @@ SameSeed grants full content within new runs. Profile unlocks and Ascension limi
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state. Back up both the checkpoint and its `.backup`.
 
-Start fresh after upgrading to v0.5.1. Schema 5 requires event-selection history that earlier saves lack; incompatible saves remain untouched.
+Start fresh after upgrading to v0.6.0. Schema 6 adds card acquisition and removal history; incompatible saves remain untouched.
 
 Perform the [stage 5 gameplay checks](docs/stage-5.md#gameplay-checks) alongside the remaining [stage 4 checks](docs/stage-4.md#gameplay-checks).

@@ -1,0 +1,25 @@
+# Stage 6: combat policies
+
+Implements the design's [combat policies](../DESIGN.md#source-policies--encounter--combat) and [card lifetimes](../DESIGN.md#combat-card-selection-state) in separately verified, reviewed commits.
+
+## Slice 1: combat scopes and permanent-card history
+
+| Operation | Interception, state and commitment |
+|---|---|
+| Combat entry | `CombatRoom.StartCombat` binds the combat before setup. `CombatManager.SetUpCombat` also supports direct engine entry. One binding consumes one ordinal: ordinary encounters use category and act; event-only encounters use the parent event. Construction and finished-room restoration consume none. |
+| Local randomness | `CombatStateScope` owns a combat's address and transient random positions. Run-owned counters persist through checkpoints; replay from the preceding checkpoint regenerates the same combat address. |
+| Permanent acquisition | Successful `CardPile.AddInternal` deck additions record the acquisition batch on the existing occurrence. Source contexts preserve batches across sequential copy grants, Astrolabe/Morphic Grove/Trial transformations and Sea Glass picks. Returns retain the original batch; permanent copies acquire new occurrences. |
+| Permanent removal | Deck removal freezes the serialized card, including its occurrence and acquisition batch, in run-owned `CardHistory`. Pael's Tooth storage bypasses this history; returning a card clears its retained entry. Transformations retain the original's frozen entry and give the replacement a new acquisition. |
+| Source assignment | Occurrence metadata records eligibility for later source-based shuffle assignment. Rewards and ordinary transformation entries qualify; copies and restricted Automaton/curse grants use acquisition order. |
+
+Schema 6 saves acquisition metadata with cards and removed-card history with the checkpoint. Frozen JSON uses the game's card serializer; snapshot copies share only immutable strings. Earlier development saves require a fresh run.
+
+Combat-card keys, full combat ordering, shuffle assignment and gameplay selectors follow in subsequent slices. This slice preserves current combat outcomes.
+
+## Validation
+
+Engine regressions cover combat-counter isolation, event battle ordinals, act changes, replay, acquisition batches, copies, frozen removal, Tooth storage, returns and transformations. The existing checksum/replay suite continues to exercise opening combat with the extended card metadata.
+
+Slice 1, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 370 standalone engine checks and 424 checks in each RitsuLib initialization order passed. The v0.113.0 API build passed. Two independent reviews identified source batches split by sequential additions; the shared acquisition context and regression check resolved the finding, with both follow-up reviews clear.
+
+Interactive acceptance and v0.113.0 runtime checks remain pending.

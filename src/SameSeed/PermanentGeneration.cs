@@ -21,10 +21,10 @@ namespace SameSeed;
 internal static class PermanentGeneration
 {
     private static readonly ConditionalWeakTable<CardModel, CardModel> prepared = new();
-    internal static CardModel Draw(Player player, CardPoolModel pool, IEnumerable<CardModel> eligible) => CardGeneration.Draw(player,
+    internal static CardModel Draw(Player player, CardPoolModel pool, IEnumerable<CardModel> eligible, bool sourceKey = true) => CardGeneration.Draw(player,
         RandomAddress.For("permanent card identity", pool.Id.Entry),
         pool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
-            .Where(c => pool is CurseCardPool || c.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare), eligible);
+            .Where(c => pool is CurseCardPool || c.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare), eligible, sourceKey);
 
     internal static CardTransformation[] Prepare(IEnumerable<CardTransformation> transformations)
     {
@@ -67,7 +67,7 @@ internal static class PermanentGeneration
                     rarity = rarity == CardRarity.Common ? CardRarity.Uncommon : rarity == CardRarity.Uncommon ? CardRarity.Rare : CardRarity.Common;
                 candidates = candidates.Where(c => c.Rarity == rarity).ToArray();
             }
-            var card = Draw(player, pool, candidates);
+            var card = Draw(player, pool, candidates, source != "Infested Automaton");
             if (!options.Flags.HasFlag(CardCreationFlags.NoUpgradeRoll))
                 CardGeneration.Upgrade(player, card);
             results.Add(new(card));
@@ -141,7 +141,9 @@ internal static class PermanentGeneration
             RewardPatches.AsyncMethod(typeof(WaterfallOfObviousSecrets), "Negotiate")];
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(CardFactory) && m.Name == nameof(CardFactory.CreateForReward),
-                AccessTools.Method(typeof(Additions), __originalMethod.DeclaringType!.DeclaringType == typeof(EndlessConveyor) ? nameof(Eel) : nameof(Create)));
+                AccessTools.Method(typeof(Additions), __originalMethod.DeclaringType!.DeclaringType == typeof(EndlessConveyor) ? nameof(Eel) :
+                    __originalMethod.DeclaringType!.DeclaringType == typeof(InfestedAutomaton) ? nameof(Automaton) : nameof(Create)));
+        private static IEnumerable<CardCreationResult> Automaton(Player player, int count, CardCreationOptions options) => Generate(player, count, options, "Infested Automaton");
         private static IEnumerable<CardCreationResult> Create(Player player, int count, CardCreationOptions options) => Generate(player, count, options, "direct addition");
         private static IEnumerable<CardCreationResult> Eel(Player player, int count, CardCreationOptions options) => Generate(player, count, options, "Fried Eel");
     }
@@ -161,7 +163,7 @@ internal static class PermanentGeneration
             return __originalMethod.DeclaringType!.DeclaringType == typeof(MuseumOfTorture) ? instructions : RewardPatches.Replace(instructions,
                 m => m.DeclaringType == typeof(List<CardModel>) && m.Name == "Remove", AccessTools.Method(typeof(Curses), nameof(Remove)));
         }
-        private static CardModel Choose(Rng _, IEnumerable<CardModel> eligible) => Draw(RunManager.Instance.DebugOnlyGetState()!.Players[0], ModelDb.CardPool<CurseCardPool>(), eligible);
+        private static CardModel Choose(Rng _, IEnumerable<CardModel> eligible) => Draw(RunManager.Instance.DebugOnlyGetState()!.Players[0], ModelDb.CardPool<CurseCardPool>(), eligible, false);
         private static CardModel Created(IRunState _, CardModel card, Player player) => card;
         private static bool Remove(List<CardModel> cards, CardModel card) => cards.Remove(card.CanonicalInstance);
     }

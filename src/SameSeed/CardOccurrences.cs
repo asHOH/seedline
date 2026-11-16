@@ -23,7 +23,9 @@ namespace SameSeed;
 
 internal sealed record CardOccurrence(
     [property: JsonRequired] string Address,
-    [property: JsonRequired] string Key);
+    [property: JsonRequired] string Key,
+    [property: JsonRequired] bool SourceKey = false,
+    [property: JsonRequired] long? Acquisition = null);
 
 internal static class CardOccurrences
 {
@@ -59,12 +61,13 @@ internal static class CardOccurrences
         cards.Remove(card);
         CardOffers.Forget(card);
     }
-    internal static void Create(CardModel card, string address)
+    internal static void Create(CardModel card, string address, bool sourceKey = false)
     {
         CardOffers.Forget(card);
-        Attach(card, new(address, address));
+        Attach(card, new(address, address, sourceKey));
     }
-    internal static void AssignKey(CardModel card, string key) => Attach(card, Info(card) with { Key = key });
+    internal static void AssignKey(CardModel card, string key) => Attach(card, Info(card) with { Key = key, SourceKey = true });
+    internal static void Acquire(CardModel card, long batch) => Attach(card, Info(card) with { Acquisition = batch });
     internal static void Recreate(CardModel original, CardModel copy)
     {
         if (Find(original) is { } info)
@@ -88,13 +91,15 @@ internal static class CardOccurrences
     }
     internal static void Initialize(RunState run)
     {
+        var batch = RunCheckpoints.Require(run).Random.Advance(RandomAddress.For("card acquisition"));
         foreach (var player in run.Players)
         {
             var index = 0;
             foreach (var card in player.Deck.Cards.OrderBy(c => c, CardOrder.Permanent))
             {
                 var address = RandomAddress.For("card occurrence", "starting deck").At(index++).Key;
-                Create(card, address);
+                Create(card, address, true);
+                Acquire(card, batch);
             }
         }
     }
@@ -151,9 +156,9 @@ internal static class CardOccurrences
     }
 
     [HarmonyPatch]
-    private static class CopySources
+    internal static class CopySources
     {
-        private static IEnumerable<MethodBase> TargetMethods() =>
+        internal static IEnumerable<MethodBase> TargetMethods() =>
         [AccessTools.Method(typeof(DollysMirror), "AfterObtained"), AccessTools.Method(typeof(BingBong), "AfterCardChangedPiles"),
             AccessTools.Method(typeof(Reflections), "Shatter"), AccessTools.Method(typeof(CloneRestSiteOption), "OnSelect")];
         private static void Prefix(object __instance, out CopyGrant? __state)
@@ -206,6 +211,8 @@ internal static class CardOccurrences
             var info = JsonSerializer.Deserialize<CardOccurrence>(json) ?? throw new InvalidDataException("Missing card occurrence.");
             RandomAddress.Parse(info.Address);
             RandomAddress.Parse(info.Key);
+            if (info.Acquisition < 0)
+                throw new InvalidDataException("Invalid card acquisition batch.");
             return info;
         }
         catch (Exception error) when (error is JsonException or ArgumentException)

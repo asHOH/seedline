@@ -9,18 +9,18 @@ namespace SameSeed;
 
 internal static class CardGeneration
 {
-    internal static CardModel Draw(Player player, RandomAddress supply, IEnumerable<CardModel> pool, IEnumerable<CardModel> eligible)
+    internal static CardModel Draw(Player player, RandomAddress supply, IEnumerable<CardModel> pool, IEnumerable<CardModel> eligible, bool sourceKey = true)
     {
         var state = RunCheckpoints.Require((RunState)player.RunState);
         var identities = pool.ToArray();
         var entry = state.Rewards.Draw(state.Seed, supply, identities.Select(c => c.Id.Entry), eligible.Select(c => c.Id.Entry));
-        return Create(player, identities.First(c => c.Id.Entry == entry.Identity), entry.Address);
+        return Create(player, identities.First(c => c.Id.Entry == entry.Identity), entry.Address, sourceKey);
     }
 
-    internal static CardModel Create(Player player, CardModel identity, string address)
+    internal static CardModel Create(Player player, CardModel identity, string address, bool sourceKey = true)
     {
         var card = player.RunState.CreateCard(identity, player);
-        CardOccurrences.Create(card, address);
+        CardOccurrences.Create(card, address, sourceKey);
         return card;
     }
 
