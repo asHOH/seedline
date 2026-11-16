@@ -89,9 +89,9 @@ internal static class CombatGeneration
     }
 
     [HarmonyPatch]
-    private static class Sources
+    internal static class Sources
     {
-        private static IEnumerable<MethodBase> TargetMethods() => sources.SelectMany(t => t.GetMethods(
+        internal static IEnumerable<MethodBase> TargetMethods() => sources.SelectMany(t => t.GetMethods(
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             .Where(m => m.GetCustomAttribute<AsyncStateMachineAttribute>() != null);
         private static void Prefix(object __instance, out Type? __state)

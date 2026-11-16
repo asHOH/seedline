@@ -94,6 +94,12 @@ public static partial class Checks
                 tarot.All(c => CardOccurrences.Info(c).Address.Contains("Tarot", StringComparison.Ordinal)) &&
                 selection.Equals(run.Rng.CombatCardSelection.ToSerializable()),
                 "Mythic Form uses Tarot entries while preserving ordered upgrades and selection RNG");
+            var tarotKeys = CombatShuffle.Keys(tarot.Reverse(), 0, false);
+            var tarotOrder = tarot.OrderBy(c => c, CardOrder.Combat).ToArray();
+            Assert(tarot.Select(c => CombatCards.Info(c).CreationBatch).Distinct().Count() == 1 &&
+                tarotKeys[tarotOrder[0]] == RandomAddress.For("shuffle key", "second").At(0).Key &&
+                tarotKeys[tarotOrder[1]] == RandomAddress.For("shuffle key", "second").At(1).Key,
+                "Mythic Form's sequential grants share a creation batch ranked in processing order");
             var entropyA = combat.CreateCard<Anger>(player);
             var entropyB = combat.CreateCard<Bash>(player);
             var hand = player.PlayerCombatState.Hand;
@@ -112,6 +118,8 @@ public static partial class Checks
             entropyResult ??= entropyMapping;
             Assert(entropyCards.Length == 2 && entropyA.Pile == null && entropyB.Pile == null && entropyMapping == entropyResult,
                 "Entropy's actual selection hook prepares and consumes sequential replacements independently of click order");
+            Assert(entropyCards.Select(c => CombatCards.Info(c).CreationBatch).Distinct().Count() == 1,
+                "Entropy's sequential replacements share one creation batch");
             Assert(vanilla.Equals(run.Rng.CombatCardGeneration.ToSerializable()), "covered generation leaves run-wide combat RNG unchanged");
             RunManager.Instance.CleanUp();
         }

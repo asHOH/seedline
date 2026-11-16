@@ -15,6 +15,7 @@ internal static partial class CardOrder
 {
     internal static readonly IComparer<CardModel> Combat = Comparer<CardModel>.Create((a, b) => Compare(a, b, CaptureCombat));
     internal static FrozenCardOrder CaptureCombat(CardModel card) => new(Rank(card, true), CardOccurrences.Find(card)?.Address);
+    internal static FrozenCardOrder CaptureCombatRank(CardModel card) => new(Rank(card, true), null);
     internal static bool CombatEquivalent(CardModel a, CardModel b) =>
         new FrozenCardOrder(Rank(a, true, false), null).CompareTo(new(Rank(b, true, false), null)) == 0;
 
@@ -28,8 +29,11 @@ internal static partial class CardOrder
     private static readonly ConditionalWeakTable<CardModel, ReturnDraw> returnDraws = new();
 
     private static bool Turn(LocalCostModifier modifier) => modifier.Expiration.HasFlag(LocalCostModifierExpiration.EndOfTurn);
+    // Pending grants have no pile yet; frozen removed cards identify themselves as their deck version.
+    private static ICombatState? ComparisonCombat(CardModel card) => card.CombatState ??
+        (card.Pile == null && card.DeckVersion != card ? card.Owner?.Creature.CombatState : null);
     private static IEnumerable<AbstractModel> CostListeners(CardModel card, bool turn) =>
-        (card.CombatState?.IterateHookListeners() ?? []).Where(m =>
+        (ComparisonCombat(card)?.IterateHookListeners() ?? []).Where(m =>
             m is not (FreeAttackPower or FreeSkillPower or FreePowerPower or FreeCardPower or VeilpiercerPower or VoidFormPower or BrilliantScarf or EnsemblePower) &&
             (turn || m is not (BorrowedTimePower or TangledPower or Coda or ChoLimbs)));
 
@@ -66,7 +70,7 @@ internal static partial class CardOrder
     private static IReadOnlySet<CardKeyword> CombatKeywords(CardModel card)
     {
         var keywords = card.GetKeywordsWithSources(KeywordSources.Local).ToHashSet();
-        foreach (var listener in card.CombatState?.IterateHookListeners() ?? [])
+        foreach (var listener in ComparisonCombat(card)?.IterateHookListeners() ?? [])
             if (listener is not HexPower)
                 listener.TryModifyKeywordsInCombat(card, keywords);
         return keywords;

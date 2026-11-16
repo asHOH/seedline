@@ -14,7 +14,7 @@ Implements the design's [combat policies](../DESIGN.md#source-policies--encounte
 
 Schema 6 saves acquisition metadata with cards and removed-card history with the checkpoint. Frozen JSON uses the game's card serializer; snapshot copies share only immutable strings. Earlier development saves require a fresh run.
 
-Combat-card keys, full combat ordering, shuffle assignment and gameplay selectors follow in subsequent slices. This slice preserves current combat outcomes.
+Subsequent slices supply combat-card keys, ordering, shuffle assignment and gameplay selectors.
 
 ## Slice 2: combat card comparisons
 
@@ -62,9 +62,15 @@ Confused rolls by original starting-deck category, skipping X cards. Slither has
 
 Random targets use enemy-occurrence priorities and the four design groups. Empty and singleton target sets preserve their group ordinal. Interceptions retain source eligibility, repeated-hit behavior and supplied targets; automatic card play uses the card's inherent effect category.
 
+## Slice 10: combat-card occurrences and shuffling
+
+Combat pile admission assigns each new logical occurrence its fixed selection key and creation batch. Randomly generated cards retain entry addresses; tokens share identity counters; other grants and copies use source opportunities. Sequential grants from one effect share their creation batch.
+
+Opening and later shuffles replace the random ordering step while preserving game modifiers and test overrides. Opening assignment includes frozen removed cards and gives Innate its separate priority sequence; ordinary assignment supplies fixed combat selection keys. Later shuffles recalculate priorities from current properties and source/acquisition history, preserving those selection keys. Pending grants include shared combat costs and keywords before their batch indices are assigned.
+
 ## Remaining policy coverage
 
-- Combat-card occurrences, shuffle assignment, routing and random selection, including Thieving Hopper.
+- Combat-card routing and random selection, including Thieving Hopper.
 - Snecko Oil hand-entry costs, potion-effect opportunities and potion-generated cards.
 
 ## Validation
@@ -90,3 +96,5 @@ Slice 8, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 511 st
 Interactive acceptance and v0.113.0 runtime checks remain pending.
 
 Slice 9, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 535 standalone engine checks and 589 checks in each RitsuLib initialization order passed. Tests exercise all four target groups, zero-damage hits, supplied targets, automatic play, and eligibility/order changes. The v0.113.0 API build passed. Two independent reviews were clear.
+
+Slice 10, 2026-11-16: formatting, analyzer build and 61 unit tests passed; 595 standalone engine checks and 649 checks in each RitsuLib initialization order passed. Checks cover opening/removal alignment, Act 3 ordering, fixed selection keys, tokens, copies, rejected admissions, unordered grants, Corruption, and sequential Nightmare/Mythic Form/Entropy batches. The v0.113.0 API build passed. Two independent reviews were clear after fixing pending-grant comparisons and the two missing power batch scopes.
