@@ -10,9 +10,9 @@
 
 ## Checkpoint contract
 
-Vanilla, SameSeed and required RitsuLib payloads form one versioned checkpoint at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities.
+Implement [saved-state guarantees](../DESIGN.md#saved-state) with one checkpoint combining vanilla, SameSeed (schema 6) and required RitsuLib payloads at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities; ordinary cloud writes exclude `.backup`.
 
-Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Restore before room regeneration, retaining vanilla checkpoint timing and parent-event reconstruction.
+Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Preserve parent-event reconstruction.
 
 Load all payloads from the same primary or backup. Only missing/empty primaries or invalid JSON permit recovery from a complete backup. Missing/incompatible required state, invalid run data or changed build/setup reject continuation with files preserved. Required capture/write/restore failures abort, preserving prior checkpoints; emit `Saved` after successful writing.
 
