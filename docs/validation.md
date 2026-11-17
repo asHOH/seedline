@@ -1,43 +1,31 @@
 # Validation
 
-**Done means:** the required checks below pass for the tested build and mod setup. Stop at the first failure and record the seed, setup, action, expected result and actual result.
+## Change checklist
 
-## Scope
+Apply the relevant checks. Reuse manual results while the tested behavior and setup remain unchanged.
 
-| Change | Required work |
-|---|---|
-| Documentation | Check changed links, headings and word limits. |
-| Code or dependencies | Run the [verification command](../README.md#build-and-validate) once on the final change. Pass: it finishes with `All checks passed`. Include RitsuLib when it is part of the intended setup. |
-| Startup or save/load changes | Also perform the manual check below. |
-| Gameplay change or reported bug | Check the affected behavior through existing automated coverage or one focused reproduction. State its expected result first. |
+- [ ] **Documentation:** check changed links, headings and word limits.
+- [ ] **Code or dependencies:** run the [verification command](../README.md#build-and-validate) once on the final change, including RitsuLib when used. Pass: `All checks passed`.
+- [ ] **Gameplay or bug fixes:** state the expected result, then verify it with existing tests or one focused reproduction. Use deterministic fixtures for rare-source combinations.
+- [ ] **Startup or save/load:** also complete the two reloads below.
 
-During fixes, use focused tests. Rare-source combinations belong in deterministic test fixtures. Reuse manual evidence while the tested behavior and setup remain unchanged.
+## Save/load check
 
-## Automated checks
+Use one character, seed and mod setup. Win the first normal fight in a fresh run; note offered cards, gold, deck and balance before claiming rewards.
 
-The [verification command](../README.md#build-and-validate) restores dependencies, checks formatting and analyzers, builds the mod, runs xUnit tests, then checks integration in an isolated headless game copy with Steam disabled. Standalone evidence stays under `.cache/stage1-checks/`.
+- [ ] Claim gold and one card; return to the menu and Continue in the reward room. **Pass:** the same offers return; balance and deck return to their pre-claim state.
+- [ ] Claim rewards again, enter the next room, then return to the menu and Continue. **Pass:** collected gold and card persist exactly once; the room opens normally.
 
-With `-RitsuLibDir '<extracted RitsuLib package>'`, it also checks the production bridge with real RitsuLib in both initialization orders. Evidence stays under `.cache/ritsu-checks/<run>/`.
+Stop after both checks pass.
 
-The resulting `artifacts/SameSeed/` package contains only `SameSeed.dll` and `SameSeed.json`. The game supplies Harmony and its other assemblies.
-
-## Manual check
-
-**Budget:** one character, one seed, one mod setup, one normal fight and two reloads.
-
-Start a fresh run and win the first normal fight. Note the offered cards, gold, deck and balance before claiming rewards.
-
-| Action | Pass criterion |
-|---|---|
-| Claim gold and one card, then return to the menu and Continue while still in the reward room. | The same offers return; gold balance and deck return to their pre-claim state. |
-| Claim rewards again, enter the next room, then return to the menu and Continue. | Collected gold and card persist exactly once, and the next room opens normally. |
-
-Stop after both rows pass.
-
-## Current evidence
+## Tested results
 
 2026-11-17, v0.113.1: formatting/analyzers, 64 unit tests, 917 standalone checks and 971 RitsuLib checks per initialization order passed.
 
-2026-11-16: Ironclad A0/A10 wins with RitsuLib included 11 menu reloads with unchanged rewards/chests. Interactive validation of the completed combat implementation remains pending.
+2026-11-16: Ironclad A0/A10 wins with RitsuLib included 11 menu reloads with unchanged rewards/chests.
 
-Cloud backup/repair and run-history filtering passed 14 isolated checks. Live Steam synchronization remains unverified; single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.
+Cloud backup/repair and run-history filtering passed 14 isolated checks.
+
+## Verification limits
+
+Interactive validation of the completed combat implementation and live Steam synchronization remain unverified. Single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.

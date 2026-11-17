@@ -1,12 +1,12 @@
 # Same-Seed Consistency
 
-A mod for Slay the Spire 2 that makes runs using the same seed easier to compare across different routes and decisions.
+A Slay the Spire 2 mod for more consistent same-seed runs across different routes and decisions.
 
-In the base game, unrelated actions can shift later random results. SameSeed reduces that interference across rewards, shops, events and combat. For example, initial shop cards use the shop visit number, so the first shop can offer the same cards on different floors when the eligible cards match.
+In the base game, unrelated actions can shift later random results. SameSeed reduces that interference across rewards, shops, events and combat. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
 
 Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve consistency.
 
-Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation and current evidence](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
+Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation checklist and results](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
 
 ## Supported setup
 
@@ -32,7 +32,7 @@ Close the game, then deploy the validated package:
 ./scripts/deploy.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-Enable mods through the game's loader and start a new run with SameSeed enabled. Keep it enabled through completion.
+Enable mods through the game's loader and start a new run with SameSeed enabled.
 
 SameSeed grants full content within new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt lists the additions for you to accept or cancel.
 
@@ -46,6 +46,6 @@ Add `-RitsuLibDir '<extracted RitsuLib package>'` to the build-and-validate comm
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state.
 
-Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. See [cloud verification limits](docs/validation.md#current-evidence).
+Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. See [cloud verification limits](docs/validation.md#verification-limits).
 
 Start a new run after incompatible updates.
