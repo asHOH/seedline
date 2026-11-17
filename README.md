@@ -1,10 +1,10 @@
 # Same-Seed Consistency
 
-A Slay the Spire 2 mod for more consistent same-seed runs across different routes and decisions.
+A Slay the Spire 2 mod that keeps same-seed runs comparable across different routes and decisions.
 
-In the base game, unrelated actions can shift later random results. SameSeed reduces that interference across rewards, shops, events and combat. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
+In the base game, unrelated actions can shift later random results. SameSeed aligns corresponding opportunities across rewards, shops, events and combat to reduce that interference. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
 
-Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve consistency.
+Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve outcome consistency.
 
 Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation results](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
 
@@ -34,7 +34,7 @@ Close the game, then deploy the validated package:
 
 Enable mods through the game's loader and start a new run with SameSeed enabled.
 
-SameSeed grants full content within new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt lists the additions for you to accept or cancel.
+SameSeed uses fully unlocked content in new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt summarizes the additions for you to accept or cancel.
 
 ## RitsuLib compatibility
 

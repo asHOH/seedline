@@ -8,13 +8,13 @@ For descriptive background, see [Reference](#reference) for calibration and reje
 
 ## Goals and principles
 
-**Goal:** keep choices and combat challenges comparable across same-seed runs with different routes and decisions. Compare corresponding opportunities — such as each run's first shop or third normal-fight reward — even on different floors.
+**Goal:** keep rewards, choices and combat challenges in same-seed runs comparable across different routes and decisions. Align choices and combat challenges at corresponding opportunities — such as each run's first shop or third normal-fight reward — even on different floors.
 
 **Fairness principle:** preserve meaningful consequences while minimizing unrelated future gameplay changes.
 
 **Preservation:** retain vanilla gameplay except for deliberate alignment tradeoffs or corrections to unintended behavior.
 
-**Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that undermine comparable opportunities, often early or mid-game. Differences caused solely by unequal consumption of intentionally shared sequences are benign, including late-game divergence.
+**Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that make same-seed runs less comparable, often early or mid-game. Differences caused solely by unequal consumption of intentionally shared sequences are benign, including late-game divergence.
 
 **Batch-order neutrality:** changing click or enumeration order for the same batch must preserve which identities or statuses are affected and the subsequent random state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
 
@@ -162,9 +162,9 @@ A source policy may cover:
 
 ## Architecture overview
 
-The mod aligns same-seed opportunities through addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
+The mod aligns corresponding opportunities across same-seed runs through addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
 
-Unless stated otherwise, each policy aims to keep results comparable across same-seed runs as available options change.
+Unless stated otherwise, each policy aims to improve outcome consistency at corresponding opportunities as available options change.
 
 ### Rewards
 
@@ -551,7 +551,7 @@ By default, hidden random relic rewards use the generic rewards source, includin
 
 #### Borrowing
 
-**Consistency boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
+**Alignment boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
 
 When the requested rarity has no eligible local entry, borrow from another source's allocation of that rarity using a [tail draw](#relic-tail-draws). Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
 
@@ -1638,7 +1638,7 @@ Front bias can affect several later positions, depending on bag composition.
 |---|---|
 | Chests | Relics are generated on room entry; base gold uses `Rewards` on opening. Pool and consumption rules: [relic bags](#relic-bags). |
 | Neow — Silver Crucible | First treasure room is empty, with neither gold nor relics. |
-| Wongos | Act 2; all players have ≥100 gold. Featured Rare costs 200 gold and is removed from stock when offered, even when unaffordable or declined, harming same-seed consistency. Hidden Common costs 100 gold and is generated on purchase. Both require `IsAllowedInShops`. Leaving downgrades a random upgraded card, if any. |
+| Wongos | Act 2; all players have ≥100 gold. Featured Rare costs 200 gold and is removed from stock when offered, even when unaffordable or declined, weakening consistency of later relic outcomes. Hidden Common costs 100 gold and is generated on purchase. Both require `IsAllowedInShops`. Leaving downgrades a random upgraded card, if any. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |
 | Ranwid — relic sacrifice | Offers one uniformly selected tradable owned relic using event RNG; sacrificing it grants two hidden random relics, generated after removal. |
 | Relic Trader | Shuffles tradable owned relics with event RNG to offer three trades. Generates and consumes all three replacements before choice, drawing from the player bag's front with event-RNG rarity rolls independent of outgoing rarity. Choose one; normally no leave. |
