@@ -1381,7 +1381,7 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
 
-[Event workbook](../references/StS2_Events.xlsx): v0.113.1 vanilla offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
+[Event workbook](../docs/StS2_Events.xlsx): v0.113.1 vanilla offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
 
 ### Rarity calibration
 

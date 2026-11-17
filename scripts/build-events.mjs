@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = `${root}/research/event-workbook`;
 const sourceRoot = `${root}/sts2-decompiled`;
 const sourceDir = `${sourceRoot}/MegaCrit.Sts2.Core.Models.Events`;
-const workbookPath = `${root}/references/StS2_Events.xlsx`;
+const workbookPath = `${root}/docs/StS2_Events.xlsx`;
 const sourceCitation = id => `StS2 v0.113.1: MegaCrit.Sts2.Core.Models.Events.${id}`;
 // Columns: source model, act override, entry conditions, content, deterministic, explanation.
 const data = [

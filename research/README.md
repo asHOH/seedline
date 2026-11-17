@@ -32,14 +32,14 @@ Scripts check assertions and write ignored `*-results.json` beside themselves. S
 
 ### Event workbook
 
-The [workbook](../references/StS2_Events.xlsx) records v0.113.1. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`).
+The [workbook](../docs/StS2_Events.xlsx) records v0.113.1. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`).
 
 ```powershell
 ilspycmd -p -o sts2-decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dll'
 & '<Codex bundled Node executable>' scripts/build-events.mjs
 ```
 
-The [generator](../scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `research/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game sources and previews stay local.
+The [generator](../scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `research/event-workbook/` before replacing `docs/StS2_Events.xlsx`. Game sources and previews stay local.
 
 ### Multi-Rare offers
 
