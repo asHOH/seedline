@@ -3,6 +3,7 @@
 - Read and fully understand the design document first.
 - Base claims about existing mechanics on code or reference evidence.
 - Exclude compatibility work for older development saves.
+- Avoid redundant defensive checks and over-engineering; keep validation at real input boundaries.
 - `sts2-decompiled/` and `catfood-decompiled/` are reference-only; never modify their contents.
 
 ## Design documentation
