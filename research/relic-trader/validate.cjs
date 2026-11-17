@@ -277,6 +277,6 @@ for (const n of [6, 9, 13, 21]) {
   console.log(JSON.stringify({ scenario: 'removal', n, separate: result.separate.meanPairs, direct: result.direct.meanPairs, hybrid: result.hybrid.meanPairs, directOutgoing: result.direct.meanOutgoing, directCollateral: result.direct.outgoingOverlapUnderTwo }));
 }
 report.simulationChecks = [report.substitution[0], report.substitution[2], report.removal[0], report.removal[2]].map(entry => simulationCheck(entry, 75000));
-const output = path.join(__dirname, 'relic-trader-matching-results.json');
+const output = path.join(__dirname, 'results.json');
 fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
 console.log('All exact self-checks passed; results written to ' + output);

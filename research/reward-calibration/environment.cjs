@@ -1,6 +1,6 @@
 // Gold/reward projection of vanilla v0.111.0.
 const assert = require('node:assert/strict');
-const reference = require('./reward-calibration-reference-v0.111.0.json');
+const reference = require('./reference-v0.111.0.json');
 assert.equal(reference.version, 'v0.111.0');
 const {characters, acts, relicInfo, pools} = reference;
 

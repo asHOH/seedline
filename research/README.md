@@ -4,14 +4,14 @@
 
 | Study | Finding | Evidence |
 |---|---|---|
-| [Card rarity](../DESIGN.md#rarity-calibration) | v0.111.0 calibration approximates vanilla Uncommon and shop Rare averages. | [A7+](reward-calibration-act3-results.json), [A0–6](reward-calibration-a6-results.json), [sensitivity](reward-calibration-results.json). |
+| [Card rarity](../DESIGN.md#rarity-calibration) | v0.111.0 calibration approximates vanilla Uncommon and shop Rare averages. | [A7+](reward-calibration/act3-results.json), [A0–6](reward-calibration/a6-results.json), [sensitivity](reward-calibration/results.json). |
 | [Event selection](#event-selection) | Retained versus refreshed priorities trade relative order against mismatch timing. | [Alternatives](../DESIGN.md#event-selection-alternatives). |
 | [Multi-Rare offers](#multi-rare-offers) | v0.111.0: **65 / 33,022 runs (0.1968%)** confirmed; six unresolved runs widen reconstruction to **0.1968–0.2150%**. | [Results](run-history/results.json), [cases](run-history/findings.json), [rejections](run-history/rejected.json). |
-| [Relic Trader](../DESIGN.md#relic-trader-alternatives) | With one inventory substitution, the selected assignment maximizes expected outgoing overlap among symmetric rules. | [Assumptions and results](relic-trader-matching-results.json), [checks](relic-trader-matching-validation.cjs). |
+| [Relic Trader](../DESIGN.md#relic-trader-alternatives) | With one inventory substitution, the selected assignment maximizes expected outgoing overlap among symmetric rules. | [Assumptions and results](relic-trader/results.json), [checks](relic-trader/validate.cjs). |
 
 ## Methods
 
-[Calibration model](reward-calibration.cjs) and [environment](reward-calibration-environment.cjs).
+[Calibration model](reward-calibration/calibrate.cjs) and [environment](reward-calibration/environment.cjs).
 
 Run commands from the repository root.
 

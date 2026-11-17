@@ -1,9 +1,9 @@
-// Run: node research/reward-calibration.cjs [runs per scenario] [output.json] [a6]
+// Run: node research/reward-calibration/calibrate.cjs [runs per scenario] [output.json] [a6]
 // Standard-library Monte Carlo; uncommon outcomes are integrated analytically.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const {rng, route, eligible, nextEvent, otherSpending, simulateEnvironment, poolSizes} = require('./reward-calibration-environment.cjs');
+const {rng, route, eligible, nextEvent, otherSpending, simulateEnvironment, poolSizes} = require('./environment.cjs');
 const BASE = {normal: 0.0149, elite: 0.05, fixed: 0.0149};
 const opening = [[0.3349, 0.3399, 0.3449], [0.3499, 0.3549, 0.3599]];
 const A7 = {base: BASE, growth: 0.005, maxOffset: 90, opening, scarcity: true, shop: 0.045, shopOffset: 0};
@@ -264,7 +264,7 @@ function main() {
   const a6 = process.argv[4] === 'a6';
   const runs = Number(process.argv[2] ?? 100000);
   assert(Number.isInteger(runs) && runs >= 1000, 'Use at least 1000 runs per scenario.');
-  const output = path.resolve(process.argv[3] ?? path.join(__dirname, 'reward-calibration-results.json'));
+  const output = path.resolve(process.argv[3] ?? path.join(__dirname, 'results.json'));
   const checks = selfCheck();
   let configs = [
     {name: 'baseline'}, {name: 'holdout'},

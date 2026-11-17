@@ -1393,14 +1393,14 @@ Uncommon rates below are non-Rare offers / rare-bearing companions:
 
 | Study | Design rates | Design − vanilla Uncommons per 100 slots |
 |---|---|---|
-| [A7+](research/reward-calibration-act3-results.json) | 38% / 39% | −0.01 |
-| [A0–6](research/reward-calibration-a6-results.json) | 40% / 40.5% | +0.1 |
+| [A7+](research/reward-calibration/act3-results.json) | 38% / 39% | −0.01 |
+| [A0–6](research/reward-calibration/a6-results.json) | 40% / 40.5% | +0.1 |
 
 Initial shops with at least one Rare character card rise from **20% to 21%** at A7+ and **42% to 44%** at A0–6.
 
-The [model](research/reward-calibration.cjs) uses 200,000 calibration and 200,000 validation runs per difficulty, with the same [projected three-act routes and economy](research/reward-calibration-environment.cjs) for vanilla and mod. Fits include opening triples and A0–6 Common-first replacement.
+The [model](research/reward-calibration/calibrate.cjs) uses 200,000 calibration and 200,000 validation runs per difficulty, with the same [projected three-act routes and economy](research/reward-calibration/environment.cjs) for vanilla and mod. Fits include opening triples and A0–6 Common-first replacement.
 
-Main runs use A3+ gold; A0–2 gold is a sensitivity case. Eligibility and event outcomes are approximated. Route assumptions and [sensitivity studies](research/reward-calibration-results.json) accompany the results.
+Main runs use A3+ gold; A0–2 gold is a sensitivity case. Eligibility and event outcomes are approximated. Route assumptions and [sensitivity studies](research/reward-calibration/results.json) accompany the results.
 
 ### Chest marker probabilities
 
@@ -1438,7 +1438,7 @@ Both [cross-act insertion](#act-entry-and-carryover) alternatives preserved less
 
 #### Relic Trader alternatives
 
-For one eligible relic removed/substituted and three distinct replacements matching by slot across runs, [analysis](research/relic-trader-matching-results.json) compares [the selected assignment](#outgoing-relic-assignment) with:
+For one eligible relic removed/substituted and three distinct replacements matching by slot across runs, [analysis](research/relic-trader/results.json) compares [the selected assignment](#outgoing-relic-assignment) with:
 
 - **Independent candidate priorities:** fewer matching outgoing/replacement pairs on average, equal expected outgoing overlap.
 - **Direct pairing over all eligible relics:** one inventory substitution can change two outgoing relics, despite more matching pairs on average.
