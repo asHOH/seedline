@@ -6,9 +6,7 @@ node_modules/
 # Local artifact workspaces and reproducible scratch results.
 /outputs/????????-????-????-????-????????????/
 /outputs/event-workbook/
-/outputs/card-rarity-expectation.cjs
 /outputs/event-overlap/*-results.json
-/outputs/event-overlap/results.json
 
 # Local reference code; never distribute with this repository.
 /sts2-decompiled/

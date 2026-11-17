@@ -38,6 +38,96 @@ public sealed class SelectionTests
         Assert.NotEqual(state.Get("seed", scope, "A").Remaining, state.Get("seed", scope.With("other"), "A").Remaining);
     }
 
+    [Fact]
+    public void BatchMatchesSequentialCountdownAcrossTiesAndEligibilitySets()
+    {
+        string[] keys = ["A", "B", "C", "D"];
+        // Exhaust every assignment of clocks 0, 1 and 2, including ties and consumed clocks.
+        for (var assignment = 0; assignment < 81; assignment++)
+        {
+            var initial = new SelectionState();
+            var values = assignment;
+            foreach (var key in keys)
+            {
+                initial.Get("seed", scope, key).Remaining = values % 3;
+                values /= 3;
+            }
+            for (var mask = 0; mask < 16; mask++)
+            {
+                for (var count = 0; count <= keys.Length; count++)
+                {
+                    var eligible = keys.Where((_, index) => (mask & (1 << index)) != 0).ToList();
+                    var batch = initial.Copy();
+                    var sequential = initial.Copy();
+                    var selected = batch.Select("seed", scope, eligible.AsEnumerable().Reverse(), count);
+                    List<string> expected = [];
+                    while (expected.Count < count && eligible.Count > 0)
+                    {
+                        var winner = sequential.Select("seed", scope, eligible, 1)[0];
+                        expected.Add(winner);
+                        eligible.Remove(winner);
+                    }
+                    Assert.Equal(expected, selected);
+                    Assert.Equal(JsonSerializer.Serialize(sequential), JsonSerializer.Serialize(batch));
+                }
+            }
+        }
+    }
+
+    [Fact]
+    public void SharedPrioritiesPreserveNestedAgreementAndCopyWeight()
+    {
+        var matches = 0;
+        var duplicateWins = 0;
+        foreach (var rank in ThreeCardRanks())
+        {
+            var initial = RankedState(rank);
+            var full = initial.Copy().Select("seed", scope, ["A", "B", "C"], 1)[0];
+            var subset = initial.Copy().Select("seed", scope, ["A", "B"], 1)[0];
+            matches += full == subset ? 1 : 0;
+            duplicateWins += full != "C" ? 1 : 0;
+        }
+        Assert.Equal(4, matches);
+        Assert.Equal(4, duplicateWins);
+    }
+
+    [Fact]
+    public void IndependentRoutingPreservesOneStepIdentityProbabilities()
+    {
+        int[] fixedCounts = new int[3], routedCounts = new int[3];
+        foreach (var downstreamRank in ThreeCardRanks())
+        {
+            var target = RankedState(downstreamRank).Select("seed", scope, ["A", "B", "C"], 1)[0];
+            // A/B are equivalent Strikes; C is a Defend. Routing upgrades one Strike.
+            int Outcome(string upgraded) => target == "C" ? 0 : target == upgraded ? 1 : 2;
+            fixedCounts[Outcome("A")]++;
+            foreach (var routingRank in ThreeCardRanks())
+            {
+                var upgraded = RankedState(routingRank).Select("seed", scope, ["A", "B"], 1)[0];
+                routedCounts[Outcome(upgraded)]++;
+            }
+        }
+        Assert.Equal([2, 2, 2], fixedCounts);
+        Assert.Equal(fixedCounts.Select(count => count * 6), routedCounts);
+    }
+
+    private static IEnumerable<string[]> ThreeCardRanks()
+    {
+        string[] keys = ["A", "B", "C"];
+        return from first in keys
+               from second in keys
+               where first != second
+               select new[] { first, second, keys.Single(key => key != first && key != second) };
+    }
+
+    private static SelectionState RankedState(string[] rank)
+    {
+        var state = new SelectionState();
+        for (var index = 0; index < rank.Length; index++)
+            state.Get("seed", scope, rank[index]).Remaining = index + 1;
+        return state;
+    }
+
     [Theory]
     [InlineData("{}")]
     [InlineData("{\"Clocks\":null}")]

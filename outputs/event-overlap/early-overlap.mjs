@@ -318,7 +318,7 @@ for (const method of methods.slice(1)) {
 const result = {
   scope: 'Same ordered incoming batch; survivor lists are subsequences of a common inherited order. Exact all distinct subset pairs of five old IDs, incoming counts 1/2/3/4, prefix lengths 2/3/5 where both outputs are long enough. Larger pools use six identity patterns, sizes 8/16/32, incoming counts 1/2/4/8. These are synthetic comparisons, not route-weighted gameplay rates.',
   metrics: 'prefix = exact agreement through k; overlap = shared identities among first k ignoring order; zero = no shared identities; belowHalf = fewer than half shared; afterMismatch metrics condition on failure of exact k-prefix agreement. Conditional rates can compare different selected cases.',
-  methods: 'slots = settled shared-position priorities; corrected = shared prefix of old random-priority draws sorted onto survivor order, with shared new priorities; fixed = evenly spaced old priorities plus shared new priorities (biased for m>1); merge = shared per-output-position weighted merge draws.',
+  methods: 'slots = rejected shared-position priorities; corrected = design sorted random priorities, using a shared prefix of old draws sorted onto survivor order and shared new priorities; fixed = evenly spaced old priorities plus shared new priorities (biased for m>1); merge = shared per-output-position weighted merge draws.',
   comparisonCounts: 'Summary arrays count [better, tied, worse] relative to slots; lower zero-overlap risk is better. Conditional metrics omit cases with no mismatch.',
   oracleCases, exactCases: small.length, summaries, strongest,
   largeCases: large.length, largeSummaries,
