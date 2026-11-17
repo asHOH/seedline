@@ -108,7 +108,7 @@ A source policy may cover:
 
 | Component | Describes |
 |---|---|
-| Intent | Consistency goal. |
+| Intent | Policy-specific priority or tradeoff. |
 | Scope | Covered operations. |
 | Purpose | What the randomness determines. |
 | Generation | How outcomes are produced. |
@@ -163,6 +163,8 @@ A source policy may cover:
 ## Architecture overview
 
 The mod aligns same-seed opportunities through addresses, shared state for related sources, and isolation of unrelated random operations. A source may use different sharing scopes and state for whether and when a result appears, and for its rarity, identity and attributes.
+
+Unless stated otherwise, each policy aims to keep results comparable across same-seed runs as available options change.
 
 ### Rewards
 
@@ -527,8 +529,6 @@ Generate replacements for selected originals in [identity-only order](CARD_ORDER
 
 ### Relics
 
-**Intent:** limit interference between generic, shop and Courier relic rewards.
-
 #### Allocation
 
 Construct disjoint generic-reward, shop and Courier allocations once, targeting **45% / 35% / 20%** of each Common/Uncommon/Rare pool. Include shop-ineligible relics. Use these fully unlocked counts:
@@ -576,7 +576,7 @@ Silver Crucible's empty chest room generates neither reward and leaves the chest
 
 #### Relic advancement
 
-**Intent:** preserve skipped relics for ordinary rewards, align common future identities, and spread acquisition's character-specific probability increase across later positions.
+**Intent:** spread acquisition's character-specific probability increase across later positions.
 
 Draw the next eligible shared relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers).
 
@@ -609,8 +609,6 @@ Baseline: [chest mechanics](#shops-chests-and-relic-events).
 
 ### Potions
 
-**Intent:** align results across batch sizes; partition repeatable generation from ordinary rewards.
-
 Potion copies carry no persistent selection state; use, discard and trade affect the selected copy, preserving slot-dependent outcomes.
 
 #### Generation
@@ -634,8 +632,6 @@ Derive each drop-check roll from the drop-check ordinal.
 **White Beast Statue:** freeze the drop-check ordinal and probability; forced rewards still advance generic potion generation.
 
 ### Shops, Wongos and Courier
-
-**Intent:** align shops independently of rewards and Courier restocks.
 
 #### Stock and prices
 
@@ -666,8 +662,6 @@ The featured Rare uses shop stock. Suppress generation when unaffordable as a [c
 Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
 ### Card reward offers
-
-**Intent:** align reward choices across related sources and preserve own-character triple boundaries across offer sizes.
 
 **Scope:** initial generation and reachable rerolls for the offer groups below.
 
@@ -734,8 +728,6 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 #### Rare timing and delivery
 
 **Scope:** the three own-character random-rarity [offer groups](#offer-groups).
-
-**Intent:** separate Rare timing from offer identities while preserving source-dependent Rare chances.
 
 ##### Luck and rarity offset
 
@@ -845,8 +837,6 @@ Rerolls of Kaleidoscope's Neow offers are unreachable.
 
 #### Prismatic Gem and Dingy Rug
 
-**Intent:** align rewards from the same expanded pool.
-
 Select the identity sequences for the complete request:
 
 - **Unchanged eligible pool:** reuse its existing sequences, including Rug's fixed-Common or already-colorless offers.
@@ -860,8 +850,6 @@ Lasting Candy draws from the inherited pool's Power sequences while retaining it
 
 ### Permanent transformations and direct card additions
 
-**Intent:** align same-pool transformations and direct additions while preserving source rarity odds.
-
 **Covered direct additions:** Infested Automaton's Study and Touch Core, Endless Conveyor's Fried Eel, Neow's Arcane Scroll and Neow's Bones curse, Distinguished Cape, Museum of Torture's curse and Waterfall of Obvious Secrets' Rare card.
 
 For random results, transformations and additions share one uniform identity sequence per pool: the six characters, colorless and curse. Keep these separate from card reward offers and combat transformations.
@@ -874,8 +862,6 @@ For random results, transformations and additions share one uniform identity seq
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions).
 
 ### Combat gold
-
-**Intent:** align normal-fight and elite gold rewards independently.
 
 **Generation and addressing:** derive each roll from `purpose = gold reward` + combat category (normal fight or elite) + that category's gold-reward ordinal. Event battles use their encounter's room type. Roll uniformly over vanilla's adjusted inclusive gold range.
 
@@ -897,8 +883,6 @@ Neow's Bones' curse follows [direct additions](#permanent-transformations-and-di
 
 ### Unknown-room resolution
 
-**Intent:** align `?` room type resolution across runs, even when their chances differ.
-
 **Addressing:** derive a uniform `[0, 1)` roll from `purpose = room type` + act-local room-type ordinal. Advance once per `?` visit, except Event rooms forced by Golden Compass or Lantern Key.
 
 **Interval widths:** after exclusions, allocate widths from stored chances in normal fight → chest → shop order, capping each at the remaining share of 100%.
@@ -910,8 +894,6 @@ Neow's Bones' curse follows [direct additions](#permanent-transformations-and-di
 Baseline: [room restrictions and chance updates](#unknown-room-resolution-1).
 
 ### Ordinary-event selection
-
-**Intent:** keep event sequences matching across same-seed runs for as long as possible, even as eligibility and acts change.
 
 **Scope:** ordinary events, excluding [Ancients](#ancient-offerings) and [Lantern Key's forced event](#lantern-key).
 
@@ -962,15 +944,11 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 
 ### Lantern Key
 
-**Intent:** keep Lantern Key from consuming an ordinary-event opportunity.
-
 Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection). Record the visit and leave the act-local ordinary-event ordinal unchanged.
 
 **Vanilla deviation — NoSL 3:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes later ordinary-event availability.
 
 ### Ancient offerings
-
-**Intent:** align Ancient offerings when eligibility changes.
 
 Use [fixed priorities](#fixed-selection-priorities) with vanilla weights, keyed by Ancient ID + option-pool ID + option ID, for Orobas's third pool, Pael's second/third, Tezcatara's first, and Tanx's and Nonupeipe's pools. Display each pool's selections in priority order.
 
@@ -980,9 +958,7 @@ Baseline: [Ancient offerings](#ancient-offerings-1).
 
 ### The Future of Potions: card-type assignment
 
-**Intent:** match rarity/type options for equal offered counts by reward rarity, and each potion ID's assigned types for identical offered potion multisets.
-
-Assign types to the first three owned potions, retaining slot order for display.
+Assign types to the first three owned potions. Match rarity/type options across runs with equal offered counts per reward rarity, and each potion ID's assigned types for identical offered potion multisets. Retain slot order for display.
 
 - Use one independent type sequence per reward rarity, addressed by `purpose = type assignment` + event ID + rarity. Each entry is an independent uniform draw from that rarity's allowed card types.
 - Rank offered potions with [fixed priorities](#fixed-selection-priorities), keyed by `purpose = ordering` + event ID + potion ID + copy number. Number each potion ID's offered copies from 1 in slot order.
@@ -996,15 +972,13 @@ Baseline: [reward-rarity mapping and allowed card types](#card-reward-offers-1).
 
 ### Ranwid relic sacrifice
 
-**Intent:** align the offered relic across changing inventories.
-
 Select one tradable owned relic using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = relic sacrifice` + event ID + relic ID.
 
 Baseline: [relic-event mechanics](#shops-chests-and-relic-events).
 
 ### Relic Trader
 
-**Intent:** align replacement relics; prioritize outgoing-relic overlap over preserving each relic's replacement pairing.
+**Intent:** prioritize outgoing-relic overlap over preserving each relic's replacement pairing.
 
 #### Replacement relics
 
@@ -1024,8 +998,6 @@ Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
 ### Endless Conveyor
 
-**Intent:** align dish order across changing eligibility.
-
 Use one sequence addressed by `purpose = dish selection`, drawing independently over all [random dishes at vanilla weights](#endless-conveyor-dishes).
 
 For each random offer, advance past ineligible entries, offer the first eligible dish, and resume after it next time.
@@ -1037,8 +1009,6 @@ Fixed Seapunk Salad displays consume zero sequence entries.
 Baseline: [dish selection](#endless-conveyor-dishes).
 
 ### Wing Charm
-
-**Intent:** align Swift targets on shared reward entries.
 
 **Scope:** batches processed by Wing Charm's reward-options hook.
 
@@ -1062,8 +1032,6 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and evaluate Swift eligibi
 Baseline: [Wing Charm and earlier reward modifiers](#card-reward-offers-1).
 
 ### Persistent selection
-
-**Intent:** align card selections across sources, changing decks and reward choices, and potion sacrifice offers across changing inventories.
 
 | Selection | Mechanism and sharing | Local rules |
 |---|---|---|
@@ -1100,15 +1068,13 @@ Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests
 
 ### Combat setup
 
-**Intent:** align combat setups within each act.
-
 Use `purpose = setup` + [combat address](#combat-addresses) for encounter RNG, covering variable enemy composition and assigned starting states.
 
 Baseline: [combat setup](#combat-setup-and-shuffles).
 
 ### Enemy HP
 
-**Intent:** isolate HP sequences by combat, minimize per-roll expected absolute HP differences across eligibility changes, and retain within-combat roll-order manipulation.
+**Intent:** minimize per-roll expected HP differences across eligibility changes and retain within-combat roll-order manipulation.
 
 For each HP roll, derive uniform `u ∈ [0,1)` from `purpose = enemy HP` + [combat address](#combat-addresses) + combat-local HP-roll ordinal. Select zero-based index `floor(u × eligible count)` from ascending eligible HP values.
 
@@ -1119,8 +1085,6 @@ Preserve vanilla eligibility and full-range fallback. Punch-Off's starting HP re
 Baseline: [enemy HP mechanics](#enemy-hp-1).
 
 ### Enemy AI
-
-**Intent:** align intents across move histories.
 
 Use [combat-local sequences](#combat-addresses), partitioned by enemy identity except for Decimillipede. Keep move history and eligibility outside addresses.
 
@@ -1137,8 +1101,6 @@ Use [combat-local sequences](#combat-addresses), partitioned by enemy identity e
 | Other enemies with random intents, excluding [rats](#rat-sampling) | Use [weighted opportunity-specific priorities](#opportunity-specific-selection-priorities), addressed by the enemy's random-branch ordinal, with move IDs as selection keys. Count singleton/all-zero branches. |
 
 #### Rat sampling
-
-**Intent:** realign later non-Summon choices each round when eligibility agrees; align summoned openings independently of birth timing.
 
 **Summon:** all rats share one percentile sequence. Advance when Summon has positive effective weight; choose it with probability `effective Summon weight / total effective weight`, preserving vanilla sequential eligibility checks.
 
@@ -1207,8 +1169,6 @@ Copies enter the remaining group.
 
 ### Random pile insertion
 
-**Intent:** align relative insertion depth across changing pile sizes.
-
 Address sequences by `purpose = insertion` + [combat address](#combat-addresses) + sharing group + target pile.
 
 | Sharing group | Coverage |
@@ -1232,8 +1192,6 @@ In Dread mode, Soul Fysh's Dominion uses the Soul Fysh group; Aeonglass boss Wit
 Baseline: [pile insertion and discard order](#combat-setup-and-shuffles).
 
 ### Random combat card selection
-
-**Intent:** align selections across sources and changing card sets.
 
 **Scope:** existing combat cards, including sampled choice offers. Mad Science's Improvement follows [permanent upgrades](#permanent-upgrades-and-downgrades); Thieving Hopper follows its [theft policy](#thieving-hopper).
 
@@ -1265,8 +1223,6 @@ Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#c
 
 ### Thieving Hopper
 
-**Intent:** align theft targets across decks.
-
 Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selection-priorities), keyed by `purpose = Thieving Hopper` + the linked permanent-deck [card key](#card-keys).
 
 **[Reroll loss](#within-room-reroll-loss):** pile order and other card-selection rolls.
@@ -1274,8 +1230,6 @@ Apply eligibility to combat copies. Select using [fixed priorities](#fixed-selec
 Baseline: [theft eligibility and recovery](#card-state-and-selection).
 
 ### Random enemy targets
-
-**Intent:** align random enemy targets across changing eligible sets.
 
 Address sequences by `purpose = targeting` + [combat address](#combat-addresses) + sharing group:
 
@@ -1295,8 +1249,6 @@ Use [opportunity-specific selection priorities](#opportunity-specific-selection-
 Baseline: [random enemy targeting](#random-enemy-targeting).
 
 ### Combat card generation and transformations
-
-**Intent:** align random card identities.
 
 **Scope:** random card generation by cards, powers, relics, and Entropy. Potions follow [potion-generated cards](#potion-generated-cards).
 
@@ -1324,8 +1276,6 @@ For Entropy, follow [transformation batch rules](#transformation-batches); apply
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
 ### Random energy costs
-
-**Intent:** align cost rolls within card categories.
 
 | Partition | Sequence address | Assignment |
 |---|---|---|
@@ -1355,8 +1305,6 @@ Baseline: [random energy costs](#random-energy-costs-1).
 
 ### Random orb types
 
-**Intent:** isolate random-orb generation by combat.
-
 Chaos, Trash to Treasure and The Magician share one sequence addressed by `purpose = orb type` + [combat address](#combat-addresses).
 
 Consume one entry per successfully channeled random orb.
@@ -1366,8 +1314,6 @@ Consume one entry per successfully channeled random orb.
 Baseline: [random orb generation](#random-orb-generation).
 
 ### Potion-generated cards
-
-**Intent:** align random card generation.
 
 **Scope:** Attack, Skill, Power and Colorless Potions, Cosmic Concoction, Orobic Acid and Bottled Song.
 
