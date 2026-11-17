@@ -8,7 +8,7 @@ const { FileBlob, SpreadsheetFile }=await import(pathToFileURL(runtimeRequire.re
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = `${root}/outputs/event-workbook`;
-const sourceRoot = `${root}/.cache/sts2-v0.113.1/decompiled`;
+const sourceRoot = `${root}/sts2-decompiled`;
 const sourceDir = `${sourceRoot}/MegaCrit.Sts2.Core.Models.Events`;
 const workbookPath = `${root}/references/StS2_Events.xlsx`;
 const sourceCitation = id => `StS2 v0.113.1: MegaCrit.Sts2.Core.Models.Events.${id}`;

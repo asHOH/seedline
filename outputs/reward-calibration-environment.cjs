@@ -1,33 +1,8 @@
-// Gold/reward projection of vanilla v0.111.0; reference sources remain read-only.
-const fs = require('node:fs');
-const path = require('node:path');
+// Gold/reward projection of vanilla v0.111.0.
 const assert = require('node:assert/strict');
-const root = path.resolve(__dirname, '..', 'sts2-decompiled');
-const read = (dir, name) => fs.readFileSync(path.join(root, dir, name + '.cs'), 'utf8');
-const names = (text, kind) => [...text.matchAll(new RegExp(`ModelDb\\.${kind}<(\\w+)>`, 'g'))].map(m => m[1]);
-const db = read('MegaCrit.Sts2.Core.Models', 'ModelDb');
-const shared = [...db.slice(db.indexOf('AllSharedEvents'), db.indexOf('AllSharedAncients')).matchAll(/\bEvent<(\w+)>/g)].map(m => m[1]);
-const acts = Object.fromEntries(['Overgrowth', 'Underdocks', 'Hive', 'Glory'].map(name => {
-  const text = read('MegaCrit.Sts2.Core.Models.Acts', name);
-  return [name, names(text.slice(text.indexOf('AllEvents'), text.indexOf('NumberOfWeakEncounters')), 'Event').concat(shared)];
-}));
-const characters = ['Ironclad', 'Silent', 'Regent', 'Necrobinder', 'Defect'];
-const relicInfo = {};
-const pools = Object.fromEntries(characters.map(character => {
-  const ids = [...new Set(['Shared', character].flatMap(prefix => {
-    const text = read('MegaCrit.Sts2.Core.Models.RelicPools', prefix + 'RelicPool');
-    return names(text.slice(text.indexOf('GenerateAllRelics'), text.indexOf('GetUnlockedRelics') < 0 ? undefined : text.indexOf('GetUnlockedRelics')), 'Relic');
-  }))];
-  const rarities = {Common: [], Uncommon: [], Rare: [], Shop: []};
-  for (const id of ids) {
-    const text = read('MegaCrit.Sts2.Core.Models.Relics', id);
-    const rarity = text.match(/Rarity => RelicRarity\.(\w+)/)?.[1];
-    relicInfo[id] = {rarity, shop: !text.includes('IsAllowedInShops => false'), cutoff: text.includes('IsBeforeAct3TreasureChest(runState)')};
-    if (rarities[rarity]) rarities[rarity].push(id);
-  }
-  assert(rarities.Shop.includes('Orrery'));
-  return [character, rarities];
-}));
+const reference = require('./reward-calibration-reference-v0.111.0.json');
+assert.equal(reference.version, 'v0.111.0');
+const {characters, acts, relicInfo, pools} = reference;
 
 function rng(seed) {
   let a = seed >>> 0;

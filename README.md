@@ -31,11 +31,11 @@ Add `-RitsuLibDir '<extracted RitsuLib package>'` to the validation command to e
 The [workbook](references/StS2_Events.xlsx) records v0.113.1. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`). From the repository root:
 
 ```powershell
-ilspycmd -p -o .cache/sts2-v0.113.1/decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dll'
+ilspycmd -p -o sts2-decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dll'
 & '<Codex bundled Node executable>' scripts/build-events.mjs
 ```
 
-The [generator](scripts/build-events.mjs) reads the committed workbook as its template and checks event coverage against the extracted source. Review its export in `outputs/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game-source inputs and generated previews remain local.
+The [generator](scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `outputs/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game sources and previews stay local.
 
 ## Deploy
 

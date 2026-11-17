@@ -1,0 +1,1587 @@
+{
+  "version": "v0.111.0",
+  "sourceCommit": "41cef1ea4657c524aa50e870df009e56337e8c32",
+  "characters": [
+    "Ironclad",
+    "Silent",
+    "Regent",
+    "Necrobinder",
+    "Defect"
+  ],
+  "acts": {
+    "Overgrowth": [
+      "AromaOfChaos",
+      "ByrdonisNest",
+      "DenseVegetation",
+      "JungleMazeAdventure",
+      "LuminousChoir",
+      "MorphicGrove",
+      "SapphireSeed",
+      "SunkenStatue",
+      "TabletOfTruth",
+      "UnrestSite",
+      "Wellspring",
+      "WhisperingHollow",
+      "WoodCarvings",
+      "BrainLeech",
+      "CrystalSphere",
+      "DollRoom",
+      "FakeMerchant",
+      "PotionCourier",
+      "RanwidTheElder",
+      "RelicTrader",
+      "RoomFullOfCheese",
+      "SelfHelpBook",
+      "SlipperyBridge",
+      "StoneOfAllTime",
+      "Symbiote",
+      "TeaMaster",
+      "TheFutureOfPotions",
+      "TheLegendsWereTrue",
+      "ThisOrThat",
+      "WarHistorianRepy",
+      "WelcomeToWongos"
+    ],
+    "Underdocks": [
+      "AbyssalBaths",
+      "DrowningBeacon",
+      "EndlessConveyor",
+      "PunchOff",
+      "SpiralingWhirlpool",
+      "SunkenStatue",
+      "SunkenTreasury",
+      "DoorsOfLightAndDark",
+      "TrashHeap",
+      "WaterloggedScriptorium",
+      "BrainLeech",
+      "CrystalSphere",
+      "DollRoom",
+      "FakeMerchant",
+      "PotionCourier",
+      "RanwidTheElder",
+      "RelicTrader",
+      "RoomFullOfCheese",
+      "SelfHelpBook",
+      "SlipperyBridge",
+      "StoneOfAllTime",
+      "Symbiote",
+      "TeaMaster",
+      "TheFutureOfPotions",
+      "TheLegendsWereTrue",
+      "ThisOrThat",
+      "WarHistorianRepy",
+      "WelcomeToWongos"
+    ],
+    "Hive": [
+      "Amalgamator",
+      "Bugslayer",
+      "ColorfulPhilosophers",
+      "ColossalFlower",
+      "FieldOfManSizedHoles",
+      "InfestedAutomaton",
+      "LostWisp",
+      "SpiritGrafter",
+      "TheLanternKey",
+      "ZenWeaver",
+      "BrainLeech",
+      "CrystalSphere",
+      "DollRoom",
+      "FakeMerchant",
+      "PotionCourier",
+      "RanwidTheElder",
+      "RelicTrader",
+      "RoomFullOfCheese",
+      "SelfHelpBook",
+      "SlipperyBridge",
+      "StoneOfAllTime",
+      "Symbiote",
+      "TeaMaster",
+      "TheFutureOfPotions",
+      "TheLegendsWereTrue",
+      "ThisOrThat",
+      "WarHistorianRepy",
+      "WelcomeToWongos"
+    ],
+    "Glory": [
+      "BattlewornDummy",
+      "GraveOfTheForgotten",
+      "HungryForMushrooms",
+      "Reflections",
+      "RoundTeaParty",
+      "Trial",
+      "TinkerTime",
+      "BrainLeech",
+      "CrystalSphere",
+      "DollRoom",
+      "FakeMerchant",
+      "PotionCourier",
+      "RanwidTheElder",
+      "RelicTrader",
+      "RoomFullOfCheese",
+      "SelfHelpBook",
+      "SlipperyBridge",
+      "StoneOfAllTime",
+      "Symbiote",
+      "TeaMaster",
+      "TheFutureOfPotions",
+      "TheLegendsWereTrue",
+      "ThisOrThat",
+      "WarHistorianRepy",
+      "WelcomeToWongos"
+    ]
+  },
+  "relicInfo": {
+    "Akabeko": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "AmethystAubergine": {
+      "rarity": "Common",
+      "shop": false,
+      "cutoff": true
+    },
+    "Anchor": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "ArtOfWar": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "BagOfMarbles": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "BagOfPreparation": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "BeatingRemnant": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "Bellows": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "BeltBuckle": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "BloodVial": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "BookOfFiveRings": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": true
+    },
+    "BowlerHat": {
+      "rarity": "Uncommon",
+      "shop": false,
+      "cutoff": true
+    },
+    "Bread": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "BronzeScales": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "BurningSticks": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Candelabra": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "CaptainsWheel": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "Cauldron": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "CentennialPuzzle": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "Chandelier": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "ChemicalX": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "CloakClasp": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "DingyRug": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "DollysMirror": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "DragonFruit": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": true
+    },
+    "EternalFeather": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "FestivePopper": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "FresnelLens": {
+      "rarity": "Event",
+      "shop": true,
+      "cutoff": false
+    },
+    "FrozenEgg": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "GamblingChip": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "GamePiece": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "GhostSeed": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Girya": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "GnarledHammer": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Gorget": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "GremlinHorn": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "HappyFlower": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "HornCleat": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "IceCream": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "IntimidatingHelmet": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "JossPaper": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "JuzuBracelet": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": true
+    },
+    "Kifuda": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Kunai": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "Kusarigama": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Lantern": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "LastingCandy": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": true
+    },
+    "LavaLamp": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "LeesWaffle": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "LetterOpener": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "LizardTail": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "LoomingFruit": {
+      "rarity": "Ancient",
+      "shop": true,
+      "cutoff": false
+    },
+    "LuckyFysh": {
+      "rarity": "Uncommon",
+      "shop": false,
+      "cutoff": true
+    },
+    "Mango": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "MealTicket": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": true
+    },
+    "MeatOnTheBone": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "MembershipCard": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "MercuryHourglass": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "MiniatureCannon": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "MiniatureTent": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "MoltenEgg": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "MummifiedHand": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "MysticLighter": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Nunchaku": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "OddlySmoothStone": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "OldCoin": {
+      "rarity": "Rare",
+      "shop": false,
+      "cutoff": true
+    },
+    "Orichalcum": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "OrnamentalFan": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Orrery": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Pantograph": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "ParryingShield": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Pear": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "PenNib": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Pendulum": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "Permafrost": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "PetrifiedToad": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Planisphere": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": true
+    },
+    "Pocketwatch": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "PotionBelt": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "PrayerWheel": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "PunchDagger": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "RainbowRing": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "RazorTooth": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "RedMask": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "RegalPillow": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "ReptileTrinket": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "RingingTriangle": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "RippleBasin": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "RoyalStamp": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "ScreamingFlagon": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Shovel": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "Shuriken": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "SlingOfCourage": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "SparklingRouge": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "StoneCalendar": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "StoneCracker": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Strawberry": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "StrikeDummy": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "SturdyClamp": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "TheAbacus": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "TheCourier": {
+      "rarity": "Rare",
+      "shop": false,
+      "cutoff": false
+    },
+    "TinyMailbox": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Toolbox": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "ToxicEgg": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "TungstenRod": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "TuningFork": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "UnceasingTop": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "UnsettlingLamp": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "Vajra": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "Vambrace": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "VenerableTeaSet": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "VeryHotCocoa": {
+      "rarity": "Ancient",
+      "shop": true,
+      "cutoff": false
+    },
+    "VexingPuzzlebox": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "WarPaint": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "Whetstone": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "WhiteBeastStatue": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "WhiteStar": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": true
+    },
+    "WingCharm": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "Brimstone": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "BurningBlood": {
+      "rarity": "Starter",
+      "shop": true,
+      "cutoff": false
+    },
+    "CharonsAshes": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "DemonTongue": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "PaperPhrog": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "RedSkull": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "RuinedHelmet": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "SelfFormingClay": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "HelicalDart": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "NinjaScroll": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "PaperKrane": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "RingOfTheSnake": {
+      "rarity": "Starter",
+      "shop": true,
+      "cutoff": false
+    },
+    "SneckoSkull": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "Tingsha": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "ToughBandages": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "TwistedFunnel": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "DivineRight": {
+      "rarity": "Starter",
+      "shop": true,
+      "cutoff": false
+    },
+    "FencingManual": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "GalacticDust": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "LunarPastry": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "MiniRegent": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "OrangeDough": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "Regalite": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "VitruvianMinion": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "BigHat": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "BoneFlute": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "BookRepairKnife": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "Bookmark": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "BoundPhylactery": {
+      "rarity": "Starter",
+      "shop": true,
+      "cutoff": false
+    },
+    "FuneraryMask": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "IvoryTile": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "UndyingSigil": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "CrackedCore": {
+      "rarity": "Starter",
+      "shop": true,
+      "cutoff": false
+    },
+    "DataDisk": {
+      "rarity": "Common",
+      "shop": true,
+      "cutoff": false
+    },
+    "EmotionChip": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "GoldPlatedCables": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    },
+    "PowerCell": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "Metronome": {
+      "rarity": "Rare",
+      "shop": true,
+      "cutoff": false
+    },
+    "RunicCapacitor": {
+      "rarity": "Shop",
+      "shop": true,
+      "cutoff": false
+    },
+    "SymbioticVirus": {
+      "rarity": "Uncommon",
+      "shop": true,
+      "cutoff": false
+    }
+  },
+  "pools": {
+    "Ironclad": {
+      "Common": [
+        "AmethystAubergine",
+        "Anchor",
+        "BagOfMarbles",
+        "BagOfPreparation",
+        "BloodVial",
+        "BookOfFiveRings",
+        "BronzeScales",
+        "CentennialPuzzle",
+        "FestivePopper",
+        "Gorget",
+        "HappyFlower",
+        "JuzuBracelet",
+        "Lantern",
+        "MealTicket",
+        "OddlySmoothStone",
+        "Pendulum",
+        "PotionBelt",
+        "RedMask",
+        "RegalPillow",
+        "Strawberry",
+        "StrikeDummy",
+        "Vajra",
+        "VenerableTeaSet",
+        "WarPaint",
+        "Whetstone",
+        "RedSkull"
+      ],
+      "Uncommon": [
+        "Akabeko",
+        "BowlerHat",
+        "Candelabra",
+        "EternalFeather",
+        "GremlinHorn",
+        "HornCleat",
+        "JossPaper",
+        "Kusarigama",
+        "LastingCandy",
+        "LetterOpener",
+        "LuckyFysh",
+        "MercuryHourglass",
+        "MiniatureCannon",
+        "Nunchaku",
+        "Orichalcum",
+        "OrnamentalFan",
+        "Pantograph",
+        "ParryingShield",
+        "Pear",
+        "PenNib",
+        "Permafrost",
+        "PetrifiedToad",
+        "Planisphere",
+        "ReptileTrinket",
+        "RippleBasin",
+        "SparklingRouge",
+        "StoneCracker",
+        "TinyMailbox",
+        "TuningFork",
+        "Vambrace",
+        "PaperPhrog",
+        "SelfFormingClay"
+      ],
+      "Rare": [
+        "ArtOfWar",
+        "BeatingRemnant",
+        "Bellows",
+        "CaptainsWheel",
+        "Chandelier",
+        "CloakClasp",
+        "FrozenEgg",
+        "GamblingChip",
+        "GamePiece",
+        "Girya",
+        "IceCream",
+        "IntimidatingHelmet",
+        "Kunai",
+        "LizardTail",
+        "Mango",
+        "MeatOnTheBone",
+        "MoltenEgg",
+        "MummifiedHand",
+        "OldCoin",
+        "Pocketwatch",
+        "PrayerWheel",
+        "RainbowRing",
+        "RazorTooth",
+        "Shovel",
+        "Shuriken",
+        "StoneCalendar",
+        "SturdyClamp",
+        "TheCourier",
+        "ToxicEgg",
+        "TungstenRod",
+        "UnceasingTop",
+        "UnsettlingLamp",
+        "VexingPuzzlebox",
+        "WhiteBeastStatue",
+        "WhiteStar",
+        "CharonsAshes",
+        "DemonTongue",
+        "RuinedHelmet"
+      ],
+      "Shop": [
+        "BeltBuckle",
+        "Bread",
+        "BurningSticks",
+        "Cauldron",
+        "ChemicalX",
+        "DingyRug",
+        "DollysMirror",
+        "DragonFruit",
+        "GhostSeed",
+        "GnarledHammer",
+        "Kifuda",
+        "LavaLamp",
+        "LeesWaffle",
+        "MembershipCard",
+        "MiniatureTent",
+        "MysticLighter",
+        "Orrery",
+        "PunchDagger",
+        "RingingTriangle",
+        "RoyalStamp",
+        "ScreamingFlagon",
+        "SlingOfCourage",
+        "TheAbacus",
+        "Toolbox",
+        "WingCharm",
+        "Brimstone"
+      ]
+    },
+    "Silent": {
+      "Common": [
+        "AmethystAubergine",
+        "Anchor",
+        "BagOfMarbles",
+        "BagOfPreparation",
+        "BloodVial",
+        "BookOfFiveRings",
+        "BronzeScales",
+        "CentennialPuzzle",
+        "FestivePopper",
+        "Gorget",
+        "HappyFlower",
+        "JuzuBracelet",
+        "Lantern",
+        "MealTicket",
+        "OddlySmoothStone",
+        "Pendulum",
+        "PotionBelt",
+        "RedMask",
+        "RegalPillow",
+        "Strawberry",
+        "StrikeDummy",
+        "Vajra",
+        "VenerableTeaSet",
+        "WarPaint",
+        "Whetstone",
+        "SneckoSkull"
+      ],
+      "Uncommon": [
+        "Akabeko",
+        "BowlerHat",
+        "Candelabra",
+        "EternalFeather",
+        "GremlinHorn",
+        "HornCleat",
+        "JossPaper",
+        "Kusarigama",
+        "LastingCandy",
+        "LetterOpener",
+        "LuckyFysh",
+        "MercuryHourglass",
+        "MiniatureCannon",
+        "Nunchaku",
+        "Orichalcum",
+        "OrnamentalFan",
+        "Pantograph",
+        "ParryingShield",
+        "Pear",
+        "PenNib",
+        "Permafrost",
+        "PetrifiedToad",
+        "Planisphere",
+        "ReptileTrinket",
+        "RippleBasin",
+        "SparklingRouge",
+        "StoneCracker",
+        "TinyMailbox",
+        "TuningFork",
+        "Vambrace",
+        "Tingsha",
+        "TwistedFunnel"
+      ],
+      "Rare": [
+        "ArtOfWar",
+        "BeatingRemnant",
+        "Bellows",
+        "CaptainsWheel",
+        "Chandelier",
+        "CloakClasp",
+        "FrozenEgg",
+        "GamblingChip",
+        "GamePiece",
+        "Girya",
+        "IceCream",
+        "IntimidatingHelmet",
+        "Kunai",
+        "LizardTail",
+        "Mango",
+        "MeatOnTheBone",
+        "MoltenEgg",
+        "MummifiedHand",
+        "OldCoin",
+        "Pocketwatch",
+        "PrayerWheel",
+        "RainbowRing",
+        "RazorTooth",
+        "Shovel",
+        "Shuriken",
+        "StoneCalendar",
+        "SturdyClamp",
+        "TheCourier",
+        "ToxicEgg",
+        "TungstenRod",
+        "UnceasingTop",
+        "UnsettlingLamp",
+        "VexingPuzzlebox",
+        "WhiteBeastStatue",
+        "WhiteStar",
+        "HelicalDart",
+        "PaperKrane",
+        "ToughBandages"
+      ],
+      "Shop": [
+        "BeltBuckle",
+        "Bread",
+        "BurningSticks",
+        "Cauldron",
+        "ChemicalX",
+        "DingyRug",
+        "DollysMirror",
+        "DragonFruit",
+        "GhostSeed",
+        "GnarledHammer",
+        "Kifuda",
+        "LavaLamp",
+        "LeesWaffle",
+        "MembershipCard",
+        "MiniatureTent",
+        "MysticLighter",
+        "Orrery",
+        "PunchDagger",
+        "RingingTriangle",
+        "RoyalStamp",
+        "ScreamingFlagon",
+        "SlingOfCourage",
+        "TheAbacus",
+        "Toolbox",
+        "WingCharm",
+        "NinjaScroll"
+      ]
+    },
+    "Regent": {
+      "Common": [
+        "AmethystAubergine",
+        "Anchor",
+        "BagOfMarbles",
+        "BagOfPreparation",
+        "BloodVial",
+        "BookOfFiveRings",
+        "BronzeScales",
+        "CentennialPuzzle",
+        "FestivePopper",
+        "Gorget",
+        "HappyFlower",
+        "JuzuBracelet",
+        "Lantern",
+        "MealTicket",
+        "OddlySmoothStone",
+        "Pendulum",
+        "PotionBelt",
+        "RedMask",
+        "RegalPillow",
+        "Strawberry",
+        "StrikeDummy",
+        "Vajra",
+        "VenerableTeaSet",
+        "WarPaint",
+        "Whetstone",
+        "FencingManual"
+      ],
+      "Uncommon": [
+        "Akabeko",
+        "BowlerHat",
+        "Candelabra",
+        "EternalFeather",
+        "GremlinHorn",
+        "HornCleat",
+        "JossPaper",
+        "Kusarigama",
+        "LastingCandy",
+        "LetterOpener",
+        "LuckyFysh",
+        "MercuryHourglass",
+        "MiniatureCannon",
+        "Nunchaku",
+        "Orichalcum",
+        "OrnamentalFan",
+        "Pantograph",
+        "ParryingShield",
+        "Pear",
+        "PenNib",
+        "Permafrost",
+        "PetrifiedToad",
+        "Planisphere",
+        "ReptileTrinket",
+        "RippleBasin",
+        "SparklingRouge",
+        "StoneCracker",
+        "TinyMailbox",
+        "TuningFork",
+        "Vambrace",
+        "GalacticDust",
+        "Regalite"
+      ],
+      "Rare": [
+        "ArtOfWar",
+        "BeatingRemnant",
+        "Bellows",
+        "CaptainsWheel",
+        "Chandelier",
+        "CloakClasp",
+        "FrozenEgg",
+        "GamblingChip",
+        "GamePiece",
+        "Girya",
+        "IceCream",
+        "IntimidatingHelmet",
+        "Kunai",
+        "LizardTail",
+        "Mango",
+        "MeatOnTheBone",
+        "MoltenEgg",
+        "MummifiedHand",
+        "OldCoin",
+        "Pocketwatch",
+        "PrayerWheel",
+        "RainbowRing",
+        "RazorTooth",
+        "Shovel",
+        "Shuriken",
+        "StoneCalendar",
+        "SturdyClamp",
+        "TheCourier",
+        "ToxicEgg",
+        "TungstenRod",
+        "UnceasingTop",
+        "UnsettlingLamp",
+        "VexingPuzzlebox",
+        "WhiteBeastStatue",
+        "WhiteStar",
+        "LunarPastry",
+        "MiniRegent",
+        "OrangeDough"
+      ],
+      "Shop": [
+        "BeltBuckle",
+        "Bread",
+        "BurningSticks",
+        "Cauldron",
+        "ChemicalX",
+        "DingyRug",
+        "DollysMirror",
+        "DragonFruit",
+        "GhostSeed",
+        "GnarledHammer",
+        "Kifuda",
+        "LavaLamp",
+        "LeesWaffle",
+        "MembershipCard",
+        "MiniatureTent",
+        "MysticLighter",
+        "Orrery",
+        "PunchDagger",
+        "RingingTriangle",
+        "RoyalStamp",
+        "ScreamingFlagon",
+        "SlingOfCourage",
+        "TheAbacus",
+        "Toolbox",
+        "WingCharm",
+        "VitruvianMinion"
+      ]
+    },
+    "Necrobinder": {
+      "Common": [
+        "AmethystAubergine",
+        "Anchor",
+        "BagOfMarbles",
+        "BagOfPreparation",
+        "BloodVial",
+        "BookOfFiveRings",
+        "BronzeScales",
+        "CentennialPuzzle",
+        "FestivePopper",
+        "Gorget",
+        "HappyFlower",
+        "JuzuBracelet",
+        "Lantern",
+        "MealTicket",
+        "OddlySmoothStone",
+        "Pendulum",
+        "PotionBelt",
+        "RedMask",
+        "RegalPillow",
+        "Strawberry",
+        "StrikeDummy",
+        "Vajra",
+        "VenerableTeaSet",
+        "WarPaint",
+        "Whetstone",
+        "BoneFlute"
+      ],
+      "Uncommon": [
+        "Akabeko",
+        "BowlerHat",
+        "Candelabra",
+        "EternalFeather",
+        "GremlinHorn",
+        "HornCleat",
+        "JossPaper",
+        "Kusarigama",
+        "LastingCandy",
+        "LetterOpener",
+        "LuckyFysh",
+        "MercuryHourglass",
+        "MiniatureCannon",
+        "Nunchaku",
+        "Orichalcum",
+        "OrnamentalFan",
+        "Pantograph",
+        "ParryingShield",
+        "Pear",
+        "PenNib",
+        "Permafrost",
+        "PetrifiedToad",
+        "Planisphere",
+        "ReptileTrinket",
+        "RippleBasin",
+        "SparklingRouge",
+        "StoneCracker",
+        "TinyMailbox",
+        "TuningFork",
+        "Vambrace",
+        "BookRepairKnife",
+        "FuneraryMask"
+      ],
+      "Rare": [
+        "ArtOfWar",
+        "BeatingRemnant",
+        "Bellows",
+        "CaptainsWheel",
+        "Chandelier",
+        "CloakClasp",
+        "FrozenEgg",
+        "GamblingChip",
+        "GamePiece",
+        "Girya",
+        "IceCream",
+        "IntimidatingHelmet",
+        "Kunai",
+        "LizardTail",
+        "Mango",
+        "MeatOnTheBone",
+        "MoltenEgg",
+        "MummifiedHand",
+        "OldCoin",
+        "Pocketwatch",
+        "PrayerWheel",
+        "RainbowRing",
+        "RazorTooth",
+        "Shovel",
+        "Shuriken",
+        "StoneCalendar",
+        "SturdyClamp",
+        "TheCourier",
+        "ToxicEgg",
+        "TungstenRod",
+        "UnceasingTop",
+        "UnsettlingLamp",
+        "VexingPuzzlebox",
+        "WhiteBeastStatue",
+        "WhiteStar",
+        "BigHat",
+        "Bookmark",
+        "IvoryTile"
+      ],
+      "Shop": [
+        "BeltBuckle",
+        "Bread",
+        "BurningSticks",
+        "Cauldron",
+        "ChemicalX",
+        "DingyRug",
+        "DollysMirror",
+        "DragonFruit",
+        "GhostSeed",
+        "GnarledHammer",
+        "Kifuda",
+        "LavaLamp",
+        "LeesWaffle",
+        "MembershipCard",
+        "MiniatureTent",
+        "MysticLighter",
+        "Orrery",
+        "PunchDagger",
+        "RingingTriangle",
+        "RoyalStamp",
+        "ScreamingFlagon",
+        "SlingOfCourage",
+        "TheAbacus",
+        "Toolbox",
+        "WingCharm",
+        "UndyingSigil"
+      ]
+    },
+    "Defect": {
+      "Common": [
+        "AmethystAubergine",
+        "Anchor",
+        "BagOfMarbles",
+        "BagOfPreparation",
+        "BloodVial",
+        "BookOfFiveRings",
+        "BronzeScales",
+        "CentennialPuzzle",
+        "FestivePopper",
+        "Gorget",
+        "HappyFlower",
+        "JuzuBracelet",
+        "Lantern",
+        "MealTicket",
+        "OddlySmoothStone",
+        "Pendulum",
+        "PotionBelt",
+        "RedMask",
+        "RegalPillow",
+        "Strawberry",
+        "StrikeDummy",
+        "Vajra",
+        "VenerableTeaSet",
+        "WarPaint",
+        "Whetstone",
+        "DataDisk"
+      ],
+      "Uncommon": [
+        "Akabeko",
+        "BowlerHat",
+        "Candelabra",
+        "EternalFeather",
+        "GremlinHorn",
+        "HornCleat",
+        "JossPaper",
+        "Kusarigama",
+        "LastingCandy",
+        "LetterOpener",
+        "LuckyFysh",
+        "MercuryHourglass",
+        "MiniatureCannon",
+        "Nunchaku",
+        "Orichalcum",
+        "OrnamentalFan",
+        "Pantograph",
+        "ParryingShield",
+        "Pear",
+        "PenNib",
+        "Permafrost",
+        "PetrifiedToad",
+        "Planisphere",
+        "ReptileTrinket",
+        "RippleBasin",
+        "SparklingRouge",
+        "StoneCracker",
+        "TinyMailbox",
+        "TuningFork",
+        "Vambrace",
+        "GoldPlatedCables",
+        "SymbioticVirus"
+      ],
+      "Rare": [
+        "ArtOfWar",
+        "BeatingRemnant",
+        "Bellows",
+        "CaptainsWheel",
+        "Chandelier",
+        "CloakClasp",
+        "FrozenEgg",
+        "GamblingChip",
+        "GamePiece",
+        "Girya",
+        "IceCream",
+        "IntimidatingHelmet",
+        "Kunai",
+        "LizardTail",
+        "Mango",
+        "MeatOnTheBone",
+        "MoltenEgg",
+        "MummifiedHand",
+        "OldCoin",
+        "Pocketwatch",
+        "PrayerWheel",
+        "RainbowRing",
+        "RazorTooth",
+        "Shovel",
+        "Shuriken",
+        "StoneCalendar",
+        "SturdyClamp",
+        "TheCourier",
+        "ToxicEgg",
+        "TungstenRod",
+        "UnceasingTop",
+        "UnsettlingLamp",
+        "VexingPuzzlebox",
+        "WhiteBeastStatue",
+        "WhiteStar",
+        "EmotionChip",
+        "PowerCell",
+        "Metronome"
+      ],
+      "Shop": [
+        "BeltBuckle",
+        "Bread",
+        "BurningSticks",
+        "Cauldron",
+        "ChemicalX",
+        "DingyRug",
+        "DollysMirror",
+        "DragonFruit",
+        "GhostSeed",
+        "GnarledHammer",
+        "Kifuda",
+        "LavaLamp",
+        "LeesWaffle",
+        "MembershipCard",
+        "MiniatureTent",
+        "MysticLighter",
+        "Orrery",
+        "PunchDagger",
+        "RingingTriangle",
+        "RoyalStamp",
+        "ScreamingFlagon",
+        "SlingOfCourage",
+        "TheAbacus",
+        "Toolbox",
+        "WingCharm",
+        "RunicCapacitor"
+      ]
+    }
+  }
+}

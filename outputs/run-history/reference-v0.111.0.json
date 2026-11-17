@@ -1,0 +1,6053 @@
+{
+  "version": "v0.111.0",
+  "sourceCommit": "41cef1ea4657c524aa50e870df009e56337e8c32",
+  "cards": {
+    "CARD.ABRASIVE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ABUNDANCE": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ACCELERANT": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ACCURACY": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ACROBATICS": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ADAPTIVE_STRIKE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ADRENALINE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.AFTERIMAGE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.AFTERLIFE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.AGGRESSION": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ALCHEMIZE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ALIGNMENT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ALL_FOR_ONE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ANGER": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ANOINTED": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ANTICIPATE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.APOTHEOSIS": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.APPARITION": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ARMAMENTS": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ARSENAL": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ASCENDERS_BANE": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ASHEN_STRIKE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ASSASSINATE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ASTRAL_PULSE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.AUTOMATION": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BACKFLIP": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BACKSTAB": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BAD_LUCK": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BALL_LIGHTNING": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BANSHEES_CRY": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BARRAGE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BARRICADE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BASH": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BATTLE_TRANCE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BEACON_OF_HOPE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.BEAM_CELL": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BEAT_DOWN": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BEAT_INTO_SHAPE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BECKON": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BEGONE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BELIEVE_IN_YOU": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.BIASED_COGNITION": {
+      "type": "Power",
+      "rarity": "Ancient",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BIG_BANG": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLACK_HOLE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLADE_DANCE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLADE_OF_INK": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLADE_SYMPHONY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.BLAZE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.BLIGHT_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLOODLETTING": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLOOD_WALL": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLUDGEON": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BLUR": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BODYGUARD": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BODY_SLAM": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BOLAS": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BOMBARDMENT": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BONE_SHARDS": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BOOST_AWAY": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BOOT_SEQUENCE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BORROWED_TIME": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BOUNCING_FLASK": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BRAND": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BREAK": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BREAKTHROUGH": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BRIGHTEST_FLAME": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BUBBLE_BUBBLE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BUFFER": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BULK_UP": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BULLET_TIME": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BULLY": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BULWARK": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BUNDLE_OF_JOY": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BURN": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BURNING_PACT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BURST": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BURY": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BYRDONIS_EGG": {
+      "type": "Quest",
+      "rarity": "Quest",
+      "pools": [
+        "QUEST"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.BYRD_SWOOP": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CACOPHONY": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.CALAMITY": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CALCIFY": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CALCULATED_GAMBLE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CALL_OF_THE_VOID": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CALTROPS": {
+      "type": "Power",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CAPACITOR": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CAPTURE_SPIRIT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CASCADE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CATASTROPHE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CELESTIAL_MIGHT": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CHAOS": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CHARGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CHARGE_BATTERY": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CHILD_OF_THE_STARS": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CHILL": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CINDER": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CLASH": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CLAW": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CLEANSE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CLOAK_AND_DAGGER": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CLOAK_OF_STARS": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CLUMSY": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COLD_SNAP": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COLLISION_COURSE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COLOSSUS": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COMET": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COMPACT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COMPILE_DRIVER": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CONCOCT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.CONFLAGRATION": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CONQUEROR": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CONSTELLATION": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.CONSUMING_SHADOW": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CONVERGENCE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COOLANT": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COOLHEADED": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COORDINATE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.CORROSIVE_WAVE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CORRUPTION": {
+      "type": "Power",
+      "rarity": "Ancient",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COSMIC_INDIFFERENCE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.COUNTDOWN": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CRASH_LANDING": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CREATIVE_AI": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CRESCENT_SPEAR": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CRIMSON_MANTLE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CRUELTY": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CRUSH_UNDER": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.CURSE_OF_THE_BELL": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DAGGER_SPRAY": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DAGGER_THROW": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DANSE_MACABRE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DARK_EMBRACE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DARKNESS": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DARK_SHACKLES": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DASH": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DAZED": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEADLY_POISON": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEATHBRINGER": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEATH_MARCH": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEATHS_DOOR": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEBILITATE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEBRIS": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEBT": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DECAY": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DECISIONS_DECISIONS": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFEND_DEFECT": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFEND_IRONCLAD": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFEND_NECROBINDER": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFEND_REGENT": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFEND_SILENT": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFILE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFLECT": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFRAGMENT": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEFY": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DELAY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEMESNE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEMON_FORM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEMONIC_SHIELD": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.DEPRECATED_CARD": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "DEPRECATED"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEVASTATE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DEVOUR_LIFE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DIRGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DISCOVERY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DISINTEGRATION": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DISMANTLE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DISTRACTION": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DODGE_AND_ROLL": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DOMINATE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DOUBLE_ENERGY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DOUBT": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DOWSING": {
+      "type": "Quest",
+      "rarity": "Quest",
+      "pools": [
+        "QUEST"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DRAIN_POWER": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DRAMATIC_ENTRANCE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DREDGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DRUM_OF_BATTLE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DUALCAST": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DUAL_WIELD": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.DYING_STAR": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ECHO_FORM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ECHOING_SLASH": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EIDOLON": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.END_OF_DAYS": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ENERGY_SURGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.ENFEEBLING_TOUCH": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ENLIGHTENMENT": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ENTHRALLED": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ENTRENCH": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ENTROPY": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ENVENOM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EQUILIBRIUM": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ERADICATE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ESCAPE_PLAN": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ETERNAL_ARMOR": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EVIL_EYE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EXPECT_A_FIGHT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EXPERTISE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EXPOSE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.EXTERMINATE": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FADE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.FALLING_STAR": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FAN_OF_KNIVES": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FASTEN": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FEAR": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FEED": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FEEDING_FRENZY": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FEEL_NO_PAIN": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FERAL": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FETCH": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FIEND_FIRE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FIGHT_ME": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FIGHT_THROUGH": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FINESSE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FINISHER": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FISTICUFFS": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FLAK_CANNON": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FLAME_BARRIER": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FLANKING": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.FLASH_OF_STEEL": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FLATTEN": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FLECHETTES": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FLICK_FLACK": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FOCUSED_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FOLLY": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FOOTWORK": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FORBIDDEN_GRIMOIRE": {
+      "type": "Power",
+      "rarity": "Ancient",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FOREGONE_CONCLUSION": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FORGOTTEN_RITUAL": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FRANTIC_ESCAPE": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FRIENDSHIP": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FTL": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FUEL": {
+      "type": "Skill",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FURNACE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.FUSION": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GAMMA_BLAST": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GANG_UP": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.GATHER_LIGHT": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GENESIS": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GENETIC_ALGORITHM": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GIANT_ROCK": {
+      "type": "Attack",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GLACIER": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GLASSWORK": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GLIMMER": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GLIMPSE_BEYOND": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.GLITTERSTREAM": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GLOW": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GO_FOR_THE_EYES": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GOLD_AXE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GRAND_FINALE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GRAVEBLAST": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GRAVE_WARDEN": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GREED": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GUARDS": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GUIDING_STAR": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GUILTY": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.GUNK_UP": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HAILSTORM": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HAMMER_TIME": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.HAND_OF_GREED": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HAND_TRICK": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HANG": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HAUNT": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HAVOC": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HAZE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HEADBUTT": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HEAVENLY_DRILL": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HEGEMONY": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HEIRLOOM_HAMMER": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HELIX_DRILL": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HELLO_WORLD": {
+      "type": "Power",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HELLRAISER": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HEMOKINESIS": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HIBERNATE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.HIDDEN_CACHE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HIDDEN_DAGGERS": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HIDDEN_GEM": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HIGH_FIVE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HOLOGRAM": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HOTFIX": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HOWL_FROM_BEYOND": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.HUDDLE_UP": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.HYPERBEAM": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.I_AM_INVINCIBLE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ICE_LANCE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.IGNITION": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.IMITATION_LEARNING": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.IMPATIENCE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.IMPERVIOUS": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INFECTION": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INFERNAL_BLADE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INFERNO": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INFINITE_BLADES": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INFLAME": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INJURY": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.INTERCEPT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.INVOKE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.IRON_WAVE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ITERATION": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.JACK_OF_ALL_TRADES": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.JACKPOT": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.JUGGERNAUT": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.JUGGLING": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.KINGLY_KICK": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.KINGLY_PUNCH": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.KNIFE_TRAP": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.KNOCKDOWN": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.KNOCKOUT_BLOW": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.KNOW_THY_PLACE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LANTERN_KEY": {
+      "type": "Quest",
+      "rarity": "Quest",
+      "pools": [
+        "QUEST"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LARGESSE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.LEADING_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LEAP": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LEGION_OF_BONE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.LEG_SWEEP": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LETHALITY": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LIFT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.LIGHTNING_ROD": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LOOP": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LUMINESCE": {
+      "type": "Skill",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.LUNAR_BLAST": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MACHINE_LEARNING": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MAD_SCIENCE": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MAKE_IT_SO": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MALAISE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MANGLE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MANIFEST_AUTHORITY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MASTER_OF_STRATEGY": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MASTER_PLANNER": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MAUL": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MAYHEM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MELANCHOLY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MEMENTO_MORI": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.METAMORPHOSIS": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.METEOR_SHOWER": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.METEOR_STRIKE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MIDNIGHT": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.MIMIC": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.MIND_BLAST": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MIND_ROT": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MINION_DIVE_BOMB": {
+      "type": "Attack",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MINION_SACRIFICE": {
+      "type": "Skill",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MINION_STRIKE": {
+      "type": "Attack",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MIRAGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MISERY": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MODDED": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MOLTEN_FIST": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MOMENTUM_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MONARCHS_GAZE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MONOLOGUE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MULTI_CAST": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.MURDER": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NECRO_MASTERY": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NEGATIVE_PULSE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NEOWS_FURY": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NEUROSURGE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NEUTRALIZE": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NEUTRON_AEGIS": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NIGHTMARE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NO_ESCAPE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NORMALITY": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NOSTALGIA": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NOT_YET": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NOXIOUS_FUMES": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.NULL": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.OBLIVION": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.OFFERING": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.OMNISLICE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ONE_FOR_ALL": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.ONE_TWO_PUNCH": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ORBIT": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.OUTBREAK": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.OUTMANEUVER": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.OUTRAGE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.OVERCLOCK": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PACTS_END": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PAGESTORM": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PALE_BLUE_DOT": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PANACHE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PANIC_BUTTON": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PARRY": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PARSE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PARTICLE_WALL": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PATTER": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PECK": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PERFECTED_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PHANTOM_BLADES": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PHOTON_CUT": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PIERCING_WAIL": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PILLAGE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PILLAR_OF_CREATION": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PINPOINT": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PLOT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.POISONED_STAB": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.POKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.POMMEL_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.POOR_SLEEP": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.POUNCE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PRECISE_CUT": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PREDATOR": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PREPARED": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PREP_TIME": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PRIMAL_FORCE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PRODUCTION": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PROLONG": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PROPHESIZE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PROTECTOR": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PROWESS": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PULL_AGGRO": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PULL_FROM_BELOW": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PURITY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PUTREFY": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.PYRE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.QUADCAST": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.QUASAR": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RADIATE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RAGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RAINBOW": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RALLY": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.RAMPAGE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RATTLE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REANIMATE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REAP": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REAPER_FORM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REAVE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REBOOT": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REBOUND": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REFINE_BLADE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REFLECT": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REFLEX": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REFRACT": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REGRET": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RELAX": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.REND": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RESONANCE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RESTLESSNESS": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RICOCHET": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RIGHT_HAND_HAND": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RIP_AND_TEAR": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ROCKET_PUNCH": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ROLLING_BOULDER": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ROYAL_GAMBLE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ROYALTIES": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.RUPTURE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SACRIFICE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SALVO": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SCAVENGE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SCOURGE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SCRAPE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SCRAWL": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SCULPTING_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SEANCE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SECOND_WIND": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SECRET_TECHNIQUE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SECRET_WEAPON": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SEEKER_STRIKE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SEEKING_EDGE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SENTRY_MODE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SERPENT_FORM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SETUP_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SEVEN_STARS": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SEVERANCE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHADOWMELD": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHADOW_SHIELD": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHADOW_STEP": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHAME": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHARED_FATE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHATTER": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHINING_STRIKE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHIV": {
+      "type": "Attack",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHOCKWAVE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHROUD": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SHRUG_IT_OFF": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SIC_EM": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SIDESTEP": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SIGNAL_BOOST": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SKEWER": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SKIM": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SLEIGHT_OF_FLESH": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SLICE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SLIMED": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SLOTH": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SMOKESTACK": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SNAKEBITE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SNAP": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SNEAKY": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.SOLAR_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SOOT": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SOUL": {
+      "type": "Skill",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SOULBOUND": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.SOUL_STORM": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SOVEREIGN_BLADE": {
+      "type": "Attack",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SOW": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPECTRUM_SHIFT": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPEEDSTER": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPINNER": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPIRIT_OF_ASH": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPITE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPLASH": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPOILS_MAP": {
+      "type": "Quest",
+      "rarity": "Quest",
+      "pools": [
+        "QUEST"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPOILS_OF_BATTLE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPORE_MIND": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SPUR": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SQUASH": {
+      "type": "Attack",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SQUEEZE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STACK": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STAMPEDE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STARDUST": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STOKE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STOMP": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STONE_ARMOR": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STORM": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STORM_OF_STEEL": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRANGLE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRATAGEM": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRIKE_DEFECT": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRIKE_IRONCLAD": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRIKE_NECROBINDER": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRIKE_REGENT": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.STRIKE_SILENT": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUBROUTINE": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUCKER_PUNCH": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUMMON_FORTH": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUNDER": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUPERCRITICAL": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUPERMASSIVE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SUPPRESS": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SURVIVOR": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SWEEPING_BEAM": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SWEEPING_GAZE": {
+      "type": "Attack",
+      "rarity": "Token",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SWORD_BOOMERANG": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SWORD_SAGE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SYNCHRONIZE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.SYNTHESIS": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TACTICIAN": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TAG_TEAM": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.TANK": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.TAUNT": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TEAR_ASUNDER": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TEMPEST": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TERRAFORMING": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TESLA_COIL": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THE_BALL": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.THE_BOMB": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THE_GAMBIT": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THE_HUNT": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THE_SCYTHE": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THE_SEALED_THRONE": {
+      "type": "Power",
+      "rarity": "Ancient",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THE_SMITH": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THINKING_AHEAD": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THRASH": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THRUMMING_HATCHET": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THUNDER": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.THUNDERCLAP": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TIMES_UP": {
+      "type": "Attack",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TOOLS_OF_THE_TRADE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TORIC_TOUGHNESS": {
+      "type": "Skill",
+      "rarity": "Event",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TOXIC": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TRACKING": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TRANSFIGURE": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TRASH_TO_TREASURE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TREMBLE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TRUE_GRIT": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TURBO": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TUTOR": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.TWIN_STRIKE": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.TYRANNY": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ULTIMATE_DEFEND": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ULTIMATE_STRIKE": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UNDEATH": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UNDERWORLD": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": true
+    },
+    "CARD.UNLEASH": {
+      "type": "Attack",
+      "rarity": "Basic",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UNMOVABLE": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UNRELENTING": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UNTOUCHABLE": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UP_MY_SLEEVE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UPPERCUT": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.UPROAR": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VEILPIERCER": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VENERATE": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VICIOUS": {
+      "type": "Power",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VOID": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VOID_FORM": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VOLLEY": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "COLORLESS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.VOLTAIC": {
+      "type": "Skill",
+      "rarity": "Rare",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WASTE_AWAY": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "TOKEN"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WELL_LAID_PLANS": {
+      "type": "Power",
+      "rarity": "Rare",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WHIRLWIND": {
+      "type": "Attack",
+      "rarity": "Uncommon",
+      "pools": [
+        "IRONCLAD"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WHISTLE": {
+      "type": "Attack",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WHITE_NOISE": {
+      "type": "Skill",
+      "rarity": "Uncommon",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WISH": {
+      "type": "Skill",
+      "rarity": "Ancient",
+      "pools": [
+        "EVENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WISP": {
+      "type": "Skill",
+      "rarity": "Common",
+      "pools": [
+        "NECROBINDER"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WITHER": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WOUND": {
+      "type": "Status",
+      "rarity": "Status",
+      "pools": [
+        "STATUS"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WRAITH_FORM": {
+      "type": "Power",
+      "rarity": "Ancient",
+      "pools": [
+        "SILENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WRITHE": {
+      "type": "Curse",
+      "rarity": "Curse",
+      "pools": [
+        "CURSE"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.WROUGHT_IN_WAR": {
+      "type": "Attack",
+      "rarity": "Common",
+      "pools": [
+        "REGENT"
+      ],
+      "multiplayerOnly": false
+    },
+    "CARD.ZAP": {
+      "type": "Skill",
+      "rarity": "Basic",
+      "pools": [
+        "DEFECT"
+      ],
+      "multiplayerOnly": false
+    }
+  },
+  "models": [
+    "CARD.ABRASIVE",
+    "CARD.ABUNDANCE",
+    "CARD.ACCELERANT",
+    "CARD.ACCURACY",
+    "CARD.ACROBATICS",
+    "CARD.ADAPTIVE_STRIKE",
+    "CARD.ADRENALINE",
+    "CARD.AFTERIMAGE",
+    "CARD.AFTERLIFE",
+    "CARD.AGGRESSION",
+    "CARD.ALCHEMIZE",
+    "CARD.ALIGNMENT",
+    "CARD.ALL_FOR_ONE",
+    "CARD.ANGER",
+    "CARD.ANOINTED",
+    "CARD.ANTICIPATE",
+    "CARD.APOTHEOSIS",
+    "CARD.APPARITION",
+    "CARD.ARMAMENTS",
+    "CARD.ARSENAL",
+    "CARD.ASCENDERS_BANE",
+    "CARD.ASHEN_STRIKE",
+    "CARD.ASSASSINATE",
+    "CARD.ASTRAL_PULSE",
+    "CARD.AUTOMATION",
+    "CARD.BACKFLIP",
+    "CARD.BACKSTAB",
+    "CARD.BAD_LUCK",
+    "CARD.BALL_LIGHTNING",
+    "CARD.BANSHEES_CRY",
+    "CARD.BARRAGE",
+    "CARD.BARRICADE",
+    "CARD.BASH",
+    "CARD.BATTLE_TRANCE",
+    "CARD.BEACON_OF_HOPE",
+    "CARD.BEAM_CELL",
+    "CARD.BEAT_DOWN",
+    "CARD.BEAT_INTO_SHAPE",
+    "CARD.BECKON",
+    "CARD.BEGONE",
+    "CARD.BELIEVE_IN_YOU",
+    "CARD.BIASED_COGNITION",
+    "CARD.BIG_BANG",
+    "CARD.BLACK_HOLE",
+    "CARD.BLADE_DANCE",
+    "CARD.BLADE_OF_INK",
+    "CARD.BLADE_SYMPHONY",
+    "CARD.BLAZE",
+    "CARD.BLIGHT_STRIKE",
+    "CARD.BLOODLETTING",
+    "CARD.BLOOD_WALL",
+    "CARD.BLUDGEON",
+    "CARD.BLUR",
+    "CARD.BODYGUARD",
+    "CARD.BODY_SLAM",
+    "CARD.BOLAS",
+    "CARD.BOMBARDMENT",
+    "CARD.BONE_SHARDS",
+    "CARD.BOOST_AWAY",
+    "CARD.BOOT_SEQUENCE",
+    "CARD.BORROWED_TIME",
+    "CARD.BOUNCING_FLASK",
+    "CARD.BRAND",
+    "CARD.BREAK",
+    "CARD.BREAKTHROUGH",
+    "CARD.BRIGHTEST_FLAME",
+    "CARD.BUBBLE_BUBBLE",
+    "CARD.BUFFER",
+    "CARD.BULK_UP",
+    "CARD.BULLET_TIME",
+    "CARD.BULLY",
+    "CARD.BULWARK",
+    "CARD.BUNDLE_OF_JOY",
+    "CARD.BURN",
+    "CARD.BURNING_PACT",
+    "CARD.BURST",
+    "CARD.BURY",
+    "CARD.BYRDONIS_EGG",
+    "CARD.BYRD_SWOOP",
+    "CARD.CACOPHONY",
+    "CARD.CALAMITY",
+    "CARD.CALCIFY",
+    "CARD.CALCULATED_GAMBLE",
+    "CARD.CALL_OF_THE_VOID",
+    "CARD.CALTROPS",
+    "CARD.CAPACITOR",
+    "CARD.CAPTURE_SPIRIT",
+    "CARD.CASCADE",
+    "CARD.CATASTROPHE",
+    "CARD.CELESTIAL_MIGHT",
+    "CARD.CHAOS",
+    "CARD.CHARGE",
+    "CARD.CHARGE_BATTERY",
+    "CARD.CHILD_OF_THE_STARS",
+    "CARD.CHILL",
+    "CARD.CINDER",
+    "CARD.CLASH",
+    "CARD.CLAW",
+    "CARD.CLEANSE",
+    "CARD.CLOAK_AND_DAGGER",
+    "CARD.CLOAK_OF_STARS",
+    "CARD.CLUMSY",
+    "CARD.COLD_SNAP",
+    "CARD.COLLISION_COURSE",
+    "CARD.COLOSSUS",
+    "CARD.COMET",
+    "CARD.COMPACT",
+    "CARD.COMPILE_DRIVER",
+    "CARD.CONCOCT",
+    "CARD.CONFLAGRATION",
+    "CARD.CONQUEROR",
+    "CARD.CONSTELLATION",
+    "CARD.CONSUMING_SHADOW",
+    "CARD.CONVERGENCE",
+    "CARD.COOLANT",
+    "CARD.COOLHEADED",
+    "CARD.COORDINATE",
+    "CARD.CORROSIVE_WAVE",
+    "CARD.CORRUPTION",
+    "CARD.COSMIC_INDIFFERENCE",
+    "CARD.COUNTDOWN",
+    "CARD.CRASH_LANDING",
+    "CARD.CREATIVE_AI",
+    "CARD.CRESCENT_SPEAR",
+    "CARD.CRIMSON_MANTLE",
+    "CARD.CRUELTY",
+    "CARD.CRUSH_UNDER",
+    "CARD.CURSE_OF_THE_BELL",
+    "CARD.DAGGER_SPRAY",
+    "CARD.DAGGER_THROW",
+    "CARD.DANSE_MACABRE",
+    "CARD.DARK_EMBRACE",
+    "CARD.DARKNESS",
+    "CARD.DARK_SHACKLES",
+    "CARD.DASH",
+    "CARD.DAZED",
+    "CARD.DEADLY_POISON",
+    "CARD.DEATHBRINGER",
+    "CARD.DEATH_MARCH",
+    "CARD.DEATHS_DOOR",
+    "CARD.DEBILITATE",
+    "CARD.DEBRIS",
+    "CARD.DEBT",
+    "CARD.DECAY",
+    "CARD.DECISIONS_DECISIONS",
+    "CARD.DEFEND_DEFECT",
+    "CARD.DEFEND_IRONCLAD",
+    "CARD.DEFEND_NECROBINDER",
+    "CARD.DEFEND_REGENT",
+    "CARD.DEFEND_SILENT",
+    "CARD.DEFILE",
+    "CARD.DEFLECT",
+    "CARD.DEFRAGMENT",
+    "CARD.DEFY",
+    "CARD.DELAY",
+    "CARD.DEMESNE",
+    "CARD.DEMON_FORM",
+    "CARD.DEMONIC_SHIELD",
+    "CARD.DEPRECATED_CARD",
+    "CARD.DEVASTATE",
+    "CARD.DEVOUR_LIFE",
+    "CARD.DIRGE",
+    "CARD.DISCOVERY",
+    "CARD.DISINTEGRATION",
+    "CARD.DISMANTLE",
+    "CARD.DISTRACTION",
+    "CARD.DODGE_AND_ROLL",
+    "CARD.DOMINATE",
+    "CARD.DOUBLE_ENERGY",
+    "CARD.DOUBT",
+    "CARD.DOWSING",
+    "CARD.DRAIN_POWER",
+    "CARD.DRAMATIC_ENTRANCE",
+    "CARD.DREDGE",
+    "CARD.DRUM_OF_BATTLE",
+    "CARD.DUALCAST",
+    "CARD.DUAL_WIELD",
+    "CARD.DYING_STAR",
+    "CARD.ECHO_FORM",
+    "CARD.ECHOING_SLASH",
+    "CARD.EIDOLON",
+    "CARD.END_OF_DAYS",
+    "CARD.ENERGY_SURGE",
+    "CARD.ENFEEBLING_TOUCH",
+    "CARD.ENLIGHTENMENT",
+    "CARD.ENTHRALLED",
+    "CARD.ENTRENCH",
+    "CARD.ENTROPY",
+    "CARD.ENVENOM",
+    "CARD.EQUILIBRIUM",
+    "CARD.ERADICATE",
+    "CARD.ESCAPE_PLAN",
+    "CARD.ETERNAL_ARMOR",
+    "CARD.EVIL_EYE",
+    "CARD.EXPECT_A_FIGHT",
+    "CARD.EXPERTISE",
+    "CARD.EXPOSE",
+    "CARD.EXTERMINATE",
+    "CARD.FADE",
+    "CARD.FALLING_STAR",
+    "CARD.FAN_OF_KNIVES",
+    "CARD.FASTEN",
+    "CARD.FEAR",
+    "CARD.FEED",
+    "CARD.FEEDING_FRENZY",
+    "CARD.FEEL_NO_PAIN",
+    "CARD.FERAL",
+    "CARD.FETCH",
+    "CARD.FIEND_FIRE",
+    "CARD.FIGHT_ME",
+    "CARD.FIGHT_THROUGH",
+    "CARD.FINESSE",
+    "CARD.FINISHER",
+    "CARD.FISTICUFFS",
+    "CARD.FLAK_CANNON",
+    "CARD.FLAME_BARRIER",
+    "CARD.FLANKING",
+    "CARD.FLASH_OF_STEEL",
+    "CARD.FLATTEN",
+    "CARD.FLECHETTES",
+    "CARD.FLICK_FLACK",
+    "CARD.FOCUSED_STRIKE",
+    "CARD.FOLLY",
+    "CARD.FOOTWORK",
+    "CARD.FORBIDDEN_GRIMOIRE",
+    "CARD.FOREGONE_CONCLUSION",
+    "CARD.FORGOTTEN_RITUAL",
+    "CARD.FRANTIC_ESCAPE",
+    "CARD.FRIENDSHIP",
+    "CARD.FTL",
+    "CARD.FUEL",
+    "CARD.FURNACE",
+    "CARD.FUSION",
+    "CARD.GAMMA_BLAST",
+    "CARD.GANG_UP",
+    "CARD.GATHER_LIGHT",
+    "CARD.GENESIS",
+    "CARD.GENETIC_ALGORITHM",
+    "CARD.GIANT_ROCK",
+    "CARD.GLACIER",
+    "CARD.GLASSWORK",
+    "CARD.GLIMMER",
+    "CARD.GLIMPSE_BEYOND",
+    "CARD.GLITTERSTREAM",
+    "CARD.GLOW",
+    "CARD.GO_FOR_THE_EYES",
+    "CARD.GOLD_AXE",
+    "CARD.GRAND_FINALE",
+    "CARD.GRAVEBLAST",
+    "CARD.GRAVE_WARDEN",
+    "CARD.GREED",
+    "CARD.GUARDS",
+    "CARD.GUIDING_STAR",
+    "CARD.GUILTY",
+    "CARD.GUNK_UP",
+    "CARD.HAILSTORM",
+    "CARD.HAMMER_TIME",
+    "CARD.HAND_OF_GREED",
+    "CARD.HAND_TRICK",
+    "CARD.HANG",
+    "CARD.HAUNT",
+    "CARD.HAVOC",
+    "CARD.HAZE",
+    "CARD.HEADBUTT",
+    "CARD.HEAVENLY_DRILL",
+    "CARD.HEGEMONY",
+    "CARD.HEIRLOOM_HAMMER",
+    "CARD.HELIX_DRILL",
+    "CARD.HELLO_WORLD",
+    "CARD.HELLRAISER",
+    "CARD.HEMOKINESIS",
+    "CARD.HIBERNATE",
+    "CARD.HIDDEN_CACHE",
+    "CARD.HIDDEN_DAGGERS",
+    "CARD.HIDDEN_GEM",
+    "CARD.HIGH_FIVE",
+    "CARD.HOLOGRAM",
+    "CARD.HOTFIX",
+    "CARD.HOWL_FROM_BEYOND",
+    "CARD.HUDDLE_UP",
+    "CARD.HYPERBEAM",
+    "CARD.I_AM_INVINCIBLE",
+    "CARD.ICE_LANCE",
+    "CARD.IGNITION",
+    "CARD.IMITATION_LEARNING",
+    "CARD.IMPATIENCE",
+    "CARD.IMPERVIOUS",
+    "CARD.INFECTION",
+    "CARD.INFERNAL_BLADE",
+    "CARD.INFERNO",
+    "CARD.INFINITE_BLADES",
+    "CARD.INFLAME",
+    "CARD.INJURY",
+    "CARD.INTERCEPT",
+    "CARD.INVOKE",
+    "CARD.IRON_WAVE",
+    "CARD.ITERATION",
+    "CARD.JACK_OF_ALL_TRADES",
+    "CARD.JACKPOT",
+    "CARD.JUGGERNAUT",
+    "CARD.JUGGLING",
+    "CARD.KINGLY_KICK",
+    "CARD.KINGLY_PUNCH",
+    "CARD.KNIFE_TRAP",
+    "CARD.KNOCKDOWN",
+    "CARD.KNOCKOUT_BLOW",
+    "CARD.KNOW_THY_PLACE",
+    "CARD.LANTERN_KEY",
+    "CARD.LARGESSE",
+    "CARD.LEADING_STRIKE",
+    "CARD.LEAP",
+    "CARD.LEGION_OF_BONE",
+    "CARD.LEG_SWEEP",
+    "CARD.LETHALITY",
+    "CARD.LIFT",
+    "CARD.LIGHTNING_ROD",
+    "CARD.LOOP",
+    "CARD.LUMINESCE",
+    "CARD.LUNAR_BLAST",
+    "CARD.MACHINE_LEARNING",
+    "CARD.MAD_SCIENCE",
+    "CARD.MAKE_IT_SO",
+    "CARD.MALAISE",
+    "CARD.MANGLE",
+    "CARD.MANIFEST_AUTHORITY",
+    "CARD.MASTER_OF_STRATEGY",
+    "CARD.MASTER_PLANNER",
+    "CARD.MAUL",
+    "CARD.MAYHEM",
+    "CARD.MELANCHOLY",
+    "CARD.MEMENTO_MORI",
+    "CARD.METAMORPHOSIS",
+    "CARD.METEOR_SHOWER",
+    "CARD.METEOR_STRIKE",
+    "CARD.MIDNIGHT",
+    "CARD.MIMIC",
+    "CARD.MIND_BLAST",
+    "CARD.MIND_ROT",
+    "CARD.MINION_DIVE_BOMB",
+    "CARD.MINION_SACRIFICE",
+    "CARD.MINION_STRIKE",
+    "CARD.MIRAGE",
+    "CARD.MISERY",
+    "CARD.MODDED",
+    "CARD.MOLTEN_FIST",
+    "CARD.MOMENTUM_STRIKE",
+    "CARD.MONARCHS_GAZE",
+    "CARD.MONOLOGUE",
+    "CARD.MULTI_CAST",
+    "CARD.MURDER",
+    "CARD.NECRO_MASTERY",
+    "CARD.NEGATIVE_PULSE",
+    "CARD.NEOWS_FURY",
+    "CARD.NEUROSURGE",
+    "CARD.NEUTRALIZE",
+    "CARD.NEUTRON_AEGIS",
+    "CARD.NIGHTMARE",
+    "CARD.NO_ESCAPE",
+    "CARD.NORMALITY",
+    "CARD.NOSTALGIA",
+    "CARD.NOT_YET",
+    "CARD.NOXIOUS_FUMES",
+    "CARD.NULL",
+    "CARD.OBLIVION",
+    "CARD.OFFERING",
+    "CARD.OMNISLICE",
+    "CARD.ONE_FOR_ALL",
+    "CARD.ONE_TWO_PUNCH",
+    "CARD.ORBIT",
+    "CARD.OUTBREAK",
+    "CARD.OUTMANEUVER",
+    "CARD.OUTRAGE",
+    "CARD.OVERCLOCK",
+    "CARD.PACTS_END",
+    "CARD.PAGESTORM",
+    "CARD.PALE_BLUE_DOT",
+    "CARD.PANACHE",
+    "CARD.PANIC_BUTTON",
+    "CARD.PARRY",
+    "CARD.PARSE",
+    "CARD.PARTICLE_WALL",
+    "CARD.PATTER",
+    "CARD.PECK",
+    "CARD.PERFECTED_STRIKE",
+    "CARD.PHANTOM_BLADES",
+    "CARD.PHOTON_CUT",
+    "CARD.PIERCING_WAIL",
+    "CARD.PILLAGE",
+    "CARD.PILLAR_OF_CREATION",
+    "CARD.PINPOINT",
+    "CARD.PLOT",
+    "CARD.POISONED_STAB",
+    "CARD.POKE",
+    "CARD.POMMEL_STRIKE",
+    "CARD.POOR_SLEEP",
+    "CARD.POUNCE",
+    "CARD.PRECISE_CUT",
+    "CARD.PREDATOR",
+    "CARD.PREPARED",
+    "CARD.PREP_TIME",
+    "CARD.PRIMAL_FORCE",
+    "CARD.PRODUCTION",
+    "CARD.PROLONG",
+    "CARD.PROPHESIZE",
+    "CARD.PROTECTOR",
+    "CARD.PROWESS",
+    "CARD.PULL_AGGRO",
+    "CARD.PULL_FROM_BELOW",
+    "CARD.PURITY",
+    "CARD.PUTREFY",
+    "CARD.PYRE",
+    "CARD.QUADCAST",
+    "CARD.QUASAR",
+    "CARD.RADIATE",
+    "CARD.RAGE",
+    "CARD.RAINBOW",
+    "CARD.RALLY",
+    "CARD.RAMPAGE",
+    "CARD.RATTLE",
+    "CARD.REANIMATE",
+    "CARD.REAP",
+    "CARD.REAPER_FORM",
+    "CARD.REAVE",
+    "CARD.REBOOT",
+    "CARD.REBOUND",
+    "CARD.REFINE_BLADE",
+    "CARD.REFLECT",
+    "CARD.REFLEX",
+    "CARD.REFRACT",
+    "CARD.REGRET",
+    "CARD.RELAX",
+    "CARD.REND",
+    "CARD.RESONANCE",
+    "CARD.RESTLESSNESS",
+    "CARD.RICOCHET",
+    "CARD.RIGHT_HAND_HAND",
+    "CARD.RIP_AND_TEAR",
+    "CARD.ROCKET_PUNCH",
+    "CARD.ROLLING_BOULDER",
+    "CARD.ROYAL_GAMBLE",
+    "CARD.ROYALTIES",
+    "CARD.RUPTURE",
+    "CARD.SACRIFICE",
+    "CARD.SALVO",
+    "CARD.SCAVENGE",
+    "CARD.SCOURGE",
+    "CARD.SCRAPE",
+    "CARD.SCRAWL",
+    "CARD.SCULPTING_STRIKE",
+    "CARD.SEANCE",
+    "CARD.SECOND_WIND",
+    "CARD.SECRET_TECHNIQUE",
+    "CARD.SECRET_WEAPON",
+    "CARD.SEEKER_STRIKE",
+    "CARD.SEEKING_EDGE",
+    "CARD.SENTRY_MODE",
+    "CARD.SERPENT_FORM",
+    "CARD.SETUP_STRIKE",
+    "CARD.SEVEN_STARS",
+    "CARD.SEVERANCE",
+    "CARD.SHADOWMELD",
+    "CARD.SHADOW_SHIELD",
+    "CARD.SHADOW_STEP",
+    "CARD.SHAME",
+    "CARD.SHARED_FATE",
+    "CARD.SHATTER",
+    "CARD.SHINING_STRIKE",
+    "CARD.SHIV",
+    "CARD.SHOCKWAVE",
+    "CARD.SHROUD",
+    "CARD.SHRUG_IT_OFF",
+    "CARD.SIC_EM",
+    "CARD.SIDESTEP",
+    "CARD.SIGNAL_BOOST",
+    "CARD.SKEWER",
+    "CARD.SKIM",
+    "CARD.SLEIGHT_OF_FLESH",
+    "CARD.SLICE",
+    "CARD.SLIMED",
+    "CARD.SLOTH",
+    "CARD.SMOKESTACK",
+    "CARD.SNAKEBITE",
+    "CARD.SNAP",
+    "CARD.SNEAKY",
+    "CARD.SOLAR_STRIKE",
+    "CARD.SOOT",
+    "CARD.SOUL",
+    "CARD.SOULBOUND",
+    "CARD.SOUL_STORM",
+    "CARD.SOVEREIGN_BLADE",
+    "CARD.SOW",
+    "CARD.SPECTRUM_SHIFT",
+    "CARD.SPEEDSTER",
+    "CARD.SPINNER",
+    "CARD.SPIRIT_OF_ASH",
+    "CARD.SPITE",
+    "CARD.SPLASH",
+    "CARD.SPOILS_MAP",
+    "CARD.SPOILS_OF_BATTLE",
+    "CARD.SPORE_MIND",
+    "CARD.SPUR",
+    "CARD.SQUASH",
+    "CARD.SQUEEZE",
+    "CARD.STACK",
+    "CARD.STAMPEDE",
+    "CARD.STARDUST",
+    "CARD.STOKE",
+    "CARD.STOMP",
+    "CARD.STONE_ARMOR",
+    "CARD.STORM",
+    "CARD.STORM_OF_STEEL",
+    "CARD.STRANGLE",
+    "CARD.STRATAGEM",
+    "CARD.STRIKE_DEFECT",
+    "CARD.STRIKE_IRONCLAD",
+    "CARD.STRIKE_NECROBINDER",
+    "CARD.STRIKE_REGENT",
+    "CARD.STRIKE_SILENT",
+    "CARD.SUBROUTINE",
+    "CARD.SUCKER_PUNCH",
+    "CARD.SUMMON_FORTH",
+    "CARD.SUNDER",
+    "CARD.SUPERCRITICAL",
+    "CARD.SUPERMASSIVE",
+    "CARD.SUPPRESS",
+    "CARD.SURVIVOR",
+    "CARD.SWEEPING_BEAM",
+    "CARD.SWEEPING_GAZE",
+    "CARD.SWORD_BOOMERANG",
+    "CARD.SWORD_SAGE",
+    "CARD.SYNCHRONIZE",
+    "CARD.SYNTHESIS",
+    "CARD.TACTICIAN",
+    "CARD.TAG_TEAM",
+    "CARD.TANK",
+    "CARD.TAUNT",
+    "CARD.TEAR_ASUNDER",
+    "CARD.TEMPEST",
+    "CARD.TERRAFORMING",
+    "CARD.TESLA_COIL",
+    "CARD.THE_BALL",
+    "CARD.THE_BOMB",
+    "CARD.THE_GAMBIT",
+    "CARD.THE_HUNT",
+    "CARD.THE_SCYTHE",
+    "CARD.THE_SEALED_THRONE",
+    "CARD.THE_SMITH",
+    "CARD.THINKING_AHEAD",
+    "CARD.THRASH",
+    "CARD.THRUMMING_HATCHET",
+    "CARD.THUNDER",
+    "CARD.THUNDERCLAP",
+    "CARD.TIMES_UP",
+    "CARD.TOOLS_OF_THE_TRADE",
+    "CARD.TORIC_TOUGHNESS",
+    "CARD.TOXIC",
+    "CARD.TRACKING",
+    "CARD.TRANSFIGURE",
+    "CARD.TRASH_TO_TREASURE",
+    "CARD.TREMBLE",
+    "CARD.TRUE_GRIT",
+    "CARD.TURBO",
+    "CARD.TUTOR",
+    "CARD.TWIN_STRIKE",
+    "CARD.TYRANNY",
+    "CARD.ULTIMATE_DEFEND",
+    "CARD.ULTIMATE_STRIKE",
+    "CARD.UNDEATH",
+    "CARD.UNDERWORLD",
+    "CARD.UNLEASH",
+    "CARD.UNMOVABLE",
+    "CARD.UNRELENTING",
+    "CARD.UNTOUCHABLE",
+    "CARD.UP_MY_SLEEVE",
+    "CARD.UPPERCUT",
+    "CARD.UPROAR",
+    "CARD.VEILPIERCER",
+    "CARD.VENERATE",
+    "CARD.VICIOUS",
+    "CARD.VOID",
+    "CARD.VOID_FORM",
+    "CARD.VOLLEY",
+    "CARD.VOLTAIC",
+    "CARD.WASTE_AWAY",
+    "CARD.WELL_LAID_PLANS",
+    "CARD.WHIRLWIND",
+    "CARD.WHISTLE",
+    "CARD.WHITE_NOISE",
+    "CARD.WISH",
+    "CARD.WISP",
+    "CARD.WITHER",
+    "CARD.WOUND",
+    "CARD.WRAITH_FORM",
+    "CARD.WRITHE",
+    "CARD.WROUGHT_IN_WAR",
+    "CARD.ZAP",
+    "RELIC.AKABEKO",
+    "RELIC.ALCHEMICAL_COFFER",
+    "RELIC.AMETHYST_AUBERGINE",
+    "RELIC.ANCHOR",
+    "RELIC.ARCANE_SCROLL",
+    "RELIC.ARCHAIC_TOOTH",
+    "RELIC.ART_OF_WAR",
+    "RELIC.ASTROLABE",
+    "RELIC.BAG_OF_MARBLES",
+    "RELIC.BAG_OF_PREPARATION",
+    "RELIC.BEATING_REMNANT",
+    "RELIC.BEAUTIFUL_BRACELET",
+    "RELIC.BELLOWS",
+    "RELIC.BELT_BUCKLE",
+    "RELIC.BIG_HAT",
+    "RELIC.BIG_MUSHROOM",
+    "RELIC.BIIIG_HUG",
+    "RELIC.BING_BONG",
+    "RELIC.BLACK_BLOOD",
+    "RELIC.BLACK_STAR",
+    "RELIC.BLESSED_ANTLER",
+    "RELIC.BLOOD_SOAKED_ROSE",
+    "RELIC.BLOOD_VIAL",
+    "RELIC.BONE_FLUTE",
+    "RELIC.BONE_TEA",
+    "RELIC.BOOKMARK",
+    "RELIC.BOOK_OF_FIVE_RINGS",
+    "RELIC.BOOK_REPAIR_KNIFE",
+    "RELIC.BOOMING_CONCH",
+    "RELIC.BOUND_PHYLACTERY",
+    "RELIC.BOWLER_HAT",
+    "RELIC.BREAD",
+    "RELIC.BRILLIANT_SCARF",
+    "RELIC.BRIMSTONE",
+    "RELIC.BRONZE_SCALES",
+    "RELIC.BURNING_BLOOD",
+    "RELIC.BURNING_STICKS",
+    "RELIC.BYRDPIP",
+    "RELIC.CALLING_BELL",
+    "RELIC.CANDELABRA",
+    "RELIC.CAPTAINS_WHEEL",
+    "RELIC.CAULDRON",
+    "RELIC.CENTENNIAL_PUZZLE",
+    "RELIC.CHANDELIER",
+    "RELIC.CHARONS_ASHES",
+    "RELIC.CHEMICAL_X",
+    "RELIC.CHOICES_PARADOX",
+    "RELIC.CHOSEN_CHEESE",
+    "RELIC.CIRCLET",
+    "RELIC.CLAWS",
+    "RELIC.CLOAK_CLASP",
+    "RELIC.CRACKED_CORE",
+    "RELIC.CROSSBOW",
+    "RELIC.CURSED_PEARL",
+    "RELIC.DARKSTONE_PERIAPT",
+    "RELIC.DATA_DISK",
+    "RELIC.DAUGHTER_OF_THE_WIND",
+    "RELIC.DELICATE_FROND",
+    "RELIC.DEMON_TONGUE",
+    "RELIC.DEPRECATED_RELIC",
+    "RELIC.DIAMOND_DIADEM",
+    "RELIC.DINGY_RUG",
+    "RELIC.DISTINGUISHED_CAPE",
+    "RELIC.DIVINE_DESTINY",
+    "RELIC.DIVINE_RIGHT",
+    "RELIC.DOLLYS_MIRROR",
+    "RELIC.DOWSING_ROD",
+    "RELIC.DRAGON_FRUIT",
+    "RELIC.DREAM_CATCHER",
+    "RELIC.DRIFTWOOD",
+    "RELIC.DUSTY_TOME",
+    "RELIC.ECTOPLASM",
+    "RELIC.ELECTRIC_SHRYMP",
+    "RELIC.EMBER_TEA",
+    "RELIC.EMOTION_CHIP",
+    "RELIC.EMPTY_CAGE",
+    "RELIC.ETERNAL_FEATHER",
+    "RELIC.FAKE_ANCHOR",
+    "RELIC.FAKE_BLOOD_VIAL",
+    "RELIC.FAKE_HAPPY_FLOWER",
+    "RELIC.FAKE_LEES_WAFFLE",
+    "RELIC.FAKE_MANGO",
+    "RELIC.FAKE_MERCHANTS_RUG",
+    "RELIC.FAKE_ORICHALCUM",
+    "RELIC.FAKE_SNECKO_EYE",
+    "RELIC.FAKE_STRIKE_DUMMY",
+    "RELIC.FAKE_VENERABLE_TEA_SET",
+    "RELIC.FENCING_MANUAL",
+    "RELIC.FESTIVE_POPPER",
+    "RELIC.FIDDLE",
+    "RELIC.FISHING_ROD",
+    "RELIC.FORGOTTEN_SOUL",
+    "RELIC.FRAGRANT_MUSHROOM",
+    "RELIC.FRESNEL_LENS",
+    "RELIC.FROZEN_EGG",
+    "RELIC.FUNERARY_MASK",
+    "RELIC.FUR_COAT",
+    "RELIC.GALACTIC_DUST",
+    "RELIC.GAMBLING_CHIP",
+    "RELIC.GAME_PIECE",
+    "RELIC.GHOST_SEED",
+    "RELIC.GIRYA",
+    "RELIC.GLASS_EYE",
+    "RELIC.GLITTER",
+    "RELIC.GNARLED_HAMMER",
+    "RELIC.GOLDEN_COMPASS",
+    "RELIC.GOLDEN_PEARL",
+    "RELIC.GOLD_PLATED_CABLES",
+    "RELIC.GORGET",
+    "RELIC.GREMLIN_HORN",
+    "RELIC.HAND_DRILL",
+    "RELIC.HAPPY_FLOWER",
+    "RELIC.HEFTY_TABLET",
+    "RELIC.HELICAL_DART",
+    "RELIC.HISTORY_COURSE",
+    "RELIC.HORN_CLEAT",
+    "RELIC.ICE_CREAM",
+    "RELIC.INFUSED_CORE",
+    "RELIC.INTIMIDATING_HELMET",
+    "RELIC.IRON_CLUB",
+    "RELIC.IVORY_TILE",
+    "RELIC.JEWELED_MASK",
+    "RELIC.JEWELRY_BOX",
+    "RELIC.JOSS_PAPER",
+    "RELIC.JUZU_BRACELET",
+    "RELIC.KALEIDOSCOPE",
+    "RELIC.KIFUDA",
+    "RELIC.KUNAI",
+    "RELIC.KUSARIGAMA",
+    "RELIC.LANTERN",
+    "RELIC.LARGE_CAPSULE",
+    "RELIC.LASTING_CANDY",
+    "RELIC.LAVA_LAMP",
+    "RELIC.LAVA_ROCK",
+    "RELIC.LEAD_PAPERWEIGHT",
+    "RELIC.LEAFY_POULTICE",
+    "RELIC.LEES_WAFFLE",
+    "RELIC.LETTER_OPENER",
+    "RELIC.LIZARD_TAIL",
+    "RELIC.LOOMING_FRUIT",
+    "RELIC.LORDS_PARASOL",
+    "RELIC.LOST_COFFER",
+    "RELIC.LOST_WISP",
+    "RELIC.LUCKY_FYSH",
+    "RELIC.LUNAR_PASTRY",
+    "RELIC.MANGO",
+    "RELIC.MASSIVE_SCROLL",
+    "RELIC.MAW_BANK",
+    "RELIC.MEAL_TICKET",
+    "RELIC.MEAT_CLEAVER",
+    "RELIC.MEAT_ON_THE_BONE",
+    "RELIC.MEMBERSHIP_CARD",
+    "RELIC.MERCURY_HOURGLASS",
+    "RELIC.METRONOME",
+    "RELIC.MINIATURE_CANNON",
+    "RELIC.MINIATURE_TENT",
+    "RELIC.MINI_REGENT",
+    "RELIC.MOLTEN_EGG",
+    "RELIC.MR_STRUGGLES",
+    "RELIC.MUMMIFIED_HAND",
+    "RELIC.MUSIC_BOX",
+    "RELIC.MYSTIC_LIGHTER",
+    "RELIC.NEOWS_BONES",
+    "RELIC.NEOWS_SACRIFICE",
+    "RELIC.NEOWS_TALISMAN",
+    "RELIC.NEOWS_TORMENT",
+    "RELIC.NEW_LEAF",
+    "RELIC.NINJA_SCROLL",
+    "RELIC.NUNCHAKU",
+    "RELIC.NUTRITIOUS_OYSTER",
+    "RELIC.NUTRITIOUS_SOUP",
+    "RELIC.ODDLY_SMOOTH_STONE",
+    "RELIC.OLD_COIN",
+    "RELIC.ORANGE_DOUGH",
+    "RELIC.ORICHALCUM",
+    "RELIC.ORNAMENTAL_FAN",
+    "RELIC.ORRERY",
+    "RELIC.PAELS_BLOOD",
+    "RELIC.PAELS_CLAW",
+    "RELIC.PAELS_EYE",
+    "RELIC.PAELS_FLESH",
+    "RELIC.PAELS_GROWTH",
+    "RELIC.PAELS_HORN",
+    "RELIC.PAELS_LEGION",
+    "RELIC.PAELS_TEARS",
+    "RELIC.PAELS_TOOTH",
+    "RELIC.PAELS_WING",
+    "RELIC.PANDORAS_BOX",
+    "RELIC.PANTOGRAPH",
+    "RELIC.PAPER_KRANE",
+    "RELIC.PAPER_PHROG",
+    "RELIC.PARRYING_SHIELD",
+    "RELIC.PEAR",
+    "RELIC.PENDULUM",
+    "RELIC.PEN_NIB",
+    "RELIC.PERMAFROST",
+    "RELIC.PETRIFIED_TOAD",
+    "RELIC.PHIAL_HOLSTER",
+    "RELIC.PHILOSOPHERS_STONE",
+    "RELIC.PHYLACTERY_UNBOUND",
+    "RELIC.PLANISPHERE",
+    "RELIC.POCKETWATCH",
+    "RELIC.POLLINOUS_CORE",
+    "RELIC.POMANDER",
+    "RELIC.POTION_BELT",
+    "RELIC.POWER_CELL",
+    "RELIC.PRAYER_WHEEL",
+    "RELIC.PRECARIOUS_SHEARS",
+    "RELIC.PRECISE_SCISSORS",
+    "RELIC.PRESERVED_FOG",
+    "RELIC.PRISMATIC_GEM",
+    "RELIC.PUMPKIN_CANDLE",
+    "RELIC.PUNCH_DAGGER",
+    "RELIC.RADIANT_PEARL",
+    "RELIC.RAINBOW_RING",
+    "RELIC.RAZOR_TOOTH",
+    "RELIC.RED_MASK",
+    "RELIC.RED_SKULL",
+    "RELIC.REGALITE",
+    "RELIC.REGAL_PILLOW",
+    "RELIC.REPTILE_TRINKET",
+    "RELIC.RINGING_TRIANGLE",
+    "RELIC.RING_OF_THE_DRAKE",
+    "RELIC.RING_OF_THE_SNAKE",
+    "RELIC.RIPPLE_BASIN",
+    "RELIC.ROYAL_POISON",
+    "RELIC.ROYAL_STAMP",
+    "RELIC.RUINED_HELMET",
+    "RELIC.RUNIC_CAPACITOR",
+    "RELIC.RUNIC_PYRAMID",
+    "RELIC.SAI",
+    "RELIC.SAND_CASTLE",
+    "RELIC.SCREAMING_FLAGON",
+    "RELIC.SCROLL_BOXES",
+    "RELIC.SEA_GLASS",
+    "RELIC.SEAL_OF_GOLD",
+    "RELIC.SELF_FORMING_CLAY",
+    "RELIC.SERE_TALON",
+    "RELIC.SHOVEL",
+    "RELIC.SHURIKEN",
+    "RELIC.SIGNET_RING",
+    "RELIC.SILKEN_TRESS",
+    "RELIC.SILVER_CRUCIBLE",
+    "RELIC.SLING_OF_COURAGE",
+    "RELIC.SMALL_CAPSULE",
+    "RELIC.SNECKO_EYE",
+    "RELIC.SNECKO_SKULL",
+    "RELIC.SOZU",
+    "RELIC.SPARKLING_ROUGE",
+    "RELIC.SPIKED_GAUNTLETS",
+    "RELIC.STONE_CALENDAR",
+    "RELIC.STONE_CRACKER",
+    "RELIC.STONE_HUMIDIFIER",
+    "RELIC.STORYBOOK",
+    "RELIC.STRAWBERRY",
+    "RELIC.STRIKE_DUMMY",
+    "RELIC.STURDY_CLAMP",
+    "RELIC.SWORD_OF_JADE",
+    "RELIC.SWORD_OF_STONE",
+    "RELIC.SYMBIOTIC_VIRUS",
+    "RELIC.TANXS_WHISTLE",
+    "RELIC.TEA_OF_DISCOURTESY",
+    "RELIC.THE_ABACUS",
+    "RELIC.THE_BOOT",
+    "RELIC.THE_COURIER",
+    "RELIC.THROWING_AXE",
+    "RELIC.TINGSHA",
+    "RELIC.TINY_MAILBOX",
+    "RELIC.TOASTY_MITTENS",
+    "RELIC.TOOLBOX",
+    "RELIC.TOUCH_OF_OROBAS",
+    "RELIC.TOUGH_BANDAGES",
+    "RELIC.TOXIC_EGG",
+    "RELIC.TOY_BOX",
+    "RELIC.TRI_BOOMERANG",
+    "RELIC.TUNGSTEN_ROD",
+    "RELIC.TUNING_FORK",
+    "RELIC.TWISTED_FUNNEL",
+    "RELIC.UNCEASING_TOP",
+    "RELIC.UNDYING_SIGIL",
+    "RELIC.UNSETTLING_LAMP",
+    "RELIC.VAJRA",
+    "RELIC.VAKUU_CARD_SELECTOR",
+    "RELIC.VAMBRACE",
+    "RELIC.VELVET_CHOKER",
+    "RELIC.VENERABLE_TEA_SET",
+    "RELIC.VERY_HOT_COCOA",
+    "RELIC.VEXING_PUZZLEBOX",
+    "RELIC.VITRUVIAN_MINION",
+    "RELIC.WAR_HAMMER",
+    "RELIC.WAR_PAINT",
+    "RELIC.WHETSTONE",
+    "RELIC.WHISPERING_EARRING",
+    "RELIC.WHITE_BEAST_STATUE",
+    "RELIC.WHITE_STAR",
+    "RELIC.WING_CHARM",
+    "RELIC.WINGED_BOOTS",
+    "RELIC.WONGO_CUSTOMER_APPRECIATION_BADGE",
+    "RELIC.WONGOS_MYSTERY_TICKET",
+    "RELIC.YUMMY_COOKIE",
+    "ENCOUNTER.AEONGLASS_BOSS",
+    "ENCOUNTER.AXEBOTS_NORMAL",
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_ENCOUNTER",
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+    "ENCOUNTER.BOWLBUGS_NORMAL",
+    "ENCOUNTER.BOWLBUGS_WEAK",
+    "ENCOUNTER.BYGONE_EFFIGY_ELITE",
+    "ENCOUNTER.BYRDONIS_ELITE",
+    "ENCOUNTER.CEREMONIAL_BEAST_BOSS",
+    "ENCOUNTER.CHOMPERS_NORMAL",
+    "ENCOUNTER.CONSTRUCT_MENAGERIE_NORMAL",
+    "ENCOUNTER.CORPSE_SLUGS_NORMAL",
+    "ENCOUNTER.CORPSE_SLUGS_WEAK",
+    "ENCOUNTER.CUBEX_CONSTRUCT_NORMAL",
+    "ENCOUNTER.CULTISTS_NORMAL",
+    "ENCOUNTER.DECIMILLIPEDE_ELITE",
+    "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
+    "ENCOUNTER.DEPRECATED_ENCOUNTER",
+    "ENCOUNTER.DEVOTED_SCULPTOR_WEAK",
+    "ENCOUNTER.ENTOMANCER_ELITE",
+    "ENCOUNTER.EXOSKELETONS_NORMAL",
+    "ENCOUNTER.EXOSKELETONS_WEAK",
+    "ENCOUNTER.FABRICATOR_NORMAL",
+    "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER",
+    "ENCOUNTER.FLYCONID_NORMAL",
+    "ENCOUNTER.FOGMOG_NORMAL",
+    "ENCOUNTER.FOSSIL_STALKER_NORMAL",
+    "ENCOUNTER.FROG_KNIGHT_NORMAL",
+    "ENCOUNTER.FUZZY_WURM_CRAWLER_WEAK",
+    "ENCOUNTER.GLOBE_HEAD_NORMAL",
+    "ENCOUNTER.GREMLIN_MERC_NORMAL",
+    "ENCOUNTER.HAUNTED_SHIP_NORMAL",
+    "ENCOUNTER.HUNTER_KILLER_NORMAL",
+    "ENCOUNTER.INFESTED_PRISMS_ELITE",
+    "ENCOUNTER.INKLETS_NORMAL",
+    "ENCOUNTER.KAISER_CRAB_BOSS",
+    "ENCOUNTER.KNIGHTS_ELITE",
+    "ENCOUNTER.KNOWLEDGE_DEMON_BOSS",
+    "ENCOUNTER.LAGAVULIN_MATRIARCH_BOSS",
+    "ENCOUNTER.LIVING_FOG_NORMAL",
+    "ENCOUNTER.LOUSE_PROGENITOR_NORMAL",
+    "ENCOUNTER.MAWLER_NORMAL",
+    "ENCOUNTER.MECHA_KNIGHT_ELITE",
+    "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+    "ENCOUNTER.MYTES_NORMAL",
+    "ENCOUNTER.NIBBITS_NORMAL",
+    "ENCOUNTER.NIBBITS_WEAK",
+    "ENCOUNTER.OVERGROWTH_CRAWLERS",
+    "ENCOUNTER.OVICOPTER_NORMAL",
+    "ENCOUNTER.OWL_MAGISTRATE_NORMAL",
+    "ENCOUNTER.PHANTASMAL_GARDENERS_ELITE",
+    "ENCOUNTER.PHROG_PARASITE_ELITE",
+    "ENCOUNTER.PUNCH_CONSTRUCT_NORMAL",
+    "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
+    "ENCOUNTER.QUEEN_BOSS",
+    "ENCOUNTER.RUBY_RAIDERS_NORMAL",
+    "ENCOUNTER.SCROLLS_OF_BITING_NORMAL",
+    "ENCOUNTER.SCROLLS_OF_BITING_WEAK",
+    "ENCOUNTER.SEAPUNK_NORMAL",
+    "ENCOUNTER.SEAPUNK_WEAK",
+    "ENCOUNTER.SEWER_CLAM_NORMAL",
+    "ENCOUNTER.SHRINKER_BEETLE_WEAK",
+    "ENCOUNTER.SKULKING_COLONY_ELITE",
+    "ENCOUNTER.SLIMED_BERSERKER_NORMAL",
+    "ENCOUNTER.SLIMES_NORMAL",
+    "ENCOUNTER.SLIMES_WEAK",
+    "ENCOUNTER.SLITHERING_STRANGLER_NORMAL",
+    "ENCOUNTER.SLUDGE_SPINNER_WEAK",
+    "ENCOUNTER.SLUMBERING_BEETLE_NORMAL",
+    "ENCOUNTER.SNAPPING_JAXFRUIT_NORMAL",
+    "ENCOUNTER.SOUL_FYSH_BOSS",
+    "ENCOUNTER.SOUL_NEXUS_ELITE",
+    "ENCOUNTER.SPINY_TOAD_NORMAL",
+    "ENCOUNTER.TERROR_EEL_ELITE",
+    "ENCOUNTER.TEST_SUBJECT_BOSS",
+    "ENCOUNTER.THE_ARCHITECT_EVENT_ENCOUNTER",
+    "ENCOUNTER.THE_INSATIABLE_BOSS",
+    "ENCOUNTER.THE_KIN_BOSS",
+    "ENCOUNTER.THE_LOST_AND_FORGOTTEN_NORMAL",
+    "ENCOUNTER.THE_OBSCURA_NORMAL",
+    "ENCOUNTER.THIEVING_HOPPER_WEAK",
+    "ENCOUNTER.TOADPOLES_WEAK",
+    "ENCOUNTER.TUNNELER_NORMAL",
+    "ENCOUNTER.TUNNELER_WEAK",
+    "ENCOUNTER.TURRET_OPERATOR_WEAK",
+    "ENCOUNTER.TWO_TAILED_RATS_NORMAL",
+    "ENCOUNTER.VANTOM_BOSS",
+    "ENCOUNTER.VINE_SHAMBLER_NORMAL",
+    "ENCOUNTER.WATERFALL_GIANT_BOSS",
+    "ACT.DEPRECATED_ACT",
+    "ACT.GLORY",
+    "ACT.HIVE",
+    "ACT.OVERGROWTH",
+    "ACT.UNDERDOCKS",
+    "EVENT.ABYSSAL_BATHS",
+    "EVENT.AMALGAMATOR",
+    "EVENT.AROMA_OF_CHAOS",
+    "EVENT.BATTLEWORN_DUMMY",
+    "EVENT.BRAIN_LEECH",
+    "EVENT.BUGSLAYER",
+    "EVENT.BYRDONIS_NEST",
+    "EVENT.COLORFUL_PHILOSOPHERS",
+    "EVENT.COLOSSAL_FLOWER",
+    "EVENT.CRYSTAL_SPHERE",
+    "EVENT.DARV",
+    "EVENT.DENSE_VEGETATION",
+    "EVENT.DEPRECATED_ANCIENT_EVENT",
+    "EVENT.DEPRECATED_EVENT",
+    "EVENT.DOLL_ROOM",
+    "EVENT.DOORS_OF_LIGHT_AND_DARK",
+    "EVENT.DROWNING_BEACON",
+    "EVENT.ENDLESS_CONVEYOR",
+    "EVENT.FAKE_MERCHANT",
+    "EVENT.FIELD_OF_MAN_SIZED_HOLES",
+    "EVENT.GRAVE_OF_THE_FORGOTTEN",
+    "EVENT.HUNGRY_FOR_MUSHROOMS",
+    "EVENT.INFESTED_AUTOMATON",
+    "EVENT.JUNGLE_MAZE_ADVENTURE",
+    "EVENT.LOST_WISP",
+    "EVENT.LUMINOUS_CHOIR",
+    "EVENT.MORPHIC_GROVE",
+    "EVENT.NEOW",
+    "EVENT.NONUPEIPE",
+    "EVENT.OROBAS",
+    "EVENT.PAEL",
+    "EVENT.POTION_COURIER",
+    "EVENT.PUNCH_OFF",
+    "EVENT.RANWID_THE_ELDER",
+    "EVENT.REFLECTIONS",
+    "EVENT.RELIC_TRADER",
+    "EVENT.ROOM_FULL_OF_CHEESE",
+    "EVENT.ROUND_TEA_PARTY",
+    "EVENT.SAPPHIRE_SEED",
+    "EVENT.SELF_HELP_BOOK",
+    "EVENT.SLIPPERY_BRIDGE",
+    "EVENT.SPIRALING_WHIRLPOOL",
+    "EVENT.SPIRIT_GRAFTER",
+    "EVENT.STONE_OF_ALL_TIME",
+    "EVENT.SUNKEN_STATUE",
+    "EVENT.SUNKEN_TREASURY",
+    "EVENT.SYMBIOTE",
+    "EVENT.TABLET_OF_TRUTH",
+    "EVENT.TANX",
+    "EVENT.TEA_MASTER",
+    "EVENT.TEZCATARA",
+    "EVENT.THE_ARCHITECT",
+    "EVENT.THE_FUTURE_OF_POTIONS",
+    "EVENT.THE_LANTERN_KEY",
+    "EVENT.THE_LEGENDS_WERE_TRUE",
+    "EVENT.THIS_OR_THAT",
+    "EVENT.TINKER_TIME",
+    "EVENT.TRASH_HEAP",
+    "EVENT.TRIAL",
+    "EVENT.UNREST_SITE",
+    "EVENT.VAKUU",
+    "EVENT.WAR_HISTORIAN_REPY",
+    "EVENT.WATERLOGGED_SCRIPTORIUM",
+    "EVENT.WELCOME_TO_WONGOS",
+    "EVENT.WELLSPRING",
+    "EVENT.WHISPERING_HOLLOW",
+    "EVENT.WOOD_CARVINGS",
+    "EVENT.ZEN_WEAVER",
+    "POTION.AMBERGRIS",
+    "POTION.ASHWATER",
+    "POTION.ATTACK_POTION",
+    "POTION.BEETLE_JUICE",
+    "POTION.BLESSING_OF_THE_FORGE",
+    "POTION.BLOCK_POTION",
+    "POTION.BLOOD_POTION",
+    "POTION.BONE_BREW",
+    "POTION.BOTTLED_POTENTIAL",
+    "POTION.CLARITY",
+    "POTION.COLORLESS_POTION",
+    "POTION.COSMIC_CONCOCTION",
+    "POTION.CUNNING_POTION",
+    "POTION.CURE_ALL",
+    "POTION.DEPRECATED_POTION",
+    "POTION.DEXTERITY_POTION",
+    "POTION.DISTILLED_CHAOS",
+    "POTION.DROPLET_OF_PRECOGNITION",
+    "POTION.DUPLICATOR",
+    "POTION.ENERGY_POTION",
+    "POTION.ENTROPIC_BREW",
+    "POTION.ESSENCE_OF_DARKNESS",
+    "POTION.EXPLOSIVE_AMPOULE",
+    "POTION.FAIRY_IN_A_BOTTLE",
+    "POTION.FIRE_POTION",
+    "POTION.FLEX_POTION",
+    "POTION.FOCUS_POTION",
+    "POTION.FORTIFIER",
+    "POTION.FOUL_POTION",
+    "POTION.FRUIT_JUICE",
+    "POTION.FYSH_OIL",
+    "POTION.GAMBLERS_BREW",
+    "POTION.GHOST_IN_A_JAR",
+    "POTION.GIGANTIFICATION_POTION",
+    "POTION.GLOWWATER_POTION",
+    "POTION.HEART_OF_IRON",
+    "POTION.KINGS_COURAGE",
+    "POTION.LIQUID_BRONZE",
+    "POTION.LIQUID_MEMORIES",
+    "POTION.LUCKY_TONIC",
+    "POTION.MAZALETHS_GIFT",
+    "POTION.OROBIC_ACID",
+    "POTION.POISON_POTION",
+    "POTION.POTION_OF_BINDING",
+    "POTION.POTION_OF_CAPACITY",
+    "POTION.POTION_OF_DOOM",
+    "POTION.POTION_SHAPED_ROCK",
+    "POTION.POT_OF_GHOULS",
+    "POTION.POWDERED_DEMISE",
+    "POTION.POWER_POTION",
+    "POTION.RADIANT_TINCTURE",
+    "POTION.REGEN_POTION",
+    "POTION.SHACKLING_POTION",
+    "POTION.SHIP_IN_A_BOTTLE",
+    "POTION.SKILL_POTION",
+    "POTION.SNECKO_OIL",
+    "POTION.SOLDIERS_STEW",
+    "POTION.SPEED_POTION",
+    "POTION.STABLE_SERUM",
+    "POTION.STAR_POTION",
+    "POTION.STRENGTH_POTION",
+    "POTION.SWIFT_POTION",
+    "POTION.TOUCH_OF_INSANITY",
+    "POTION.VULNERABLE_POTION",
+    "POTION.WEAK_POTION",
+    "MONSTER.AEONGLASS",
+    "MONSTER.ARCHITECT",
+    "MONSTER.ASSASSIN_RUBY_RAIDER",
+    "MONSTER.AXEBOT",
+    "MONSTER.AXE_RUBY_RAIDER",
+    "MONSTER.BATTLE_FRIEND_V1",
+    "MONSTER.BATTLE_FRIEND_V2",
+    "MONSTER.BATTLE_FRIEND_V3",
+    "MONSTER.BIG_DUMMY",
+    "MONSTER.BOWLBUG_EGG",
+    "MONSTER.BOWLBUG_NECTAR",
+    "MONSTER.BOWLBUG_ROCK",
+    "MONSTER.BOWLBUG_SILK",
+    "MONSTER.BRUTE_RUBY_RAIDER",
+    "MONSTER.BYGONE_EFFIGY",
+    "MONSTER.BYRDONIS",
+    "MONSTER.BYRDPIP",
+    "MONSTER.CALCIFIED_CULTIST",
+    "MONSTER.CEREMONIAL_BEAST",
+    "MONSTER.CHOMPER",
+    "MONSTER.CORPSE_SLUG",
+    "MONSTER.CROSSBOW_RUBY_RAIDER",
+    "MONSTER.CRUSHER",
+    "MONSTER.CUBEX_CONSTRUCT",
+    "MONSTER.DAMP_CULTIST",
+    "MONSTER.DECIMILLIPEDE_SEGMENT",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+    "MONSTER.DEPRECATED_MONSTER",
+    "MONSTER.DEVOTED_SCULPTOR",
+    "MONSTER.ENTOMANCER",
+    "MONSTER.EXOSKELETON",
+    "MONSTER.EYE_WITH_TEETH",
+    "MONSTER.FABRICATOR",
+    "MONSTER.FAKE_MERCHANT_MONSTER",
+    "MONSTER.FAT_GREMLIN",
+    "MONSTER.FLAIL_KNIGHT",
+    "MONSTER.FLYCONID",
+    "MONSTER.FOGMOG",
+    "MONSTER.FOSSIL_STALKER",
+    "MONSTER.FROG_KNIGHT",
+    "MONSTER.FUZZY_WURM_CRAWLER",
+    "MONSTER.GAS_BOMB",
+    "MONSTER.GLOBE_HEAD",
+    "MONSTER.GREMLIN_MERC",
+    "MONSTER.GUARDBOT",
+    "MONSTER.HAUNTED_SHIP",
+    "MONSTER.HUNTER_KILLER",
+    "MONSTER.INFESTED_PRISM",
+    "MONSTER.INKLET",
+    "MONSTER.KIN_FOLLOWER",
+    "MONSTER.KIN_PRIEST",
+    "MONSTER.KNOWLEDGE_DEMON",
+    "MONSTER.LAGAVULIN_MATRIARCH",
+    "MONSTER.LEAF_SLIME_M",
+    "MONSTER.LEAF_SLIME_S",
+    "MONSTER.LIVING_FOG",
+    "MONSTER.LIVING_SHIELD",
+    "MONSTER.LOUSE_PROGENITOR",
+    "MONSTER.MAGI_KNIGHT",
+    "MONSTER.MAWLER",
+    "MONSTER.MECHA_KNIGHT",
+    "MONSTER.MULTI_ATTACK_MOVE_MONSTER",
+    "MONSTER.MYSTERIOUS_KNIGHT",
+    "MONSTER.MYTE",
+    "MONSTER.NIBBIT",
+    "MONSTER.NOISEBOT",
+    "MONSTER.ONE_HP_MONSTER",
+    "MONSTER.OSTY",
+    "MONSTER.OVICOPTER",
+    "MONSTER.OWL_MAGISTRATE",
+    "MONSTER.PAELS_LEGION",
+    "MONSTER.PARAFRIGHT",
+    "MONSTER.PHANTASMAL_GARDENER",
+    "MONSTER.PHROG_PARASITE",
+    "MONSTER.PUNCH_CONSTRUCT",
+    "MONSTER.QUEEN",
+    "MONSTER.ROCKET",
+    "MONSTER.SCROLL_OF_BITING",
+    "MONSTER.SEAPUNK",
+    "MONSTER.SEWER_CLAM",
+    "MONSTER.SHRINKER_BEETLE",
+    "MONSTER.SINGLE_ATTACK_MOVE_MONSTER",
+    "MONSTER.SKULKING_COLONY",
+    "MONSTER.SLIMED_BERSERKER",
+    "MONSTER.SLITHERING_STRANGLER",
+    "MONSTER.SLUDGE_SPINNER",
+    "MONSTER.SLUMBERING_BEETLE",
+    "MONSTER.SNAPPING_JAXFRUIT",
+    "MONSTER.SNEAKY_GREMLIN",
+    "MONSTER.SOUL_FYSH",
+    "MONSTER.SOUL_NEXUS",
+    "MONSTER.SPECTRAL_KNIGHT",
+    "MONSTER.SPINY_TOAD",
+    "MONSTER.STABBOT",
+    "MONSTER.TEN_HP_MONSTER",
+    "MONSTER.TERROR_EEL",
+    "MONSTER.TEST_SUBJECT",
+    "MONSTER.THE_ADVERSARY_MK_ONE",
+    "MONSTER.THE_ADVERSARY_MK_THREE",
+    "MONSTER.THE_ADVERSARY_MK_TWO",
+    "MONSTER.THE_FORGOTTEN",
+    "MONSTER.THE_INSATIABLE",
+    "MONSTER.THE_LOST",
+    "MONSTER.THE_OBSCURA",
+    "MONSTER.THIEVING_HOPPER",
+    "MONSTER.TOADPOLE",
+    "MONSTER.TORCH_HEAD_AMALGAM",
+    "MONSTER.TOUGH_EGG",
+    "MONSTER.TRACKER_RUBY_RAIDER",
+    "MONSTER.TUNNELER",
+    "MONSTER.TURRET_OPERATOR",
+    "MONSTER.TWIG_SLIME_M",
+    "MONSTER.TWIG_SLIME_S",
+    "MONSTER.TWO_TAILED_RAT",
+    "MONSTER.VANTOM",
+    "MONSTER.VINE_SHAMBLER",
+    "MONSTER.WATERFALL_GIANT",
+    "MONSTER.WRIGGLER",
+    "MONSTER.ZAPBOT",
+    "ENCHANTMENT.ADROIT",
+    "ENCHANTMENT.CLONE",
+    "ENCHANTMENT.CORRUPTED",
+    "ENCHANTMENT.DEPRECATED_ENCHANTMENT",
+    "ENCHANTMENT.GLAM",
+    "ENCHANTMENT.GOOPY",
+    "ENCHANTMENT.IMBUED",
+    "ENCHANTMENT.INKY",
+    "ENCHANTMENT.INSTINCT",
+    "ENCHANTMENT.MOMENTUM",
+    "ENCHANTMENT.NIMBLE",
+    "ENCHANTMENT.PERFECT_FIT",
+    "ENCHANTMENT.ROYALLY_APPROVED",
+    "ENCHANTMENT.SHARP",
+    "ENCHANTMENT.SLITHER",
+    "ENCHANTMENT.SLUMBERING_ESSENCE",
+    "ENCHANTMENT.SOULS_POWER",
+    "ENCHANTMENT.SOWN",
+    "ENCHANTMENT.SPIRAL",
+    "ENCHANTMENT.STEADY",
+    "ENCHANTMENT.SWIFT",
+    "ENCHANTMENT.TEZCATARAS_EMBER",
+    "ENCHANTMENT.VIGOROUS",
+    "CHARACTER.DEFECT",
+    "CHARACTER.DEPRECATED_CHARACTER",
+    "CHARACTER.DEPRIVED",
+    "CHARACTER.IRONCLAD",
+    "CHARACTER.NECROBINDER",
+    "CHARACTER.RANDOM_CHARACTER",
+    "CHARACTER.REGENT",
+    "CHARACTER.SILENT"
+  ]
+}

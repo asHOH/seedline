@@ -70,7 +70,7 @@ This deviation applies implicitly wherever its definition holds.
 
 Standalone StS2 v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
 
-Compare single-player runs, including [Dread](#dread), with matching seeds, versions and rules, and all content unlocked.
+Compare single-player runs, including Dread, with matching seeds, versions and rules, and all content unlocked.
 
 Grant full content within new runs using this mod, preserving profile unlocks and Ascension limits.
 
@@ -773,7 +773,7 @@ An offer is **Rare-eligible** if at least one slot has positive Rare probability
 
 This excludes the first two three-card normal-rule offers after an offset reset without elite intervention. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; additional Rares beyond the single pending one are omitted. **Frequency:** rare — about **0.2%** of [sampled A7+ runs reaching Act 3's first boss](outputs/run-history/README.md#current-result).
+**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; additional Rares beyond the single pending one are omitted. **Frequency:** rare — about **0.2%**.
 
 ##### A0–6: Rare delivery
 

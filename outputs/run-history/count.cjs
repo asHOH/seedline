@@ -8,27 +8,11 @@ const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 const ROOT = path.resolve(__dirname, '../..');
 const VERSION = 'v0.111.0';
-const slug = s => s.replace(/(?<=[A-Za-z0-9])(?=[A-Z])/g, '_').toUpperCase();
+const reference = require('./reference-v0.111.0.json');
+assert.equal(reference.version, VERSION);
 
-function catalog(root = ROOT) {
-  const cards = {};
-  const dir = path.join(root, 'sts2-decompiled/MegaCrit.Sts2.Core.Models.Cards');
-  for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.cs'))) {
-    const text = fs.readFileSync(path.join(dir, file), 'utf8');
-    const m = text.match(/: base\([^\n]*CardType\.(\w+), CardRarity\.(\w+)/);
-    if (m) cards['CARD.' + slug(file.slice(0, -3))] = {type: m[1], rarity: m[2], pools: [],
-      multiplayerOnly: /MultiplayerConstraint\s*=>\s*CardMultiplayerConstraint\.MultiplayerOnly/.test(text)};
-  }
-  const pools = path.join(root, 'sts2-decompiled/MegaCrit.Sts2.Core.Models.CardPools');
-  for (const file of fs.readdirSync(pools).filter(f => f.endsWith('CardPool.cs'))) {
-    const text = fs.readFileSync(path.join(pools, file), 'utf8').split('protected override CardModel[] GenerateAllCards()')[1]?.split('public override')[0] || '';
-    for (const m of text.matchAll(/ModelDb.Card<(\w+)>/g)) {
-      const card = cards['CARD.' + slug(m[1])], pool = file.replace('CardPool.cs', '').toUpperCase();
-      if (card && !card.pools.includes(pool)) card.pools.push(pool);
-    }
-  }
-  assert(Object.keys(cards).length > 500, 'Incomplete local card catalog');
-  return cards;
+function catalog() {
+  return structuredClone(reference.cards);
 }
 
 function cohortReason(r) {
@@ -43,15 +27,7 @@ function cohortReason(r) {
 }
 
 function knownModels() {
-  const ids = new Set();
-  for (const [category, folder] of [['CARD', 'Cards'], ['RELIC', 'Relics'], ['ENCOUNTER', 'Encounters'],
-    ['ACT', 'Acts'], ['EVENT', 'Events'], ['POTION', 'Potions'], ['MONSTER', 'Monsters'],
-    ['ENCHANTMENT', 'Enchantments'], ['CHARACTER', 'Characters']]) {
-    for (const f of fs.readdirSync(path.join(ROOT, 'sts2-decompiled/MegaCrit.Sts2.Core.Models.' + folder))) {
-      if (f.endsWith('.cs')) ids.add(category + '.' + slug(f.slice(0, -3)));
-    }
-  }
-  return ids;
+  return new Set(reference.models);
 }
 
 function contentReason(line, known) {
