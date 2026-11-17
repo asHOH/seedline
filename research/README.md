@@ -22,7 +22,6 @@ Run commands from the repository root.
 | [Chain](event-overlap/within-act-chain.mjs) | Retained, refreshed and hybrid condition priorities across three acts, carrying policy-generated visits. |
 | [Within-act](event-overlap/within-act-sequences.mjs) | Priority persistence, exact small-case distributions, shared chain helpers. |
 | [Insertion](event-overlap/insertion-coupling.mjs) | Sorted random insertion priorities: uniformity versus weighted merging. |
-| [Early overlap](event-overlap/early-overlap.mjs) | Prefix agreement and overlap: sorted/position priorities, weighted merging, biased fixed spacing. |
 | [Wrapping](event-overlap/wrap-comparison.mjs) | Exact exposure differences after count refill and wrapping. |
 
 ```powershell
