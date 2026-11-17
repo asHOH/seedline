@@ -2,7 +2,7 @@
 
 Standard-path checkpoints combine vanilla, SameSeed and optional RitsuLib state.
 
-The initializer verifies the [supported builds](../README.md)' assembly hashes before installing Harmony patches. Run entry rejects Catfood, multiplayer, daily, Blitz and custom runs.
+The initializer verifies the [supported build](../README.md)'s assembly hash before installing Harmony patches. Run entry rejects Catfood, multiplayer, daily, Blitz and custom runs.
 
 New runs receive the game's full unlock snapshot before initialization. Grants stay in the run; profile unlocks, Ascension limits and selected difficulty are preserved. Standard and Dread Start buttons list missing content with Proceed focused and Cancel available. Act selection also uses full unlocks. New-run compatibility checks remain at setup, after the UI fades out.
 
@@ -40,7 +40,7 @@ The game store writes locally before uploading; failed uploads retain the local 
 
 The [validation command](../README.md#build-and-validate) exercises standard-path discovery, profile isolation, deletion, completed-run cleanup, paired backup recovery, rejected ordinary saves, snapshot isolation, disk failure and simulated cloud operations. Combined runs add [RitsuLib checks](ritsulib.md); both configurations exercise the foundation and replay checks. Each run writes `result.json` and `game.log` under `.cache/stage1-checks/<run>/` or `.cache/ritsu-checks/<run>/`.
 
-Validation: [build compatibility review](../references/v0.113.1-review.md).
+Validation: [build compatibility review](../references/v0.113.1-ai-review.md).
 
 Live Steam synchronization and normal-UI disable/re-enable remain unverified; second-device checks are outside the available setup.
 

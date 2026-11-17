@@ -1,8 +1,8 @@
 # RitsuLib compatibility
 
-The bridge supports official RitsuLib **v0.6.14** on both [supported game builds](../README.md), with current-schema run/player `RunSavedData` slots. Model-attached data, slot migrations and custom pile behavior remain outside this compatibility claim. SameSeed owns its RNG and state independently.
+The bridge supports official RitsuLib **v0.6.14** on the [supported game build](../README.md), with current-schema run/player `RunSavedData` slots. Model-attached data, slot migrations and custom pile behavior remain outside this compatibility claim. SameSeed owns its RNG and state independently.
 
-v0.6.14 replaces the v0.6.13 target. The [source comparison](https://github.com/BAKAOLC/STS2-RitsuLib/compare/v0.6.13...v0.6.14) changes multiplayer action serialization and debug-card controls. Existing SameSeed schema 3 checkpoints from v0.6.13 remain compatible.
+RitsuLib's `compat/0.113.0` directory supplies the runtime used on StS2 v0.113.1; preserve the complete package. SameSeed requires schema 6 checkpoints.
 
 Use [STS2.RitsuLib.0.6.14.github.zip](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip), then run:
 

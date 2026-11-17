@@ -68,7 +68,7 @@ This deviation applies implicitly wherever its definition holds.
 
 ## Scope
 
-Standalone StS2 v0.113.0–v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
+Standalone StS2 v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
 
 Compare single-player runs, including [Dread](#dread), with matching seeds, versions and rules, and all content unlocked.
 
@@ -1381,7 +1381,7 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
 
-[Event workbook](references/StS2_Events.xlsx): v0.113.0 vanilla offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
+[Event workbook](references/StS2_Events.xlsx): v0.113.1 vanilla offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
 
 ### Rarity calibration
 

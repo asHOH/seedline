@@ -7,8 +7,8 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $game = (Resolve-Path -LiteralPath $GameDir).Path
 $assemblyHash = (Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash
-if ($assemblyHash -notin @('A6CC282C52B96AD2E01D5692B1144B33AA8E3BA4E969582F648ECB13B2F751D7', '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3')) {
-    throw 'Checks require v0.113.0 build 16ac0fe3 or v0.113.1 build d09d48e5.'
+if ($assemblyHash -ne '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3') {
+    throw 'Checks require v0.113.1 build d09d48e5.'
 }
 $suite = if ($RitsuLibDir) { 'ritsu' } else { 'stage1' }
 $hostDir = Join-Path $repo ".cache/$suite-host"
@@ -53,9 +53,10 @@ foreach ($name in 'SameSeed', 'SameSeed.Checks') {
 if ($RitsuLibDir) {
     $ritsuPackage = (Resolve-Path -LiteralPath $RitsuLibDir).Path
     $manifest = Get-Content -LiteralPath (Join-Path $ritsuPackage 'mod_manifest.json') -Raw | ConvertFrom-Json
+    # RitsuLib v0.6.14 names its v0.113.1-compatible runtime directory 0.113.0.
     if ($manifest.id -ne 'STS2-RitsuLib' -or $manifest.version -ne '0.6.14' -or
         !(Test-Path -LiteralPath (Join-Path $ritsuPackage 'compat/0.113.0/STS2-RitsuLib.dll'))) {
-        throw 'Checks require the official RitsuLib v0.6.14 package with its StS2 v0.113.0 runtime.'
+        throw 'Checks require the complete official RitsuLib v0.6.14 package, including compat/0.113.0.'
     }
     $ritsuTarget = Join-Path $hostDir 'mods/STS2-RitsuLib'
     New-Item -ItemType Directory -Path $ritsuTarget -Force | Out-Null

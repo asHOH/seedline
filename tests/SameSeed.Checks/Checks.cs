@@ -192,7 +192,7 @@ public static partial class Checks
             root => root["same_seed"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = -1 },
             root => root["same_seed"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = "1" },
             root => root["same_seed"]!["game_build"] = "another build",
-            root => root["same_seed"]!["game_build"] = ModEntry.GameBuild == "v0.113.0/16ac0fe3" ? "v0.113.1/d09d48e5" : "v0.113.0/16ac0fe3",
+            root => root["same_seed"]!["game_build"] = "v0.113.0/16ac0fe3",
             root => root["same_seed"]!["run_id"] = Guid.Empty.ToString(),
             root => root["same_seed"]!["seed"] = "another seed",
             root => root["schema_version"] = schema + 1,

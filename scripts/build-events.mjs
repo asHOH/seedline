@@ -8,10 +8,10 @@ const { FileBlob, SpreadsheetFile }=await import(pathToFileURL(runtimeRequire.re
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = `${root}/outputs/event-workbook`;
-const sourceRoot = `${root}/.cache/sts2-v0.113.0/decompiled`;
+const sourceRoot = `${root}/.cache/sts2-v0.113.1/decompiled`;
 const sourceDir = `${sourceRoot}/MegaCrit.Sts2.Core.Models.Events`;
 const workbookPath = `${root}/references/StS2_Events.xlsx`;
-const sourceCitation = id => `StS2 v0.113.0: MegaCrit.Sts2.Core.Models.Events.${id}`;
+const sourceCitation = id => `StS2 v0.113.1: MegaCrit.Sts2.Core.Models.Events.${id}`;
 // Columns: source model, act override, entry conditions, content, deterministic, explanation.
 const data = [
  ['AbyssalBaths','Act 1 — Underdocks','None.','Immerse: +2 max HP, then 3 damage; repeat with damage increasing by 1 each time, or exit. Abstain: heal 10.',true,'Fixed choices and repeat-cost rule.'],
@@ -149,12 +149,12 @@ function updateSheet(name, items) {
  return s;
 }
 const events=updateSheet('Events',rows);
-events.getRange('A1').values=[['StS2 event reference • v0.113.0']];
+events.getRange('A1').values=[['StS2 event reference • v0.113.1']];
 events.getRange('A2').values=[['61 ordinary events and forced War Historian Repy. is_deterministic = TRUE means fixed event offers across seeds at equivalent player state and decision stage.']];
 events.getRange('A4').values=[['Entry conditions: solo, ordinary runs, permanent unlocks satisfied. Byrdonis’ Nest and Wuppy in Trouble assume no earlier event pet.']];
-events.getRange('A6').values=[['Sources: StS2 v0.113.0 event models, ModelDb and act pools. Offer classification is independent of EventModel.IsDeterministic.']];
+events.getRange('A6').values=[['Sources: StS2 v0.113.1 event models, ModelDb and act pools. Offer classification is independent of EventModel.IsDeterministic.']];
 const ancients=updateSheet('Ancients',ancientRows);
-ancients.getRange('A5').values=[['Source context: StS2 v0.113.0. Catfood v1.1.2 can change Neow / Nonupeipe pools when Mass Audition is enabled.']];
+ancients.getRange('A5').values=[['Source context: StS2 v0.113.1. Catfood v1.1.2 can change Neow / Nonupeipe pools when Mass Audition is enabled.']];
 ancients.getRange('A6').values=[['Content is an event-level summary. The cited event model classes define the complete gift pools.']];
 assert.equal(ancientRows.length,8);
 assert.equal(rows.filter(row=>row[7]!=='WarHistorianRepy').length,61);

@@ -28,7 +28,7 @@ Permanent-card supplies reuse `RewardState`; room and dish positions reuse `Rand
 
 Automated checks cover clock correction/renewal, equivalent-copy routing, cancellation, persistent-selection sources and checkpoint isolation/replay. Non-combat checks add transformation batch reversal and source hooks, direct-addition filters and addresses, room intervals/forced events, event carryover/wrapping/fallback, condition-weighted sampling, Ancient menus, potion types, Trader overlap and Conveyor consumption. Patch installation checks source interception counts.
 
-2026-11-16, v0.113.1: formatting and analyzer build passed, with 58 unit tests, 351 standalone engine checks and 405 checks with RitsuLib v0.6.14 in each initialization order. Two independent agent reviews identified sequential transformation batches in Morphic Grove/Trial and Ranwid's empty-relic fallback; both fixes passed source-level regressions and reviewer follow-up. The v0.113.0 API build passed; runtime acceptance remains pending.
+2026-11-16, v0.113.1: formatting and analyzer build passed, with 58 unit tests, 351 standalone engine checks and 405 checks with RitsuLib v0.6.14 in each initialization order. Two independent agent reviews identified sequential transformation batches in Morphic Grove/Trial and Ranwid's empty-relic fallback; both fixes passed source-level regressions and reviewer follow-up. Interactive acceptance remains pending.
 
 ## Gameplay checks
 

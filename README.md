@@ -1,6 +1,6 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.0/16ac0fe3** and **v0.113.1/d09d48e5**. Stages 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. Stage 5 adds permanent-card supplies and selection, deck routing, room resolution and event policies. [Stage 6](docs/stage-6.md) adds combat randomness, enemy behavior, card routing and potion effects.
+Windows mod for Slay the Spire 2 **v0.113.1/d09d48e5**. Stages 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. Stage 5 adds permanent-card supplies and selection, deck routing, room resolution and event policies. [Stage 6](docs/stage-6.md) adds combat randomness, enemy behavior, card routing and potion effects.
 
 Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md), [reward supplies and card occurrences](docs/stage-4.md).
 
@@ -20,10 +20,10 @@ The package at `artifacts/SameSeed/` contains only `SameSeed.dll` and `SameSeed.
 
 ## Event workbook
 
-The [workbook](references/StS2_Events.xlsx) records v0.113.0. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`). From the repository root:
+The [workbook](references/StS2_Events.xlsx) records v0.113.1. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`). From the repository root:
 
 ```powershell
-ilspycmd -p -o .cache/sts2-v0.113.0/decompiled '<v0.113.0 game>/data_sts2_windows_x86_64/sts2.dll'
+ilspycmd -p -o .cache/sts2-v0.113.1/decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dll'
 & '<Codex bundled Node executable>' scripts/build-events.mjs
 ```
 
