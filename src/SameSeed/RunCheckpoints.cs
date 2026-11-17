@@ -40,20 +40,20 @@ internal static class RunCheckpoints
         ModEntry.CheckOtherMods();
         var state = Require(save);
         if (run.Rng.StringSeed != state.Seed)
-            throw new InvalidDataException("SameSeed checkpoint belongs to another run.");
+            throw new InvalidDataException("Seedline checkpoint belongs to another run.");
         RitsuBridge.ValidateRestored(run, state.Ritsu);
         runs.Add(run, state.Copy());
     }
 
     internal static CheckpointState Require(RunState run) => runs.TryGetValue(run, out var state)
-        ? state : throw new InvalidOperationException("SameSeed state is missing from this run.");
+        ? state : throw new InvalidOperationException("Seedline state is missing from this run.");
 
     internal static CheckpointState? Find(RunState run) => runs.TryGetValue(run, out var state) ? state : null;
 
     internal static CheckpointState Require(SerializableRun save)
     {
         if (!snapshots.TryGetValue(save, out var state))
-            throw new InvalidDataException("SameSeed state is missing. Start a new run with the mod enabled.");
+            throw new InvalidDataException("Seedline state is missing. Start a new run with the mod enabled.");
         Validate(save, state);
         return state;
     }
@@ -99,24 +99,24 @@ internal static class RunCheckpoints
             !state.TryGetProperty("game_build", out var build) || build.GetString() != ModEntry.GameBuild ||
             !state.TryGetProperty("run_id", out var id) || !id.TryGetGuid(out var runId) || runId == Guid.Empty ||
             !state.TryGetProperty("seed", out var seed) || seed.ValueKind != JsonValueKind.String)
-            throw new InvalidDataException("Missing or incompatible SameSeed checkpoint metadata. Save preserved.");
+            throw new InvalidDataException("Missing or incompatible Seedline checkpoint metadata. Save preserved.");
 
         SerializableRun save;
         try
         {
             save = root.Deserialize(JsonSerializationUtility.GetTypeInfo<SerializableRun>())
-                ?? throw new InvalidDataException("SameSeed checkpoint has no run.");
+                ?? throw new InvalidDataException("Seedline checkpoint has no run.");
         }
         catch (JsonException error)
         {
-            throw new InvalidDataException("SameSeed checkpoint contains invalid run data. Save preserved.", error);
+            throw new InvalidDataException("Seedline checkpoint contains invalid run data. Save preserved.", error);
         }
         if (save.SchemaVersion != gameSchema)
             throw new InvalidDataException("Unsupported vanilla checkpoint schema. Save preserved.");
         if (!state.TryGetProperty("random_positions", out var positions) || !state.TryGetProperty("rewards", out var rewards) ||
             !state.TryGetProperty("selection", out var selection) || !state.TryGetProperty("events", out var events) ||
             !state.TryGetProperty("card_history", out var cards))
-            throw new InvalidDataException("Missing SameSeed random, reward or selection state. Save preserved.");
+            throw new InvalidDataException("Missing Seedline random, reward or selection state. Save preserved.");
         var random = RandomState.Read(seed.GetString()!, positions);
         var restored = new CheckpointState(runId, seed.GetString()!, random, RitsuBridge.Read(root, save))
         {
@@ -138,7 +138,7 @@ internal static class RunCheckpoints
             save.SerializableSharedRelicGrabBag == null || save.ExtraFields == null ||
             save.Players.Any(player => player == null) || save.Acts.Any(act => act == null) ||
             save.CurrentActIndex < 0 || save.CurrentActIndex >= save.Acts.Count)
-            throw new InvalidDataException("SameSeed checkpoint is incomplete or belongs to another run.");
+            throw new InvalidDataException("Seedline checkpoint is incomplete or belongs to another run.");
         CheckScope(save.GameMode, save.IsCustomGame, save.Players.Count, save.Modifiers.Count);
         CardOccurrences.Validate(save);
     }
@@ -146,6 +146,6 @@ internal static class RunCheckpoints
     private static void CheckScope(GameMode mode, bool custom, int players, int modifiers)
     {
         if (players != 1 || custom || modifiers != 0 || mode is not (GameMode.Standard or GameMode.Dread))
-            throw new InvalidDataException("SameSeed supports standard and Dread single-player runs without custom modifiers.");
+            throw new InvalidDataException("Seedline supports standard and Dread single-player runs without custom modifiers.");
     }
 }

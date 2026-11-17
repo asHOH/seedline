@@ -39,7 +39,7 @@ internal static class RelicRewards
         {
             var count = pool.Count(r => r.Rarity == rarity);
             if (AllocationCounts(rarity, count).Sum() != count)
-                throw new InvalidOperationException($"SameSeed content compatibility error: {character.Title.GetFormattedText()} has an unexpected {rarity} relic pool.");
+                throw new InvalidOperationException($"Seedline content compatibility error: {character.Title.GetFormattedText()} has an unexpected {rarity} relic pool.");
         }
     }
 
@@ -54,7 +54,7 @@ internal static class RelicRewards
             Shuffle(pool, state.Seed, RandomAddress.For("relic allocation", rarity.ToString()));
             var counts = AllocationCounts(rarity, pool.Length);
             if (counts.Sum() != pool.Length)
-                throw new InvalidOperationException($"SameSeed requires the fully unlocked {rarity} relic pool.");
+                throw new InvalidOperationException($"Seedline requires the fully unlocked {rarity} relic pool.");
             var start = 0;
             for (var source = 0; source < sources.Length; source++)
             {

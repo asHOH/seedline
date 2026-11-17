@@ -1,6 +1,6 @@
 {
   "Title": "Bu denemede tüm içerik açık",
-  "Body": "SameSeed, aynı tohuma sahip denemelerin karşılaştırılabilmesi için tamamen açılmış içeriği kullanır.\n\nProfilindeki içerik açma ilerlemesi aynı kalır.\n\nKullanılabilir ek içerik:\n\n{0}",
+  "Body": "Seedline, aynı tohuma sahip denemelerin karşılaştırılabilmesi için tamamen açılmış içeriği kullanır.\n\nProfilindeki içerik açma ilerlemesi aynı kalır.\n\nKullanılabilir ek içerik:\n\n{0}",
   "Group": "{0}: {1}{2}",
   "More": " (+{0} tane daha)",
   "ListSeparator": ", ",

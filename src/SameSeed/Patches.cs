@@ -14,7 +14,7 @@ internal static class SavePatch
         IProfileIdProvider ____profileIdProvider, bool ____forceSynchronous, Action? ___Saved, ref Task __result)
     {
         if (isMultiplayer)
-            throw new InvalidOperationException("SameSeed requires single-player.");
+            throw new InvalidOperationException("Seedline requires single-player.");
         var path = RunSaveManager.GetRunSavePath(____profileIdProvider.CurrentProfileId, RunSaveManager.runSaveFileName);
         __result = CheckpointStore.Write(____saveStore, path, save, ____forceSynchronous, ___Saved);
         return false;
@@ -84,5 +84,5 @@ internal static class MultiplayerPatch
         AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer))
     ];
 
-    private static void Prefix() => throw new InvalidOperationException("Disable SameSeed to play multiplayer.");
+    private static void Prefix() => throw new InvalidOperationException("Disable Seedline to play multiplayer.");
 }

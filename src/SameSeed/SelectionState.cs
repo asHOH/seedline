@@ -76,7 +76,7 @@ internal sealed class SelectionState
         }
         catch (Exception error) when (error is JsonException or ArgumentException)
         {
-            throw new InvalidDataException("Invalid SameSeed selection state. Save preserved.", error);
+            throw new InvalidDataException("Invalid Seedline selection state. Save preserved.", error);
         }
     }
 }

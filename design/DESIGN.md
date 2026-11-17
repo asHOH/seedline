@@ -1,4 +1,4 @@
-# Same-Seed Consistency Mod — design
+# Seedline — design
 
 **Reading guide:**
 

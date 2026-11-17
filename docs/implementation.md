@@ -10,7 +10,7 @@
 
 ## Checkpoint contract
 
-Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla, SameSeed (schema 6) and required RitsuLib payloads at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities; ordinary cloud writes exclude `.backup`. Single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.
+Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla, Seedline (schema 6) and required RitsuLib payloads at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities; ordinary cloud writes exclude `.backup`. Single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.
 
 Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Preserve parent-event reconstruction.
 
@@ -18,4 +18,4 @@ Load all payloads from the same primary or backup. Recover from a complete backu
 
 **RitsuLib scope:** official v0.6.14, current-schema run/player `RunSavedData` slots. Excludes model-attached data, slot migrations, custom pile behavior and compatibility with other mods.
 
-RitsuLib envelope presence must match activation, including empty envelopes. Write captured bytes before its injection context; reattach the selected payload after its primary reread. Validate live slot values before setup because retained JSON can conceal failed imports. SameSeed RNG behavior and state format are unchanged by RitsuLib.
+RitsuLib envelope presence must match activation, including empty envelopes. Write captured bytes before its injection context; reattach the selected payload after its primary reread. Validate live slot values before setup because retained JSON can conceal failed imports. Seedline RNG behavior and state format are unchanged by RitsuLib.

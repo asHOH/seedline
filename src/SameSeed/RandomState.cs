@@ -55,14 +55,14 @@ internal sealed class RandomState(string seed)
     internal static RandomState Read(string seed, JsonElement element)
     {
         if (element.ValueKind != JsonValueKind.Object)
-            throw new InvalidDataException("SameSeed random positions are missing or invalid.");
+            throw new InvalidDataException("Seedline random positions are missing or invalid.");
         var state = new RandomState(seed);
         foreach (var property in element.EnumerateObject())
         {
             var address = RandomAddress.Parse(property.Name);
             if (property.Value.ValueKind != JsonValueKind.Number || !property.Value.TryGetInt64(out var position) ||
                 position < 0 || !state.positions.TryAdd(address.Key, position))
-                throw new InvalidDataException("Invalid or duplicate SameSeed random position.");
+                throw new InvalidDataException("Invalid or duplicate Seedline random position.");
         }
         return state;
     }

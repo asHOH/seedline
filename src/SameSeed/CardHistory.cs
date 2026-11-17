@@ -45,7 +45,7 @@ internal sealed class CardHistory
         }
         catch (Exception error) when (error is JsonException or ArgumentException)
         {
-            throw new InvalidDataException("Invalid SameSeed card history. Save preserved.", error);
+            throw new InvalidDataException("Invalid Seedline card history. Save preserved.", error);
         }
     }
 

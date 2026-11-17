@@ -23,7 +23,7 @@ internal static class RitsuBridge
             return false;
         if (framework?.Assembly.GetName().Version != new Version(0, 6, 14, 0) ||
             AccessTools.Property(framework, "IsActive").GetValue(null) is not true)
-            throw new InvalidDataException("SameSeed requires active RitsuLib v0.6.14 when installed.");
+            throw new InvalidDataException("Seedline requires active RitsuLib v0.6.14 when installed.");
         return true;
     }
 
@@ -60,7 +60,7 @@ internal static class RitsuBridge
     {
         if (payload == null)
             return;
-        // RitsuLib's load postfix rereads the primary even when SameSeed selected its backup.
+        // RitsuLib's load postfix rereads the primary even when Seedline selected its backup.
         var json = new JsonObject { ["_ritsulib"] = payload.DeepClone() }.ToJsonString();
         Call("RunData.RunSavedDataRegistry", "AttachDocumentFromJson", save, json);
         var attached = Call("RunData.RunSavedDataRegistry", "BuildPayloadFromSerializable", save) as string;

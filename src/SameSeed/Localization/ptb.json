@@ -1,6 +1,6 @@
 {
   "Title": "Todo o conteúdo nesta partida",
-  "Body": "SameSeed usa todo o conteúdo desbloqueado para manter comparáveis as partidas com a mesma semente.\n\nOs desbloqueios do seu perfil permanecem inalterados.\n\nConteúdo adicional disponível:\n\n{0}",
+  "Body": "Seedline usa todo o conteúdo desbloqueado para manter comparáveis as partidas com a mesma semente.\n\nOs desbloqueios do seu perfil permanecem inalterados.\n\nConteúdo adicional disponível:\n\n{0}",
   "Group": "{0}: {1}{2}",
   "More": " (mais {0})",
   "ListSeparator": ", ",

@@ -19,13 +19,13 @@ public static class ModEntry
             return;
 
         if (!OperatingSystem.IsWindows())
-            throw new PlatformNotSupportedException("SameSeed requires Windows.");
+            throw new PlatformNotSupportedException("Seedline requires Windows.");
         using (var file = File.OpenRead(typeof(RunManager).Assembly.Location))
         {
             GameBuild = Convert.ToHexString(SHA256.HashData(file)) switch
             {
                 "62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3" => "v0.113.1/d09d48e5",
-                _ => throw new InvalidOperationException("SameSeed requires v0.113.1 build d09d48e5.")
+                _ => throw new InvalidOperationException("Seedline requires v0.113.1 build d09d48e5.")
             };
         }
 
@@ -37,7 +37,7 @@ public static class ModEntry
                 .OrderByDescending(CombatRouting.IsChoicePatch))
                 harmony.CreateClassProcessor(patch).Patch();
             initialized = true;
-            Log.Info($"{Id}: Reward supplies and checkpoints initialized for {GameBuild}.");
+            Log.Info($"Seedline ({Id}): Reward supplies and checkpoints initialized for {GameBuild}.");
         }
         catch
         {
@@ -51,7 +51,7 @@ public static class ModEntry
         // Check at run entry too: Catfood may initialize after this mod.
         if (ModManager.Mods.Any(m => m.state == ModLoadState.Loaded &&
             (IsCatfood(m.manifest?.id) || m.assemblies.Any(a => IsCatfood(a.GetName().Name)))))
-            throw new InvalidOperationException("Disable Catfood before starting or continuing a SameSeed run.");
+            throw new InvalidOperationException("Disable Catfood before starting or continuing a Seedline run.");
     }
 
     private static bool IsCatfood(string? name) => name != null &&

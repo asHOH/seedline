@@ -1,6 +1,6 @@
 {
   "Title": "Tout le contenu pour cette partie",
-  "Body": "SameSeed utilise l’ensemble du contenu déverrouillé pour rendre comparables les parties jouées avec la même graine.\n\nLes déverrouillages de votre profil restent inchangés.\n\nContenu supplémentaire disponible :\n\n{0}",
+  "Body": "Seedline utilise l’ensemble du contenu déverrouillé pour rendre comparables les parties jouées avec la même graine.\n\nLes déverrouillages de votre profil restent inchangés.\n\nContenu supplémentaire disponible :\n\n{0}",
   "Group": "{0} : {1}{2}",
   "More": " (+{0} en plus)",
   "ListSeparator": ", ",

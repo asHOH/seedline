@@ -30,14 +30,14 @@ internal static class CheckpointStore
             var backup = ReadOne(store, path + ".backup", gameSchema);
             if (backup.Success)
             {
-                Log.Warn($"SameSeed: recovered complete checkpoint from {path}.backup.");
+                Log.Warn($"Seedline: recovered complete checkpoint from {path}.backup.");
                 return backup;
             }
             return primary.Status == ReadSaveStatus.FileNotFound ? backup : primary;
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException or SaveException)
         {
-            Log.Error($"SameSeed: checkpoint load rejected; files preserved. {error.Message}");
+            Log.Error($"Seedline: checkpoint load rejected; files preserved. {error.Message}");
             return new ReadSaveResult<SerializableRun>(ReadSaveStatus.ValidationFailed, error.Message);
         }
     }

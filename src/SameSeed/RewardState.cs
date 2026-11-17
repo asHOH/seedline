@@ -55,7 +55,7 @@ internal sealed class RewardState
         }
         catch (Exception error) when (error is JsonException or ArgumentException or NullReferenceException)
         {
-            throw new InvalidDataException("Invalid SameSeed reward state. Save preserved.", error);
+            throw new InvalidDataException("Invalid Seedline reward state. Save preserved.", error);
         }
     }
 

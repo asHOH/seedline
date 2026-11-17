@@ -71,7 +71,7 @@ internal static class RunContent
 
     internal static NGenericPopup Notice(string missing)
     {
-        var popup = NGenericPopup.Create() ?? throw new InvalidOperationException("SameSeed notice could not be created.");
+        var popup = NGenericPopup.Create() ?? throw new InvalidOperationException("Seedline notice could not be created.");
         NModalContainer.Instance!.Add(popup);
         var panel = popup.GetNode<NVerticalPopup>("VerticalPopup");
         panel.SetText(NoticeText.Get("Title"), NoticeText.Get("Body", missing));

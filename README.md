@@ -1,8 +1,8 @@
-# Same-Seed Consistency
+# Seedline
 
 A Slay the Spire 2 mod that keeps same-seed runs comparable across different routes and decisions.
 
-In the base game, unrelated actions can shift later random results. SameSeed aligns corresponding opportunities across rewards, shops, events and combat to reduce that interference. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
+In the base game, unrelated actions can shift later random results. Seedline aligns corresponding opportunities across rewards, shops, events and combat to reduce that interference. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
 
 Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve outcome consistency.
 
@@ -22,7 +22,7 @@ Install the .NET SDK pinned in [global.json](global.json). In PowerShell 7, run 
 
 The command builds and checks the mod, using an isolated game copy for integration checks; allow disk space for that copy. Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. With RitsuLib installed, include the [RitsuLib checks](#ritsulib-compatibility).
 
-The validated package is written to `artifacts/SameSeed/`.
+The validated package is written to `artifacts/SameSeed/`. The internal mod ID and filenames use `SameSeed`.
 
 ## Deploy
 
@@ -32,9 +32,9 @@ Close the game, then deploy the validated package:
 ./scripts/deploy.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-Enable mods through the game's loader and start a new run with SameSeed enabled.
+Enable mods through the game's loader and start a new run with **Seedline / 不歪种神器** enabled.
 
-SameSeed uses fully unlocked content in new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt summarizes the additions for you to accept or cancel.
+Seedline uses fully unlocked content in new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt summarizes the additions for you to accept or cancel.
 
 The notice follows the game's language setting and supports all 17 game languages.
 
@@ -46,7 +46,7 @@ Add `-RitsuLibDir '<extracted RitsuLib package>'` to the build-and-validate comm
 
 ## Saves
 
-Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state.
+Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, Seedline and RitsuLib setup fixed throughout each run: continuing with Seedline disabled can discard its state.
 
 Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. See [cloud verification limits](docs/validation.md#verification-limits).
 
