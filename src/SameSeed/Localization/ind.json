@@ -1,0 +1,13 @@
+{
+  "Title": "Semua konten untuk permainan ini",
+  "Body": "SameSeed menggunakan konten yang sepenuhnya terbuka agar permainan dengan seed yang sama dapat dibandingkan.\n\nProgres pembukaan konten profilmu tetap sama.\n\nKonten tambahan yang tersedia:\n\n{0}",
+  "Group": "{0}: {1}{2}",
+  "More": " (+{0} lainnya)",
+  "ListSeparator": ", ",
+  "ColorlessCards": "Kartu Tanpa Warna",
+  "SharedRelics": "Relik Bersama",
+  "SharedPotions": "Ramuan Bersama",
+  "Acts": "Bab",
+  "Ancients": "Para Leluhur",
+  "Events": "Peristiwa"
+}

@@ -1,0 +1,13 @@
+{
+  "Title": "이번 도전에서 모든 콘텐츠 사용",
+  "Body": "SameSeed는 같은 시드의 도전을 비교할 수 있도록 모든 콘텐츠가 해금된 상태를 사용합니다.\n\n프로필의 해금 진행 상황은 그대로 유지됩니다.\n\n추가로 이용 가능한 콘텐츠:\n\n{0}",
+  "Group": "{0}: {1}{2}",
+  "More": " (외 {0}개)",
+  "ListSeparator": ", ",
+  "ColorlessCards": "무색 카드",
+  "SharedRelics": "공용 유물",
+  "SharedPotions": "공용 포션",
+  "Acts": "막",
+  "Ancients": "고대인",
+  "Events": "이벤트"
+}

@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -149,5 +150,48 @@ public static partial class Checks
         Assert(tutorialResumed && NModalContainer.Instance.OpenModal == null,
             "first-run tutorial callback can resume Start before its own modal closes");
         screen.QueueFree();
+        await CheckNoticeLocalization();
+    }
+
+    private static async Task CheckNoticeLocalization()
+    {
+        var locale = LocManager.Instance;
+        var originalLanguage = locale.Language;
+        var cards = ModelDb.AllCards.OrderBy(c => c, CardOrder.Identity).Select(c => c.Id).ToArray();
+        var partial = new UnlockState(EpochModel.AllEpochIds.Except([EpochModel.GetId<Fool6Epoch>()]), [], 0);
+        using var englishStream = typeof(NoticeText).Assembly.GetManifestResourceStream("SameSeed.Localization.eng.json")!;
+        var english = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(englishStream)!;
+        Assert(NoticeText.GetTemplate("untranslated", "Title") == english["Title"], "an untranslated locale falls back to English");
+        try
+        {
+            foreach (var language in LocManager.Languages.Append("eng"))
+            {
+                using var stream = typeof(NoticeText).Assembly.GetManifestResourceStream($"SameSeed.Localization.{language}.json")!;
+                var translation = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(stream)!;
+                Assert(english.Keys.ToHashSet().SetEquals(translation.Keys) && translation.Values.All(value => !string.IsNullOrEmpty(value)),
+                    $"{language}: packaged translations cover every notice key");
+                locale.SetLanguage(language);
+                var missing = RunContent.Missing(UnlockState.none);
+                var popup = RunContent.Notice(missing);
+                var panel = popup.GetNode<NVerticalPopup>("VerticalPopup");
+                await NGame.Instance!.ToSignal(NGame.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
+                Assert(panel.GetNode<MegaLabel>("Header").Text == translation["Title"] &&
+                    panel.GetNode<MegaRichTextLabel>("Description").Text == string.Format(locale.CultureInfo, translation["Body"], missing) &&
+                    missing.Contains(translation["Ancients"]) &&
+                    new[] { 1, 2, 5, 12 }.All(count => NoticeText.Get("More", count) == string.Format(locale.CultureInfo, translation["More"], count)),
+                    $"{language}: notice title, body, headings and counts follow the selected locale");
+                Assert(RunContent.Missing(partial).Contains(ModelDb.Relic<WhittlingKnife>().Title.GetFormattedText()) &&
+                    RunContent.Missing(UnlockState.all) == "",
+                    $"{language}: content names use game translations and full unlocks still skip the notice");
+                Assert(cards.SequenceEqual(ModelDb.AllCards.OrderBy(c => c, CardOrder.Identity).Select(c => c.Id)),
+                    $"{language}: notice localization preserves gameplay card ordering");
+                NModalContainer.Instance!.Clear();
+            }
+        }
+        finally
+        {
+            NModalContainer.Instance!.Clear();
+            locale.SetLanguage(originalLanguage);
+        }
     }
 }

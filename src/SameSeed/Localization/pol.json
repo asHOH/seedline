@@ -1,0 +1,13 @@
+{
+  "Title": "Pełna zawartość w tej rozgrywce",
+  "Body": "SameSeed korzysta z w pełni odblokowanej zawartości, aby rozgrywki z tym samym ziarnem były porównywalne.\n\nOdblokowania w twoim profilu pozostają bez zmian.\n\nDodatkowa dostępna zawartość:\n\n{0}",
+  "Group": "{0}: {1}{2}",
+  "More": " (jeszcze {0})",
+  "ListSeparator": ", ",
+  "ColorlessCards": "Bezbarwne karty",
+  "SharedRelics": "Wspólne relikty",
+  "SharedPotions": "Wspólne mikstury",
+  "Acts": "Akty",
+  "Ancients": "Pradawni",
+  "Events": "Wydarzenia"
+}

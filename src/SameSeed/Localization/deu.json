@@ -1,0 +1,13 @@
+{
+  "Title": "Alle Inhalte für diesen Durchlauf",
+  "Body": "SameSeed verwendet vollständig freigeschaltete Inhalte, damit Durchläufe mit demselben Seed vergleichbar bleiben.\n\nDie Freischaltungen in deinem Profil bleiben unverändert.\n\nZusätzlich verfügbare Inhalte:\n\n{0}",
+  "Group": "{0}: {1}{2}",
+  "More": " (+{0} weitere)",
+  "ListSeparator": ", ",
+  "ColorlessCards": "Farblose Karten",
+  "SharedRelics": "Klassenübergreifende Relikte",
+  "SharedPotions": "Klassenübergreifende Tränke",
+  "Acts": "Akte",
+  "Ancients": "Uralte",
+  "Events": "Ereignisse"
+}

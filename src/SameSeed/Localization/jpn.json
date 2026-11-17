@@ -1,0 +1,13 @@
+{
+  "Title": "このランでは全コンテンツを使用",
+  "Body": "SameSeedでは全コンテンツを解放し、同じシードのランを比較しやすくします。\n\nプロフィールの解放状況は変わりません。\n\n追加で利用できるコンテンツ：\n\n{0}",
+  "Group": "{0}：{1}{2}",
+  "More": "（ほか{0}件）",
+  "ListSeparator": "、",
+  "ColorlessCards": "無色カード",
+  "SharedRelics": "共通のレリック",
+  "SharedPotions": "共通のポーション",
+  "Acts": "アクト",
+  "Ancients": "古代の存在",
+  "Events": "イベント"
+}

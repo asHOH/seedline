@@ -42,8 +42,8 @@ internal static class RunContent
         {
             var names = items.Distinct().ToArray();
             if (names.Length > 0)
-                groups.Add($"{name}: {string.Join(", ", names.Take(limit))}" +
-                    (names.Length > limit ? $" (+{names.Length - limit} more)" : ""));
+                groups.Add(NoticeText.Get("Group", name, string.Join(NoticeText.Get("ListSeparator"), names.Take(limit)),
+                    names.Length > limit ? NoticeText.Get("More", names.Length - limit) : ""));
         }
         IEnumerable<CardModel> Cards(UnlockState state) => state.CardPools.SelectMany(p =>
             p.GetUnlockedCards(state, CardMultiplayerConstraint.SingleplayerOnly));
@@ -58,12 +58,12 @@ internal static class RunContent
                 cards.Where(c => c.Pool == character.CardPool).Select(c => c.Title)
                     .Concat(relics.Where(r => r.Pool == character.RelicPool).Select(r => r.Title.GetFormattedText()))
                     .Concat(potions.Where(p => p.Pool == character.PotionPool).Select(p => p.Title.GetFormattedText())), 5);
-        Add("Colorless Cards", cards.Where(c => characters.All(character => c.Pool != character.CardPool)).Select(c => c.Title), 5);
-        Add("Shared Relics", relics.Where(r => characters.All(character => r.Pool != character.RelicPool)).Select(r => r.Title.GetFormattedText()), 5);
-        Add("Shared Potions", potions.Where(p => characters.All(character => p.Pool != character.PotionPool)).Select(p => p.Title.GetFormattedText()), 5);
-        Add("Acts", ModelDb.ActsByIndex.SelectMany(a => a).Where(a => !a.IsUnlocked(unlocks)).Select(a => a.Title.GetFormattedText()));
-        Add("Ancients", Ancients(UnlockState.all).Except(Ancients(unlocks)).Select(a => a.Title.GetFormattedText()));
-        Add("Events", (unlocks.IsEpochRevealed<Event1Epoch>() ? [] : Event1Epoch.Events)
+        Add(NoticeText.Get("ColorlessCards"), cards.Where(c => characters.All(character => c.Pool != character.CardPool)).Select(c => c.Title), 5);
+        Add(NoticeText.Get("SharedRelics"), relics.Where(r => characters.All(character => r.Pool != character.RelicPool)).Select(r => r.Title.GetFormattedText()), 5);
+        Add(NoticeText.Get("SharedPotions"), potions.Where(p => characters.All(character => p.Pool != character.PotionPool)).Select(p => p.Title.GetFormattedText()), 5);
+        Add(NoticeText.Get("Acts"), ModelDb.ActsByIndex.SelectMany(a => a).Where(a => !a.IsUnlocked(unlocks)).Select(a => a.Title.GetFormattedText()));
+        Add(NoticeText.Get("Ancients"), Ancients(UnlockState.all).Except(Ancients(unlocks)).Select(a => a.Title.GetFormattedText()));
+        Add(NoticeText.Get("Events"), (unlocks.IsEpochRevealed<Event1Epoch>() ? [] : Event1Epoch.Events)
             .Concat(unlocks.IsEpochRevealed<Event2Epoch>() ? [] : Event2Epoch.Events)
             .Concat(unlocks.IsEpochRevealed<Event3Epoch>() ? [] : Event3Epoch.Events).Select(e => e.Title.GetFormattedText()));
         return string.Join("\n\n", groups);
@@ -74,9 +74,7 @@ internal static class RunContent
         var popup = NGenericPopup.Create() ?? throw new InvalidOperationException("SameSeed notice could not be created.");
         NModalContainer.Instance!.Add(popup);
         var panel = popup.GetNode<NVerticalPopup>("VerticalPopup");
-        panel.SetText("Full content for this run",
-            "SameSeed uses fully unlocked content to keep same-seed runs comparable.\n\n" +
-            "Your profile unlocks stay unchanged.\n\nAdditional content available:\n\n" + missing);
+        panel.SetText(NoticeText.Get("Title"), NoticeText.Get("Body", missing));
         // Keep long missing-content lists readable in the game's existing popup.
         var body = panel.GetNode<MegaRichTextLabel>("Description");
         body.AutoSizeEnabled = false;

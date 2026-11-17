@@ -36,6 +36,8 @@ Enable mods through the game's loader and start a new run with SameSeed enabled.
 
 SameSeed uses fully unlocked content in new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt summarizes the additions for you to accept or cancel.
 
+The notice follows the game's language setting and supports all 17 game languages.
+
 ## RitsuLib compatibility
 
 RitsuLib is optional. Use the official [v0.6.14 package](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip), keeping its `compat/0.113.0` directory, which supplies the runtime for StS2 v0.113.1. See the [supported save-data scope](docs/implementation.md#checkpoint-contract).

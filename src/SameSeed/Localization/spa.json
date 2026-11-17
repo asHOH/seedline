@@ -1,0 +1,13 @@
+{
+  "Title": "Todo el contenido para esta partida",
+  "Body": "SameSeed utiliza todo el contenido desbloqueado para que las partidas con la misma semilla sean comparables.\n\nLos desbloqueos de tu perfil permanecen intactos.\n\nContenido adicional disponible:\n\n{0}",
+  "Group": "{0}: {1}{2}",
+  "More": " (+{0} más)",
+  "ListSeparator": ", ",
+  "ColorlessCards": "Cartas incoloras",
+  "SharedRelics": "Reliquias compartidas",
+  "SharedPotions": "Pociones compartidas",
+  "Acts": "Actos",
+  "Ancients": "Ancestros",
+  "Events": "Eventos"
+}
