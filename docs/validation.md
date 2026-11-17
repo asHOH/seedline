@@ -28,4 +28,8 @@ Stop after both rows pass. An unfinished required check remains unverified.
 
 ## Current evidence
 
-The [automated suite passed on 2026-11-17](../references/v0.113.1-ai-review.md#validation). On 2026-11-16, Ironclad A0/A10 wins with RitsuLib included 11 menu reloads with unchanged rewards/chests. Interactive validation of the completed combat implementation remains pending; use the bounded check above.
+2026-11-17, v0.113.1: formatting/analyzers, 64 unit tests, 917 standalone checks and 971 RitsuLib checks per initialization order passed.
+
+2026-11-16: Ironclad A0/A10 wins with RitsuLib included 11 menu reloads with unchanged rewards/chests. Interactive validation of the completed combat implementation remains pending.
+
+Cloud backup/repair and run-history filtering passed 14 isolated checks. Live Steam synchronization remains unverified; single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.

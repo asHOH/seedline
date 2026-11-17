@@ -1586,6 +1586,8 @@ Jelly Liver's transformation and Spicy Snappy's random upgrade also use event RN
 
 **Shuffling:** opening shuffles start from deck-order clones. Reshuffles first sort combined discard/draw cards by identity and upgrade level (`StableShuffle`). Each shuffle, including empty/singleton lists, seeds a child RNG from one parent `NextUnsignedLong` call, then uses Fisher–Yates and applies modifiers. Candidate count changes leave parent consumption unchanged. Sorting leaves copies tied despite different enchantments, persistent progress or combat state, so input order can affect results.
 
+**Ki Chant:** after shuffling to replenish a short draw pile, restores surviving pre-shuffle cards to the top in their original order.
+
 **Discard order:** affects All for One with limited hand space and the shuffles used by Aggression and Drain Power. Frantic Escape's +1 combat cost per play can leave tied copies with different costs, changing which cost is drawn earlier.
 
 **Random insertion:** for a pile of `n` cards, `CardPileCmd.Add` uses `Shuffle.NextInt(n + 1)` to select a uniform gap. Lifecycle guards run before the roll.
@@ -1642,6 +1644,8 @@ Exactly one kill yields a zero-damage next intent: 50% before seeing the intent;
 #### Random enemy targeting
 
 Direct random effects and automatic enemy targeting share run-wide `CombatTargets`, sampling uniformly among eligible enemies. Singletons advance RNG once; empty sets leave it unchanged. Automatic play and Lightning retain supplied targets; intrinsically random-hit effects roll per hit and allow repeats.
+
+**Memento Mori:** selects the lowest-HP hittable enemy, breaking ties by enumeration order.
 
 ### Relics, shops and chests
 

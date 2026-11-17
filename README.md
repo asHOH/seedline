@@ -53,6 +53,6 @@ SameSeed grants full content within new runs. Profile unlocks and Ascension limi
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state.
 
-Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves; `.backup` stays local. Live Steam synchronization remains unverified.
+Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves; ordinary cloud writes exclude `.backup`. Live Steam synchronization remains unverified.
 
 Checkpoints require schema 6 and their creating game build; incompatible saves remain untouched. Start a new run after incompatible updates.
