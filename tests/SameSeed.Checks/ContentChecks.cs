@@ -131,9 +131,10 @@ public static partial class Checks
         panel = ((Node)NModalContainer.Instance.OpenModal!).GetNode<NVerticalPopup>("VerticalPopup");
         await NGame.Instance.ToSignal(NGame.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
         var description = panel.GetNode<MegaRichTextLabel>("Description");
-        Assert(description.Text.Contains("Cards:") && description.Text.Contains("Ancients:") &&
+        Assert(ModelDb.AllCharacters.All(character => description.Text.Contains(character.Title.GetFormattedText() + ":")) &&
+            description.Text.Contains("Ancients:") &&
             description.GetContentHeight() > description.Size.Y && description.GetVScrollBar().MaxValue > description.GetVScrollBar().Page,
-            "a fresh profile's complete content list overflows into working scrolling");
+            "a fresh profile's character-grouped content summary retains working scrolling");
         panel.YesButton.EmitSignal(NClickableControl.SignalName.Released, panel.YesButton);
         await NGame.Instance.ToSignal(NGame.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
         Assert(contentProceedCount == 1 && NModalContainer.Instance.OpenModal == null &&
