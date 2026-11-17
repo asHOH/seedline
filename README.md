@@ -1,8 +1,8 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.1/d09d48e5**. Stages 1–4 provide standard-path combined checkpoints, optional RitsuLib v0.6.14 compatibility, deterministic random state and aligned gold, relics, chests, potions, shops and card rewards. Stage 5 adds permanent-card supplies and selection, deck routing, room resolution and event policies. [Stage 6](docs/stage-6.md) adds combat randomness, enemy behavior, card routing and potion effects.
+Windows mod for Slay the Spire 2 **v0.113.1/d09d48e5**. Keeps rewards and combat challenges comparable across same-seed runs with different routes and decisions, with combined checkpoints and optional RitsuLib support.
 
-Rules: [design](DESIGN.md). Delivery: [implementation](IMPLEMENTATION.md). Contracts and limits: [checkpoints](docs/stage-1.md), [random state](docs/stage-2.md), [combat gold](docs/stage-3.md), [reward supplies and card occurrences](docs/stage-4.md).
+Rules: [design](DESIGN.md). Architecture and contracts: [implementation](IMPLEMENTATION.md). Validation scope and pass criteria: [validation](docs/validation.md).
 
 ## Build and validate
 
@@ -14,9 +14,17 @@ Install the .NET SDK pinned in [global.json](global.json). Use PowerShell 7:
 
 Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. The command restores dependencies, checks formatting and analyzers, runs xUnit tests, then checks integration in an isolated headless game copy. Allow disk space for that copy. Test evidence stays under `.cache/stage1-checks/`; Steam is disabled for testing.
 
-Add `-RitsuLibDir '<extracted RitsuLib v0.6.14 package>'` to also run the combined checks in both mod initialization orders. [Compatibility scope and evidence](docs/ritsulib.md).
+For combined checks, see [RitsuLib compatibility](#ritsulib-compatibility).
 
 The package at `artifacts/SameSeed/` contains only `SameSeed.dll` and `SameSeed.json`. The game supplies Harmony and its other assemblies.
+
+## RitsuLib compatibility
+
+RitsuLib is optional. The bridge supports official **v0.6.14** with current-schema run/player `RunSavedData` slots. Model-attached data, slot migrations, custom pile behavior and compatibility with other mods remain outside this claim.
+
+Use [STS2.RitsuLib.0.6.14.github.zip](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip). Preserve the complete package: its `compat/0.113.0` directory supplies the runtime used on StS2 v0.113.1.
+
+Add `-RitsuLibDir '<extracted RitsuLib package>'` to the validation command to exercise the production bridge with real RitsuLib in both initialization orders. Results are stored under `.cache/ritsu-checks/<run>/`. See the [checkpoint contract](IMPLEMENTATION.md#checkpoint-contract).
 
 ## Event workbook
 
@@ -41,8 +49,10 @@ Enable mods through the game's loader. Start a new standard or Dread single-play
 
 SameSeed grants full content within new runs. Profile unlocks and Ascension limits stay unchanged. When starting with missing content, review the listed additions and choose Proceed (the default) or Cancel.
 
-Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state. Back up both the checkpoint and its `.backup`.
+## Saves
 
-Start fresh after upgrading to v0.6.0. Schema 6 adds card acquisition and removal history; incompatible saves remain untouched.
+Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, SameSeed and RitsuLib setup fixed throughout each run: continuing with SameSeed disabled can discard its state.
 
-Perform the [stage 6 gameplay checks](docs/stage-6.md#gameplay-checks) alongside the remaining [stage 5](docs/stage-5.md#gameplay-checks) and [stage 4 checks](docs/stage-4.md#gameplay-checks).
+Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves; `.backup` stays local. Live Steam synchronization remains unverified.
+
+Checkpoints require schema 6 and their creating game build; incompatible saves remain untouched. Start a new run after incompatible updates.

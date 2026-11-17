@@ -2,27 +2,22 @@
 
 [DESIGN.md](DESIGN.md) owns gameplay rules; [CARD_ORDER.md](CARD_ORDER.md) owns ranking.
 
-## Architecture
+## State ownership
 
-- C# `net9.0`, pinned .NET 10 SDK, built-in loader and bundled Harmony; prefer prefixes/postfixes.
-- Use local game assemblies, platform JSON and game logging. Package only the mod DLL and manifest; deploy explicitly.
-- Save vanilla and mod state in one versioned checkpoint at the standard modded save path, using game save and cloud facilities. [Checkpoint contract](docs/stage-1.md).
-- Keep RitsuLib optional, with identical SameSeed RNG behavior and state format in both configurations.
-- Support Windows and the scoped game build. Require SameSeed throughout the run; reject Catfood and incompatible state while preserving saves.
+`RunCheckpoints` groups run-owned counters, supplies, selection clocks, event state and removed-card history into frozen snapshots. `CombatStateScope` owns transient combat state rebuilt from checkpoints.
 
-## Delivery order
+`CardOccurrences` binds logical card records to physical objects; `CardOffers` tracks offers and key assignment; `CardHistory` stores frozen removals. Register saved card metadata before property-cache bit widths finalize so checksums and replays preserve it.
 
-For each operation, record its interception point, state owner, commitment point and restoration path.
+## Checkpoint contract
 
-1. **Integration:** standard-path checkpoints and optional RitsuLib v0.6.14 bridge. [Boundaries and verification](docs/stage-1.md).
-2. **Foundation:** complete. Stable addresses, independent randomness and run-owned state, with deterministic-roll, snapshot-isolation and replay checks. [Foundation contract](docs/stage-2.md).
-3. **First playable path:** combat-gold generation, acquisition and reload implemented, including parent-event reconstruction checks. [Coverage and pending gameplay checks](docs/stage-3.md).
-4. **Rewards:** shared supplies, relics/chests, potions, shops and card offers implemented, with permanent-card processing order, occurrence lifetime, keys and checkpoint rebinding. [Coverage and gameplay checks](docs/stage-4.md).
-5. **Non-combat:** persistent selection, deck routing, transformation/direct-addition supplies, room resolution, event selection and event policies implemented. [Coverage and checks](docs/stage-5.md).
-6. **Combat:** policies implemented in verified, reviewed slices: combat/card/enemy addresses, shuffling and routing, random selections and targets, AI, generation, costs, orbs and potion effects. [Coverage and pending gameplay checks](docs/stage-6.md).
+Vanilla, SameSeed and required RitsuLib payloads form one versioned checkpoint at the [standard modded save path](README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities.
+
+Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Restore before room regeneration, retaining vanilla checkpoint timing and parent-event reconstruction.
+
+Load all payloads from the same primary or backup. Only missing/empty primaries or invalid JSON permit recovery from a complete backup. Missing/incompatible required state, invalid run data or changed build/setup reject continuation with files preserved. Required capture/write/restore failures abort, preserving prior checkpoints; emit `Saved` after successful writing.
+
+RitsuLib envelope presence must match activation, including empty envelopes. Write captured bytes before its injection context; reattach the selected payload after its primary reread. Validate live slot values before setup because retained JSON can conceal failed imports. SameSeed RNG behavior and state format stay identical with or without RitsuLib.
 
 ## Validation
 
-Run [one command](README.md#build-and-validate) for formatting, analyzers, xUnit v3 tests and isolated in-engine checks. Require automated and relevant gameplay checks at each stage. Explain failures, their impact and remaining limits in validation reports.
-
-Track coverage against the design's architecture overview. Check matching seeds, changed routes, equivalent-copy choices and reloads against preservation rules and declared deviations. See [verification limits](docs/stage-1.md#cloud-and-verification-limits).
+Follow the [bounded checks and pass criteria](docs/validation.md).
