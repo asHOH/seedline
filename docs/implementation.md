@@ -14,7 +14,9 @@ Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one che
 
 Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Preserve parent-event reconstruction.
 
-Load all payloads from the same primary or backup. Only missing/empty primaries or invalid JSON permit recovery from a complete backup. Missing/incompatible required state, invalid run data or changed build/setup reject continuation with files preserved. Required capture/write/restore failures abort, preserving prior checkpoints; emit `Saved` after successful writing.
+Load all payloads from the same primary or backup. Recover from a complete backup only when the primary file is missing, empty or has malformed JSON syntax. Reject continuation for missing/incompatible required state, invalid run data or changed build/setup, preserving files. Required capture/write/restore failures abort, preserving prior checkpoints; emit `Saved` after successful writing.
+
+**RitsuLib scope:** official v0.6.14, current-schema run/player `RunSavedData` slots. Model-attached data, slot migrations, custom pile behavior and compatibility with other mods remain outside this claim.
 
 RitsuLib envelope presence must match activation, including empty envelopes. Write captured bytes before its injection context; reattach the selected payload after its primary reread. Validate live slot values before setup because retained JSON can conceal failed imports. SameSeed RNG behavior and state format stay identical with or without RitsuLib.
 

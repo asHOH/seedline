@@ -1,53 +1,46 @@
 # Same-Seed Consistency
 
-Windows mod for Slay the Spire 2 **v0.113.1/d09d48e5**. Keeps rewards and combat challenges comparable across same-seed runs with different routes and decisions, with combined checkpoints and optional RitsuLib support.
+A mod for Slay the Spire 2 that makes runs using the same seed easier to compare across different routes and decisions.
 
-Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Supporting guides: [implementation](docs/implementation.md) and [validation](docs/validation.md). Research: [overview](research/README.md).
+In the base game, unrelated actions can shift later random results. SameSeed reduces that interference across rewards, shops, events and combat. For example, initial shop cards use the shop visit number, so the first shop can offer the same cards on different floors when the eligible cards match.
+
+Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve consistency.
+
+Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation and current evidence](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
+
+## Supported setup
+
+Requires **StS2 v0.113.1/d09d48e5** on Windows. Supports standard and Dread single-player runs without custom modifiers. Compare runs with matching seeds, game/mod versions and rules. Disable Catfood.
 
 ## Build and validate
 
-Install the .NET SDK pinned in [global.json](global.json). Use PowerShell 7:
+Install the .NET SDK pinned in [global.json](global.json). In PowerShell 7, run from the repository root, replacing the example game path with your installation:
 
 ```powershell
 ./scripts/verify.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. The command restores dependencies, checks formatting and analyzers, runs xUnit tests, then checks integration in an isolated headless game copy. Allow disk space for that copy. Test evidence stays under `.cache/stage1-checks/`; Steam is disabled for testing.
+The command builds and checks the mod, using an isolated game copy for integration checks; allow disk space for that copy. Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. With RitsuLib installed, include the [RitsuLib checks](#ritsulib-compatibility).
 
-For combined checks, see [RitsuLib compatibility](#ritsulib-compatibility).
-
-The package at `artifacts/SameSeed/` contains only `SameSeed.dll` and `SameSeed.json`. The game supplies Harmony and its other assemblies.
-
-## RitsuLib compatibility
-
-RitsuLib is optional. The bridge supports official **v0.6.14** with current-schema run/player `RunSavedData` slots. Model-attached data, slot migrations, custom pile behavior and compatibility with other mods remain outside this claim.
-
-Use [STS2.RitsuLib.0.6.14.github.zip](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip). Preserve the complete package: its `compat/0.113.0` directory supplies the runtime used on StS2 v0.113.1.
-
-Add `-RitsuLibDir '<extracted RitsuLib package>'` to the validation command to exercise the production bridge with real RitsuLib in both initialization orders. Results are stored under `.cache/ritsu-checks/<run>/`. See the [checkpoint contract](docs/implementation.md#checkpoint-contract).
-
-## Event workbook
-
-The [workbook](references/StS2_Events.xlsx) records v0.113.1. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`). From the repository root:
-
-```powershell
-ilspycmd -p -o sts2-decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dll'
-& '<Codex bundled Node executable>' scripts/build-events.mjs
-```
-
-The [generator](scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `research/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game sources and previews stay local.
+The validated package is written to `artifacts/SameSeed/`.
 
 ## Deploy
 
-Close the game, then explicitly deploy the validated package:
+Close the game, then deploy the validated package:
 
 ```powershell
 ./scripts/deploy.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-Enable mods through the game's loader. Start a new standard or Dread single-player run with SameSeed enabled, and keep it enabled through completion. Disable Catfood. Unsupported builds and run modes are rejected.
+Enable mods through the game's loader and start a new run with SameSeed enabled. Keep it enabled through completion.
 
-SameSeed grants full content within new runs. Profile unlocks and Ascension limits stay unchanged. When starting with missing content, review the listed additions and choose Proceed (the default) or Cancel.
+SameSeed grants full content within new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt lists the additions for you to accept or cancel.
+
+## RitsuLib compatibility
+
+RitsuLib is optional. Use the official [v0.6.14 package](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip), keeping its `compat/0.113.0` directory, which supplies the runtime for StS2 v0.113.1. See the [supported save-data scope](docs/implementation.md#checkpoint-contract).
+
+Add `-RitsuLibDir '<extracted RitsuLib package>'` to the build-and-validate command when using RitsuLib.
 
 ## Saves
 

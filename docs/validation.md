@@ -13,6 +13,14 @@
 
 During fixes, use focused tests. Rare-source combinations belong in deterministic test fixtures. Reuse manual evidence while the tested behavior and setup remain unchanged.
 
+## Automated checks
+
+The [verification command](../README.md#build-and-validate) restores dependencies, checks formatting and analyzers, builds the mod, runs xUnit tests, then checks integration in an isolated headless game copy with Steam disabled. Standalone evidence stays under `.cache/stage1-checks/`.
+
+With `-RitsuLibDir '<extracted RitsuLib package>'`, it also checks the production bridge with real RitsuLib in both initialization orders. Evidence stays under `.cache/ritsu-checks/<run>/`.
+
+The resulting `artifacts/SameSeed/` package contains only `SameSeed.dll` and `SameSeed.json`. The game supplies Harmony and its other assemblies.
+
 ## Manual check
 
 **Budget:** one character, one seed, one mod setup, one normal fight and two reloads.
@@ -24,7 +32,7 @@ Start a fresh run and win the first normal fight. Note the offered cards, gold, 
 | Claim gold and one card, then return to the menu and Continue while still in the reward room. | The same offers return; gold balance and deck return to their pre-claim state. |
 | Claim rewards again, enter the next room, then return to the menu and Continue. | Collected gold and card persist exactly once, and the next room opens normally. |
 
-Stop after both rows pass. An unfinished required check remains unverified.
+Stop after both rows pass.
 
 ## Current evidence
 

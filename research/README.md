@@ -30,6 +30,17 @@ node research/event-overlap/within-act-chain.mjs
 
 Scripts check assertions and write ignored `*-results.json` beside themselves. Simulations use fixed seeds. Historical pools and prescribed state histories isolate algorithm tradeoffs; current gameplay frequencies require representative recorded routes.
 
+### Event workbook
+
+The [workbook](../references/StS2_Events.xlsx) records v0.113.1. Regeneration requires that game build, ILSpyCmd 9.1.0.7988 with its .NET 8 runtime, and Codex's bundled Node runtime (which supplies `@oai/artifact-tool`).
+
+```powershell
+ilspycmd -p -o sts2-decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dll'
+& '<Codex bundled Node executable>' scripts/build-events.mjs
+```
+
+The [generator](../scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `research/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game sources and previews stay local.
+
 ### Multi-Rare offers
 
 Cohort: v0.111.0 standard single-player A7–10 runs reaching the **first Act 3 boss**, including wins, losses and abandons; each counted once. Sources: elites, Orrery, Lost Coffer, Trial's Nondescript Guilty and Brain Leech's Share Knowledge.
