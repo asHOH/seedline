@@ -10,7 +10,7 @@
 
 ## Checkpoint contract
 
-Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla, SameSeed (schema 6) and required RitsuLib payloads at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities; ordinary cloud writes exclude `.backup`.
+Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla, SameSeed (schema 6) and required RitsuLib payloads at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities; ordinary cloud writes exclude `.backup`. Single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.
 
 Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Preserve parent-event reconstruction.
 

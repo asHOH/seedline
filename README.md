@@ -6,7 +6,7 @@ In the base game, unrelated actions can shift later random results. SameSeed red
 
 Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve consistency.
 
-Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation checklist and results](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
+Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation results](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
 
 ## Supported setup
 
