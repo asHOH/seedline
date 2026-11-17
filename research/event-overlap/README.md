@@ -13,7 +13,7 @@ Evidence for the [event-selection policy](../../DESIGN.md#ordinary-event-selecti
 Run a script from the repository root with Node.js, for example:
 
 ```powershell
-node outputs/event-overlap/within-act-chain.mjs
+node research/event-overlap/within-act-chain.mjs
 ```
 
 Each script validates its assertions and writes an ignored `*-results.json` beside it. Simulations use fixed seeds. Historical pools and prescribed state histories isolate algorithm tradeoffs; current gameplay frequencies require representative recorded routes.

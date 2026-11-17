@@ -7,7 +7,7 @@ const runtimeRequire=createRequire(path.resolve(path.dirname(process.execPath),'
 const { FileBlob, SpreadsheetFile }=await import(pathToFileURL(runtimeRequire.resolve('@oai/artifact-tool')).href);
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const out = `${root}/outputs/event-workbook`;
+const out = `${root}/research/event-workbook`;
 const sourceRoot = `${root}/sts2-decompiled`;
 const sourceDir = `${sourceRoot}/MegaCrit.Sts2.Core.Models.Events`;
 const workbookPath = `${root}/references/StS2_Events.xlsx`;

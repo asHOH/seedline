@@ -1,6 +1,6 @@
 # Implementation guide
 
-[DESIGN.md](DESIGN.md) owns gameplay rules; [CARD_ORDER.md](CARD_ORDER.md) owns ranking.
+[DESIGN.md](../DESIGN.md) owns gameplay rules; [CARD_ORDER.md](../CARD_ORDER.md) owns ranking.
 
 ## State ownership
 
@@ -10,7 +10,7 @@
 
 ## Checkpoint contract
 
-Vanilla, SameSeed and required RitsuLib payloads form one versioned checkpoint at the [standard modded save path](README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities.
+Vanilla, SameSeed and required RitsuLib payloads form one versioned checkpoint at the [standard modded save path](../README.md#saves). Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities.
 
 Capture freezes every payload; restoration copies state independently. Reload-count rewrites preserve the loaded snapshot. Restore before room regeneration, retaining vanilla checkpoint timing and parent-event reconstruction.
 
@@ -20,4 +20,4 @@ RitsuLib envelope presence must match activation, including empty envelopes. Wri
 
 ## Validation
 
-Follow the [bounded checks and pass criteria](docs/validation.md).
+Follow the [bounded checks and pass criteria](validation.md).

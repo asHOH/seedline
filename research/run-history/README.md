@@ -16,8 +16,8 @@ The counter uses [v0.111.0 card and model metadata](reference-v0.111.0.json). Wi
 New-Item -ItemType Directory -Force .cache/run-history | Out-Null
 Invoke-WebRequest https://spire-codex.com/api/exports/runs/manifest -OutFile .cache/run-history/source-manifest.json -ErrorAction Stop
 curl.exe --fail --location --output .cache/run-history/runs-v0.111.0.jsonl.gz https://spire-codex.com/exports/runs-v0.111.0.jsonl.gz
-node --test outputs/run-history/count.test.cjs
-node outputs/run-history/count.cjs
+node --test research/run-history/count.test.cjs
+node research/run-history/count.cjs
 ```
 
 The counter validates dataset size, checksum and record count against the downloaded manifest, then replaces the results and saved manifest. Refresh both downloads on mismatch.

@@ -1,4 +1,4 @@
-// Run: node outputs/reward-calibration.cjs [runs per scenario] [output.json] [a6]
+// Run: node research/reward-calibration.cjs [runs per scenario] [output.json] [a6]
 // Standard-library Monte Carlo; uncommon outcomes are integrated analytically.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

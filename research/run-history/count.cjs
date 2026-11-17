@@ -1,5 +1,5 @@
-// node outputs/run-history/count.cjs [.cache/run-history/runs-v0.111.0.jsonl.gz]
-// Standard library only; references are read-only. Tests: node --test outputs/run-history/count.test.cjs
+// node research/run-history/count.cjs [.cache/run-history/runs-v0.111.0.jsonl.gz]
+// Standard library only; references are read-only. Tests: node --test research/run-history/count.test.cjs
 const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');

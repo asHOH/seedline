@@ -2,7 +2,7 @@
 
 Windows mod for Slay the Spire 2 **v0.113.1/d09d48e5**. Keeps rewards and combat challenges comparable across same-seed runs with different routes and decisions, with combined checkpoints and optional RitsuLib support.
 
-Rules: [design](DESIGN.md). Architecture and contracts: [implementation](IMPLEMENTATION.md). Validation scope and pass criteria: [validation](docs/validation.md).
+Authoritative designs: [gameplay rules](DESIGN.md) and [card processing order](CARD_ORDER.md). Supporting guides: [implementation](docs/implementation.md) and [validation](docs/validation.md). Experiments and evidence live in [research](research/).
 
 ## Build and validate
 
@@ -24,7 +24,7 @@ RitsuLib is optional. The bridge supports official **v0.6.14** with current-sche
 
 Use [STS2.RitsuLib.0.6.14.github.zip](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip). Preserve the complete package: its `compat/0.113.0` directory supplies the runtime used on StS2 v0.113.1.
 
-Add `-RitsuLibDir '<extracted RitsuLib package>'` to the validation command to exercise the production bridge with real RitsuLib in both initialization orders. Results are stored under `.cache/ritsu-checks/<run>/`. See the [checkpoint contract](IMPLEMENTATION.md#checkpoint-contract).
+Add `-RitsuLibDir '<extracted RitsuLib package>'` to the validation command to exercise the production bridge with real RitsuLib in both initialization orders. Results are stored under `.cache/ritsu-checks/<run>/`. See the [checkpoint contract](docs/implementation.md#checkpoint-contract).
 
 ## Event workbook
 
@@ -35,7 +35,7 @@ ilspycmd -p -o sts2-decompiled '<v0.113.1 game>/data_sts2_windows_x86_64/sts2.dl
 & '<Codex bundled Node executable>' scripts/build-events.mjs
 ```
 
-The [generator](scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `outputs/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game sources and previews stay local.
+The [generator](scripts/build-events.mjs) uses the workbook as its template and checks event coverage against the extracted source. Review its export in `research/event-workbook/` before replacing `references/StS2_Events.xlsx`. Game sources and previews stay local.
 
 ## Deploy
 

@@ -25,4 +25,4 @@
 
 ## Implementation documentation
 
-- Keep [IMPLEMENTATION.md](IMPLEMENTATION.md) under 350 words.
+- Keep [implementation.md](docs/implementation.md) under 350 words.
