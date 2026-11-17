@@ -2,7 +2,7 @@
 
 Windows mod for Slay the Spire 2 **v0.113.1/d09d48e5**. Keeps rewards and combat challenges comparable across same-seed runs with different routes and decisions, with combined checkpoints and optional RitsuLib support.
 
-Authoritative designs: [gameplay rules](DESIGN.md) and [card processing order](CARD_ORDER.md). Supporting guides: [implementation](docs/implementation.md) and [validation](docs/validation.md). Research: [overview](research/README.md).
+Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Supporting guides: [implementation](docs/implementation.md) and [validation](docs/validation.md). Research: [overview](research/README.md).
 
 ## Build and validate
 
