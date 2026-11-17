@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>SameSeed.Checks</AssemblyName>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="../../src/SameSeed/SameSeed.csproj" />
-    <None Include="SameSeed.Checks.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-</Project>

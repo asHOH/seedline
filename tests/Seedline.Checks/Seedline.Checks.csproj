@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Seedline.Checks</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Seedline/Seedline.csproj" />
+    <None Include="Seedline.Checks.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

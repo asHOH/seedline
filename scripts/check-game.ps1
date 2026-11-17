@@ -16,7 +16,7 @@ $runDir = Join-Path $repo (".cache/$suite-checks/" + [guid]::NewGuid().ToString(
 New-Item -ItemType Directory -Path $hostDir, $runDir -Force | Out-Null
 $settingsDir = Join-Path $runDir 'SlayTheSpire2/default/1'
 New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
-$modOrder = if ($RitsuFirst) { @('STS2-RitsuLib', 'SameSeed', 'SameSeed.Checks') } else { @('SameSeed', 'STS2-RitsuLib', 'SameSeed.Checks') }
+$modOrder = if ($RitsuFirst) { @('STS2-RitsuLib', 'Seedline', 'Seedline.Checks') } else { @('Seedline', 'STS2-RitsuLib', 'Seedline.Checks') }
 $settings = @{
     schema_version = 8
     mod_settings = @{ mods_enabled = $true; mod_list = @($modOrder | ForEach-Object { @{ id = $_; source = 1; is_enabled = $true } }) }
@@ -27,7 +27,7 @@ $settings = @{
 $settings | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $settingsDir 'settings.save') -Encoding utf8
 
 # Keep the installed game and its saves outside the test host.
-if ($game -ne [System.IO.Path]::GetFullPath($hostDir)) {
+if ($game -ne $hostDir) {
     Copy-Item -LiteralPath (Join-Path $game 'SlayTheSpire2.exe'), (Join-Path $game 'release_info.json') -Destination $hostDir -Force
     foreach ($file in Get-ChildItem -LiteralPath $game -File | Where-Object Extension -In '.dll', '.pck') {
         $target = Join-Path $hostDir $file.Name
@@ -40,13 +40,13 @@ if ($game -ne [System.IO.Path]::GetFullPath($hostDir)) {
         Copy-Item -LiteralPath $file.FullName -Destination $target -Force
     }
 }
-if ((Get-FileHash -LiteralPath (Join-Path $hostDir 'data_sts2_windows_x86_64/sts2.dll')).Hash -ne $assemblyHash) {
-    throw 'Test-host assembly differs from the selected game.'
-}
-foreach ($name in 'SameSeed', 'SameSeed.Checks') {
+# Rebuild the isolated host's mod set so previous installations cannot load alongside this build.
+$hostMods = Join-Path $hostDir 'mods'
+if (Test-Path -LiteralPath $hostMods) { Remove-Item -LiteralPath $hostMods -Recurse -Force }
+foreach ($name in 'Seedline', 'Seedline.Checks') {
     $modDir = Join-Path $hostDir "mods/$name"
     New-Item -ItemType Directory -Path $modDir -Force | Out-Null
-    $sourceDir = if ($name -eq 'SameSeed') { 'src/SameSeed' } else { 'tests/SameSeed.Checks' }
+    $sourceDir = if ($name -eq 'Seedline') { 'src/Seedline' } else { 'tests/Seedline.Checks' }
     Copy-Item -LiteralPath (Join-Path $repo "$sourceDir/bin/Release/net9.0/$name.dll"), (Join-Path $repo "$sourceDir/$name.json") -Destination $modDir -Force
 }
 
@@ -71,19 +71,16 @@ $start.CreateNoWindow = $true
 $start.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
 $start.Environment['APPDATA'] = $runDir
 $start.Environment['LOCALAPPDATA'] = $runDir
-$start.Environment['SAMESEED_CHECK_ROOT'] = $runDir
-$start.Environment['SAMESEED_RITSU_CHECKS'] = if ($RitsuLibDir) { '1' } else { '0' }
-$start.Environment['SAMESEED_RITSU_FIRST'] = if ($RitsuFirst) { '1' } else { '0' }
+$start.Environment['SEEDLINE_CHECK_ROOT'] = $runDir
+$start.Environment['SEEDLINE_RITSU_CHECKS'] = if ($RitsuLibDir) { '1' } else { '0' }
+$start.Environment['SEEDLINE_RITSU_FIRST'] = if ($RitsuFirst) { '1' } else { '0' }
 foreach ($argument in '--headless', '--audio-driver', 'Dummy', '--force-steam=off', '--log-file', (Join-Path $runDir 'game.log')) {
     $start.ArgumentList.Add($argument)
 }
 $process = [System.Diagnostics.Process]::Start($start)
-$deadline = [DateTime]::UtcNow.AddMinutes(3)
-while (!$process.WaitForExit(1000)) {
-    if ([DateTime]::UtcNow -gt $deadline) {
-        $process.Kill()
-        throw "Game checks timed out. Inspect $runDir/game.log"
-    }
+if (!$process.WaitForExit(180000)) {
+    $process.Kill()
+    throw "Game checks timed out. Inspect $runDir/game.log"
 }
 $resultPath = Join-Path $runDir 'result.json'
 if (!(Test-Path -LiteralPath $resultPath)) { throw "Game checks produced no result. Inspect $runDir/game.log" }

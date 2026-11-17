@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Seedline</AssemblyName>
+    <Version>0.6.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.IO.Hashing" HintPath="$(GameManagedDir)/System.IO.Hashing.dll" Private="false" />
+    <None Include="Seedline.json" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Localization/*.json" />
+    <InternalsVisibleTo Include="Seedline.Checks" />
+    <InternalsVisibleTo Include="Seedline.Tests" />
+  </ItemGroup>
+</Project>

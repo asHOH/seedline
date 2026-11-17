@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/Seedline/Seedline.csproj" />
+  <Project Path="tests/Seedline.Checks/Seedline.Checks.csproj" />
+  <Project Path="tests/Seedline.Tests/Seedline.Tests.csproj" />
+</Solution>

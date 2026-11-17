@@ -1,0 +1,11 @@
+{
+  "id": "Seedline",
+  "name": "Seedline / 不歪种神器",
+  "author": "Seedline contributors",
+  "description": "Aligned rewards, rooms, events and permanent-card selection with versioned checkpoints.",
+  "version": "0.6.0",
+  "has_dll": true,
+  "has_pck": false,
+  "affects_gameplay": true,
+  "min_game_version": "0.113.1"
+}

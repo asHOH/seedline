@@ -22,7 +22,7 @@ Install the .NET SDK pinned in [global.json](global.json). In PowerShell 7, run 
 
 The command builds and checks the mod, using an isolated game copy for integration checks; allow disk space for that copy. Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK. With RitsuLib installed, include the [RitsuLib checks](#ritsulib-compatibility).
 
-The validated package is written to `artifacts/SameSeed/`. The internal mod ID and filenames use `SameSeed`.
+The validated package is written to `artifacts/Seedline/`.
 
 ## Deploy
 
