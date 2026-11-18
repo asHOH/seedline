@@ -79,7 +79,7 @@ internal static partial class CardOrder
     private static IComparable[] Rank(CardModel card, CombatRankBatch? batch = null, bool includeOrigin = true)
     {
         var inCombat = batch != null;
-        var listeners = batch?.Listeners(ComparisonCombat(card)) ?? [];
+        var listeners = batch?.Listeners(ComparisonCombat(card), card) ?? [];
         var persistent = Equivalence(card);
         var id = persistent.Identity;
         var replay = card.GetEnchantedReplayCount();

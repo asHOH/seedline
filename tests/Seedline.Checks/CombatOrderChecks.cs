@@ -153,7 +153,12 @@ public static partial class Checks
         });
         var coda = Card<Coda>();
         var beforeMelody = CardOrder.CaptureCombat(coda);
-        Played(Card<ChoLimbs>());
+        var cho = Card<ChoLimbs>();
+        var batch = new CardOrder.CombatRankBatch();
+        foreach (var candidate in new CardModel[] { coda, cho, combat.CreateCard<Coda>(player) })
+            Assert(batch.Listeners(combat, candidate).SequenceEqual(combat.IterateHookListeners().Where(m => m is not CardModel || m == candidate)),
+                "only the admitted copy's own modifier remains in game listener order");
+        Played(cho);
         Assert(CardOrder.CaptureCombat(coda).CompareTo(beforeMelody) != 0,
             "Coda's own cost hook still affects its turn rank after playing a melody");
         Played(returning);

@@ -25,21 +25,33 @@ internal static partial class CardOrder
     internal sealed class CombatRankBatch
     {
         private ICombatState? combat;
-        private AbstractModel[] listeners = [];
+        private AbstractModel[] shared = [];
+        private readonly Dictionary<CardModel, int> selfPositions = new();
 
         internal FrozenCardOrder ShuffleRank(CardModel card) => new(Rank(card, this), null);
         internal FrozenCardOrder RoutingRank(CardModel card) => new(Rank(card, this, includeOrigin: false), null);
 
-        internal AbstractModel[] Listeners(ICombatState? state)
+        internal AbstractModel[] Listeners(ICombatState? state, CardModel card)
         {
             if (state == null) return [];
             if (!ReferenceEquals(state, combat))
             {
-                // Coda and Cho Limbs are the only cards in this build with cost or keyword hooks.
-                listeners = state.IterateHookListeners().Where(m => m is not CardModel || m is Coda or ChoLimbs).ToArray();
+                var listeners = new List<AbstractModel>();
+                selfPositions.Clear();
+                foreach (var model in state.IterateHookListeners())
+                {
+                    // These cost hooks affect only their own copy. Keep their position among shared hooks.
+                    if (model is Coda or ChoLimbs)
+                        selfPositions.Add((CardModel)model, listeners.Count);
+                    else if (model is not CardModel)
+                        listeners.Add(model);
+                }
+                shared = listeners.ToArray();
                 combat = state;
             }
-            return listeners;
+            return selfPositions.TryGetValue(card, out var index)
+                ? [.. shared.AsSpan(0, index), card, .. shared.AsSpan(index)]
+                : shared;
         }
     }
 
