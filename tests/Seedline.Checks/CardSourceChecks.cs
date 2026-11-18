@@ -1,8 +1,10 @@
 using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -72,6 +74,19 @@ public static partial class Checks
             Assert(offered.Length == 6 && offered.All(c => CardOccurrences.Info(c).Address
                 .StartsWith("[\"card identity\",\"other character\",", StringComparison.Ordinal)),
                 "Kaleidoscope single-card calls retain other-character offer supplies");
+            before = player.Deck.Cards.ToArray();
+            RewardsSet.testSelector = async set =>
+            {
+                foreach (var reward in set.Rewards.OfType<CardReward>().Take(2).ToArray())
+                {
+                    selector.PrepareToSelectCardRewardAtIndex(0);
+                    await RunManager.Instance.RewardsSetSynchronizer.SelectLocalReward(reward);
+                }
+                RunManager.Instance.RewardsSetSynchronizer.SkipLocalRewardsSet();
+            };
+            await RelicCmd.Obtain<Orrery>(player);
+            var claims = player.Deck.Cards.Except(before).Select(c => CardOccurrences.Info(c).Acquisition).ToArray();
+            Assert(claims.Length == 2 && claims[0] < claims[1], "separate Orrery claims have separate acquisition ordinals");
         }
         finally { RewardsSet.testSelector = previous; }
 
@@ -92,6 +107,22 @@ public static partial class Checks
                 run.CurrentMapPointHistoryEntry!.GetEntry(player.NetId).CardChoices.Count == size - picks.Length,
                 $"{eventModel.Id.Entry}: source interception preserves offer size and committed grid picks");
         }
+        var originals = player.Deck.Cards.Where(c => c.IsTransformable && c.IsUpgradable).Take(2).ToArray();
+        CardCmd.Upgrade(originals[0]);
+        selector.PrepareToSelect(originals);
+        var claws = await RelicCmd.Obtain<Claws>(player);
+        var mauls = player.Deck.Cards.OfType<Maul>().OrderBy(c => c.IsUpgraded).ToArray();
+        var grant = RandomAddress.For("card occurrence", claws.Id.Entry).At(0);
+        Assert(mauls.Length == 2 && !mauls[0].IsUpgraded && mauls[1].IsUpgraded &&
+            mauls.Select(c => CardOccurrences.Info(c).Address).SequenceEqual([grant.At(0).Key, grant.At(1).Key]),
+            "Claws indexes its fixed replacements by their inherited status even when the upgraded original is first");
+        var swoops = new[] { run.CreateCard<ByrdSwoop>(player), run.CreateCard<ByrdSwoop>(player) };
+        CardCmd.Upgrade(swoops[0]);
+        await CardPileCmd.Add(swoops, PileType.Deck);
+        var byrdine = await RelicCmd.Obtain<Byrdine>(player);
+        grant = RandomAddress.For("card occurrence", byrdine.Id.Entry).At(0);
+        Assert(player.Deck.Cards.OfType<GodByrd>().OrderBy(c => c.IsUpgraded).Select(c => CardOccurrences.Info(c).Address)
+            .SequenceEqual([grant.At(0).Key, grant.At(1).Key]), "Byrdine ranks sequential replacements without reordering deck effects");
         RunManager.Instance.CleanUp();
     }
 }

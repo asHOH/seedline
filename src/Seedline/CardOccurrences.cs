@@ -100,7 +100,7 @@ internal static class CardOccurrences
         }
     }
 
-    private static void Prepare(IEnumerable<CardModel> added, CardPile pile, AbstractModel? source)
+    internal static void Prepare(IEnumerable<CardModel> added, CardPile pile, AbstractModel? source)
     {
         if (pile.Type != PileType.Deck)
             return;
@@ -109,13 +109,7 @@ internal static class CardOccurrences
         var fresh = batch.Where(c => Find(c) == null).OrderBy(c => c, CardOrder.Permanent).ToArray();
         if (fresh.Length == 0 || fresh[0].Owner.RunState is not RunState run || RunCheckpoints.Find(run) is not { } state)
             return;
-        var address = RandomAddress.For("card occurrence", source?.Id.Entry ?? run.CurrentRoom?.ModelId?.Entry ?? "initial grants");
-        var grant = state.Random.Advance(address);
-        for (var i = 0; i < fresh.Length; i++)
-        {
-            var occurrence = address.At(grant).At(i).Key;
-            Create(fresh[i], occurrence);
-        }
+        CardHistory.AddressGrant(fresh, state, source?.Id.Entry ?? run.CurrentRoom?.ModelId?.Entry ?? "initial grants");
     }
 
     [HarmonyPatch(typeof(CardPileCmd), nameof(CardPileCmd.Add),

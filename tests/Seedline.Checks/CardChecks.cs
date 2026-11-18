@@ -1,8 +1,10 @@
 using System.Text;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -113,12 +115,9 @@ public static partial class Checks
             var commonCounter = RandomAddress.For("card triple", player.Character.CardPool.Id.Entry, "Common");
             Assert(state.Random.Position(commonCounter) == 2, "Scroll Boxes consumes exactly one Common triple");
             CardOffers.AssignKeys(bundles[0]);
-            var keySet = bundles[0].Select(c => CardOccurrences.Info(c).Key).Order().ToArray();
+            var mapping = bundles[0].ToDictionary(c => c, c => CardOccurrences.Info(c).Key);
             CardOffers.AssignKeys(bundles[0].Reverse());
-            Assert(keySet.SequenceEqual(bundles[0].Select(c => CardOccurrences.Info(c).Key).Order()), "bundle key assignment ignores selection enumeration order");
-            var mapping = bundles[0].ToDictionary(c => c.Id, c => CardOccurrences.Info(c).Key);
-            CardOffers.AssignKeys(bundles[0].Reverse());
-            Assert(bundles[0].All(c => mapping[c.Id] == CardOccurrences.Info(c).Key), "pair priorities preserve identity-to-key mapping under reordered picks");
+            Assert(bundles[0].All(c => mapping[c] == CardOccurrences.Info(c).Key), "pair priorities preserve each card's key under reordered picks");
             var wing = ModelDb.Relic<WingCharm>().ToMutable();
             player.AddRelicInternal(wing);
             var wingOffer = Offer(RoomType.Monster);
@@ -216,8 +215,17 @@ public static partial class Checks
                         Assert(clawBundles[1][0] is Claw && clawBundles[1].Select(c => c.Id).Distinct().Count() == 3,
                             "a substituted Claw bundle preserves Claw eligibility in the ordinary bundle");
                         CardOffers.AssignKeys(clawBundles[0]);
-                        Assert(clawBundles[0].Select(c => CardOccurrences.Info(c).Key).Distinct().Count() == 3,
-                            "identical Claws in one chosen bundle receive distinct offer keys");
+                        var claws = clawBundles[0];
+                        var keys = claws.Select(c => CardOccurrences.Info(c).Key).ToArray();
+                        var grid = clawBundles.SelectMany(b => b).Reverse().Select(c => new CardCreationResult(c)).ToList();
+                        var selector = new TestCardSelector();
+                        selector.PrepareToSelect(new[] { 3, 4, 5 });
+                        using (CardSelectorStack.SetTestSelector(selector))
+                            await CardSelectCmd.FromSimpleGridForRewards(new BlockingPlayerChoiceContext(),
+                                grid, player, new(CardSelectorPrefs.TransformSelectionPrompt, 3));
+                        Assert(keys.Distinct().Count() == 3 && claws.Select(c => CardOffers.Info(c).CopyNumber).SequenceEqual([1, 2, 3]) &&
+                            claws.Select(c => CardOccurrences.Info(c).Key).SequenceEqual(keys),
+                            "duplicate copies keep their original offer numbers and individual keys after reversing display and pick order");
                     }
                 }
             }

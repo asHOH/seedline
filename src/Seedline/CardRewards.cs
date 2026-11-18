@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
@@ -120,11 +121,12 @@ internal static class CardRewards
                 CardModel card;
                 if (typed && types[0] != CardType.Power)
                 {
-                    var address = RandomAddress.For("event card", "THE_FUTURE_OF_POTIONS", rarity.ToString()!, types[0].ToString());
+                    var eventId = ModelDb.GetId<TheFutureOfPotions>();
+                    var address = RandomAddress.For("event card", eventId.Entry, rarity.ToString()!, types[0].ToString());
                     var eligible = pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)).ToArray();
-                    var index = state.Random.Advance(address);
-                    card = CardGeneration.Create(player,
-                        eligible[AddressRandom.IntInclusive(state.Seed, address.At(index), 0, eligible.Length - 1)], address.At(index).Key);
+                    var entry = address.At(state.Random.Advance(address));
+                    var rng = new Rng(player, eventId, StringHelper.GetDeterministicHashCode(entry.Key));
+                    card = CardGeneration.Create(player, eligible[rng.NextInt(eligible.Length)], entry.Key);
                 }
                 else
                 {

@@ -30,6 +30,8 @@ internal static class PermanentGeneration
     internal static CardTransformation[] Prepare(IEnumerable<CardTransformation> transformations)
     {
         var batch = transformations.ToArray();
+        if (batch.Length > 0 && !batch[0].IsInCombat)
+            CardOccurrences.Prepare(batch.Select(t => t.Replacement).OfType<CardModel>(), batch[0].Original.Owner.Deck, null);
         var replacements = new Dictionary<CardModel, CardModel>();
         foreach (var item in batch.Where(t => t.Replacement == null)
             .OrderBy(t => t.Original, CardOrder.Identity).ThenBy(t => t.Original.Pile!.Cards.IndexOf(t.Original)))

@@ -43,7 +43,7 @@ public static partial class Checks
         canceled.AfterUsageCanceled();
         Assert(state.Random.Position(attack) == 1, "canceled potion use preserves effect progression");
         await PotionCmd.Discard(canceled);
-        Assert(state.Random.Position(attack) == 2, "discard and event-trade removal advance the covered type once");
+        Assert(state.Random.Position(attack) == 2, "discard advances the covered type once");
         var skipped = new PotionReward(ModelDb.Potion<AttackPotion>().ToMutable(), player);
         skipped.OnSkipped();
         skipped.OnSkipped();

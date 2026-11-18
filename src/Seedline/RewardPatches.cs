@@ -7,9 +7,9 @@ namespace Seedline;
 
 internal static class RewardPatches
 {
-    internal static MethodInfo AsyncMethod(Type type, string name)
+    internal static MethodInfo AsyncMethod(Type type, string name, Type[]? parameters = null)
     {
-        var method = AccessTools.Method(type, name);
+        var method = AccessTools.Method(type, name, parameters);
         return AccessTools.Method(method.GetCustomAttribute<AsyncStateMachineAttribute>()!.StateMachineType, "MoveNext");
     }
 

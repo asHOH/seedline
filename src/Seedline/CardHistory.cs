@@ -4,10 +4,13 @@ using System.Text.Json.Serialization;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Random;
+using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Runs;
@@ -49,8 +52,44 @@ internal sealed class CardHistory
         }
     }
 
-    private sealed class AcquisitionBatch { internal long? Ordinal; }
+    private sealed class AcquisitionBatch(AbstractModel? source = null)
+    {
+        internal string? Source => source is CardModel card ? CardOccurrences.Info(card).Address : source?.Id.Entry;
+        internal long? Ordinal;
+        internal RandomAddress? Grant;
+        private int nextIndex;
+        // Byrdine transforms in deck order. Its replacements differ only by inherited upgrade.
+        private int nextUpgradedIndex = source is Byrdine byrdine ? byrdine.Owner.Deck.Cards.OfType<ByrdSwoop>().Count(c => !c.IsUpgraded) : 0;
+        internal int NextIndex(CardModel card) => source is Byrdine && card.IsUpgraded ? nextUpgradedIndex++ : nextIndex++;
+    }
     private static readonly AsyncLocal<AcquisitionBatch?> batch = new();
+
+    internal static void AddressGrant(CardModel[] cards, CheckpointState state, string fallbackSource)
+    {
+        var current = batch.Value ?? new();
+        var counter = RandomAddress.For("card occurrence", current.Source ?? fallbackSource);
+        current.Grant ??= counter.At(state.Random.Advance(counter));
+        foreach (var card in cards)
+            CardOccurrences.Create(card, current.Grant.At(current.NextIndex(card)).Key);
+    }
+
+    [HarmonyPatch]
+    private static class RelicGrants
+    {
+        private static IEnumerable<MethodBase> TargetMethods() =>
+        [RewardPatches.AsyncMethod(typeof(RelicCmd), nameof(RelicCmd.Obtain), [typeof(RelicModel), typeof(Player), typeof(int)]),
+            RewardPatches.AsyncMethod(typeof(RunManager), nameof(RunManager.FinalizeStartingRelics))];
+
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) => RewardPatches.Replace(instructions,
+            m => m.DeclaringType == typeof(RelicModel) && m.Name == nameof(RelicModel.AfterObtained),
+            AccessTools.Method(typeof(RelicGrants), nameof(AfterObtained)));
+
+        private static async Task AfterObtained(RelicModel relic)
+        {
+            batch.Value = new(relic);
+            await relic.AfterObtained();
+        }
+    }
 
     [HarmonyPatch]
     private static class Batches
@@ -60,15 +99,17 @@ internal sealed class CardHistory
             [typeof(IEnumerable<CardModel>), typeof(CardPile), typeof(CardPilePosition), typeof(AbstractModel), typeof(bool), typeof(bool)]),
             AccessTools.Method(typeof(CardCmd), nameof(CardCmd.Transform),
                 [typeof(IEnumerable<CardTransformation>), typeof(Rng), typeof(CardPreviewStyle)]),
+            AccessTools.Method(typeof(CardReward), "OnSelect"),
             AccessTools.Method(typeof(Astrolabe), nameof(Astrolabe.AfterObtained)),
+            AccessTools.Method(typeof(Dowsing), nameof(Dowsing.BeforeRoomEntered)),
             AccessTools.Method(typeof(ScrollBoxes), nameof(ScrollBoxes.AfterObtained)),
             AccessTools.Method(typeof(MorphicGrove), "Group"), AccessTools.Method(typeof(Trial), "NondescriptInnocent"),
             AccessTools.Method(typeof(SeaGlass), nameof(SeaGlass.AfterObtained))]);
-        private static void Prefix(MethodBase __originalMethod, out AcquisitionBatch? __state)
+        private static void Prefix(object? __instance, MethodBase __originalMethod, out AcquisitionBatch? __state)
         {
             __state = batch.Value;
             if (__state == null || (__originalMethod.DeclaringType != typeof(CardPileCmd) && __originalMethod.DeclaringType != typeof(CardCmd)))
-                batch.Value = new();
+                batch.Value = new(__instance as AbstractModel);
         }
         private static void Finalizer(AcquisitionBatch? __state) => batch.Value = __state;
     }

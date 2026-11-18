@@ -3,8 +3,10 @@ using System.Text.Json;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Events;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
@@ -14,6 +16,7 @@ using MegaCrit.Sts2.Core.Models.Potions;
 using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Random;
+using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
@@ -34,6 +37,7 @@ public static partial class Checks
             var save = RunCheckpoints.Decode(Encoding.UTF8.GetString(bytes), snapshot.SchemaVersion);
             run = RunState.FromSerializable(save);
             await RunManager.Instance.SetUpSavedSingleplayer(run, save);
+            LocalContext.NetId = RunManager.Instance.NetService.NetId;
             player = run.Players[0];
         }
         async Task<EventModel> Begin(EventModel canonical)
@@ -201,6 +205,38 @@ public static partial class Checks
         var types = EventChoices.AssignTypes(future);
         Assert(types.Count == 3 && types.Values.All(t => t is CardType.Attack or CardType.Skill) &&
             types.SequenceEqual(EventChoices.AssignTypes(future)), "Future of Potions caches three slot-preserving assignments with Common reward types");
+        var traded = player.Potions.First();
+        var tradeCounter = PotionEffects.Counter(traded.Id.Entry);
+        var beforeTrade = RunCheckpoints.Require(run).Random.Position(tradeCounter);
+        var type = types[traded];
+        var pool = player.Character.CardPool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
+            .Where(c => c.IsAllowedInRun(run) && c.Rarity == CardRarity.Common && c.Type == type).ToList();
+        var eventSeed = run.Rng.Seed + StringHelper.GetDeterministicHashCode(future.Id.Entry);
+        var partition = RandomAddress.For("event card", future.Id.Entry, CardRarity.Common.ToString(), type.ToString());
+        var expectedIds = new List<ModelId>();
+        for (var i = 0; i < 3; i++)
+        {
+            var pick = new Rng(eventSeed, partition.At(i).Key).NextItem(pool)!;
+            expectedIds.Add(pick.Id);
+            pool.Remove(pick);
+        }
+        var previousSelector = RewardsSet.testSelector;
+        ModelId[] offeredIds = [];
+        try
+        {
+            RewardsSet.testSelector = set =>
+            {
+                offeredIds = set.Rewards.OfType<CardReward>().Single().Cards.Select(c => c.Id).ToArray();
+                RunManager.Instance.RewardsSetSynchronizer.SkipLocalRewardsSet();
+                return Task.CompletedTask;
+            };
+            await future.CurrentOptions[0].Chosen();
+        }
+        finally { RewardsSet.testSelector = previousSelector; }
+        Assert(offeredIds.SequenceEqual(expectedIds),
+            "Future of Potions draws distinct identities from the vanilla event seed partitioned by rarity and type");
+        Assert(!player.Potions.Contains(traded) && RunCheckpoints.Require(run).Random.Position(tradeCounter) == beforeTrade + 1,
+            "a committed Future of Potions trade removes the potion and advances its type's effect ordinal once");
 
         await Reset();
         var ranwid = await Begin(ModelDb.Event<RanwidTheElder>());

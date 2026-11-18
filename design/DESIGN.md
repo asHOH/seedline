@@ -224,7 +224,7 @@ Rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 | [Courier cards](#stock-and-prices) | Per-type sequences; fixed colorless rarities. | Character: per-type, per-rarity sequences. Colorless: per-rarity sequences. |
 | [Own-character random-rarity offers](#offer-groups), such as fight rewards and Orrery | Shared luck and thresholds; source Rare odds. | Shared triple sequences, split by offers with or without a Rare. |
 | [Own-character fixed-rarity offers](#other-offer-groups) | Requested rarity. | Separate triples per rarity. |
-| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared own-character Power sequences per rarity (Uncommon/Rare); Future of Potions uses event RNG for Attack/Skill. |
+| [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared own-character Power sequences per rarity (Uncommon/Rare); Future of Potions derives Attack/Skill draws from the vanilla event seed. |
 | [Colorless offers: Lead Paperweight / Brain Leech's Rip](#other-offer-groups) | Shared sequence at source odds. | Shared Uncommon/Rare identity sequences. |
 | [Other-character offers: Kaleidoscope / Colorful Philosophers / Sea Glass](#other-offer-groups) | Kaleidoscope: event RNG. Others: fixed rarity. | Shared sequences per character and rarity. |
 | [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Separate expanded-pool sequences. |
@@ -695,7 +695,7 @@ Colorless and other-character rewards consume individual entries across batch si
 Lasting Candy and The Future of Potions share own-character Uncommon and Rare Power identity sequences, consuming individual entries.
 
 - **Lasting Candy:** separate normal-fight and elite rarity sequences at source base odds, with unavailable-rarity fallback; boss triggers request Rare.
-- **The Future of Potions:** request the option's rarity; Attack/Skill identities use event RNG addressed by rarity and type.
+- **The Future of Potions:** request the option's rarity; Attack/Skill identities use draws derived from the vanilla event seed, partitioned by rarity and type.
 
 #### Reward offer addresses
 

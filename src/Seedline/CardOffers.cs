@@ -102,10 +102,12 @@ internal static class CardOffers
     {
         private static void Prefix(List<CardCreationResult> cards)
         {
-            var generated = cards.Select(c => c.Card).Where(c => Find(c) != null).ToArray();
-            if (generated.Length == 0)
+            // Sea Glass concatenates three generated batches. Single-batch offers already have their entry order.
+            var batches = cards.Select(c => c.Card).Where(c => Find(c) != null).GroupBy(c => Info(c).Offer).ToArray();
+            if (batches.Length < 2)
                 return;
-            var offer = Info(generated[0]).Offer;
+            var offer = batches[0].Key;
+            var generated = batches.SelectMany(batch => batch.OrderBy(c => Info(c).EntryOrder)).ToArray();
             for (var i = 0; i < generated.Length; i++)
             {
                 Info(generated[i]).Offer = offer;

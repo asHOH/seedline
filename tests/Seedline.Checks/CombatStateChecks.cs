@@ -38,7 +38,7 @@ public static partial class Checks
             "elite combat has an independent category counter");
         run.PushRoom(new EventRoom(ModelDb.Event<BattlewornDummy>()));
         var battle1 = CombatStateScope.Begin(new(ModelDb.Encounter<BattlewornDummyEventV1Encounter>().ToMutable(), run));
-        var battle2 = CombatStateScope.Begin(new(ModelDb.Encounter<BattlewornDummyEventV2Encounter>().ToMutable(), run));
+        var battle2 = CombatStateScope.Begin(new(ModelDb.Encounter<BattlewornDummyEventV1Encounter>().ToMutable(), run));
         Assert(battle1.Address != battle2.Address && state.Random.Position(counter) == 1 &&
             state.Random.Position(RandomAddress.For("event combat", "BATTLEWORN_DUMMY")) == 2,
             "event battles use event-local ordinals without consuming normal combats");
@@ -61,6 +61,11 @@ public static partial class Checks
         var opening = player.Deck.Cards.Select(CardOccurrences.Info).ToArray();
         Assert(opening.All(c => c.SourceKey && c.Acquisition != null) && opening.Select(c => c.Acquisition).Distinct().Count() == 1,
             "starting deck is one acquisition batch with source keys");
+        var horn = await RelicCmd.Obtain<PaelsHorn>(player);
+        var relax = player.Deck.Cards.OfType<Relax>().Select(CardOccurrences.Info).ToArray();
+        var hornGrant = RandomAddress.For("card occurrence", horn.Id.Entry).At(0);
+        Assert(relax.Length == 2 && relax.Select(c => c.Address).ToHashSet().SetEquals([hornGrant.At(0).Key, hornGrant.At(1).Key]) &&
+            relax[0].Acquisition == relax[1].Acquisition, "Pael's Horn grants two indexed copies from one relic opportunity and acquisition batch");
         var a = run.CreateCard<Anger>(player);
         var b = run.CreateCard<Bash>(player);
         await CardPileCmd.Add(new CardModel[] { b, a }, PileType.Deck);
