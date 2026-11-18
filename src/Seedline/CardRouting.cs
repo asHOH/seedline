@@ -21,7 +21,8 @@ internal static class CardRouting
             var chosen = keys.Select(k => byKey[k]).ToArray();
             var logical = chosen.Concat(copies.Except(chosen).OrderBy(address, StringComparer.Ordinal)).ToArray();
             var physical = picks.Concat(copies.Where(c => !clicked.Contains(c))).ToArray();
-            reassociate(physical, logical);
+            if (!physical.SequenceEqual(logical, ReferenceEqualityComparer.Instance))
+                reassociate(physical, logical);
             if (renew)
                 foreach (var k in keys)
                     clocks.Renew(seed, scope, k);
