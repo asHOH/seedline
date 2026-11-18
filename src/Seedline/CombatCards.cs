@@ -58,8 +58,16 @@ internal static class CombatCards
 
     private static void Prepare(Grant current, IEnumerable<CardModel> candidates)
     {
-        foreach (var card in candidates.Where(c => Find(c) == null && !c.HasBeenRemovedFromState && !c.Owner.Creature.IsDead)
-            .OrderBy(c => c, CardOrder.Combat))
+        var fresh = candidates.Where(c => Find(c) == null && !current.Indices.ContainsKey(c) &&
+            !c.HasBeenRemovedFromState && !c.Owner.Creature.IsDead).ToArray();
+        IEnumerable<CardModel> ordered = fresh;
+        if (fresh.Length > 1)
+        {
+            var ranks = new CardOrder.CombatRankBatch();
+            ordered = fresh.OrderBy(c => ranks.ShuffleRank(c))
+                .ThenBy(c => CardOccurrences.Find(c)?.Address, StringComparer.Ordinal);
+        }
+        foreach (var card in ordered)
             if (!current.Indices.ContainsKey(card))
                 current.Indices.Add(card, current.Indices.Count);
     }
