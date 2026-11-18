@@ -14,10 +14,34 @@ namespace Seedline;
 internal static partial class CardOrder
 {
     internal static readonly IComparer<CardModel> Combat = Comparer<CardModel>.Create((a, b) => Compare(a, b, CaptureCombat));
-    internal static FrozenCardOrder CaptureCombat(CardModel card) => new(Rank(card, true), CardOccurrences.Find(card)?.Address);
-    internal static FrozenCardOrder CaptureCombatRank(CardModel card) => new(Rank(card, true), null);
-    internal static FrozenCardOrder CaptureRoutingRank(CardModel card) => new(Rank(card, true, false), null);
-    internal static bool CombatEquivalent(CardModel a, CardModel b) => CaptureRoutingRank(a).CompareTo(CaptureRoutingRank(b)) == 0;
+    internal static FrozenCardOrder CaptureCombat(CardModel card) => new(Rank(card, new CombatRankBatch()), CardOccurrences.Find(card)?.Address);
+    internal static bool CombatEquivalent(CardModel a, CardModel b)
+    {
+        var batch = new CombatRankBatch();
+        return batch.RoutingRank(a).CompareTo(batch.RoutingRank(b)) == 0;
+    }
+
+    // Only the listener roster is shared. Each card's modifiers still run in game order.
+    internal sealed class CombatRankBatch
+    {
+        private ICombatState? combat;
+        private AbstractModel[] listeners = [];
+
+        internal FrozenCardOrder ShuffleRank(CardModel card) => new(Rank(card, this), null);
+        internal FrozenCardOrder RoutingRank(CardModel card) => new(Rank(card, this, includeOrigin: false), null);
+
+        internal AbstractModel[] Listeners(ICombatState? state)
+        {
+            if (state == null) return [];
+            if (!ReferenceEquals(state, combat))
+            {
+                // Coda and Cho Limbs are the only cards in this build with cost or keyword hooks.
+                listeners = state.IterateHookListeners().Where(m => m is not CardModel || m is Coda or ChoLimbs).ToArray();
+                combat = state;
+            }
+            return listeners;
+        }
+    }
 
     private static readonly AccessTools.FieldRef<CardEnergyCost, List<LocalCostModifier>> energyModifiers =
         AccessTools.FieldRefAccess<CardEnergyCost, List<LocalCostModifier>>("_localModifiers");
@@ -43,12 +67,11 @@ internal static partial class CardOrder
     // Pending grants have no pile yet; frozen removed cards identify themselves as their deck version.
     private static ICombatState? ComparisonCombat(CardModel card) => card.CombatState ??
         (card.Pile == null && card.DeckVersion != card ? card.Owner?.Creature.CombatState : null);
-    private static IEnumerable<AbstractModel> CostListeners(CardModel card, bool turn) =>
-        (ComparisonCombat(card)?.IterateHookListeners() ?? []).Where(m =>
-            m is not (FreeAttackPower or FreeSkillPower or FreePowerPower or FreeCardPower or VeilpiercerPower or VoidFormPower or BrilliantScarf or EnsemblePower) &&
-            (turn || m is not (BorrowedTimePower or TangledPower or Coda or ChoLimbs)));
+    private static bool AffectsRankCost(AbstractModel m, bool turn) =>
+        m is not (FreeAttackPower or FreeSkillPower or FreePowerPower or FreeCardPower or VeilpiercerPower or VoidFormPower or BrilliantScarf or EnsemblePower) &&
+        (turn || m is not (BorrowedTimePower or TangledPower or Coda or ChoLimbs));
 
-    private static int CombatEnergy(CardModel card, bool turn)
+    private static int CombatEnergy(CardModel card, AbstractModel[] listeners, bool turn)
     {
         var value = card.EnergyCost.GetWithModifiers(CostModifiers.None);
         if (value < 0 || card.EnergyCost.CostsX || card.IsCanonical)
@@ -58,30 +81,32 @@ internal static partial class CardOrder
         if (value < 0)
             return 0;
         decimal cost = value;
-        var listeners = CostListeners(card, turn).ToArray();
         foreach (var listener in listeners)
-            listener.TryModifyEnergyCostInCombat(card, cost, out cost);
+            if (AffectsRankCost(listener, turn))
+                listener.TryModifyEnergyCostInCombat(card, cost, out cost);
         foreach (var listener in listeners)
-            listener.TryModifyEnergyCostInCombatLate(card, cost, out cost);
+            if (AffectsRankCost(listener, turn))
+                listener.TryModifyEnergyCostInCombatLate(card, cost, out cost);
         return Math.Max(0, (int)cost);
     }
 
-    private static int CombatStars(CardModel card, bool turn)
+    private static int CombatStars(CardModel card, AbstractModel[] listeners, bool turn)
     {
         if (card.IsCanonical || card.HasStarCostX)
             return card.BaseStarCost;
         decimal cost = starModifiers(card).LastOrDefault(m => turn || !m.ClearsWhenTurnEnds)?.Cost ?? card.BaseStarCost;
         if (cost < 0)
             return (int)cost;
-        foreach (var listener in CostListeners(card, turn))
-            listener.TryModifyStarCost(card, cost, out cost);
+        foreach (var listener in listeners)
+            if (AffectsRankCost(listener, turn))
+                listener.TryModifyStarCost(card, cost, out cost);
         return (int)cost;
     }
 
-    private static IReadOnlySet<CardKeyword> CombatKeywords(CardModel card)
+    private static IReadOnlySet<CardKeyword> CombatKeywords(CardModel card, AbstractModel[] listeners)
     {
         var keywords = card.GetKeywordsWithSources(KeywordSources.Local).ToHashSet();
-        foreach (var listener in ComparisonCombat(card)?.IterateHookListeners() ?? [])
+        foreach (var listener in listeners)
             if (listener is not HexPower)
                 listener.TryModifyKeywordsInCombat(card, keywords);
         return keywords;
@@ -90,13 +115,15 @@ internal static partial class CardOrder
     private static readonly AccessTools.FieldRef<CardModel, bool> turnRetain = AccessTools.FieldRefAccess<CardModel, bool>("_hasSingleTurnRetain");
     private static readonly AccessTools.FieldRef<CardModel, bool> turnSly = AccessTools.FieldRefAccess<CardModel, bool>("_hasSingleTurnSly");
 
-    private static int TemporaryKeywords(CardModel card)
+    private static int TemporaryKeywords(CardModel card, IReadOnlySet<CardKeyword> rankingKeywords)
     {
         var retain = turnRetain(card);
         var sly = turnSly(card);
         if (!retain && !sly)
             return 0;
-        var keywords = card.Keywords;
+        // Pending grants rank with combat hooks, but their actual keywords are still local.
+        // Hex, excluded from ranking, only changes Ethereal.
+        var keywords = card.CombatState == null || card.IsCanonical ? card.GetKeywordsWithSources(KeywordSources.Local) : rankingKeywords;
         return (retain && !keywords.Contains(CardKeyword.Retain) ? 1 : 0) +
             (sly && !keywords.Contains(CardKeyword.Sly) ? 2 : 0);
     }

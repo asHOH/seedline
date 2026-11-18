@@ -19,8 +19,11 @@ internal static class CombatShuffle
     private static readonly AsyncLocal<ShuffleContext?> context = new();
 
     private readonly record struct RankedCard(CardModel Card, FrozenCardOrder Rank, CardOccurrence Info);
-    private static RankedCard[] Capture(IEnumerable<CardModel> cards) => cards
-        .Select(c => new RankedCard(c, CardOrder.CaptureCombatRank(c), CardOccurrences.Info(c))).ToArray();
+    private static RankedCard[] Capture(IEnumerable<CardModel> cards)
+    {
+        var batch = new CardOrder.CombatRankBatch();
+        return cards.Select(c => new RankedCard(c, batch.ShuffleRank(c), CardOccurrences.Info(c))).ToArray();
+    }
 
     internal static Dictionary<CardModel, string> Keys(IEnumerable<CardModel> candidates, int act, bool innate) =>
         AssignKeys(Capture(candidates), act, innate);
@@ -37,7 +40,8 @@ internal static class CombatShuffle
         IEnumerable<RankedCard> ordinary = cards;
         if (innate)
         {
-            var byInnate = cards.ToLookup(c => c.Card.Keywords.Contains(CardKeyword.Innate));
+            // Combat keyword hooks change Ethereal and Retain; Innate comes from the card itself.
+            var byInnate = cards.ToLookup(c => c.Card.GetKeywordsWithSources(KeywordSources.Local).Contains(CardKeyword.Innate));
             Sequence(byInnate[true].OrderBy(c => c.Rank)
                 .ThenBy(c => c.Info.Address, StringComparer.Ordinal), "Innate");
             ordinary = byInnate[false];

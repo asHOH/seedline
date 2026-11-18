@@ -33,7 +33,7 @@ internal static class CombatRouting
         (!Protected(a) && !Protected(b) || ReferenceEquals(a.DeckVersion, b.DeckVersion)) &&
         CombatReferences.PendingEquivalent(a, b);
 
-    internal static bool Equivalent(CardModel a, CardModel b) => Equivalent(a, b, CardOrder.CaptureRoutingRank);
+    internal static bool Equivalent(CardModel a, CardModel b) => Equivalent(a, b, new CardOrder.CombatRankBatch().RoutingRank);
 
     internal sealed class Choice
     {
@@ -45,10 +45,11 @@ internal static class CombatRouting
             var classes = new List<List<CardModel>>();
             var byIdentity = new Dictionary<ModelId, List<List<CardModel>>>();
             var ranks = new Dictionary<CardModel, FrozenCardOrder>();
+            var batch = new CardOrder.CombatRankBatch();
             FrozenCardOrder Rank(CardModel card)
             {
                 if (!ranks.TryGetValue(card, out var rank))
-                    ranks.Add(card, rank = CardOrder.CaptureRoutingRank(card));
+                    ranks.Add(card, rank = batch.RoutingRank(card));
                 return rank;
             }
             foreach (var card in eligible)

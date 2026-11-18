@@ -76,8 +76,10 @@ internal static partial class CardOrder
         return capture(left).CompareTo(capture(right));
     }
 
-    private static IComparable[] Rank(CardModel card, bool inCombat = false, bool includeOrigin = true)
+    private static IComparable[] Rank(CardModel card, CombatRankBatch? batch = null, bool includeOrigin = true)
     {
+        var inCombat = batch != null;
+        var listeners = batch?.Listeners(ComparisonCombat(card)) ?? [];
         var persistent = Equivalence(card);
         var id = persistent.Identity;
         var replay = card.GetEnchantedReplayCount();
@@ -97,7 +99,7 @@ internal static partial class CardOrder
         if (enchantment is Momentum && momentum > 0)
             enchantRank = 6.5;
         var neutralTie = enchantId == "NONE" ? 0 : expired ? 1 : enchantId == "SPIRAL" ? 2 : enchantId == "CLONE" ? 3 : 4;
-        var lastingEnergy = inCombat ? CombatEnergy(card, false) : card.EnergyCost.GetWithModifiers(CostModifiers.None);
+        var lastingEnergy = inCombat ? CombatEnergy(card, listeners, false) : card.EnergyCost.GetWithModifiers(CostModifiers.None);
         var energy = card.EnergyCost.CostsX ? 0.5 : lastingEnergy;
         if (enchantment is Slither)
             energy = 2.5;
@@ -105,15 +107,15 @@ internal static partial class CardOrder
         var title = english.GetValueOrDefault(id + ".title", id).ToUpperInvariant();
         var special = category == 0 ? Array.IndexOf(curses, id) : category == 1 ? Array.IndexOf(statuses, id) : -1;
         var carried = inCombat ? CarriedValue(card) : card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
-        var keywords = inCombat ? CombatKeywords(card) : card.Keywords;
+        var keywords = inCombat ? CombatKeywords(card, listeners) : card.Keywords;
         var restoration = inCombat ? Restoration(card) : 0;
-        var temporaryKeywords = inCombat ? TemporaryKeywords(card) : 0;
-        var turnEnergy = inCombat && !card.IsCanonical ? CombatEnergy(card, true) : lastingEnergy;
+        var temporaryKeywords = inCombat ? TemporaryKeywords(card, keywords) : 0;
+        var turnEnergy = inCombat && !card.IsCanonical ? CombatEnergy(card, listeners, true) : lastingEnergy;
         var turnEffects = inCombat && !card.IsCanonical && (temporaryKeywords != 0 || turnEnergy != lastingEnergy ||
             energyModifiers(card.EnergyCost).Any(Turn) || starModifiers(card).Any(m => m.ClearsWhenTurnEnds));
         var rank = new List<IComparable> {category, special, (strike || defend) && replay > 0 ? (replay - 1) / 2d : replay,
             category < 2 ? false : keywords.Contains(CardKeyword.Retain),
-            category < 2 ? 0d : card.HasStarCostX ? 0.5 : Math.Max(0, inCombat ? CombatStars(card, false) : card.BaseStarCost), category < 2 ? false : rarity >= 10,
+            category < 2 ? 0d : card.HasStarCostX ? 0.5 : Math.Max(0, inCombat ? CombatStars(card, listeners, false) : card.BaseStarCost), category < 2 ? false : rarity >= 10,
             category < 2 ? 0d : energy, category < 2 ? false : Draws(card), category < 2 ? 0 : rarity,
             category < 2 ? false : card.Pool is ColorlessCardPool || card.Pool.Id.Entry is "EVENT_CARD_POOL" or "TOKEN_CARD_POOL",
             title, id };
@@ -126,7 +128,7 @@ internal static partial class CardOrder
         rank.AddRange([card is Guilty ? persistent.Progress : 0, keywords.Contains(CardKeyword.Ethereal), keywords.Contains(CardKeyword.Sly)]);
         if (inCombat)
             rank.AddRange([PendingUse(card), restoration, turnEffects,
-                turnEffects ? card.HasStarCostX ? 0.5 : Math.Max(0, CombatStars(card, true)) : 0d,
+                turnEffects ? card.HasStarCostX ? 0.5 : Math.Max(0, CombatStars(card, listeners, true)) : 0d,
                 turnEffects ? card.EnergyCost.CostsX ? 0.5 : turnEnergy : 0d,
                 temporaryKeywords, enchantment is Slither ? lastingEnergy : 0]);
         rank.AddRange([neutral ? neutralTie : 0, expired ? Array.IndexOf(enchantments, enchantId) : 0]);

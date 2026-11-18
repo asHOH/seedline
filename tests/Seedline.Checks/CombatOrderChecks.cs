@@ -151,6 +151,11 @@ public static partial class Checks
             PlayIndex = 0,
             PlayCount = 1
         });
+        var coda = Card<Coda>();
+        var beforeMelody = CardOrder.CaptureCombat(coda);
+        Played(Card<ChoLimbs>());
+        Assert(CardOrder.CaptureCombat(coda).CompareTo(beforeMelody) != 0,
+            "Coda's own cost hook still affects its turn rank after playing a melody");
         Played(returning);
         combat.CurrentSide = CombatSide.Enemy;
         Assert(CardOrder.Combat.Compare(returning, idle) > 0, "pending hand-draw return survives the enemy side");
