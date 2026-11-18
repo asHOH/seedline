@@ -28,14 +28,10 @@ internal static class CombatCards
     internal static bool UseVanilla(Player? player) =>
         player?.PlayerCombatState is { } state && vanillaDecks.TryGetValue(state, out _);
 
-    [HarmonyPatch(typeof(Player), nameof(Player.PopulateCombatState))]
-    private static class DeckSize
+    internal static void RecordOpeningDeckSize(Player player)
     {
-        private static void Prefix(Player __instance)
-        {
-            if (__instance.Deck.Cards.Count > maxControlledDeckSize)
-                vanillaDecks.GetOrCreateValue(__instance.PlayerCombatState!);
-        }
+        if (player.Deck.Cards.Count > maxControlledDeckSize)
+            vanillaDecks.GetOrCreateValue(player.PlayerCombatState!);
     }
 
     private sealed class Grant(string source)

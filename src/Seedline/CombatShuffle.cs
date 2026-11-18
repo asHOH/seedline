@@ -81,6 +81,8 @@ internal static class CombatShuffle
     private static List<CardModel> Shuffle(List<CardModel> cards, Rng rng)
     {
         var current = context.Value ?? throw new InvalidOperationException("Missing combat shuffle context.");
+        if (current.Opening)
+            CombatCards.RecordOpeningDeckSize(current.Player);
         if (CombatCards.UseVanilla(current.Player))
             return current.Opening ? cards.UnstableShuffle(rng) : cards.StableShuffle(rng);
         var scope = CombatStateScope.Require(current.Combat);

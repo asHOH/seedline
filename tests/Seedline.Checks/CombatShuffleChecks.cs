@@ -16,6 +16,32 @@ public static partial class Checks
 {
     private static async Task CheckCombatShuffle()
     {
+        foreach (var size in new[] { 2000, 2001 })
+        {
+            var run = StartGoldRun();
+            var player = run.Players[0];
+            var filler = RandomAddress.For("deck size fixture");
+            while (player.Deck.Cards.Count < size)
+            {
+                var card = run.CreateCard<StrikeIronclad>(player);
+                CardOccurrences.Create(card, filler.At(player.Deck.Cards.Count).Key);
+                player.Deck.AddInternal(card, silent: true);
+            }
+            var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
+            combat.AddPlayer(player);
+            var vanilla = run.Rng.Shuffle.ToSerializable();
+            CombatManager.Instance.SetUpCombat(combat);
+            var scope = CombatStateScope.Require(combat);
+            var large = size > 2000;
+            Assert(CombatCards.UseVanilla(player) == large && scope.Random.Position(scope.For("shuffle")) == (large ? 0 : 1) &&
+                vanilla.Equals(run.Rng.Shuffle.ToSerializable()) == !large, $"a {size}-card deck opens with the policy's shuffle RNG");
+            if (large)
+            {
+                player.Deck.RemoveInternal(player.Deck.Cards[^1]);
+                Assert(CombatCards.UseVanilla(player), "shrinking to 2000 after entry preserves the combat's vanilla selection and shuffle mode");
+            }
+            RunManager.Instance.CleanUp();
+        }
         foreach (var act in new[] { 0, 2 })
         {
             string[]? expectedOpening = null;
