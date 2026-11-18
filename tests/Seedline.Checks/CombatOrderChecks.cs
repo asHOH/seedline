@@ -104,6 +104,12 @@ public static partial class Checks
         Power<HexPower>();
         Assert(CardOrder.CaptureCombat(hexed).CompareTo(beforeHex) == 0,
             "Hex-derived Ethereal is excluded from combat ordering");
+        Power<PhantomBladesPower>();
+        var shiv = Card<Shiv>();
+        var beforeRetain = CardOrder.CaptureCombat(shiv);
+        shiv.GiveSingleTurnRetain();
+        Assert(CardOrder.CaptureCombat(shiv).CompareTo(beforeRetain) == 0,
+            "Phantom Blades' Retain masks a Shiv's temporary Retain flag");
         foreach (var power in powers)
             player.Creature.RemovePowerInternal(power);
 

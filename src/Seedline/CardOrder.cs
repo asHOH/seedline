@@ -107,7 +107,10 @@ internal static partial class CardOrder
         var carried = inCombat ? CarriedValue(card) : card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
         var keywords = inCombat ? CombatKeywords(card) : card.Keywords;
         var restoration = inCombat ? Restoration(card) : 0;
-        var turnEffects = inCombat && HasTurnEffects(card);
+        var temporaryKeywords = inCombat ? TemporaryKeywords(card) : 0;
+        var turnEnergy = inCombat && !card.IsCanonical ? CombatEnergy(card, true) : lastingEnergy;
+        var turnEffects = inCombat && !card.IsCanonical && (temporaryKeywords != 0 || turnEnergy != lastingEnergy ||
+            energyModifiers(card.EnergyCost).Any(Turn) || starModifiers(card).Any(m => m.ClearsWhenTurnEnds));
         var rank = new List<IComparable> {category, special, (strike || defend) && replay > 0 ? (replay - 1) / 2d : replay,
             category < 2 ? false : keywords.Contains(CardKeyword.Retain),
             category < 2 ? 0d : card.HasStarCostX ? 0.5 : Math.Max(0, inCombat ? CombatStars(card, false) : card.BaseStarCost), category < 2 ? false : rarity >= 10,
@@ -124,8 +127,8 @@ internal static partial class CardOrder
         if (inCombat)
             rank.AddRange([PendingUse(card), restoration, turnEffects,
                 turnEffects ? card.HasStarCostX ? 0.5 : Math.Max(0, CombatStars(card, true)) : 0d,
-                turnEffects ? card.EnergyCost.CostsX ? 0.5 : CombatEnergy(card, true) : 0d,
-                TemporaryKeywords(card), enchantment is Slither ? lastingEnergy : 0]);
+                turnEffects ? card.EnergyCost.CostsX ? 0.5 : turnEnergy : 0d,
+                temporaryKeywords, enchantment is Slither ? lastingEnergy : 0]);
         rank.AddRange([neutral ? neutralTie : 0, expired ? Array.IndexOf(enchantments, enchantId) : 0]);
         if (inCombat)
         {

@@ -87,13 +87,19 @@ internal static partial class CardOrder
         return keywords;
     }
 
-    private static bool HasTurnEffects(CardModel card) => !card.IsCanonical &&
-        (energyModifiers(card.EnergyCost).Any(Turn) || starModifiers(card).Any(m => m.ClearsWhenTurnEnds) ||
-            TemporaryKeywords(card) != 0 || CombatEnergy(card, true) != CombatEnergy(card, false));
+    private static readonly AccessTools.FieldRef<CardModel, bool> turnRetain = AccessTools.FieldRefAccess<CardModel, bool>("_hasSingleTurnRetain");
+    private static readonly AccessTools.FieldRef<CardModel, bool> turnSly = AccessTools.FieldRefAccess<CardModel, bool>("_hasSingleTurnSly");
 
-    private static int TemporaryKeywords(CardModel card) =>
-        (card.ShouldRetainThisTurn && !card.Keywords.Contains(CardKeyword.Retain) ? 1 : 0) +
-        (card.IsSlyThisTurn && !card.Keywords.Contains(CardKeyword.Sly) ? 2 : 0);
+    private static int TemporaryKeywords(CardModel card)
+    {
+        var retain = turnRetain(card);
+        var sly = turnSly(card);
+        if (!retain && !sly)
+            return 0;
+        var keywords = card.Keywords;
+        return (retain && !keywords.Contains(CardKeyword.Retain) ? 1 : 0) +
+            (sly && !keywords.Contains(CardKeyword.Sly) ? 2 : 0);
+    }
 
     private static int Expiration(bool turn, bool play) => turn ? play ? 0 : 1 : play ? 2 : 3;
     private static FrozenCardOrder StarModifiers(CardModel card) => new(card.IsCanonical ? [] : starModifiers(card)
