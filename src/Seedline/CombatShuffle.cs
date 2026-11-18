@@ -18,20 +18,30 @@ internal static class CombatShuffle
     private sealed record ShuffleContext(Player Player, CombatState Combat, bool Opening);
     private static readonly AsyncLocal<ShuffleContext?> context = new();
 
-    internal static Dictionary<CardModel, string> Keys(IEnumerable<CardModel> candidates, int act, bool innate)
+    private readonly record struct RankedCard(CardModel Card, FrozenCardOrder Rank, CardOccurrence Info);
+    private static RankedCard[] Capture(IEnumerable<CardModel> cards) => cards
+        .Select(c => new RankedCard(c, CardOrder.CaptureCombatRank(c), CardOccurrences.Info(c))).ToArray();
+
+    internal static Dictionary<CardModel, string> Keys(IEnumerable<CardModel> candidates, int act, bool innate) =>
+        AssignKeys(Capture(candidates), act, innate);
+
+    private static Dictionary<CardModel, string> AssignKeys(RankedCard[] cards, int act, bool innate)
     {
-        var cards = candidates.Select(c => (Card: c, Rank: CardOrder.CaptureCombatRank(c), Info: CardOccurrences.Info(c))).ToArray();
         var result = new Dictionary<CardModel, string>();
-        void Sequence(IEnumerable<(CardModel Card, FrozenCardOrder Rank, CardOccurrence Info)> group, string name)
+        void Sequence(IEnumerable<RankedCard> group, string name)
         {
             var i = 0;
             foreach (var entry in group)
                 result.Add(entry.Card, RandomAddress.For("shuffle key", name).At(i++).Key);
         }
-        var ordinary = cards.Where(c => !innate || !c.Card.Keywords.Contains(CardKeyword.Innate)).ToArray();
+        IEnumerable<RankedCard> ordinary = cards;
         if (innate)
-            Sequence(cards.Where(c => c.Card.Keywords.Contains(CardKeyword.Innate)).OrderBy(c => c.Rank)
+        {
+            var byInnate = cards.ToLookup(c => c.Card.Keywords.Contains(CardKeyword.Innate));
+            Sequence(byInnate[true].OrderBy(c => c.Rank)
                 .ThenBy(c => c.Info.Address, StringComparer.Ordinal), "Innate");
+            ordinary = byInnate[false];
+        }
         Sequence(ordinary.Where(c => c.Rank.Category <= 4).OrderBy(c => c.Rank)
             .ThenBy(c => c.Info.Address, StringComparer.Ordinal), "first");
         var later = ordinary.Where(c => c.Rank.Category > 4).ToArray();
@@ -64,11 +74,16 @@ internal static class CombatShuffle
                 removed.DeckVersion = removed;
                 candidates.Add(removed);
             }
-            var ordinary = Keys(candidates, current.Combat.RunState.CurrentActIndex, false);
+        }
+        var ranked = Capture(candidates);
+        var act = current.Combat.RunState.CurrentActIndex;
+        if (current.Opening)
+        {
+            var ordinary = AssignKeys(ranked, act, false);
             foreach (var card in cards)
                 CombatCards.Info(card).Key = ordinary[card];
         }
-        var keys = Keys(candidates, current.Combat.RunState.CurrentActIndex, current.Opening);
+        var keys = AssignKeys(ranked, act, current.Opening);
         var counter = scope.For("shuffle");
         var address = counter.At(scope.Random.Advance(counter));
         var priorities = cards.ToDictionary(c => c, c => AddressRandom.UInt64(scope.Seed, address.With(keys[c])));
