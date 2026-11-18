@@ -19,10 +19,12 @@ internal static class CombatShuffle
     private static readonly AsyncLocal<ShuffleContext?> context = new();
 
     private readonly record struct RankedCard(CardModel Card, FrozenCardOrder Rank, CardOccurrence Info);
-    private static RankedCard[] Capture(IEnumerable<CardModel> cards)
+    private static RankedCard[] Capture(IEnumerable<CardModel> cards, ICombatState? pileCombat = null)
     {
         var batch = new CardOrder.CombatRankBatch();
-        return cards.Select(c => new RankedCard(c, batch.ShuffleRank(c), CardOccurrences.Info(c))).ToArray();
+        // Removed snapshots point to themselves and have no live pile or combat hooks.
+        return cards.Select(c => new RankedCard(c, batch.ShuffleRank(c, c.DeckVersion == c ? null : pileCombat),
+            CardOccurrences.Info(c))).ToArray();
     }
 
     internal static Dictionary<CardModel, string> Keys(IEnumerable<CardModel> candidates, int act, bool innate) =>
@@ -79,7 +81,7 @@ internal static class CombatShuffle
                 candidates.Add(removed);
             }
         }
-        var ranked = Capture(candidates);
+        var ranked = Capture(candidates, current.Combat);
         var act = current.Combat.RunState.CurrentActIndex;
         if (current.Opening)
         {

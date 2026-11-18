@@ -88,6 +88,15 @@ internal static class CombatCards
     {
         private static void Postfix(CardModel mutableCard, CardModel __result)
         {
+            // PopulateCombatState clones the deck in order, adding each clone to draw before the next.
+            var owner = mutableCard.Owner;
+            if (owner?.PlayerCombatState is { } combat)
+            {
+                var index = combat.DrawPile.Cards.Count;
+                var deck = owner.Deck.Cards;
+                if (index < deck.Count && ReferenceEquals(deck[index], mutableCard))
+                    return;
+            }
             if (mutableCard.Pile?.Type != PileType.Deck)
                 copies.Add(__result, new());
         }

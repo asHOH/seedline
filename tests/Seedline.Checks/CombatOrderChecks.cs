@@ -162,6 +162,9 @@ public static partial class Checks
         Assert(CardOrder.CaptureCombat(coda).CompareTo(beforeMelody) != 0,
             "Coda's own cost hook still affects its turn rank after playing a melody");
         Played(returning);
+        foreach (var candidate in new[] { permanent, retained, returning })
+            Assert(batch.ShuffleRank(candidate, combat).CompareTo(batch.ShuffleRank(candidate)) == 0,
+                "known combat pile and discovered pile produce the same origin, temporary effects, and play history rank");
         combat.CurrentSide = CombatSide.Enemy;
         Assert(CardOrder.Combat.Compare(returning, idle) > 0, "pending hand-draw return survives the enemy side");
         player.PlayerCombatState!.IncrementTurnNumber();

@@ -94,6 +94,11 @@ public static partial class Checks
                 await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, player);
                 Assert(CombatCards.Info(copy).Key != entry && !CardOccurrences.Info(copy).SourceKey && copy.CloneOf == generated,
                     "combat copies receive fresh occurrence state while preserving vanilla copy relationships");
+                var rawDeckCopy = combat.CloneCard(innate);
+                await CardPileCmd.AddGeneratedCardToCombat(rawDeckCopy, PileType.Hand, player);
+                Assert(CombatCards.Info(rawDeckCopy).Address == CardOccurrences.Info(innate).Address,
+                    "cloning from the permanent deck outside population still recognizes the source pile");
+                rawDeckCopy.RemoveFromCurrentPile();
                 var tied = new[] { generated, copy }.OrderBy(c => CombatCards.Info(c).Address, StringComparer.Ordinal).ToArray();
                 var tiedKeys = CombatShuffle.Keys(tied.Reverse(), 2, false);
                 Assert(tiedKeys[tied[0]] == RandomAddress.For("shuffle key", "second").At(0).Key &&

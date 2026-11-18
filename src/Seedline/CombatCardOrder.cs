@@ -28,7 +28,8 @@ internal static partial class CardOrder
         private AbstractModel[] shared = [];
         private readonly Dictionary<CardModel, int> selfPositions = new();
 
-        internal FrozenCardOrder ShuffleRank(CardModel card) => new(Rank(card, this), null);
+        internal FrozenCardOrder ShuffleRank(CardModel card, ICombatState? pileCombat = null) =>
+            new(Rank(card, this, pileCombat: pileCombat), null);
         internal FrozenCardOrder RoutingRank(CardModel card) => new(Rank(card, this, includeOrigin: false), null);
 
         internal AbstractModel[] Listeners(ICombatState? state, CardModel card)
@@ -77,8 +78,8 @@ internal static partial class CardOrder
 
     private static bool Turn(LocalCostModifier modifier) => modifier.Expiration.HasFlag(LocalCostModifierExpiration.EndOfTurn);
     // Pending grants have no pile yet; frozen removed cards identify themselves as their deck version.
-    private static ICombatState? ComparisonCombat(CardModel card) => card.CombatState ??
-        (card.Pile == null && card.DeckVersion != card ? card.Owner?.Creature.CombatState : null);
+    private static ICombatState? PendingCombat(CardModel card) =>
+        card.DeckVersion != card && card.Pile == null ? card.Owner?.Creature.CombatState : null;
     private static bool AffectsRankCost(AbstractModel m, bool turn) =>
         m is not (FreeAttackPower or FreeSkillPower or FreePowerPower or FreeCardPower or VeilpiercerPower or VoidFormPower or BrilliantScarf or EnsemblePower) &&
         (turn || m is not (BorrowedTimePower or TangledPower or Coda or ChoLimbs));
@@ -127,7 +128,7 @@ internal static partial class CardOrder
     private static readonly AccessTools.FieldRef<CardModel, bool> turnRetain = AccessTools.FieldRefAccess<CardModel, bool>("_hasSingleTurnRetain");
     private static readonly AccessTools.FieldRef<CardModel, bool> turnSly = AccessTools.FieldRefAccess<CardModel, bool>("_hasSingleTurnSly");
 
-    private static int TemporaryKeywords(CardModel card, IReadOnlySet<CardKeyword> rankingKeywords)
+    private static int TemporaryKeywords(CardModel card, IReadOnlySet<CardKeyword> rankingKeywords, ICombatState? combat)
     {
         var retain = turnRetain(card);
         var sly = turnSly(card);
@@ -135,7 +136,7 @@ internal static partial class CardOrder
             return 0;
         // Pending grants rank with combat hooks, but their actual keywords are still local.
         // Hex, excluded from ranking, only changes Ethereal.
-        var keywords = card.CombatState == null || card.IsCanonical ? card.GetKeywordsWithSources(KeywordSources.Local) : rankingKeywords;
+        var keywords = combat == null || card.IsCanonical ? card.GetKeywordsWithSources(KeywordSources.Local) : rankingKeywords;
         return (retain && !keywords.Contains(CardKeyword.Retain) ? 1 : 0) +
             (sly && !keywords.Contains(CardKeyword.Sly) ? 2 : 0);
     }
@@ -159,14 +160,14 @@ internal static partial class CardOrder
         return levels.GetValueOrDefault(card);
     }
 
-    private static bool PendingUse(CardModel card)
+    private static bool PendingUse(CardModel card, ICombatState? combat)
     {
-        if (card.CombatState == null)
+        if (combat == null)
             return card is Fetch;
         var plays = CombatManager.Instance.History.CardPlaysFinished.Where(e => e.CardPlay.Card == card);
         return card switch
         {
-            Fetch => !plays.Any(e => e.HappenedThisTurn(card.CombatState)),
+            Fetch => !plays.Any(e => e.HappenedThisTurn(combat)),
             Bolas or ThrummingHatchet => plays.Any(e => playerTurns(e).GetValueOrDefault(card.Owner.NetId) == card.Owner.PlayerCombatState!.TurnNumber ||
                 (e.HappenedLastPlayerTurn(card.Owner) && (!returnDraws.TryGetValue(card, out var draw) || draw.Turn != card.Owner.PlayerCombatState!.TurnNumber))),
             _ => false

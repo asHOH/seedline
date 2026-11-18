@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Enchantments;
@@ -76,10 +77,12 @@ internal static partial class CardOrder
         return capture(left).CompareTo(capture(right));
     }
 
-    private static IComparable[] Rank(CardModel card, CombatRankBatch? batch = null, bool includeOrigin = true)
+    private static IComparable[] Rank(CardModel card, CombatRankBatch? batch = null, bool includeOrigin = true,
+        ICombatState? pileCombat = null)
     {
         var inCombat = batch != null;
-        var listeners = batch?.Listeners(ComparisonCombat(card), card) ?? [];
+        var combat = inCombat ? pileCombat ?? card.CombatState : null;
+        var listeners = batch?.Listeners(combat ?? PendingCombat(card), card) ?? [];
         var persistent = Equivalence(card);
         var id = persistent.Identity;
         var replay = card.GetEnchantedReplayCount();
@@ -109,7 +112,7 @@ internal static partial class CardOrder
         var carried = inCombat ? CarriedValue(card) : card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
         var keywords = inCombat ? CombatKeywords(card, listeners) : card.Keywords;
         var restoration = inCombat ? Restoration(card) : 0;
-        var temporaryKeywords = inCombat ? TemporaryKeywords(card, keywords) : 0;
+        var temporaryKeywords = inCombat ? TemporaryKeywords(card, keywords, combat) : 0;
         var turnEnergy = inCombat && !card.IsCanonical ? CombatEnergy(card, listeners, true) : lastingEnergy;
         var turnEffects = inCombat && !card.IsCanonical && (temporaryKeywords != 0 || turnEnergy != lastingEnergy ||
             energyModifiers(card.EnergyCost).Any(Turn) || starModifiers(card).Any(m => m.ClearsWhenTurnEnds));
@@ -127,7 +130,7 @@ internal static partial class CardOrder
             rank.Add(card.CurrentUpgradeLevel);
         rank.AddRange([card is Guilty ? persistent.Progress : 0, keywords.Contains(CardKeyword.Ethereal), keywords.Contains(CardKeyword.Sly)]);
         if (inCombat)
-            rank.AddRange([PendingUse(card), restoration, turnEffects,
+            rank.AddRange([PendingUse(card, combat), restoration, turnEffects,
                 turnEffects ? card.HasStarCostX ? 0.5 : Math.Max(0, CombatStars(card, listeners, true)) : 0d,
                 turnEffects ? card.EnergyCost.CostsX ? 0.5 : turnEnergy : 0d,
                 temporaryKeywords, enchantment is Slither ? lastingEnergy : 0]);
@@ -137,7 +140,7 @@ internal static partial class CardOrder
             rank.Add(StarModifiers(card));
             rank.Add(EnergyModifiers(card));
             if (includeOrigin)
-                rank.Add(card.Pile?.Type == PileType.Deck || card.DeckVersion != null);
+                rank.Add(card.DeckVersion != null || (pileCombat == null && card.Pile?.Type == PileType.Deck));
         }
         return rank.ToArray();
     }
