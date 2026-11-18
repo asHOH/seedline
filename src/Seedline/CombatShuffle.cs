@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
@@ -77,9 +78,11 @@ internal static class CombatShuffle
         return result;
     }
 
-    private static List<CardModel> Shuffle(List<CardModel> cards, Rng _)
+    private static List<CardModel> Shuffle(List<CardModel> cards, Rng rng)
     {
         var current = context.Value ?? throw new InvalidOperationException("Missing combat shuffle context.");
+        if (CombatCards.UseVanilla(current.Player))
+            return current.Opening ? cards.UnstableShuffle(rng) : cards.StableShuffle(rng);
         var scope = CombatStateScope.Require(current.Combat);
         var candidates = cards.ToList();
         if (current.Opening)

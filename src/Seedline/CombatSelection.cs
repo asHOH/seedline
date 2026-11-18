@@ -5,6 +5,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Extensions;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Monsters;
@@ -93,10 +94,16 @@ internal static class CombatSelection
         return Select(eligible, count, Group(model), whole, model is not SeekerStrike);
     }
 
-    private static CardModel? One(Rng _, IEnumerable<CardModel> cards) => Choose(cards, 1).FirstOrDefault();
-    private static IEnumerable<CardModel> Batch(IEnumerable<CardModel> cards, int count, Rng _) => Choose(cards, count);
+    private static CardModel? One(Rng rng, IEnumerable<CardModel> cards) =>
+        source.Value == null ? rng.NextItem(cards) : Choose(cards, 1).FirstOrDefault();
+    private static IEnumerable<CardModel> Batch(IEnumerable<CardModel> cards, int count, Rng rng) =>
+        source.Value == null ? cards.TakeRandom(count, rng) : Choose(cards, count);
+    private static List<T> Stable<T>(List<T> cards, Rng rng) where T : CardModel =>
+        source.Value == null ? cards.StableShuffle(rng) : Ordered(cards);
+    private static List<T> Unstable<T>(List<T> cards, Rng rng) where T : CardModel =>
+        source.Value == null ? cards.UnstableShuffle(rng) : Ordered(cards);
 
-    private static List<T> Ordered<T>(List<T> cards, Rng _) where T : CardModel
+    private static List<T> Ordered<T>(List<T> cards) where T : CardModel
     {
         var current = source.Value ?? throw new InvalidOperationException("Missing combat selection source.");
         var count = current.Model switch
@@ -136,7 +143,8 @@ internal static class CombatSelection
         private static void Prefix(AbstractModel __instance, out SelectionSource? __state)
         {
             __state = source.Value;
-            source.Value = new(__instance);
+            var player = HookPlayerChoiceContext.GetOwner(__instance, null);
+            source.Value = CombatCards.UseVanilla(player) ? null : new(__instance);
         }
         private static void Finalizer(SelectionSource? __state) => source.Value = __state;
     }
@@ -161,7 +169,8 @@ internal static class CombatSelection
                     else if (method.DeclaringType == typeof(IEnumerableExtensions) && method.Name == nameof(IEnumerableExtensions.TakeRandom))
                         replacement = AccessTools.Method(typeof(CombatSelection), nameof(Batch));
                     else if (method.DeclaringType == typeof(ListExtensions) && method.Name is nameof(ListExtensions.StableShuffle) or nameof(ListExtensions.UnstableShuffle))
-                        replacement = AccessTools.Method(typeof(CombatSelection), nameof(Ordered)).MakeGenericMethod(method.GetGenericArguments());
+                        replacement = AccessTools.Method(typeof(CombatSelection),
+                            method.Name == nameof(ListExtensions.StableShuffle) ? nameof(Stable) : nameof(Unstable)).MakeGenericMethod(method.GetGenericArguments());
                     if (replacement != null)
                     {
                         instruction.opcode = OpCodes.Call;
@@ -188,11 +197,13 @@ internal static class CombatSelection
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(Rng) && m.Name == nameof(Rng.NextItem),
                 AccessTools.Method(typeof(Hopper), nameof(Choose)));
-        private static CardModel? Choose(Rng _, IEnumerable<CardModel> cards)
+        private static CardModel? Choose(Rng rng, IEnumerable<CardModel> cards)
         {
             var eligible = cards.ToArray();
             if (eligible.Length == 0)
                 return null;
+            if (CombatCards.UseVanilla(eligible[0].Owner))
+                return rng.NextItem(eligible);
             var scope = CombatStateScope.Require((CombatState)eligible[0].Owner.Creature.CombatState!);
             return eligible.OrderBy(c => AddressRandom.UInt64(scope.Seed,
                 RandomAddress.For("Thieving Hopper").With(CardOccurrences.Info(c.DeckVersion!).Key)))

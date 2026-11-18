@@ -4,6 +4,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Dread.Dominions;
@@ -22,6 +23,21 @@ internal sealed class CombatCardOccurrence(string address, string key, long crea
 
 internal static class CombatCards
 {
+    private const int maxControlledDeckSize = 2000;
+    private static readonly ConditionalWeakTable<PlayerCombatState, object> vanillaDecks = new();
+    internal static bool UseVanilla(Player? player) =>
+        player?.PlayerCombatState is { } state && vanillaDecks.TryGetValue(state, out _);
+
+    [HarmonyPatch(typeof(Player), nameof(Player.PopulateCombatState))]
+    private static class DeckSize
+    {
+        private static void Prefix(Player __instance)
+        {
+            if (__instance.Deck.Cards.Count > maxControlledDeckSize)
+                vanillaDecks.GetOrCreateValue(__instance.PlayerCombatState!);
+        }
+    }
+
     private sealed class Grant(string source)
     {
         internal string Source { get; } = source;

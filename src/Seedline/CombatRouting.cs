@@ -105,7 +105,8 @@ internal static class CombatRouting
         _ => "choice:" + model.Id.Entry
     };
 
-    private static bool Scripted(Player player) => RunManager.Instance.CardSelectorStack.GetSelector(player) is VakuuCardSelector;
+    private static bool RouteChoices(Player player) => !CombatCards.UseVanilla(player) &&
+        RunManager.Instance.CardSelectorStack.GetSelector(player) is not VakuuCardSelector;
 
     private static async Task<IEnumerable<CardModel>> Complete(Task<IEnumerable<CardModel>> task, Choice? choice)
     {
@@ -124,7 +125,7 @@ internal static class CombatRouting
     private static class HandChoice
     {
         private static void Prefix(Player player, Func<CardModel, bool>? filter, AbstractModel source, out Choice? __state) =>
-            __state = Scripted(player) ? null : new(player.PlayerCombatState!.Hand.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source));
+            __state = RouteChoices(player) ? new(player.PlayerCombatState!.Hand.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source)) : null;
         private static void Postfix(Choice? __state, ref Task<IEnumerable<CardModel>> __result) => __result = Complete(__result, __state);
     }
 
@@ -132,7 +133,7 @@ internal static class CombatRouting
     private static class UpgradeChoice
     {
         private static void Prefix(Player player, out Choice? __state) =>
-            __state = Scripted(player) ? null : new(player.PlayerCombatState!.Hand.Cards.Where(c => c.IsUpgradable), "upgrade");
+            __state = RouteChoices(player) ? new(player.PlayerCombatState!.Hand.Cards.Where(c => c.IsUpgradable), "upgrade") : null;
         private static void Postfix(Choice? __state, ref Task<CardModel?> __result) => __result = CompleteOne(__result, __state);
     }
 
@@ -142,8 +143,8 @@ internal static class CombatRouting
         private static MethodBase TargetMethod() => typeof(CardSelectCmd).GetMethods().Single(m =>
             m.Name == nameof(CardSelectCmd.FromCombatPile) && m.GetParameters().Length == 5);
         private static void Prefix(CardPile pile, Player player, Func<CardModel, bool>? filter, out Choice? __state) =>
-            __state = Scripted(player) ? null : new(pile.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source.Value
-                ?? throw new InvalidOperationException("Missing combat pile choice source.")));
+            __state = RouteChoices(player) ? new(pile.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source.Value
+                ?? throw new InvalidOperationException("Missing combat pile choice source."))) : null;
         private static void Postfix(Choice? __state, ref Task<IEnumerable<CardModel>> __result) => __result = Complete(__result, __state);
     }
 
@@ -193,6 +194,7 @@ internal static class CombatRouting
         }
         private static void Route(CardModel card)
         {
+            if (CombatCards.UseVanilla(card.Owner)) return;
             // The action has validated play/target; capture equivalence before spending changes costs.
             var eligible = card.Owner.PlayerCombatState!.Hand.Cards.Where(c => c.CanPlay(out _, out _)).ToArray();
             new Choice(eligible, "play").Commit([card]);

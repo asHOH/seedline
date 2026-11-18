@@ -1068,6 +1068,8 @@ Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests
 
 ### Combat setup
 
+**Large decks:** for each player with more than 2,000 permanent cards at combat entry, use vanilla opening shuffles, reshuffles, random combat-card selection (including Thieving Hopper's theft), and manual play and choice routing for that combat.
+
 Use `purpose = setup` + [combat address](#combat-addresses) for encounter RNG, covering variable enemy composition and assigned starting states.
 
 Baseline: [combat setup](#combat-setup-and-shuffles).
