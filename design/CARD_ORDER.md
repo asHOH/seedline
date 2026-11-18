@@ -42,7 +42,7 @@ Rank these Skills as **Other Attack**: Blade Dance, Bouncing Flask, Darkness, De
 
 ### 2. Replay
 
-Replay `r` counts extra plays. Compare `r` normally and `(r - 1) / 2` for promoted starter Strikes/Defends. Preserve fractions: `1, 2, 3` becomes `0, 0.5, 1`.
+Replay `r` counts extra plays. For Curses, Quests and Statuses, compare [identity rank](#identity-and-rarity-ranks) first, then ascending replay count. Compare `r` normally for other cards and `(r - 1) / 2` for promoted starter Strikes/Defends. Preserve fractions: `1, 2, 3` becomes `0, 0.5, 1`.
 
 ### 3. Within-category order
 
@@ -110,7 +110,7 @@ Combat-only cards rank before permanent cards and their linked combat instances.
 
 **Quests (alphabetical):** Byrdonis Egg < Dowsing < Lantern Key < Spoils Map.
 
-**Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed < Sadness < Dazed < Frantic Escape.
+**Statuses:** Wither < Beckon < Void < Toxic < Infection < Burn < Wound < Soot < Debris < Slimed without replay < Sadness < Dazed < Frantic Escape < Slimed with replay.
 
 **Rarity rank:** Basic < Peck < Trash Heap < Toric Toughness < Common < Other Token < Dingy Dagger (+0/+1) < Uncommon < Other Event A < Rare < Sovereign Blade < Other Event B < Ancient. Other Token includes every Token-rarity card except Sovereign Blade.
 

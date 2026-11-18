@@ -11,8 +11,9 @@ public static partial class Checks
     private static void CheckCardOrdering(Player player)
     {
         Assert(CardOrder.Permanent.Compare(ModelDb.Card<Backflip>(), ModelDb.Card<DodgeAndRoll>()) > 0 &&
-            CardOrder.Permanent.Compare(ModelDb.Card<DarkEmbrace>(), ModelDb.Card<Envenom>()) > 0,
-            "immediate and power-mediated draw effects rank before alphabetical tie-breaks");
+            CardOrder.Permanent.Compare(ModelDb.Card<DarkEmbrace>(), ModelDb.Card<Envenom>()) > 0 &&
+            CardOrder.Permanent.Compare(ModelDb.Card<CalculatedGamble>(), ModelDb.Card<Rage>()) > 0,
+            "immediate, power-mediated and discard-and-draw effects rank before alphabetical tie-breaks");
 
         var strikes = player.Deck.Cards.Where(c => c.Id.Entry == "STRIKE_IRONCLAD").Take(2).ToArray();
         Assert(CardOrder.Equivalence(strikes[0]) == CardOrder.Equivalence(strikes[1]) &&

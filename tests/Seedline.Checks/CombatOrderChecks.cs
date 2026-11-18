@@ -30,6 +30,28 @@ public static partial class Checks
             return card;
         }
         var bash = Card<Bash>();
+        var plainSlimed = Card<Slimed>();
+        var once = Card<Slimed>();
+        var twice = Card<Slimed>();
+        once.BaseReplayCount = 1;
+        twice.BaseReplayCount = 2;
+        var dazed = Card<Dazed>();
+        dazed.BaseReplayCount = 3;
+        var escape = Card<FranticEscape>();
+        var replayedEscape = Card<FranticEscape>();
+        replayedEscape.BaseReplayCount = 2;
+        CardModel[] statusOrder = [plainSlimed, Card<Sadness>(), dazed, escape, replayedEscape, once, twice];
+        Assert(statusOrder.Zip(statusOrder.Skip(1)).All(p => CardOrder.Combat.Compare(p.First, p.Second) < 0) &&
+            !CombatRouting.Equivalent(once, twice) && !CombatRouting.Equivalent(escape, replayedEscape),
+            "Status identity precedes replay count, with replayed Slimed after every Frantic Escape");
+        foreach (var card in new CardModel[] { Card<Debris>(), Card<SporeMind>(), Card<Dowsing>() })
+        {
+            var same = combat.CreateCard(card.CanonicalInstance, player);
+            player.PlayerCombatState!.Hand.AddInternal(same);
+            card.BaseReplayCount = 2;
+            Assert(CardOrder.Combat.Compare(card, same) > 0 && !CombatRouting.Equivalent(card, same),
+                $"{card.Id.Entry} ranks higher with more replay and keeps a separate routing class");
+        }
         var other = Card<Bash>();
         Assert(CardOrder.CombatEquivalent(bash, other), "fresh combat copies have equal gameplay ordering properties");
         bash.EnergyCost.AddUntilPlayed(-1);

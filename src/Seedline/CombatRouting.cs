@@ -14,7 +14,10 @@ using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Potions;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
 
 namespace Seedline;
 
@@ -137,15 +140,71 @@ internal static class CombatRouting
         private static void Postfix(Choice? __state, ref Task<CardModel?> __result) => __result = CompleteOne(__result, __state);
     }
 
+    // The grid and scripted selectors can present different orders for the same draw pile.
+    internal sealed class PileSelection(string operation, CardModel[] pileOrder)
+    {
+        private Choice? presented;
+        internal void Present(IEnumerable<CardModel> shown) => presented = new(shown, operation);
+        internal Task<IEnumerable<CardModel>> SelectGrid(NCombatPileCardSelectScreen screen)
+        {
+            Present(screen.GetNode<NCardGrid>("%CardGrid").SortedCards);
+            return screen.CardsSelected();
+        }
+        internal async Task<IEnumerable<CardModel>> Finish(Task<IEnumerable<CardModel>> task)
+        {
+            var clicked = (await task).ToArray();
+            if (clicked.Length > 0)
+                (presented ?? new Choice(pileOrder, operation)).Commit(clicked);
+            return clicked;
+        }
+    }
+
     [HarmonyPatch]
     private static class PileChoice
     {
+        private static readonly AsyncLocal<PileSelection?> pendingChoice = new();
         private static MethodBase TargetMethod() => typeof(CardSelectCmd).GetMethods().Single(m =>
             m.Name == nameof(CardSelectCmd.FromCombatPile) && m.GetParameters().Length == 5);
-        private static void Prefix(CardPile pile, Player player, Func<CardModel, bool>? filter, out Choice? __state) =>
-            __state = RouteChoices(player) ? new(pile.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source.Value
-                ?? throw new InvalidOperationException("Missing combat pile choice source."))) : null;
-        private static void Postfix(Choice? __state, ref Task<IEnumerable<CardModel>> __result) => __result = Complete(__result, __state);
+        private static void Prefix(CardPile pile, Player player, Func<CardModel, bool>? filter, out (PileSelection? Previous, PileSelection? Current) __state)
+        {
+            var current = RouteChoices(player) ? new PileSelection(Operation(source.Value
+                ?? throw new InvalidOperationException("Missing combat pile choice source.")), pile.Cards.Where(c => filter?.Invoke(c) ?? true).ToArray()) : null;
+            __state = (pendingChoice.Value, current);
+            pendingChoice.Value = current;
+        }
+        private static void Postfix((PileSelection? Previous, PileSelection? Current) __state, ref Task<IEnumerable<CardModel>> __result)
+        {
+            pendingChoice.Value = __state.Previous;
+            if (__state.Current is { } current)
+                __result = current.Finish(__result);
+        }
+
+        [HarmonyPatch]
+        private static class Presentation
+        {
+            private static MethodBase TargetMethod() => RewardPatches.AsyncMethod(typeof(CardSelectCmd), nameof(CardSelectCmd.FromCombatPile),
+                PileChoice.TargetMethod().GetParameters().Select(p => p.ParameterType).ToArray());
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                var patched = RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(ICardSelector) && m.Name == nameof(ICardSelector.GetSelectedCards),
+                    AccessTools.Method(typeof(Presentation), nameof(Select)), 2);
+                return RewardPatches.Replace(patched, m => m.Name == nameof(NCardGridSelectionScreen.CardsSelected),
+                    AccessTools.Method(typeof(Presentation), nameof(SelectGrid)));
+            }
+            private static Task<IEnumerable<CardModel>> Select(ICardSelector selector, IEnumerable<CardModel> cards, int min, int max)
+            {
+                if (pendingChoice.Value is { } current)
+                {
+                    var shown = cards.ToArray();
+                    current.Present(shown);
+                    return selector.GetSelectedCards(shown, min, max);
+                }
+                return selector.GetSelectedCards(cards, min, max);
+            }
+            private static Task<IEnumerable<CardModel>> SelectGrid(NCombatPileCardSelectScreen screen) =>
+                pendingChoice.Value?.SelectGrid(screen) ?? screen.CardsSelected();
+        }
     }
 
     // Context follows asynchronous continuations; nested sources restore their caller's context.

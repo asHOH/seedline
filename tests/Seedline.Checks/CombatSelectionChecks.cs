@@ -204,7 +204,11 @@ public static partial class Checks
                 foreach (var card in pcs.DrawPile.Cards.ToArray())
                     pcs.DrawPile.MoveToTopInternal(card);
             var beforeDeck = player.Deck.Cards.ToArray();
+            var linked = pcs.DrawPile.Cards.OfType<StrikeIronclad>().ToArray();
+            Assert(!CombatRouting.Equivalent(linked[0], linked[1]), "a pending Hopper theft splits equivalent Strikes by deck link");
             await (Task)AccessTools.Method(typeof(ThievingHopper), "ThieveryMove").Invoke(hopper, [new Creature[] { player.Creature }])!;
+            var survivors = linked.Where(c => c.Pile == pcs.DrawPile).Take(2).ToArray();
+            Assert(CombatRouting.Equivalent(survivors[0], survivors[1]), "after Hopper steals, surviving ordinary deck links route together");
             var stolen = beforeDeck.Single(c => !player.Deck.Cards.Contains(c));
             var theft = CardOccurrences.Info(stolen).Key;
             expectedTheft ??= theft;

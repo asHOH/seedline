@@ -5,15 +5,20 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.CardRewardAlternatives;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Actions;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Encounters;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardLibrary;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
 
@@ -28,8 +33,11 @@ public static partial class Checks
         {
             var run = StartGoldRun();
             var player = run.Players[0];
-            await CardPileCmd.Add(run.CreateCard<GeneticAlgorithm>(player), PileType.Deck);
-            await CardPileCmd.Add(run.CreateCard<GeneticAlgorithm>(player), PileType.Deck);
+            foreach (var model in new CardModel[] { ModelDb.Card<GeneticAlgorithm>(), ModelDb.Card<TheScythe>(), ModelDb.Card<ShowOff>() })
+                for (var i = 0; i < 2; i++)
+                    await CardPileCmd.Add(run.CreateCard(model, player), PileType.Deck);
+            foreach (var defend in player.Deck.Cards.OfType<DefendIronclad>().Take(2))
+                CardCmd.Enchant<Goopy>(defend, 1);
             var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
             combat.AddPlayer(player);
             combat.Encounter!.GenerateMonstersWithSlots(run);
@@ -41,8 +49,14 @@ public static partial class Checks
             var pcs = player.PlayerCombatState!;
             var scope = CombatStateScope.Require(combat);
             var strikes = pcs.DrawPile.Cards.OfType<StrikeIronclad>().Cast<CardModel>().ToArray();
-            var genetic = pcs.DrawPile.Cards.OfType<GeneticAlgorithm>().ToArray();
-            Assert(!CombatRouting.Equivalent(genetic[0], genetic[1]), "permanent growth cards keep their exact deck correspondence");
+            var protectedGroups = pcs.DrawPile.Cards.Where(c => c is GeneticAlgorithm or TheScythe or ShowOff || c.Enchantment is Goopy).GroupBy(c => c.Id).ToArray();
+            Assert(protectedGroups.Length == 4, "combat copies retain all four protected deck-link cases");
+            foreach (var copies in protectedGroups)
+            {
+                var pair = copies.ToArray();
+                Assert(pair.Length == 2 && CardOrder.CombatEquivalent(pair[0], pair[1]) && !CombatRouting.Equivalent(pair[0], pair[1]),
+                    $"{copies.Key}: otherwise equal cards with distinct protected deck links stay separate");
+            }
             Assert(CombatRouting.Equivalent(strikes[0], strikes[1]), "ordinary duplicate deck links permit routing");
             foreach (var card in strikes)
             {
@@ -149,6 +163,28 @@ public static partial class Checks
             var amounts = (Dictionary<CardModel, int>)AccessTools.Field(data.GetType(), "amountsForPlayedCards").GetValue(data)!;
             Assert(amounts.ContainsKey(b) && !amounts.ContainsKey(a), "pending power dictionaries follow logical occurrences");
 
+            // Dowsing room progress sorts the selector, but has no effect on combat equivalence.
+            var fresh = combat.CreateCard<Dowsing>(player);
+            var progressed = combat.CreateCard<Dowsing>(player);
+            progressed.RoomsEntered = 1;
+            pcs.DrawPile.AddInternal(fresh);
+            pcs.DrawPile.AddInternal(progressed);
+            var routingScope = scope.For("combat routing", "retrieval", fresh.Id.Entry);
+            var retrievalKeys = scope.Selection.Copy().Select(scope.Seed, routingScope,
+                new[] { fresh, progressed }.Select(c => CombatCards.Info(c).Key), 2);
+            var stratagem = (StratagemPower)ModelDb.Power<StratagemPower>().ToMutable();
+            AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Owner)).SetValue(stratagem, player.Creature);
+            stratagem.SetAmount(2);
+            using (CardSelectorStack.SetTestSelector(selector))
+            {
+                selector.PrepareToSelect([fresh, progressed]);
+                await stratagem.AfterShuffle(context, player);
+            }
+            Assert(CombatCards.Info(progressed).Key == retrievalKeys[0] && CombatCards.Info(fresh).Key == retrievalKeys[1],
+                "Stratagem routes by selector presentation, independently of draw-pile order and returned click order");
+            if (branch == 0)
+                await CheckDrawGridRouting(combat, player);
+
             var hopper = ModelDb.Monster<ThievingHopper>().ToMutable();
             var creature = combat.CreateCreature(hopper, CombatSide.Enemy, null);
             combat.AddCreature(creature);
@@ -158,6 +194,36 @@ public static partial class Checks
         }
         await CheckCombatPlayRouting();
         await CheckPendingCombatRouting();
+    }
+
+    private static async Task CheckDrawGridRouting(CombatState combat, Player player)
+    {
+        var pile = player.PlayerCombatState!.DrawPile;
+        var rows = Enumerable.Range(0, 18).Select(i => i % 2 == 0 ? (CardModel)combat.CreateCard<StrikeIronclad>(player) :
+            combat.CreateCard<DefendIronclad>(player)).ToArray();
+        foreach (var card in rows) pile.AddInternal(card);
+        var strikes = rows.OfType<StrikeIronclad>().ToArray();
+        var screen = NCombatPileCardSelectScreen.Create(pile, new(CardSelectorPrefs.ExhaustSelectionPrompt, strikes.Length), rows.Contains);
+        try
+        {
+            var grid = screen.GetNode<NCardGrid>("%CardGrid");
+            // Exercise vanilla sorting off-tree, without starting a layout animation.
+            AccessTools.Field(typeof(NCardGrid), "_cardsAnimatingOutForSetCards").SetValue(grid, true);
+            grid.SetCards(rows, PileType.Draw, [SortingOrders.RarityAscending, SortingOrders.AlphabetAscending]);
+            var shown = grid.SortedCards.OfType<StrikeIronclad>().Cast<CardModel>().ToArray();
+            Assert(!shown.SequenceEqual(strikes), "draw grid reorders tied Strikes in the presentation fixture");
+            var state = CombatStateScope.Require(combat);
+            var keys = state.Selection.Copy().Select(state.Seed, state.For("combat routing", "retrieval", shown[0].Id.Entry),
+                shown.Select(c => CombatCards.Info(c).Key), shown.Length);
+            var selection = new CombatRouting.PileSelection("retrieval", rows);
+            var pending = selection.Finish(selection.SelectGrid(screen));
+            var result = (TaskCompletionSource<IEnumerable<CardModel>>)AccessTools.Field(typeof(NCardGridSelectionScreen), "_completionSource").GetValue(screen)!;
+            result.SetResult(shown.Reverse());
+            var clicked = await pending;
+            Assert(clicked.SequenceEqual(shown.Reverse()) && shown.Select(c => CombatCards.Info(c).Key).SequenceEqual(keys),
+                "the real draw grid assigns routing keys in displayed order and preserves click order");
+        }
+        finally { screen.Free(); }
     }
 
     private static async Task CheckCombatPlayRouting()

@@ -110,7 +110,8 @@ internal static partial class CardOrder
             energy = 2.5;
         english ??= JsonSerializer.Deserialize<Dictionary<string, string>>(Godot.FileAccess.GetFileAsString("res://localization/eng/cards.json"))!;
         var title = english.GetValueOrDefault(id + ".title", id).ToUpperInvariant();
-        var special = category == 0 ? Array.IndexOf(curses, id) : category == 1 ? Array.IndexOf(statuses, id) : -1;
+        var special = card is Slimed && replay > 0 ? statuses.Length :
+            category == 0 ? Array.IndexOf(curses, id) : category == 1 ? Array.IndexOf(statuses, id) : -1;
         var carried = inCombat ? CarriedValue(card) : card is GeneticAlgorithm or TheScythe or ShowOff ? persistent.Progress : 0;
         var keywords = inCombat ? CombatKeywords(card, listeners) : card.Keywords;
         var restoration = inCombat ? Restoration(card) : 0;
@@ -177,7 +178,9 @@ internal static partial class CardOrder
             draws = type.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public).Append(type)
                 .SelectMany(t => t.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 .Where(m => m.GetMethodBody() != null).Any(m => PatchProcessor.GetOriginalInstructions(m)
-                    .Any(i => i.operand is MethodInfo method && method.DeclaringType == typeof(CardPileCmd) && method.Name == nameof(CardPileCmd.Draw)));
+                    .Any(i => i.operand is MethodInfo method &&
+                        (method.DeclaringType == typeof(CardPileCmd) && method.Name == nameof(CardPileCmd.Draw) ||
+                         method.DeclaringType == typeof(CardCmd) && method.Name == nameof(CardCmd.DiscardAndDraw))));
             drawEffects.Add(type, draws);
         }
         return draws;
