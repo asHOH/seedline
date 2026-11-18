@@ -71,25 +71,10 @@ internal static class PermanentSelection
         if (clicked.Count == 0)
             return;
         var state = State(clicked.First());
-        var selected = clicked.ToHashSet();
-        foreach (var group in eligible.GroupBy(CardOrder.Equivalence))
-        {
-            var copies = group.ToArray();
-            var picks = copies.Where(selected.Contains).ToArray();
-            if (picks.Length == 0)
-                continue;
-            var scope = RandomAddress.For("deck routing", operation, group.Key.Identity);
-            var logicalPicks = Select(copies, picks.Length, scope);
-            var rest = copies.Except(logicalPicks).OrderBy(c => CardOccurrences.Info(c).Address, StringComparer.Ordinal);
-            var logical = logicalPicks.Concat(rest).ToArray();
-            var physical = picks.Concat(copies.Where(c => !selected.Contains(c))).ToArray();
-            var keys = logicalPicks.Select(Key).ToArray();
-            CardOccurrences.Reassociate(physical, logical);
-            // Removal retires its inputs; Tooth uses upgrade routing because its stored cards return.
-            if (operation != "removal")
-                foreach (var key in keys)
-                    state.Selection.Renew(state.Seed, scope, key);
-        }
+        // Removal retires its inputs; Tooth uses upgrade routing because its stored cards return.
+        CardRouting.Commit(eligible.GroupBy(CardOrder.Equivalence), clicked.ToHashSet(), state.Selection, state.Seed,
+            id => RandomAddress.For("deck routing", operation, id), operation != "removal",
+            Key, c => CardOccurrences.Info(c).Address, CardOccurrences.Reassociate);
     }
 
     internal static PotionModel? Sacrifice(IEnumerable<PotionModel> inventory)

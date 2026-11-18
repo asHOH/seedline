@@ -55,24 +55,18 @@ internal static class CombatRouting
             var selected = clicked.ToHashSet();
             if (selected.Count != clicked.Count || !selected.IsSubsetOf(groups.SelectMany(g => g)))
                 throw new ArgumentException("Routing selections must be distinct eligible cards.");
-            foreach (var copies in groups)
+            var combat = (CombatState)clicked.First().CombatState!;
+            var scope = CombatStateScope.Require(combat);
+            CardRouting.Commit(groups, selected, scope.Selection, scope.Seed,
+                id => scope.For("combat routing", operation, id), operation != "transformation",
+                c => CombatCards.Info(c).Key, c => CombatCards.Info(c).Address, Reassociate);
+
+            void Reassociate(IReadOnlyList<CardModel> physical, IReadOnlyList<CardModel> logical)
             {
-                var picks = copies.Where(selected.Contains).ToArray();
-                if (picks.Length == 0) continue;
-                var combat = (CombatState)copies[0].CombatState!;
-                var scope = CombatStateScope.Require(combat);
-                var address = scope.For("combat routing", operation, copies[0].Id.Entry);
-                var keys = scope.Selection.Select(scope.Seed, address, copies.Select(c => CombatCards.Info(c).Key), picks.Length);
-                var chosen = keys.Select(k => copies.Single(c => CombatCards.Info(c).Key == k)).ToArray();
-                var logical = chosen.Concat(copies.Except(chosen).OrderBy(c => CombatCards.Info(c).Address, StringComparer.Ordinal)).ToArray();
-                var physical = picks.Concat(copies.Where(c => !selected.Contains(c))).ToArray();
                 CombatReferences.Rebind(combat, physical, logical);
                 CardOrder.Reassociate(physical, logical);
                 CardOccurrences.Reassociate(physical, logical);
                 CombatCards.Reassociate(physical, logical);
-                // Transformation retires its selected inputs; the other choices retain occurrences.
-                if (operation != "transformation")
-                    foreach (var key in keys) scope.Selection.Renew(scope.Seed, address, key);
             }
         }
     }
