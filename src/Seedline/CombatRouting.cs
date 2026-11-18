@@ -28,9 +28,12 @@ internal static class CombatRouting
         card.Enchantment is Goopy || card.CombatState is CombatState combat && combat.Enemies.Any(c =>
             c.IsAlive && c.Monster is ThievingHopper hopper && !theftFinished.TryGetValue(hopper, out _));
 
-    internal static bool Equivalent(CardModel a, CardModel b) => CardOrder.CombatEquivalent(a, b) &&
+    private static bool Equivalent(CardModel a, CardModel b, Func<CardModel, FrozenCardOrder> rank) =>
+        rank(a).CompareTo(rank(b)) == 0 &&
         (!Protected(a) && !Protected(b) || ReferenceEquals(a.DeckVersion, b.DeckVersion)) &&
         CombatReferences.PendingEquivalent(a, b);
+
+    internal static bool Equivalent(CardModel a, CardModel b) => Equivalent(a, b, CardOrder.CaptureRoutingRank);
 
     internal sealed class Choice
     {
@@ -40,10 +43,25 @@ internal static class CombatRouting
         {
             this.operation = operation;
             var classes = new List<List<CardModel>>();
+            var byIdentity = new Dictionary<ModelId, List<List<CardModel>>>();
+            var ranks = new Dictionary<CardModel, FrozenCardOrder>();
+            FrozenCardOrder Rank(CardModel card)
+            {
+                if (!ranks.TryGetValue(card, out var rank))
+                    ranks.Add(card, rank = CardOrder.CaptureRoutingRank(card));
+                return rank;
+            }
             foreach (var card in eligible)
             {
-                var group = classes.FirstOrDefault(g => Equivalent(g[0], card));
-                if (group == null) classes.Add([card]);
+                if (!byIdentity.TryGetValue(card.Id, out var sameIdentity))
+                    byIdentity.Add(card.Id, sameIdentity = []);
+                var group = sameIdentity.FirstOrDefault(g => Equivalent(g[0], card, Rank));
+                if (group == null)
+                {
+                    group = [card];
+                    sameIdentity.Add(group);
+                    classes.Add(group);
+                }
                 else group.Add(card);
             }
             groups = classes.Select(g => g.ToArray()).ToArray();

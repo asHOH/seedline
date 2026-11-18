@@ -16,8 +16,8 @@ internal static partial class CardOrder
     internal static readonly IComparer<CardModel> Combat = Comparer<CardModel>.Create((a, b) => Compare(a, b, CaptureCombat));
     internal static FrozenCardOrder CaptureCombat(CardModel card) => new(Rank(card, true), CardOccurrences.Find(card)?.Address);
     internal static FrozenCardOrder CaptureCombatRank(CardModel card) => new(Rank(card, true), null);
-    internal static bool CombatEquivalent(CardModel a, CardModel b) =>
-        new FrozenCardOrder(Rank(a, true, false), null).CompareTo(new(Rank(b, true, false), null)) == 0;
+    internal static FrozenCardOrder CaptureRoutingRank(CardModel card) => new(Rank(card, true, false), null);
+    internal static bool CombatEquivalent(CardModel a, CardModel b) => CaptureRoutingRank(a).CompareTo(CaptureRoutingRank(b)) == 0;
 
     private static readonly AccessTools.FieldRef<CardEnergyCost, List<LocalCostModifier>> energyModifiers =
         AccessTools.FieldRefAccess<CardEnergyCost, List<LocalCostModifier>>("_localModifiers");
