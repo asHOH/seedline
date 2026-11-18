@@ -56,7 +56,14 @@ internal static class PotionRewards
         HashSet<string>? excluded = null, int slot = -1)
     {
         var state = RunCheckpoints.Require((RunState)player.RunState);
-        var preview = state with { Random = state.Random.Copy(), Rewards = state.Rewards.Copy() };
+        var rewards = new RewardState();
+        foreach (var rarity in new[] { PotionRarity.Common, PotionRarity.Uncommon, PotionRarity.Rare })
+        {
+            var key = RandomAddress.For("potion identity", source, rarity.ToString()).Key;
+            if (state.Rewards.Supplies.TryGetValue(key, out var supply))
+                rewards.Supplies.Add(key, supply.Copy());
+        }
+        var preview = state with { Random = state.Random.Copy(), Rewards = rewards };
         var eligible = PotionFactory.GetPotionOptions(player).Where(p => (!combat || p.CanBeGeneratedInCombat) &&
             (excluded == null || !excluded.Contains(p.Id.Entry)));
         var potion = Draw(player, source, eligible, preview: preview).ToMutable();
