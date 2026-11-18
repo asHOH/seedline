@@ -21,16 +21,16 @@ public static partial class Checks
             string[]? expectedOpening = null;
             Dictionary<string, string>? expectedKeys = null;
             string? expectedReshuffle = null;
-            for (var branch = 0; branch < 2; branch++)
+            for (var branch = 0; branch < 3; branch++)
             {
                 var run = StartGoldRun();
                 var player = run.Players[0];
                 var innate = run.CreateCard<Apotheosis>(player);
                 await CardPileCmd.Add(innate, PileType.Deck);
                 CardOccurrences.AssignKey(innate, RandomAddress.For("shuffle check reward").Key);
-                CardModel removed = player.Deck.Cards.OfType<StrikeIronclad>().First();
+                CardModel removed = branch == 2 ? innate : player.Deck.Cards.OfType<StrikeIronclad>().First();
                 var removedAddress = CardOccurrences.Info(removed).Address;
-                if (branch == 1)
+                if (branch != 0)
                 {
                     await CardPileCmd.RemoveFromDeck(removed, false);
                     foreach (var card in player.Deck.Cards.ToArray())
@@ -58,6 +58,11 @@ public static partial class Checks
                     $"act {act + 1} opening shuffle and fixed selection keys preserve removed-card positions and ignore deck order");
                 Assert(overrideCalled && scope.Random.Position(scope.For("shuffle")) == 1 && shuffleRng.Equals(run.Rng.Shuffle.ToSerializable()),
                     "opening shuffle commits once and preserves the game's test override and vanilla RNG");
+                if (branch == 2) // The removed snapshot was the only Innate card in the opening field.
+                {
+                    RunManager.Instance.CleanUp();
+                    continue;
+                }
                 var combatInnate = draw.Cards.Single(c => c.DeckVersion == innate);
                 var innateKeys = CombatShuffle.Keys(draw.Cards, act, true);
                 Assert(CombatCards.Info(combatInnate).Key != innateKeys[combatInnate] &&

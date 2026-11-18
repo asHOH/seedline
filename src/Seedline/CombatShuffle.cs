@@ -30,6 +30,10 @@ internal static class CombatShuffle
     internal static Dictionary<CardModel, string> Keys(IEnumerable<CardModel> candidates, int act, bool innate) =>
         AssignKeys(Capture(candidates), act, innate);
 
+    // Combat keyword hooks change Ethereal and Retain; Innate comes from the card itself.
+    private static bool IsInnate(RankedCard entry) =>
+        entry.Card.GetKeywordsWithSources(KeywordSources.Local).Contains(CardKeyword.Innate);
+
     private static Dictionary<CardModel, string> AssignKeys(RankedCard[] cards, int act, bool innate)
     {
         var result = new Dictionary<CardModel, string>();
@@ -42,8 +46,7 @@ internal static class CombatShuffle
         IEnumerable<RankedCard> ordinary = cards;
         if (innate)
         {
-            // Combat keyword hooks change Ethereal and Retain; Innate comes from the card itself.
-            var byInnate = cards.ToLookup(c => c.Card.GetKeywordsWithSources(KeywordSources.Local).Contains(CardKeyword.Innate));
+            var byInnate = cards.ToLookup(IsInnate);
             Sequence(byInnate[true].OrderBy(c => c.Rank)
                 .ThenBy(c => c.Info.Address, StringComparer.Ordinal), "Innate");
             ordinary = byInnate[false];
@@ -83,13 +86,14 @@ internal static class CombatShuffle
         }
         var ranked = Capture(candidates, current.Combat);
         var act = current.Combat.RunState.CurrentActIndex;
+        var keys = AssignKeys(ranked, act, false);
         if (current.Opening)
         {
-            var ordinary = AssignKeys(ranked, act, false);
             foreach (var card in cards)
-                CombatCards.Info(card).Key = ordinary[card];
+                CombatCards.Info(card).Key = keys[card];
+            if (ranked.Any(IsInnate))
+                keys = AssignKeys(ranked, act, true);
         }
-        var keys = AssignKeys(ranked, act, current.Opening);
         var counter = scope.For("shuffle");
         var address = counter.At(scope.Random.Advance(counter));
         var priorities = cards.ToDictionary(c => c, c => AddressRandom.UInt64(scope.Seed, address.With(keys[c])));
