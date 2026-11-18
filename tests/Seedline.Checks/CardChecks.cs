@@ -225,16 +225,19 @@ public static partial class Checks
             run = StartGoldRun();
             player = run.Players[0];
             var originals = player.Deck.Cards.ToArray();
+            var copyGrant = RandomAddress.For("card copy", "REFLECTIONS").At(0);
+            var expectedCopyAddress = originals.OrderBy(c => c, CardOrder.Permanent)
+                .Select((card, index) => (card, address: copyGrant.At(index).Key)).ToDictionary(p => p.card, p => p.address);
             var reflections = ModelDb.Event<Reflections>().ToMutable();
             await reflections.BeginEvent(player, null, false);
             await (Task)AccessTools.Method(typeof(Reflections), "Shatter").Invoke(reflections, [])!;
             Assert(player.Deck.Cards.Count == originals.Length * 2 + 1 && player.Deck.Cards
                 .Select(c => CardOccurrences.Info(c).Address).Distinct().Count() == player.Deck.Cards.Count,
                 "asynchronous Reflections copies create distinct source-addressed occurrences across the entire batch");
-            var copyAddresses = player.Deck.Cards.Except(originals).Where(c => c is not BadLuck)
-                .Select(c => CardOccurrences.Info(c).Address).ToArray();
-            Assert(copyAddresses.All(a => a.StartsWith("[\"card copy\",\"REFLECTIONS\",0,", StringComparison.Ordinal)),
-                "all Reflections copies share one committed source opportunity through asynchronous waits");
+            var copyAddresses = player.Deck.Cards.Skip(originals.Length).Where(c => c is not BadLuck)
+                .Select(c => CardOccurrences.Info(c).Address);
+            Assert(copyAddresses.SequenceEqual(originals.Select(card => expectedCopyAddress[card])),
+                "each Reflections copy keeps its original's permanent-order index within the shared grant");
             RunManager.Instance.CleanUp();
             await CheckTransformationReload();
             RunManager.Instance.CleanUp();

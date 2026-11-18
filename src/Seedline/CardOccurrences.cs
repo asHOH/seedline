@@ -167,7 +167,7 @@ internal static class CardOccurrences
             Dictionary<CardModel, int>? indices = null;
             if (__instance is Reflections or CloneRestSiteOption)
                 indices = player.Deck.Cards.Where(c => __instance is Reflections || c.Enchantment is Clone)
-                    .OrderBy(c => c, CardOrder.Permanent).Select((card, index) => (card, index)).ToDictionary(p => p.card, p => p.index);
+                    .OrderBy(CardOrder.CapturePermanent).Select((card, index) => (card, index)).ToDictionary(p => p.card, p => p.index);
             copyGrant.Value = new(address, state.Random, indices);
         }
         private static void Finalizer(CopyGrant? __state) => copyGrant.Value = __state;
