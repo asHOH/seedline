@@ -1,29 +1,29 @@
 # Agent rules
 
-- Read and fully understand the design document first.
+## Design decisions
+
+- Read and fully understand the [design document](design/DESIGN.md) first. Use its goals and priorities to judge tradeoffs and ask about unresolved design choices.
 - Base claims about existing mechanics on code or reference evidence.
+- When a verified mechanic gives a rule a surprising consequence, check it against the design intent and trace what else the rule governs. If several gameplay outcomes remain plausible, show the smallest example that distinguishes them and ask which is intended before proposing an edit.
+- Assess deviations against [behavior preservation](design/DESIGN.md#goals-and-principles) and report policy conflicts.
+
+## Implementation constraints
+
+- `sts2-decompiled/` and `catfood-decompiled/` are reference-only; never modify their contents.
 - Exclude compatibility work for older development saves.
 - Avoid redundant defensive checks and over-engineering; keep validation at real input boundaries.
-- `sts2-decompiled/` and `catfood-decompiled/` are reference-only; never modify their contents.
 
-## Design documentation
+## Design document structure
 
-- Prefer concise rules over exhaustive qualifications; leave obvious implementation details.
-- Test every sentence for reader value: remove obvious, implied or repeated information; retain distinctions affecting interpretation or use.
-- Write for implementers and design reviewers. Keep authoring instructions here; reading guides serve navigation and interpretation.
-- Follow [Document hierarchy](design/DESIGN.md#document-hierarchy).
-- Prefer established terms; define new names before use, only for distinct, reusable concepts. Include edge cases affecting implementation or interpretation; name exceptional sources directly.
-- Judge tradeoffs by documented goals and priorities; ask about unresolved choices.
-- Prefer brief gameplay wording; pair necessary code references with explanations.
-- In address expressions, place purpose before sharing scope.
-- Extract repeated algorithms into mechanisms and cross-source requirements into shared policies; source policies add local rules and exceptions.
+- Follow [Document hierarchy](design/DESIGN.md#document-hierarchy). Define common behavior once, rely on preservation defaults, and state local exceptions explicitly; repeat only to clarify subtle implementation requirements.
+- Keep authoring instructions here; reading guides serve navigation and interpretation.
 - Put requirements in policies, explanations in notes, intent/scope first, baseline last, and rationale beside rules.
-- Rely on shared rules and preservation defaults; repeat only to clarify subtle implementation requirements.
-- Assess deviations against [behavior preservation](design/DESIGN.md#goals-and-principles). Separate distinct deviations; illustrate when and how strategy changes for grades 4B/5.
 - Keep policy tables section-local; fold short qualifications into relevant rows. Overview/reference tables may summarize.
-- Review policy names and necessity; propose terminology changes and retire redundancies.
-- Report policy conflicts explicitly.
 
-## Implementation documentation
+## Design writing
 
-- Keep [implementation.md](docs/implementation.md) under 350 words.
+- Write for implementers and design reviewers. Prefer brief gameplay wording; pair necessary code references with explanations. Never refer to git-untracked files.
+- Test every sentence for reader value. Remove obvious, implied or repeated information; retain distinctions affecting interpretation or use.
+- Prefer established terms; define new names before use, only for distinct, reusable concepts. Review terminology and policies for necessity, propose clearer names, and retire redundancies.
+- Include edge cases affecting implementation or interpretation; name exceptional sources directly.
+- In address expressions, place purpose before sharing scope.
