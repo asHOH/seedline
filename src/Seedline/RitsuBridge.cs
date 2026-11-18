@@ -13,11 +13,14 @@ internal static class RitsuBridge
 {
     internal const string PatchId = "com.ritsukage.sts2-RitsuLib.framework-core";
 
+    // The first checkpoint operation runs after both mods have had a chance to initialize.
+    private static readonly Lazy<Type?> frameworkType = new(() => AccessTools.TypeByName("STS2RitsuLib.RitsuLibFramework"));
+
     private static JsonObject EmptyDocument() => new() { ["version"] = 1, ["run_saved_data"] = new JsonObject() };
 
     private static bool Enabled()
     {
-        var framework = AccessTools.TypeByName("STS2RitsuLib.RitsuLibFramework");
+        var framework = frameworkType.Value;
         if (framework == null && !ModManager.Mods.Any(m => m.manifest?.id == "STS2-RitsuLib" &&
             m.state is ModLoadState.Loaded or ModLoadState.Failed))
             return false;
