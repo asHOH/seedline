@@ -52,17 +52,14 @@ internal static class CombatCards
                 current.Indices.Add(card, current.Indices.Count);
     }
 
-    internal static void Admit(CardModel card)
+    private static CombatCardOccurrence CreateOccurrence(CardModel card)
     {
-        if (Find(card) != null)
-            return;
         var scope = CombatStateScope.Require((CombatState)card.Owner.Creature.CombatState!);
         var occurrence = CardOccurrences.Find(card);
         if (card.DeckVersion != null && !copies.TryGetValue(card, out _))
         {
             occurrence ??= CardOccurrences.Info(card.DeckVersion);
-            cards.Add(card, new(occurrence.Address, occurrence.Key, -1));
-            return;
+            return new(occurrence.Address, occurrence.Key, -1);
         }
         var current = grant.Value ?? new Grant("direct grant");
         Prepare(current, [card]);
@@ -82,8 +79,8 @@ internal static class CombatCards
             address = counter.At(current.Ordinal.Value).At(current.Indices[card]).Key;
         }
         CardOccurrences.Create(card, address);
-        cards.Add(card, new(address, address, current.Creation.Value));
         copies.Remove(card);
+        return new(address, address, current.Creation.Value);
     }
 
     [HarmonyPatch(typeof(CombatState), nameof(CombatState.CloneCard))]
@@ -99,10 +96,16 @@ internal static class CombatCards
     [HarmonyPatch(typeof(CardPile), nameof(CardPile.AddInternal))]
     private static class Entered
     {
-        private static void Postfix(CardPile __instance, CardModel card)
+        private static void Prefix(CardPile __instance, CardModel card, out bool __state) =>
+            __state = __instance.Type == PileType.Hand && Find(card) == null;
+
+        private static void Postfix(CardPile __instance, CardModel card, bool __state)
         {
-            if (__instance.IsCombatPile && card.Owner.Creature.CombatState is CombatState)
-                Admit(card);
+            if (!__instance.IsCombatPile || card.Owner.Creature.CombatState is not CombatState combat)
+                return;
+            var occurrence = cards.GetValue(card, CreateOccurrence);
+            if (__instance.Type == PileType.Hand)
+                HandEntries.Record(combat, card, occurrence, firstAdmission: __state);
         }
     }
 

@@ -72,29 +72,21 @@ internal static class HandEntries
         private static void Finalizer(Batch? __state) => batch.Value = __state;
     }
 
-    [HarmonyPatch(typeof(CardPile), nameof(CardPile.AddInternal))]
-    private static class Entered
+    internal static void Record(CombatState combat, CardModel card, CombatCardOccurrence occurrence, bool firstAdmission)
     {
-        private static void Prefix(CardModel card, out bool __state) => __state = CombatCards.Find(card) == null;
-        private static void Postfix(CardPile __instance, CardModel card, bool __state)
-        {
-            if (__instance.Type != PileType.Hand || card.Owner.Creature.CombatState is not CombatState combat)
-                return;
-            CombatCards.Admit(card);
-            var scope = CombatStateScope.Require(combat);
-            var creation = CombatCards.Info(card).CreationBatch;
-            var created = creationEntries.GetOrCreateValue(combat);
-            long ordinal;
-            if (__state && creation >= 0 && created.TryGetValue(creation, out var existing))
-                ordinal = existing;
-            else if (batch.Value is { } current && current.Cards.Contains(card) && current.Entered.Add(card))
-                ordinal = current.Ordinal ??= scope.Random.Advance(scope.For("hand entry"));
-            else
-                ordinal = scope.Random.Advance(scope.For("hand entry"));
-            if (__state && creation >= 0)
-                created[creation] = ordinal;
-            entries.AddOrUpdate(CombatCards.Info(card), new(ordinal, CardOrder.CaptureCombat(card)));
-        }
+        var scope = CombatStateScope.Require(combat);
+        var creation = occurrence.CreationBatch;
+        var created = creationEntries.GetOrCreateValue(combat);
+        long ordinal;
+        if (firstAdmission && creation >= 0 && created.TryGetValue(creation, out var existing))
+            ordinal = existing;
+        else if (batch.Value is { } current && current.Cards.Contains(card) && current.Entered.Add(card))
+            ordinal = current.Ordinal ??= scope.Random.Advance(scope.For("hand entry"));
+        else
+            ordinal = scope.Random.Advance(scope.For("hand entry"));
+        if (firstAdmission && creation >= 0)
+            created[creation] = ordinal;
+        entries.AddOrUpdate(occurrence, new(ordinal, CardOrder.CaptureCombat(card)));
     }
 
     internal static RandomAddress OilAddress(SneckoOil potion, string category) =>
