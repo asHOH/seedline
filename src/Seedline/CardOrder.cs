@@ -21,6 +21,8 @@ internal sealed class FrozenCardOrder(IComparable[] properties, string? address)
 
     public int CompareTo(FrozenCardOrder? other)
     {
+        if (ReferenceEquals(this, other))
+            return 0;
         if (other == null)
             return 1;
         for (var i = 0; i < Math.Min(properties.Length, other.properties.Length); i++)

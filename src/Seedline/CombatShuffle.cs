@@ -37,6 +37,15 @@ internal static class CombatShuffle
     private static Dictionary<CardModel, string> AssignKeys(RankedCard[] cards, int act, bool innate)
     {
         var result = new Dictionary<CardModel, string>();
+        var distinctRanks = new SortedSet<FrozenCardOrder>();
+        FrozenCardOrder SortRank(RankedCard entry)
+        {
+            // Equal gameplay ranks share a sort key; address still breaks ties between occurrences.
+            if (distinctRanks.TryGetValue(entry.Rank, out var representative))
+                return representative;
+            distinctRanks.Add(entry.Rank);
+            return entry.Rank;
+        }
         void Sequence(IEnumerable<RankedCard> group, string name)
         {
             var i = 0;
@@ -47,15 +56,15 @@ internal static class CombatShuffle
         if (innate)
         {
             var byInnate = cards.ToLookup(IsInnate);
-            Sequence(byInnate[true].OrderBy(c => c.Rank)
+            Sequence(byInnate[true].OrderBy(SortRank)
                 .ThenBy(c => c.Info.Address, StringComparer.Ordinal), "Innate");
             ordinary = byInnate[false];
         }
-        Sequence(ordinary.Where(c => c.Rank.Category <= 4).OrderBy(c => c.Rank)
+        Sequence(ordinary.Where(c => c.Rank.Category <= 4).OrderBy(SortRank)
             .ThenBy(c => c.Info.Address, StringComparer.Ordinal), "first");
         var later = ordinary.Where(c => c.Rank.Category > 4).ToArray();
         if (act >= 2)
-            Sequence(later.OrderByDescending(c => c.Rank).ThenBy(c => c.Info.Address, StringComparer.Ordinal), "second");
+            Sequence(later.OrderByDescending(SortRank).ThenBy(c => c.Info.Address, StringComparer.Ordinal), "second");
         else
         {
             foreach (var entry in later.Where(c => c.Info.SourceKey))
@@ -63,7 +72,7 @@ internal static class CombatShuffle
             Sequence(later.Where(c => !c.Info.SourceKey)
                 .OrderBy(c => c.Info.Acquisition == null ? 1 : 0)
                 .ThenBy(c => c.Info.Acquisition ?? CombatCards.Info(c.Card).CreationBatch)
-                .ThenBy(c => c.Rank).ThenBy(c => c.Info.Address, StringComparer.Ordinal), "second");
+                .ThenBy(SortRank).ThenBy(c => c.Info.Address, StringComparer.Ordinal), "second");
         }
         return result;
     }

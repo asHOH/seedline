@@ -109,6 +109,19 @@ public static partial class Checks
                 Assert(tiedKeys[tied[0]] == RandomAddress.For("shuffle key", "second").At(0).Key &&
                     tiedKeys[tied[1]] == RandomAddress.For("shuffle key", "second").At(1).Key,
                     "Act 3 reverses usefulness ranks while retaining ascending occurrence tie-breaks");
+                var upgradedCopy = generated.CreateClone();
+                await CardPileCmd.AddGeneratedCardToCombat(upgradedCopy, PileType.Hand, player);
+                CardCmd.Upgrade(upgradedCopy);
+                CardModel[] variants = [copy, upgradedCopy, generated];
+                var batch = new CardOrder.CombatRankBatch();
+                var reference = variants.OrderByDescending(c => batch.ShuffleRank(c))
+                    .ThenBy(c => CardOccurrences.Info(c).Address, StringComparer.Ordinal).ToArray();
+                foreach (var first in variants)
+                {
+                    var keys = CombatShuffle.Keys(variants.Prepend(first).Distinct(), 2, false);
+                    Assert(reference.Select((c, i) => keys[c] == RandomAddress.For("shuffle key", "second").At(i).Key).All(x => x),
+                        "equal copies retain address order and an upgraded copy keeps its own rank with any representative");
+                }
                 var token1 = combat.CreateCard<Soul>(player);
                 var token2 = combat.CreateCard<Soul>(player);
                 await CardPileCmd.AddGeneratedCardToCombat(token1, PileType.Hand, player);
