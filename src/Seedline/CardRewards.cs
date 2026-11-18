@@ -123,10 +123,15 @@ internal static class CardRewards
                 {
                     var eventId = ModelDb.GetId<TheFutureOfPotions>();
                     var address = RandomAddress.For("event card", eventId.Entry, rarity.ToString()!, types[0].ToString());
-                    var eligible = pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)).ToArray();
-                    var entry = address.At(state.Random.Advance(address));
-                    var rng = new Rng(player, eventId, StringHelper.GetDeterministicHashCode(entry.Key));
-                    card = CardGeneration.Create(player, eligible[rng.NextInt(eligible.Length)], entry.Key);
+                    var partition = pool.Where(c => c.Rarity == rarity).ToArray();
+                    var eligible = partition.Where(c => cards.All(r => r.Card.Id != c.Id)).Select(c => c.Id.Entry).ToHashSet();
+                    var entry = state.Rewards.Supply(address).Draw(eligible, index =>
+                    {
+                        var key = address.At(index).Key;
+                        var rng = new Rng(player, eventId, StringHelper.GetDeterministicHashCode(key));
+                        return new(partition[rng.NextInt(partition.Length)].Id.Entry, key);
+                    }, remove: eligible.Count == partition.Length) ?? throw new InvalidOperationException("Empty eligible event card supply.");
+                    card = CardGeneration.Create(player, partition.First(c => c.Id.Entry == entry.Identity), entry.Address);
                 }
                 else
                 {

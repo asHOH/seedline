@@ -196,7 +196,11 @@ public static partial class Checks
                 Assert(menu.SequenceEqual(EventChoices.Order(source, menu, "main")), $"{source.Id.Entry}: menu follows fixed priority order");
         }
 
-        await Reset();
+        // The first two Common entries coincide for both Attack and Skill on this seed.
+        RunManager.Instance.CleanUp();
+        run = StartGoldRun(seed: "POTIONCHECK126");
+        player = run.Players[0];
+        player.AddRelicInternal(ModelDb.Relic<Driftwood>().ToMutable());
         player.AddToMaxPotionCount(2);
         foreach (var canonical in new PotionModel[] { ModelDb.Potion<AttackPotion>(), ModelDb.Potion<SkillPotion>(), ModelDb.Potion<AttackPotion>() })
             await PotionCmd.TryToProcure(canonical.ToMutable(), player);
@@ -213,28 +217,37 @@ public static partial class Checks
             .Where(c => c.IsAllowedInRun(run) && c.Rarity == CardRarity.Common && c.Type == type).ToList();
         var eventSeed = run.Rng.Seed + StringHelper.GetDeterministicHashCode(future.Id.Entry);
         var partition = RandomAddress.For("event card", future.Id.Entry, CardRarity.Common.ToString(), type.ToString());
-        var expectedIds = new List<ModelId>();
-        for (var i = 0; i < 3; i++)
+        var expectedCards = new List<(ModelId Id, string Address)>();
+        for (var i = 0; expectedCards.Count < 3; i++)
         {
-            var pick = new Rng(eventSeed, partition.At(i).Key).NextItem(pool)!;
-            expectedIds.Add(pick.Id);
-            pool.Remove(pick);
+            var address = partition.At(i).Key;
+            var pick = new Rng(eventSeed, address).NextItem(pool)!;
+            if (expectedCards.All(c => c.Id != pick.Id))
+                expectedCards.Add((pick.Id, address));
         }
         var previousSelector = RewardsSet.testSelector;
-        ModelId[] offeredIds = [];
+        (ModelId Id, string Address)[] offeredCards = [];
+        (ModelId Id, string Address) rerolledFirst = default;
         try
         {
             RewardsSet.testSelector = set =>
             {
-                offeredIds = set.Rewards.OfType<CardReward>().Single().Cards.Select(c => c.Id).ToArray();
+                var reward = set.Rewards.OfType<CardReward>().Single();
+                offeredCards = reward.Cards.Select(c => (c.Id, CardOccurrences.Info(c).Address)).ToArray();
+                Assert(reward.CanReroll, "Driftwood enables the Future of Potions reward reroll");
+                reward.Reroll();
+                var first = reward.Cards.First();
+                rerolledFirst = (first.Id, CardOccurrences.Info(first).Address);
                 RunManager.Instance.RewardsSetSynchronizer.SkipLocalRewardsSet();
                 return Task.CompletedTask;
             };
             await future.CurrentOptions[0].Chosen();
         }
         finally { RewardsSet.testSelector = previousSelector; }
-        Assert(offeredIds.SequenceEqual(expectedIds),
-            "Future of Potions draws distinct identities from the vanilla event seed partitioned by rarity and type");
+        Assert(offeredCards.SequenceEqual(expectedCards),
+            "Future of Potions offers the first distinct event-seeded identities with their original entry addresses");
+        Assert(expectedCards[1].Address != partition.At(1).Key && rerolledFirst == (expectedCards[0].Id, partition.At(1).Key),
+            "reroll recovers the skipped duplicate at its original event-seeded address");
         Assert(!player.Potions.Contains(traded) && RunCheckpoints.Require(run).Random.Position(tradeCounter) == beforeTrade + 1,
             "a committed Future of Potions trade removes the potion and advances its type's effect ordinal once");
 

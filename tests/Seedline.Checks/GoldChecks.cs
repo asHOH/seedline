@@ -84,10 +84,10 @@ public static partial class Checks
 
     private static void EndGoldUiNotification(bool __state) => TestMode.IsOn = __state;
 
-    private static RunState StartGoldRun(int ascension = 7, GameMode mode = GameMode.Standard)
+    private static RunState StartGoldRun(int ascension = 7, GameMode mode = GameMode.Standard, string seed = "GOLDCHECK")
     {
         var run = RunState.CreateForNewRun([Player.CreateForNewRun<Ironclad>(UnlockState.all, 1)],
-            ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], mode, false, ascension, "GOLDCHECK");
+            ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], mode, false, ascension, seed);
         RunManager.Instance.SetUpNewSingleplayer(run, true);
         LocalContext.NetId = RunManager.Instance.NetService.NetId;
         return run;

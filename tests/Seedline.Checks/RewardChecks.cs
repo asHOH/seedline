@@ -1,6 +1,7 @@
 using System.Text;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Merchant;
+using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Factories;
@@ -50,9 +51,13 @@ public static partial class Checks
             foreach (var entry in shop.AllEntries.Where(e => e is not MerchantCardRemovalEntry))
                 entry.CalcCost();
             Assert(costs.SequenceEqual(shop.AllEntries.Select(e => e.Cost)), "recalculating prices preserves entry-addressed base prices and sale");
-            var oldPotion = shop.PotionEntries[0].Model;
             AccessTools.Method(typeof(MerchantPotionEntry), "RestockAfterPurchase").Invoke(shop.PotionEntries[0], [shop]);
-            Assert(shop.PotionEntries[0].Model != oldPotion && state.Random.Position(RandomAddress.For("potion rarity", "Courier", "standard")) == 1 &&
+            var restocked = shop.PotionEntries[0].Model!;
+            var firstCourier = RandomAddress.For("potion identity", "Courier", restocked.Rarity.ToString()).At(0);
+            var courierPool = PotionFactory.GetPotionOptions(player).Where(p => p.Rarity == restocked.Rarity).OrderBy(p => p.Id.Entry, StringComparer.Ordinal).ToArray();
+            var expectedId = courierPool[AddressRandom.IntInclusive(state.Seed, firstCourier, 0, courierPool.Length - 1)].Id.Entry;
+            Assert(restocked.Id.Entry == expectedId && RewardEntries.Find(restocked)?.Address == firstCourier.Key &&
+                state.Random.Position(RandomAddress.For("potion rarity", "Courier", "standard")) == 1 &&
                 state.Random.Position(RandomAddress.For("potion rarity", "shop", "standard")) == 3,
                 "Courier potion restocking has an independent source");
             var snapshot = RunManager.Instance.ToSave(null);
@@ -78,18 +83,33 @@ public static partial class Checks
                 "White Beast Statue freezes drop probability and ordinal");
             while (player.HasOpenPotionSlots)
                 player.AddPotionInternal(ModelDb.Potion<BlockPotion>().ToMutable());
+            SupplyEntry NextPotion(RewardState rewards, PotionRarity rarity)
+            {
+                var ids = PotionFactory.GetPotionOptions(player).Where(p => p.Rarity == rarity).Select(p => p.Id.Entry).ToArray();
+                return rewards.Draw(state.Seed, RandomAddress.For("potion identity", "generic", rarity.ToString()), ids, ids);
+            }
+            SupplyEntry[] NextByRarity(RewardState rewards) =>
+                new[] { PotionRarity.Common, PotionRarity.Uncommon, PotionRarity.Rare }.Select(r => NextPotion(rewards.Copy(), r)).ToArray();
+            var control = state.Rewards.Copy();
+            var originalPotions = player.Potions.ToArray();
             var generic = state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard"));
             var holster = ModelDb.Relic<PhialHolster>().ToMutable();
             player.AddRelicInternal(holster);
             await holster.AfterObtained();
-            Assert(state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard")) == generic + 1 && !player.HasOpenPotionSlots,
+            var acquired = player.Potions.Except(originalPotions).Single();
+            var acquiredEntry = NextPotion(control, acquired.Rarity);
+            var nextEntries = NextByRarity(control);
+            Assert(acquired.Id.Entry == acquiredEntry.Identity && RewardEntries.Find(acquired) == acquiredEntry &&
+                NextByRarity(state.Rewards).SequenceEqual(nextEntries) &&
+                state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard")) == generic + 1 && !player.HasOpenPotionSlots,
                 "Phial Holster commits one acquired potion while its failed second grant leaves supplies unchanged");
             player.AddRelicInternal(ModelDb.Relic<Sozu>().ToMutable());
             var failedGrant = state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard"));
             var blocked = ModelDb.Relic<PhialHolster>().ToMutable();
             player.AddRelicInternal(blocked);
             await blocked.AfterObtained();
-            Assert(state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard")) == failedGrant,
+            Assert(state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard")) == failedGrant &&
+                NextByRarity(state.Rewards).SequenceEqual(nextEntries),
                 "Sozu-blocked direct potion grants preserve rarity and identity progression");
 
             RunManager.Instance.CleanUp();
@@ -136,6 +156,24 @@ public static partial class Checks
             }
             Assert(identities.Count == 96 && identities.Distinct().Count() == 96,
                 "generic draws expose every eligible ordinary relic once across borrowing and rarity fallback");
+            foreach (var (source, firstDonor, secondDonor) in new[]
+                { ("generic", "Courier", "shop"), ("shop", "Courier", "generic"), ("Courier", "generic", "shop") })
+            {
+                RunManager.Instance.CleanUp();
+                run = StartGoldRun();
+                player = run.Players[0];
+                RelicRewards.Initialize(player);
+                var supplies = RunCheckpoints.Require(run).Rewards;
+                var allowed = RelicRewards.Pool(player).Where(r => r.IsAllowed(run)).Select(r => r.Id.Entry).ToHashSet();
+                var donorTails = new[] { firstDonor, secondDonor }.SelectMany(donor =>
+                    supplies.Supply(RelicRewards.Address(donor, RelicRarity.Common)).Positions.AsEnumerable().Reverse()
+                        .Select(p => p.Entry!).Where(e => allowed.Contains(e.Identity)).Take(2)).ToArray();
+                var wanted = donorTails.Select(e => e.Identity).ToHashSet();
+                var borrowed = donorTails.Select(_ => RewardEntries.Find(RelicRewards.Draw(player, source, RelicRarity.Common,
+                    r => wanted.Contains(r.Id.Entry)))).ToArray();
+                Assert(donorTails.Length == 4 && borrowed.SequenceEqual(donorTails),
+                    $"{source} borrows eligible tails from {firstDonor} before {secondDonor}, retaining donor entry addresses");
+            }
         }
         finally
         {
