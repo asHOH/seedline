@@ -277,7 +277,7 @@ An entry's address is its original source sequence + original entry position, di
 
 **Invariant — consumption timing:** for operations that consume opportunities, generate results and advance random state only when those results become available to reveal or receive — even if left unrevealed, declined or skipped.
 
-Deferred rewards consume at the payoff opportunity, not acquisition of the effect creating it.
+Deferred rewards consume opportunities when they become available, not when the effect creating them is acquired.
 
 **Exception:** [potion effect opportunities](#potion-effect-opportunities) also advance on discard, trade and covered reward skips.
 
@@ -432,7 +432,7 @@ Other new permanent cards use occurrence addresses; returns follow [lifetime rul
 
 For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [persistent clocks](#persistent-clocks) with one fixed selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
-**At combat start:** before selection effects, use each card's [shuffle key](#priority-assignment) under ordinary-card assignment, including retained entries for removed cards. Innate separation applies only to shuffling.
+**At combat start:** before selection effects, use each card's key from [shuffle-key assignment](#priority-assignment) without Innate separation, including retained entries for removed cards. Innate separation applies only to shuffling.
 
 **During combat:** take the first applicable key for a new occurrence:
 
@@ -545,7 +545,7 @@ Without [borrowing](#borrowing), generic reward opportunities must eventually ex
 
 #### Source classification
 
-By default, hidden random relic rewards use the generic rewards source, including paid rewards and relic-triggered grants. Classify deferred payoffs separately from their granting relic.
+By default, hidden random relic rewards use the generic rewards source, including paid rewards and relic-triggered grants. Classify deferred rewards separately from their granting relic.
 
 **Vanilla deviation — SL 5↑:** events now allow foreseeing future relic rewards.
 
@@ -579,7 +579,7 @@ Silver Crucible's empty chest room generates neither reward and leaves the chest
 Draw the next eligible shared relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers).
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as an [ordinary reward entry](#opportunity-consumption-timing).
+- **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as a [relic entry](#opportunity-consumption-timing).
 
 Resolve the choice before expiry, including `x = 0`. Permanent ineligibility or acquisition elsewhere clears the carried entry, preserving the marker's lifetime.
 
@@ -733,14 +733,14 @@ Replacements precede reward enchantments; [presentation swaps](#presentation) fo
 
 **Per slot:** process card slots in order. Each adds `-ln(1 - p)` to luck, where `p` is its Rare probability:
 
-- Normal-fight-rule and elite slots use `max(0, base Rare chance + o)` with the shared combat offset.
-- Fixed-base-odds slots use their base Rare chance without reading or modifying `o`.
+- Slots using normal-fight or elite rarity rules use `max(0, base Rare chance + o)` with the shared combat offset.
+- Slots using base Rare odds without the combat offset neither read nor modify `o`.
 
 **Rare delivery:** subject to the difficulty-specific cap below, a slot reaching the threshold becomes Rare. Reset luck to zero, discard the overshoot and renew the threshold.
 
 **Combat offset updates:**
 
-- Normal-fight-rule and elite non-Rare slots add `0.005` (`0.01` without Scarcity), capped at `0.40`. Zero-probability slots still grow the offset while adding no luck.
+- Non-Rare slots using normal-fight or elite rarity rules add `0.005` (`0.01` without Scarcity), capped at `0.40`. Zero-probability slots still grow the offset while adding no luck.
 - A delivered Rare in either group resets the offset to `-0.05`.
 - Boss rewards reset the combat offset, preserving luck and the threshold.
 - Between acts, reset the offset to `-0.05`; carry luck, the threshold and sequence state forward.
@@ -761,7 +761,7 @@ An offer is **Rare-eligible** if at least one slot has positive Rare probability
 - **Next eligible offer:** replace its first simulated slot's ordinary check with the pending Rare. Clear pending and apply the [delivery and offset rules](#luck-and-rarity-offset), then process remaining slots normally.
 - **Ineligible offer:** retain the pending threshold and apply normal non-Rare offset growth.
 
-This excludes the first two three-card normal-rule offers after an offset reset without elite intervention. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
+This excludes the first two three-card offers using normal-fight rarity rules after an offset reset without elite intervention. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
 **Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; additional Rares beyond the single pending one are omitted. **Frequency:** rare — about **0.2%**.
 
@@ -838,7 +838,7 @@ Rerolls of Kaleidoscope's Neow offers are unreachable.
 Select the identity sequences for the complete request:
 
 - **Unchanged eligible pool:** reuse its existing sequences, including Rug's fixed-Common or already-colorless offers.
-- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining source draw grouping. All results, including own-character cards, consume entries from these sequences.
+- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining the source's triple or individual-entry draws. All results, including own-character cards, consume entries from these sequences.
 
 Changing pools preserves luck state and opening-triple progression.
 
