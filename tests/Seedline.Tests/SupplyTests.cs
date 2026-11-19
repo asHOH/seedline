@@ -75,6 +75,56 @@ public sealed class SupplyTests
         Assert.Equal("C", acquired.Draw(all, remove: true)!.Identity);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ChestMarkerBorrowsDonorTailsUntilItsLifetimeExpires(bool acquired)
+    {
+        var supply = Supply("A", "K");
+        var offered = supply.Draw(["A", "B", "C"], lifetime: 2);
+        if (acquired)
+            supply.Remove("A");
+        var donorC = new SupplyEntry("C", RandomAddress.For("donor").At(0).Key);
+        var donorB = new SupplyEntry("B", RandomAddress.For("donor").At(3).Key);
+        var donorD = new SupplyEntry("D", RandomAddress.For("donor").At(2).Key);
+        var donorMarker = new SupplyPosition { Eligible = ["B", "C"] };
+        var donor = new ResultSupply
+        {
+            Positions = [new() { Entry = donorC }, donorMarker, new() { Entry = donorD }, new() { Entry = donorB }]
+        };
+        SupplyEntry? Draw() => supply.Draw(["A", "B", "C", "K"], borrow: donor.Tail, remove: true);
+
+        Assert.Equal(donorB, Draw());
+        Assert.Equal(1, supply.Positions.Single(p => p.Eligible != null).Remaining);
+        Assert.Equal("K", Draw()!.Identity);
+        Assert.Equal(donorC, Draw());
+        Assert.Equal(0, supply.Positions.Single(p => p.Eligible != null).Remaining);
+        Assert.Equal(acquired ? null : offered, Draw());
+        Assert.Null(Draw());
+        Assert.Collection(donor.Positions,
+            p => Assert.Same(donorMarker, p), p => Assert.Equal(donorD, p.Entry));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ChestMarkerExpiresWhenNeitherLocalNorDonorEntriesCanAdvanceIt(bool acquired)
+    {
+        var supply = Supply("A", "K");
+        var offered = supply.Draw(["A", "B"], lifetime: 5);
+        if (acquired)
+            supply.Remove("A");
+        var donor = Supply("D");
+        SupplyEntry? Draw() => supply.Draw(["A", "B", "K"], borrow: donor.Tail, remove: true);
+
+        if (!acquired)
+            Assert.Equal(offered, Draw());
+        Assert.Equal("K", Draw()!.Identity);
+        Assert.Null(Draw());
+        Assert.Empty(supply.Positions);
+        Assert.Equal("D", Assert.Single(donor.Positions).Entry!.Identity);
+    }
+
     [Fact]
     public void TailSkipsMarkersAndInfiniteEntriesKeepTheirGenerationAddresses()
     {
