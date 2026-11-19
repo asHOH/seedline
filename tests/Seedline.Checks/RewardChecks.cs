@@ -6,12 +6,14 @@ using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Factories;
+using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Potions;
 using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Rewards;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
 
@@ -159,6 +161,7 @@ public static partial class Checks
                 "generic draws expose every eligible ordinary relic once across borrowing and rarity fallback");
             CheckChestDepletion();
             CheckChestFallbackLifetime();
+            await CheckUniformPotionEvents();
             foreach (var (source, firstDonor, secondDonor) in new[]
                 { ("generic", "Courier", "shop"), ("shop", "Courier", "generic"), ("Courier", "generic", "shop") })
             {
@@ -240,6 +243,50 @@ public static partial class Checks
                 else
                     Assert(actual == expected, $"{requested} to {delivered}: fallback preserves the direct draw's entry address and marker state");
             }
+        }
+    }
+
+    private static async Task CheckUniformPotionEvents()
+    {
+        string? expected = null;
+        foreach (var (canonical, method) in new (EventModel, string)[]
+            { (ModelDb.Event<Wellspring>(), "Bottle"), (ModelDb.Event<WuppyInTrouble>(), "Ignore") })
+        {
+            RunManager.Instance.CleanUp();
+            var run = StartGoldRun();
+            var player = run.Players[0];
+            if (canonical is WuppyInTrouble)
+                for (var i = 0; i < 8; i++) player.PlayerRng.Rewards.NextFloat();
+            var vanilla = player.PlayerRng.Rewards.ToSerializable();
+            var source = canonical.ToMutable();
+            run.AppendToMapPointHistory(MapPointType.Unknown, RoomType.Event, source.Id);
+            await source.BeginEvent(player, null, false);
+            PotionModel? offered = null;
+            var previous = RewardsSet.testSelector;
+            try
+            {
+                RewardsSet.testSelector = set =>
+                {
+                    offered = set.Rewards.OfType<PotionReward>().Single().Potion;
+                    RunManager.Instance.RewardsSetSynchronizer.SkipLocalRewardsSet();
+                    return Task.CompletedTask;
+                };
+                await (Task)AccessTools.Method(source.GetType(), method).Invoke(source, [])!;
+            }
+            finally { RewardsSet.testSelector = previous; }
+            var state = RunCheckpoints.Require(run);
+            Assert(offered != null && RewardEntries.Find(offered) != null && !player.Potions.Any() &&
+                state.Random.Position(RandomAddress.For("potion rarity", "generic", "uniform")) == 1 &&
+                state.Random.Position(RandomAddress.For("potion rarity", "generic", "standard")) == 0 &&
+                vanilla.Equals(player.PlayerRng.Rewards.ToSerializable()),
+                $"{source.Id.Entry}: a skipped potion offer commits uniform generic generation and preserves vanilla reward RNG");
+            var first = RewardEntries.Find(offered!);
+            var next = PotionRewards.Draw(player, "generic", PotionFactory.GetPotionOptions(player), uniform: true);
+            var actual = first + ":" + RewardEntries.Find(next) + JsonSerializer.Serialize(state.Rewards);
+            if (expected == null)
+                expected = actual;
+            else
+                Assert(actual == expected, "Wuppy and Wellspring share potion identities, entry addresses and later progression despite unrelated vanilla rolls");
         }
     }
 }

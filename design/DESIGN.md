@@ -1797,7 +1797,7 @@ Add the offset to the base Rare chance. Base Uncommon chances are 37%/40%/37% fo
 | Alchemize | Generates one potion using `CombatPotionGeneration`, excluding Fairy in a Bottle, Fruit Juice and Regen Potion. Attempts generation even with full slots. |
 | Entropic Brew / Delicate Frond | Fill empty slots with unrestricted generation using `NonCombatGeneration`, stopping on the first failed acquisition. Brew works outside combat; Frond triggers before combat. |
 | Fixed-rarity random potions | Potion Courier's Ransack gives Uncommon; Crystal Sphere specifies the rarity and selects identity with event RNG. |
-| Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True and Wellspring select uniformly from eligible potion identities. |
+| Uniform-identity event potions | Battleworn Dummy, Endless Conveyor, The Legends Were True, Wellspring and Wuppy in Trouble select uniformly from eligible potion identities. |
 | Multi-potion factory calls | Initial shop stock: 3; Alchemical Coffer on acquisition: 4; Phial Holster on acquisition: 2. |
 | Phial Holster | Adds one slot but generates two potions, so its second grant can fail. |
 | Cauldron | Shop relic offering five separate potion rewards on acquisition. |

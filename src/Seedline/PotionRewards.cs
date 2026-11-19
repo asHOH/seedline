@@ -201,6 +201,7 @@ internal static class PotionRewards
         private static IEnumerable<MethodBase> TargetMethods() =>
         [
             RewardPatches.AsyncMethod(typeof(Wellspring), "Bottle"),
+            RewardPatches.AsyncMethod(typeof(WuppyInTrouble), "Ignore"),
             RewardPatches.AsyncMethod(typeof(TheLegendsWereTrue), "SlowlyFindAnExit"),
             RewardPatches.AsyncMethod(typeof(BattlewornDummy), "Resume"),
             RewardPatches.AsyncMethod(typeof(EndlessConveyor), "SuspiciousCondiment"),
