@@ -250,6 +250,7 @@ public static partial class Checks
             await CheckTransformationReload();
             RunManager.Instance.CleanUp();
             await CheckCardRewardSources();
+            CheckCardOfferPolicies();
         }
         finally
         {
