@@ -865,7 +865,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 Advance ordinals only for generated random combat-gold rewards. Gremlin Merc's half-gold reward uses the reduced range and advances the normal-fight ordinal.
 
-**Rationale and tradeoff:** reordering unreduced rewards preserves each category's payouts and totals under unchanged payout modifiers, including Bowler Hat's per-payout truncation. Replacing one unreduced normal reward with an elite reward adds 11–26 base gold at A3+. [Rejected alternatives](#combat-gold-alternatives).
+**Rationale and tradeoff:** reordering unreduced rewards preserves each category's individual gold amounts and totals under unchanged gold-gain modifiers, including Bowler Hat's truncation on each gold gain. Replacing one unreduced normal reward with an elite reward adds 11–26 base gold at A3+. [Rejected alternatives](#combat-gold-alternatives).
 
 Baseline: [gold ranges and exceptions](#combat-gold-1).
 
@@ -1820,7 +1820,7 @@ Snecko Oil is also combat-only; see [random energy costs](#random-energy-costs-1
 
 Combat gold uses the player's shared `Rewards` RNG to sample uniformly from inclusive ranges: **10–20 normal, 35–45 elite**. Poverty (A3+) multiplies endpoints by 0.75 and truncates before rolling: **7–15 normal, 26–33 elite**.
 
-**Bowler Hat:** multiplies each payout by 1.25; `PlayerCmd.GainGold` then truncates to an integer.
+**Bowler Hat:** multiplies each gold gain by 1.25; `PlayerCmd.GainGold` then truncates to an integer.
 
 | Exception | Gold |
 |---|---|
@@ -1829,7 +1829,7 @@ Combat gold uses the player's shared `Rewards` RNG to sample uniformly from incl
 | Gremlin Merc | Normal gold unless Fat Gremlin escapes: halve the range if no gold was stolen, otherwise omit the gold reward. Round reduced endpoints before rolling. |
 | Bosses | Fixed 100 (75 with Poverty); the final boss omits ordinary rewards. |
 
-Recovered stolen gold, Royalties and Amethyst Aubergine are separate fixed payouts.
+Recovered stolen gold, Royalties and Amethyst Aubergine are separate fixed gold gains.
 
 ### Run-save checkpoints
 
