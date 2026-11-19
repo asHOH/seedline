@@ -33,6 +33,8 @@ public static partial class Checks
 
     private static async Task CheckCombatSelection()
     {
+        await CheckCombatSelectionPolicy();
+        await CheckHopperPolicy();
         string? expected = null;
         string? expectedTheft = null;
         for (var branch = 0; branch < 2; branch++)
