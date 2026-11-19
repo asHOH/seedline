@@ -52,6 +52,7 @@ public static partial class Checks
             await CheckCardRewards();
             await CheckPermanentSelection();
             await CheckNonCombatPolicies();
+            await CheckPermanentGenerationPolicies();
             await CheckCombatStateFoundation();
             await CheckCombatOrdering();
             await CheckCombatEnvironment();
