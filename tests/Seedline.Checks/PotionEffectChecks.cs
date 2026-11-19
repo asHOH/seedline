@@ -96,6 +96,7 @@ public static partial class Checks
             "checkpoint restoration retains the remaining Cauldron exemption and type ordinals");
         RunManager.Instance.CleanUp();
         await CheckPotionGeneration();
+        await CheckPotionGenerationPolicy();
     }
 
     private sealed class PotionChoice : ICardSelector

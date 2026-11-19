@@ -17,6 +17,7 @@ public static partial class Checks
 {
     private static async Task CheckCombatOrbs()
     {
+        await CheckOrbPolicy();
         string? expected = null;
         for (var branch = 0; branch < 2; branch++)
         {
