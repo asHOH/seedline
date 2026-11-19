@@ -142,20 +142,85 @@ public static partial class Checks
         await Reset();
         state = RunCheckpoints.Require(run);
         var odds = run.Odds.UnknownMapPoint;
-        for (var i = 0; i < 15; i++)
+        foreach (var (monster, chest, shop, chestEnd, fightStart, fightEnd, shopStart) in new[]
         {
-            var expectedRoom = RoomSelection.Resolve(AddressRandom.Unit(AddressRandom.UInt64(state.Seed, RandomAddress.For("room type").At(0).At(i))),
-                odds.MonsterOdds, odds.TreasureOdds, odds.ShopOdds);
-            Assert(odds.Roll([], run) == expectedRoom, $"unknown room {i}: independent ordinal roll and preserved chance updates");
+            (.1, .02, .03, .02, 5d / 12, 31d / 60, .97), // Base chances, centered fight.
+            (.7, .14, .21, .14, .14, .84, .84), // Overflow truncates shop, not chest or fight.
+            (.2, .6, .1, .6, .6, .8, .9), // Chest shifts fight right.
+            (.2, .1, .6, .1, .2, .4, .4), // Shop shifts fight left.
+            (1.2, .2, .3, 0d, 0d, 1d, 1d), // Fight consumes the whole range.
+            (0d, .02, .03, .02, 7d / 15, 7d / 15, .97) // Excluded fight leaves event space.
+        })
+        {
+            Assert(Enumerable.Range(0, 6000).All(i =>
+            {
+                var roll = (i + .5) / 6000;
+                var expected = roll < chestEnd ? RoomType.Treasure : roll >= shopStart ? RoomType.Shop :
+                    roll >= fightStart && roll < fightEnd ? RoomType.Monster : RoomType.Event;
+                return RoomSelection.Resolve(roll, monster, chest, shop) == expected;
+            }), $"unknown intervals {monster}/{chest}/{shop}: explicit widths and placement");
         }
-        Assert(RoomSelection.Resolve(0.01, .7, .14, .21) == RoomType.Treasure && RoomSelection.Resolve(.5, .7, .14, .21) == RoomType.Monster &&
-            RoomSelection.Resolve(.9, .7, .14, .21) == RoomType.Shop, "overflow widths retain normal/chest/shop allocation with centered fight placement");
+
+        void CheckUnknownRoll(bool fightsAllowed = true, bool shopsAllowed = true)
+        {
+            var address = RandomAddress.For("room type").At(run.CurrentActIndex);
+            var position = state.Random.Position(address);
+            var before = (odds.MonsterOdds, odds.EliteOdds, odds.TreasureOdds, odds.ShopOdds);
+            var expected = RoomSelection.Resolve(AddressRandom.Unit(AddressRandom.UInt64(state.Seed, address.At(position))),
+                fightsAllowed ? before.MonsterOdds : 0, before.TreasureOdds, shopsAllowed ? before.ShopOdds : 0);
+            var actual = odds.Roll(shopsAllowed ? [] : [RoomType.Shop], run);
+            Assert(actual == expected && state.Random.Position(address) == position + 1,
+                $"unknown act {run.CurrentActIndex} roll {position}: addressed result and single advancement");
+            Assert(odds.MonsterOdds == (!fightsAllowed ? before.MonsterOdds : actual == RoomType.Monster ? .1f : before.MonsterOdds + .1f) &&
+                odds.EliteOdds == (fightsAllowed ? before.EliteOdds - 1 : before.EliteOdds) &&
+                odds.TreasureOdds == (actual == RoomType.Treasure ? .02f : before.TreasureOdds + .02f) &&
+                odds.ShopOdds == (!shopsAllowed ? before.ShopOdds : actual == RoomType.Shop ? .03f : before.ShopOdds + .03f),
+                $"unknown act {run.CurrentActIndex} roll {position}: selected chance resets, allowed chances grow, excluded chances freeze");
+        }
+        for (var i = 0; i < 15; i++)
+            CheckUnknownRoll();
         var compass = (GoldenCompass)ModelDb.Relic<GoldenCompass>().ToMutable();
         player.AddRelicInternal(compass);
         compass.GoldenPathAct = 0;
-        var beforeForced = (odds.MonsterOdds, odds.TreasureOdds, odds.ShopOdds);
+        var beforeForced = (odds.MonsterOdds, odds.EliteOdds, odds.TreasureOdds, odds.ShopOdds);
         Assert(odds.Roll([], run) == RoomType.Event && state.Random.Position(RandomAddress.For("room type").At(0)) == 15 &&
-            beforeForced == (odds.MonsterOdds, odds.TreasureOdds, odds.ShopOdds), "Golden Compass freezes room ordinal and stored chances");
+            beforeForced == (odds.MonsterOdds, odds.EliteOdds, odds.TreasureOdds, odds.ShopOdds), "Golden Compass freezes room ordinal and stored chances");
+        compass.GoldenPathAct = -1;
+        CheckUnknownRoll();
+
+        var unknownSnapshot = RunManager.Instance.ToSave(null);
+        var unknownBytes = RunCheckpoints.Encode(unknownSnapshot);
+        var nextRooms = Enumerable.Range(0, 8).Select(_ => odds.Roll([], run)).ToArray();
+        var nextOdds = (odds.MonsterOdds, odds.EliteOdds, odds.TreasureOdds, odds.ShopOdds);
+        RunManager.Instance.CleanUp();
+        var unknownSave = RunCheckpoints.Decode(Encoding.UTF8.GetString(unknownBytes), unknownSnapshot.SchemaVersion);
+        run = RunState.FromSerializable(unknownSave);
+        await RunManager.Instance.SetUpSavedSingleplayer(run, unknownSave);
+        player = run.Players[0];
+        state = RunCheckpoints.Require(run);
+        odds = run.Odds.UnknownMapPoint;
+        Assert(nextRooms.SequenceEqual(Enumerable.Range(0, 8).Select(_ => odds.Roll([], run))) &&
+            nextOdds == (odds.MonsterOdds, odds.EliteOdds, odds.TreasureOdds, odds.ShopOdds) &&
+            state.Random.Position(RandomAddress.For("room type").At(0)) == 24,
+            "unknown checkpoint replays room types, stored chances and ordinal continuation");
+
+        CheckUnknownRoll(shopsAllowed: false);
+        var dowsing = run.CreateCard<Dowsing>(player);
+        await CardPileCmd.Add(dowsing, PileType.Deck, skipVisuals: true);
+        dowsing.RoomsEntered = 2;
+        CheckUnknownRoll();
+        dowsing.RoomsEntered = 3;
+        CheckUnknownRoll(fightsAllowed: false, shopsAllowed: false);
+        dowsing.RoomsEntered = 0;
+        player.AddRelicInternal(ModelDb.Relic<JuzuBracelet>().ToMutable());
+        CheckUnknownRoll(fightsAllowed: false);
+
+        await RunManager.Instance.SetActInternal(1);
+        Assert((odds.MonsterOdds, odds.EliteOdds, odds.TreasureOdds, odds.ShopOdds) == (.1f, -1f, .02f, .03f) &&
+            state.Random.Position(RandomAddress.For("room type").At(1)) == 0 &&
+            state.Random.Position(RandomAddress.For("room type").At(0)) == 28,
+            "act entry resets unknown chances and starts a separate ordinal without advancing the previous act");
+        CheckUnknownRoll(fightsAllowed: false);
 
         await Reset();
         for (var i = 0; i < 12; i++)
