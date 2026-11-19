@@ -422,18 +422,81 @@ public static partial class Checks
         Assert(EventChoices.Outgoing(trader).Count(r => outgoingPairs.Contains(r.Id)) >= 2,
             "Relic Trader retains two outgoing identities when one owned relic is replaced");
 
-        await Reset();
-        var conveyor = await Begin(ModelDb.Event<EndlessConveyor>());
-        var position = RunCheckpoints.Require(run).Random.Position(RandomAddress.For("dish selection"));
-        var previous = (string)AccessTools.Field(typeof(EndlessConveyor), "_lastDishId").GetValue(conveyor)!;
-        AccessTools.Method(typeof(EndlessConveyor), "RollDish").Invoke(conveyor, []);
-        Assert((string)AccessTools.Field(typeof(EndlessConveyor), "_lastDishId").GetValue(conveyor)! != previous &&
-            RunCheckpoints.Require(run).Random.Position(RandomAddress.For("dish selection")) > position, "Conveyor skips ineligible and immediately repeated dishes in its shared sequence");
-        AccessTools.Field(typeof(EndlessConveyor), "_numOfGrabs").SetValue(conveyor, 4);
-        position = RunCheckpoints.Require(run).Random.Position(RandomAddress.For("dish selection"));
-        AccessTools.Method(typeof(EndlessConveyor), "RollDish").Invoke(conveyor, []);
-        Assert((string)AccessTools.Field(typeof(EndlessConveyor), "_lastDishId").GetValue(conveyor)! == "SEAPUNK_SALAD" &&
-            RunCheckpoints.Require(run).Random.Position(RandomAddress.For("dish selection")) == position, "fixed Conveyor salad consumes no random dish entry");
+        var dishAddress = RandomAddress.For("dish selection");
+        var lastDish = AccessTools.Field(typeof(EndlessConveyor), "_lastDishId");
+        var rollDish = AccessTools.Method(typeof(EndlessConveyor), "RollDish");
+        var skippedDishes = new HashSet<string>();
+        foreach (var fullHp in new[] { false, true })
+            foreach (var fullPotions in new[] { false, true })
+            {
+                await Reset();
+                player.Creature.SetCurrentHpInternal(fullHp ? player.Creature.MaxHp : player.Creature.MaxHp - 20);
+                if (fullPotions)
+                    while (player.HasOpenPotionSlots)
+                        player.AddPotionInternal(ModelDb.Potion<BlockPotion>().ToMutable());
+                var dishState = RunCheckpoints.Require(run);
+                long expectedPosition = 0;
+                var previousDish = "";
+                var conveyor = await Begin(ModelDb.Event<EndlessConveyor>());
+                var eventRng = conveyor.Rng.ToSerializable();
+                for (var display = 1; display <= 20; display++)
+                {
+                    var expectedDish = "SEAPUNK_SALAD";
+                    if (display % 5 != 0)
+                        while (true)
+                        {
+                            var roll = AddressRandom.IntInclusive(dishState.Seed, dishAddress.At(expectedPosition++), 0, 24);
+                            expectedDish = roll switch
+                            {
+                                < 6 => "CAVIAR",
+                                < 9 => "SPICY_SNAPPY",
+                                < 12 => "JELLY_LIVER",
+                                < 15 => "FRIED_EEL",
+                                < 18 => "SUSPICIOUS_CONDIMENT",
+                                < 24 => "CLAM_ROLL",
+                                _ => "GOLDEN_FYSH"
+                            };
+                            if (expectedDish != previousDish && !(fullPotions && expectedDish == "SUSPICIOUS_CONDIMENT") &&
+                                !(fullHp && expectedDish == "CLAM_ROLL") && !(display == 1 && expectedDish == "GOLDEN_FYSH"))
+                                break;
+                            skippedDishes.Add(expectedDish);
+                        }
+                    if (display > 1)
+                        rollDish.Invoke(conveyor, []);
+                    Assert((string)lastDish.GetValue(conveyor)! == expectedDish && dishState.Random.Position(dishAddress) == expectedPosition,
+                        $"Conveyor display {display}, full HP {fullHp}, full potions {fullPotions}: weighted sequence skips ineligible entries and pauses for Salad");
+                    if (display == 1)
+                        Assert(conveyor.CurrentOptions[0].TextKey.EndsWith("." + expectedDish, StringComparison.Ordinal),
+                            "Conveyor's initial displayed option matches its selected dish");
+                    previousDish = expectedDish;
+                }
+                Assert(eventRng.Equals(conveyor.Rng.ToSerializable()), "Conveyor dish rolls leave event-effect RNG unchanged");
+            }
+        Assert(skippedDishes.Contains("CLAM_ROLL") && skippedDishes.Contains("SUSPICIOUS_CONDIMENT"),
+            "Conveyor sequence fixtures exercise HP and potion-slot exclusions");
+
+        RunManager.Instance.CleanUp();
+        run = StartGoldRun(seed: "6T09M6UV7U1C");
+        player = run.Players[0];
+        player.Creature.SetMaxHpInternal(95);
+        player.Creature.SetCurrentHpInternal(43);
+        await PlayerCmd.GainGold(206 - player.Gold, player);
+        var purchasedConveyor = await Begin(ModelDb.Event<EndlessConveyor>());
+        var conveyorRewardSelector = RewardsSet.testSelector;
+        try
+        {
+            RewardsSet.testSelector = null;
+            foreach (var dish in new[] { "SPICY_SNAPPY", "CAVIAR", "SUSPICIOUS_CONDIMENT", "FRIED_EEL", "SEAPUNK_SALAD" })
+            {
+                Assert(purchasedConveyor.CurrentOptions[0].TextKey.EndsWith("." + dish, StringComparison.Ordinal),
+                    $"Conveyor displays {dish} before its purchase");
+                await purchasedConveyor.CurrentOptions[0].Chosen();
+            }
+        }
+        finally { RewardsSet.testSelector = conveyorRewardSelector; }
+        Assert(player.Gold == 6 && purchasedConveyor.CurrentOptions[0].IsLocked &&
+            (string)lastDish.GetValue(purchasedConveyor)! == "CLAM_ROLL" && RunCheckpoints.Require(run).Random.Position(dishAddress) == 5,
+            "Conveyor purchases generate the unaffordable sixth dish while the fifth, fixed Salad consumes no sequence entry");
         RunManager.Instance.CleanUp();
     }
 }
