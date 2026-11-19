@@ -19,6 +19,7 @@ public static partial class Checks
 {
     private static async Task CheckEnemyTargets()
     {
+        await CheckEnemyTargetPolicy();
         string? expected = null;
         for (var pass = 0; pass < 2; pass++)
         {
