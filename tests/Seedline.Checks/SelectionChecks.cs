@@ -140,20 +140,35 @@ public static partial class Checks
 
         await Reset();
         state = RunCheckpoints.Require(run);
-        foreach (var card in player.Deck.Cards.Where(c => c.IsUpgradable).Take(3))
-            CardCmd.Upgrade(card);
+        var mirrorOriginals = player.Deck.Cards.Where(c => c.IsUpgradable).Take(3).ToArray();
+        for (var i = 0; i < mirrorOriginals.Length; i++)
+        {
+            CardCmd.Upgrade(mirrorOriginals[i]);
+            state.Selection.Get(state.Seed, PermanentSelection.Downgrade, PermanentSelection.Key(mirrorOriginals[i])).Remaining = (3 - i) * 0.1;
+            if (i > 0)
+                state.Selection.Get(state.Seed, PermanentSelection.Upgrade, PermanentSelection.Key(mirrorOriginals[i])).Remaining = 0;
+        }
         var preMirror = state.Selection.Copy();
         var expectedDown = preMirror.Select(state.Seed, PermanentSelection.Downgrade,
             player.Deck.Cards.Where(c => c.IsUpgraded).Select(PermanentSelection.Key), 2);
         var reflections = ModelDb.Event<Reflections>().ToMutable();
         run.AppendToMapPointHistory(MapPointType.Unknown, RoomType.Event, reflections.Id);
         await reflections.BeginEvent(player, null, false);
-        var beforeMirror = reflections.Rng.ToSerializable().counter;
+        var mirrorRng = new Rng(reflections.Rng.ToSerializable());
+        var mirrorRandom = state.Random.Copy();
+        foreach (var key in expectedDown)
+        {
+            preMirror.Get(state.Seed, PermanentSelection.Upgrade, key).Remaining = -Math.Log(mirrorRandom.NextOpenUnit(refill));
+            preMirror.Get(state.Seed, PermanentSelection.Downgrade, key).Remaining = -Math.Log(AddressRandom.OpenUnit(mirrorRng.NextUnsignedLong()));
+        }
+        var expectedMirrorUp = preMirror.Select(state.Seed, PermanentSelection.Upgrade,
+            player.Deck.Cards.Where(c => c.IsUpgradable || expectedDown.Contains(PermanentSelection.Key(c))).Select(PermanentSelection.Key), 4);
         await (Task)AccessTools.Method(typeof(Reflections), "TouchAMirror").Invoke(reflections, [])!;
-        Assert(player.Deck.Cards.Count(c => c.IsUpgraded) == 5 && reflections.Rng.ToSerializable().counter == beforeMirror + 2 &&
-            expectedDown.All(key => state.Selection.Get(state.Seed, PermanentSelection.Downgrade, key).Remaining > 0) &&
-            state.Selection.Clocks.Where(p => p.Key.StartsWith("[\"permanent upgrade\",", StringComparison.Ordinal)).Count(p => p.Value.Remaining == 0) == 4,
-            "Reflections commits two downgrades before its four-card upgrade batch");
+        Assert(player.Deck.Cards.Where(c => c.IsUpgraded).Select(PermanentSelection.Key).ToHashSet().SetEquals(
+            expectedMirrorUp.Concat(mirrorOriginals.Select(PermanentSelection.Key).Except(expectedDown))) &&
+            Clocks(state) == JsonSerializer.Serialize(preMirror) && reflections.Rng.ToSerializable().Equals(mirrorRng.ToSerializable()) &&
+            state.Random.Position(refill) == mirrorRandom.Position(refill),
+            "Reflections refills in pre-selection downgrade-clock order before selecting its exact four upgrade targets");
 
         await Reset();
         state = RunCheckpoints.Require(run);
@@ -170,7 +185,8 @@ public static partial class Checks
         var stored = tooth.SerializableCards.Select(c => CardModel.FromSerializable(c)).ToArray();
         foreach (var card in stored)
             run.AddCard(card, player);
-        var expectedReturn = PermanentSelection.Fixed(stored, 1, "Pael's Tooth return").Single();
+        var expectedReturn = stored.OrderBy(c => AddressRandom.UInt64(state.Seed,
+            RandomAddress.For("Pael's Tooth return", PermanentSelection.Key(c)))).ThenBy(PermanentSelection.Key, StringComparer.Ordinal).First();
         var beforeReturn = player.PlayerRng.Rewards.ToSerializable().counter;
         await tooth.AfterCombatEnd(null!);
         Assert(player.Deck.Cards.Any(c => PermanentSelection.Key(c) == PermanentSelection.Key(expectedReturn) && c.IsUpgraded) &&
@@ -181,7 +197,9 @@ public static partial class Checks
         state = RunCheckpoints.Require(run);
         var bracelet = ModelDb.Relic<BeautifulBracelet>().ToMutable();
         player.AddRelicInternal(bracelet);
-        var expectedSwift = PermanentSelection.Fixed(player.Deck.Cards.Where(c => ModelDb.Enchantment<Swift>().CanEnchant(c)), 4, "Beautiful Bracelet");
+        var expectedSwift = player.Deck.Cards.Where(c => ModelDb.Enchantment<Swift>().CanEnchant(c))
+            .OrderBy(c => AddressRandom.UInt64(state.Seed, RandomAddress.For("Beautiful Bracelet", PermanentSelection.Key(c))))
+            .ThenBy(PermanentSelection.Key, StringComparer.Ordinal).Take(4).ToArray();
         await bracelet.AfterObtained();
         Assert(player.Deck.Cards.Where(c => c.Enchantment is Swift).ToHashSet().SetEquals(expectedSwift) && state.Selection.Clocks.Count == 0,
             "Beautiful Bracelet uses fixed priorities and bypasses player routing");
@@ -200,6 +218,30 @@ public static partial class Checks
 
         await Reset();
         state = RunCheckpoints.Require(run);
+        var bridgeCopies = player.Deck.Cards.OfType<StrikeIronclad>().Take(2).ToArray();
+        foreach (var card in player.Deck.Cards.Except(bridgeCopies).ToArray())
+            await CardPileCmd.RemoveFromDeck(card);
+        bridge = ModelDb.Event<SlipperyBridge>().ToMutable();
+        run.AppendToMapPointHistory(MapPointType.Unknown, RoomType.Event, bridge.Id);
+        var bridgePreview = state.Selection.Copy();
+        var initialBridgeKey = bridgePreview.Select(state.Seed, PermanentSelection.Bridge, bridgeCopies.Select(PermanentSelection.Key), 1).Single();
+        await bridge.BeginEvent(player, null, false);
+        Assert(PermanentSelection.Key((CardModel)AccessTools.Field(typeof(SlipperyBridge), "_randomCardToLose").GetValue(bridge)!) == initialBridgeKey &&
+            Clocks(state) == JsonSerializer.Serialize(bridgePreview), "Bridge's initial fallback selects from an all-Basic deck and commits once");
+        bridgePreview.Renew(state.Seed, PermanentSelection.Bridge, initialBridgeKey);
+        var fallbackKey = bridgePreview.Select(state.Seed, PermanentSelection.Bridge, bridgeCopies.Select(PermanentSelection.Key), 1).Single();
+        var bridgeHp = player.Creature.CurrentHp;
+        await bridge.CurrentOptions[1].Chosen();
+        var fallbackCard = (CardModel)AccessTools.Field(typeof(SlipperyBridge), "_randomCardToLose").GetValue(bridge)!;
+        Assert(PermanentSelection.Key(fallbackCard) == fallbackKey && Clocks(state) == JsonSerializer.Serialize(bridgePreview) &&
+            player.Creature.CurrentHp == bridgeHp - 3,
+            "Bridge's Hold On renews once before exhausted identity exclusions fall back to all removable copies");
+        await bridge.CurrentOptions[0].Chosen();
+        Assert(bridge.IsFinished && !player.Deck.Cards.Contains(fallbackCard) && player.Deck.Cards.Count == 1 &&
+            Clocks(state) == JsonSerializer.Serialize(bridgePreview), "accepting Bridge's displayed removal neither reroutes nor renews another clock");
+
+        await Reset();
+        state = RunCheckpoints.Require(run);
         player.AddPotionInternal(ModelDb.Potion<BlockPotion>().ToMutable());
         Assert(ReferenceEquals(PermanentSelection.Sacrifice(player.Potions), player.Potions.Single()) && state.Selection.Clocks.Count == 0,
             "singleton potion sacrifice preserves clocks");
@@ -209,13 +251,37 @@ public static partial class Checks
         var sacrificeScope = RandomAddress.For("potion sacrifice");
         state.Selection.Get(state.Seed, sacrificeScope, ModelDb.Potion<BlockPotion>().Id.Entry).Remaining = 0.6;
         state.Selection.Get(state.Seed, sacrificeScope, ModelDb.Potion<StrengthPotion>().Id.Entry).Remaining = 0.5;
+        var blockCopies = player.Potions.OfType<BlockPotion>().ToArray();
+        var expectedPotionCopy = blockCopies[AddressRandom.IntInclusive(state.Seed,
+            RandomAddress.For("potion sacrifice copy", ModelDb.Potion<BlockPotion>().Id.Entry).At(0), 0, blockCopies.Length - 1)];
         var stone = ModelDb.Event<StoneOfAllTime>().ToMutable();
         run.AppendToMapPointHistory(MapPointType.Unknown, RoomType.Event, stone.Id);
         await stone.BeginEvent(player, null, false);
         var sacrifice = (PotionModel)AccessTools.Field(typeof(StoneOfAllTime), "_drinkAndLiftPotion").GetValue(stone)!;
-        Assert(sacrifice is BlockPotion && state.Selection.Get(state.Seed, sacrificeScope, sacrifice.Id.Entry).Renewals == 1 &&
+        Assert(ReferenceEquals(sacrifice, expectedPotionCopy) && state.Selection.Get(state.Seed, sacrificeScope, sacrifice.Id.Entry).Renewals == 1 &&
             Math.Abs(state.Selection.Get(state.Seed, sacrificeScope, ModelDb.Potion<StrengthPotion>().Id.Entry).Remaining - 0.2) < 1e-12,
-            "Stone of All Time weights potion types by owned count and corrects surviving types");
+            "Stone weights types by owned count, chooses the slot copy with its pre-renewal count, and corrects survivors");
+        var offeredPotionClocks = Clocks(state);
+        await stone.CurrentOptions[0].Chosen();
+        Assert(!player.Potions.Contains(expectedPotionCopy) && player.Potions.Count() == 2 && Clocks(state) == offeredPotionClocks,
+            "Stone sacrifices its displayed copy without advancing sacrifice clocks again on choice");
+        var expectedRanwid = player.Potions.OrderBy(p => state.Selection.Get(state.Seed, sacrificeScope, p.Id.Entry).Remaining)
+            .ThenBy(p => p.Id.Entry, StringComparer.Ordinal).First();
+        var potionPreview = state.Selection.Copy();
+        potionPreview.Select(state.Seed, sacrificeScope, player.Potions.Select(p => p.Id.Entry), 1);
+        potionPreview.Renew(state.Seed, sacrificeScope, expectedRanwid.Id.Entry);
+        var ranwid = ModelDb.Event<RanwidTheElder>().ToMutable();
+        run.AppendToMapPointHistory(MapPointType.Unknown, RoomType.Event, ranwid.Id);
+        await ranwid.BeginEvent(player, null, false);
+        Assert(Clocks(state) == JsonSerializer.Serialize(potionPreview), "Ranwid's offer continues Stone's shared sacrifice clocks after inventory changes");
+        string PotionClocks() => JsonSerializer.Serialize(state.Selection.Clocks.Where(p => p.Key.StartsWith(sacrificeScope.Key[..^1] + ",", StringComparison.Ordinal)));
+        offeredPotionClocks = PotionClocks();
+        using (CardSelectorStack.SetTestSelector(new TestCardSelector()))
+            await ranwid.CurrentOptions[0].Chosen();
+        Assert(!player.Potions.Contains(expectedRanwid) && player.Potions.Count() == 1 && PotionClocks() == offeredPotionClocks,
+            "Ranwid sacrifices the continued-clock target without renewing again on choice");
+        Assert(ReferenceEquals(PermanentSelection.Sacrifice(player.Potions), player.Potions.Single()) && PotionClocks() == offeredPotionClocks,
+            "a later singleton sacrifice preserves existing clocks and renewal history for owned and absent types");
         RunManager.Instance.CleanUp();
     }
 }
