@@ -305,9 +305,11 @@ public static partial class Checks
             await PotionCmd.TryToProcure(canonical.ToMutable(), player);
         await PotionCmd.TryToProcure(ModelDb.Potion<PowerPotion>().ToMutable(), player);
         var future = (TheFutureOfPotions)await Begin(ModelDb.Event<TheFutureOfPotions>());
-        var types = EventChoices.AssignTypes(future);
-        Assert(types.Count == 3 && types.Values.All(t => t is CardType.Attack or CardType.Skill) &&
-            types.SequenceEqual(EventChoices.AssignTypes(future)), "Future of Potions caches three slot-preserving assignments with Common reward types");
+        var typeProperty = AccessTools.Property(typeof(TheFutureOfPotions), "PotionToCardType");
+        var types = (Dictionary<PotionModel, CardType>)typeProperty.GetValue(future)!;
+        Assert(types.Count == 3 && types.Keys.ToHashSet().SetEquals(player.Potions.Take(3)) &&
+            types.Values.All(t => t is CardType.Attack or CardType.Skill) && ReferenceEquals(types, typeProperty.GetValue(future)),
+            "Future of Potions caches assignments for the first three occupied slots with Common reward types");
         var traded = player.Potions.First();
         var tradeCounter = PotionEffects.Counter(traded.Id.Entry);
         var beforeTrade = RunCheckpoints.Require(run).Random.Position(tradeCounter);
