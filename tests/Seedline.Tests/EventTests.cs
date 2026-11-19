@@ -80,6 +80,33 @@ public sealed class EventTests
         Assert.Equal(JsonSerializer.Serialize(expected), JsonSerializer.Serialize(state));
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void SameSelectedEventLeavesSameStateAcrossConditionChanges(int act)
+    {
+        var orders = new Dictionary<string, string[]> { ["A"] = ["a", "b"], ["B"] = ["c", "d", "e"], ["C"] = ["f", "g"] };
+        for (var seed = 0; seed < 100; seed++)
+        {
+            var text = seed.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            var initial = new EventState();
+            initial.Enter(text, act, orders, ["a", "b", "c", "d", "e", "f", "g"], []);
+            var results = new Dictionary<string, string>();
+            for (var mask = 1; mask < 8; mask++)
+            {
+                var state = initial.Copy();
+                bool Passes(string key) => (mask & (1 << (key[0] - 'A'))) != 0;
+                var selected = state.Select(text, [], Passes, id => orders.Any(p => Passes(p.Key) && p.Value.Contains(id)))!;
+                var serialized = JsonSerializer.Serialize(state);
+                if (results.TryGetValue(selected, out var previous))
+                    Assert.Equal(previous, serialized);
+                else
+                    results.Add(selected, serialized);
+            }
+        }
+    }
+
     [Fact]
     public void LateFailuresAdvanceIdsAndFallbackTerminates()
     {

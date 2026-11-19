@@ -251,6 +251,30 @@ public static partial class Checks
             run.Odds.UnknownMapPoint.Roll([], run) == RoomType.Event && RunCheckpoints.Require(run).Random.Position(RandomAddress.For("room type").At(2)) == 0,
             "Lantern Key records Repy while bypassing ordinary-event selection and room-type advancement");
 
+        foreach (var ancient in new AncientEventModel[] { ModelDb.AncientEvent<Tanx>(), ModelDb.AncientEvent<Nonupeipe>(), ModelDb.AncientEvent<Vakuu>() })
+        {
+            await Reset();
+            run.Acts[2].GetRoomsDebug().Ancient = ancient;
+            run.CurrentActIndex = 2;
+            RoomSelection.EnterActs(run);
+            var queued = RunCheckpoints.Require(run).Events.Conditions.Values.SelectMany(c => c.Order).ToHashSet(StringComparer.Ordinal);
+            Assert(queued.Contains(ModelDb.Event<ShrineOfTheWarlord>().Id.Entry) == (ancient is not Tanx) &&
+                queued.Contains(ModelDb.Event<ThermaeNonupeipe>().Id.Entry) == (ancient is not Nonupeipe) &&
+                !queued.Contains(ModelDb.Event<WarHistorianRepy>().Id.Entry),
+                $"{ancient.Id.Entry}: ordinary queues apply Ancient exclusions before selection and omit forced Repy");
+        }
+
+        await Reset();
+        var fallback = run.Act.GetRoomsDebug().events.ToArray();
+        foreach (var model in fallback)
+            run.AddVisitedEvent(model);
+        for (var i = 0; i <= fallback.Length; i++)
+        {
+            Assert(run.Act.PullNextEvent(run).Id == fallback[i % fallback.Length].Id &&
+                RunCheckpoints.Require(run).Events.Ordinal == i + 1,
+                $"exhausted ordinary events {i}: fallback follows ordinal indexing and wraps the original act list");
+        }
+
         await Reset();
         foreach (var canonical in new AncientEventModel[] { ModelDb.AncientEvent<Orobas>(), ModelDb.AncientEvent<Pael>(), ModelDb.AncientEvent<Tezcatara>(), ModelDb.AncientEvent<Tanx>(), ModelDb.AncientEvent<Nonupeipe>() })
         {
