@@ -156,6 +156,7 @@ public static partial class Checks
             }
             Assert(identities.Count == 96 && identities.Distinct().Count() == 96,
                 "generic draws expose every eligible ordinary relic once across borrowing and rarity fallback");
+            CheckChestDepletion();
             foreach (var (source, firstDonor, secondDonor) in new[]
                 { ("generic", "Courier", "shop"), ("shop", "Courier", "generic"), ("Courier", "generic", "shop") })
             {
@@ -179,6 +180,34 @@ public static partial class Checks
         {
             RunManager.Instance.CleanUp();
             TestMode.IsOn = previous;
+        }
+    }
+
+    private static void CheckChestDepletion()
+    {
+        foreach (var (requested, fallback) in new[]
+            { (RelicRarity.Common, RelicRarity.Uncommon), (RelicRarity.Uncommon, RelicRarity.Rare), (RelicRarity.Rare, RelicRarity.None) })
+        {
+            RunManager.Instance.CleanUp();
+            var run = StartGoldRun();
+            var player = run.Players[0];
+            var count = RelicRewards.Pool(player).Count(r => r.Rarity == requested);
+            var consumed = Enumerable.Range(0, count).Select(_ => RelicRewards.Draw(player, "generic", requested)).ToArray();
+            Assert(consumed.All(r => r.Rarity == requested) && consumed.Select(r => r.Id).Distinct().Count() == count &&
+                consumed.All(r => player.Relics.All(owned => owned.Id != r.Id)),
+                $"{requested}: depletion fixture consumes every identity while leaving the relics unowned");
+
+            // Production single-player bags preserve depletion; CreateForTest enables refresh.
+            var vanilla = run.SharedRelicGrabBag.PullFromFront(requested, run) ?? RelicFactory.FallbackRelic;
+            var state = RunCheckpoints.Require(run);
+            var rarityAddress = RandomAddress.For("relic rarity", "generic");
+            var before = state.Random.Position(rarityAddress);
+            var offered = RelicRewards.Draw(player, "generic", requested, chest: true);
+            Assert(fallback == RelicRarity.None ? vanilla is Circlet && offered is Circlet :
+                vanilla.Rarity == fallback && offered.Rarity == fallback,
+                $"{requested}: depleted chests preserve vanilla single-player rarity fallback");
+            Assert(!consumed.Any(r => r.Id == offered.Id) && state.Random.Position(rarityAddress) == before,
+                $"{requested}: chest fallback preserves consumed identities and uses no additional rarity roll");
         }
     }
 }

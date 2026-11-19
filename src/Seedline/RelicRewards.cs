@@ -118,18 +118,6 @@ internal static class RelicRewards
                 : supply.Draw(eligible, borrow: e => Borrow(candidateRarity, e), remove: remove || (!chest && filter == null), lifetime: lifetime);
             if (chosen != null)
                 break;
-            if (chest && candidateRarity == rarity)
-            {
-                var refill = pool.Values.Where(r => r.Rarity == rarity && shared.Contains(r.Id.Entry) &&
-                    r.IsAllowed(player.RunState) && !player.Relics.Any(owned => owned.Id == r.Id) &&
-                    !rewards.ChestOffers.Contains(r.Id.Entry)).OrderBy(r => r.Id.Entry, StringComparer.Ordinal).ToArray();
-                if (refill.Length > 0)
-                {
-                    var index = (int)(state.Random.NextUnit(RandomAddress.For("relic rarity", "generic")) * refill.Length);
-                    chosen = new(refill[index].Id.Entry, RandomAddress.For("chest refill").At(chestOrdinal).Key);
-                    break;
-                }
-            }
         }
         var result = chosen == null ? RelicFactory.FallbackRelic : pool[chosen.Identity];
         if (chosen != null)

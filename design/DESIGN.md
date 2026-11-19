@@ -551,13 +551,11 @@ By default, hidden random relic rewards use the generic rewards source, includin
 
 #### Borrowing
 
-**Alignment boundary:** source-partitioning guarantees exclude borrowing's effects. Chest refill and final fallback require no alignment.
+**Alignment boundary:** source-partitioning guarantees exclude borrowing's effects. Final fallback requires no alignment.
 
 When the requested rarity has no eligible local entry, borrow from another source's allocation of that rarity using a [tail draw](#relic-tail-draws). Courier borrows from generic rewards, then shop; generic rewards and shop borrow from Courier, then the remaining source.
 
 Apply borrowing during [marker resolution](#filtered-draws), but skip filtered-draw marker placement in the donor allocation.
-
-**Chest refill:** when a chest reward has no eligible entry after same-rarity borrowing, retain its generic rarity result and select uniformly among eligible identities of that rarity in the original shared relic pool, advancing the generic relic rarity RNG once more. If none qualify, use the final fallback.
 
 **Final fallback:** from the requested rarity onward in Shop → Common → Uncommon → Rare, try local entries then same-rarity borrowing at each rarity. Return Circlet if all fail; make no additional rarity roll.
 
@@ -585,7 +583,7 @@ Draw the next eligible shared relic from the generic identity sequence for the r
 
 Resolve the choice before expiry, including `x = 0`. Permanent ineligibility or acquisition elsewhere clears the carried entry, preserving the marker's lifetime.
 
-Refill and Circlet rewards bypass markers: skipping leaves stock unchanged; acquisition retains [baseline identity removal](#relic-bags).
+Circlet rewards bypass markers: skipping leaves stock unchanged; acquisition retains [baseline identity removal](#relic-bags).
 
 **Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
 
@@ -1630,7 +1628,7 @@ Front bias can affect several later positions, depending on bag composition.
 
 **Floor eligibility:** these 17 relics require `TotalFloor < 41` in standard single-player or `< 38` in multiplayer (`RelicLists` and `RelicModel.IsAllowed`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited.
 
-**Depletion:** search from the requested rarity along Shop → Common → Uncommon → Rare, then multiplayer fallback, then Circlet. Refresh-enabled bags first refill empty requested rarities. Catfood inherits this fallback.
+**Depletion:** single-player bags stay depleted; search from the requested rarity along Shop → Common → Uncommon → Rare, then Circlet. Multiplayer chest bags first refill empty requested rarities and can use a multiplayer fallback pool. Catfood inherits this behavior.
 
 #### Shops, chests and relic events
 
