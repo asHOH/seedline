@@ -120,9 +120,12 @@ public static partial class Checks
             Assert(bundles[0].All(c => mapping[c] == CardOccurrences.Info(c).Key), "pair priorities preserve each card's key under reordered picks");
             var wing = ModelDb.Relic<WingCharm>().ToMutable();
             player.AddRelicInternal(wing);
+            var wingRng = player.PlayerRng.Rewards.ToSerializable();
             var wingOffer = Offer(RoomType.Monster);
-            Assert(wingOffer.Count(c => c.Enchantment is Swift) == 1 && wingOffer.All(c => CardOccurrences.Find(c) != null),
-                "Wing Charm selects one eligible shared entry and preserves metadata through its clone");
+            var expectedWing = wingOffer.MinBy(c => CardRewards.Unit(state, "Wing Charm", CardOffers.Info(c).WingAddress));
+            Assert(wingOffer.Single(c => c.Enchantment is Swift) == expectedWing && wingOffer.All(c => CardOccurrences.Find(c) != null) &&
+                wingRng.Equals(player.PlayerRng.Rewards.ToSerializable()),
+                "Wing Charm enchants the lowest-priority shared entry without advancing vanilla reward RNG");
             var gem = ModelDb.Relic<PrismaticGem>().ToMutable();
             player.AddRelicInternal(gem);
             var reward = new CardReward(CardCreationOptions.ForRoom(player, RoomType.Monster), 3, player);
@@ -139,8 +142,12 @@ public static partial class Checks
             var candyOffer = CardRewards.Generate(player, 3, CardCreationOptions.ForRoom(player, RoomType.Monster)
                 .WithFlags(CardCreationFlags.IsCardReward | CardCreationFlags.IsFromCombat), CardOfferKind.OwnCharacter).ToArray();
             Assert(candyOffer.Length == 4 && candyOffer[^1].Card.Type == CardType.Power &&
-                CardOffers.Info(candyOffer[^1].Card).Offer == CardOffers.Info(candyOffer[0].Card).Offer,
+                CardOffers.Info(candyOffer[^1].Card).Candy && CardOffers.Info(candyOffer[^1].Card).Offer == CardOffers.Info(candyOffer[0].Card).Offer,
                 "Lasting Candy inherits expanded Power supply and parent offer address");
+            var expectedCandyWing = CardRewards.Unit(state, "Wing Charm", CardOccurrences.Info(candyOffer[^1].Card).Address) < 0.25
+                ? candyOffer[^1] : candyOffer.Take(3).MinBy(c => CardRewards.Unit(state, "Wing Charm", CardOffers.Info(c.Card).WingAddress));
+            Assert(candyOffer.Single(c => c.Card.Enchantment is Swift) == expectedCandyWing,
+                "Wing Charm uses the Candy Power's entry roll to choose between the actual added Power and parent triple");
             var otherOptions = CardCreationOptions.ForNonCombatWithUniformOdds([ModelDb.Character<Silent>().CardPool], c => c.Rarity == CardRarity.Rare)
                 .WithFlags(CardCreationFlags.NoCardPoolModifications);
             var otherCards = CardRewards.Generate(player, 5, otherOptions, CardOfferKind.OtherCharacter).ToArray();
@@ -251,6 +258,7 @@ public static partial class Checks
             RunManager.Instance.CleanUp();
             await CheckCardRewardSources();
             CheckCardOfferPolicies();
+            CheckWingCharmPolicies();
         }
         finally
         {

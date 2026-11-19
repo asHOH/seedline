@@ -35,7 +35,8 @@ internal static class SpecialCardRewards
             if (eligible.Length > 1 && candy.Length > 0)
                 candidates = CardRewards.Unit(state, "Wing Charm", CardOccurrences.Info(candy[0].Card).Address) < 1d / eligible.Length
                     ? candy : eligible.Except(candy).ToArray();
-            var supplementary = candidates.Where(c => CardOffers.Find(c.Card)?.Supplementary == true).ToArray();
+            var supplementary = candidates.Where(c => CardOffers.Find(c.Card)?.Supplementary == true)
+                .OrderBy(c => CardOffers.Info(c.Card).EntryOrder).ToArray();
             if (candidates.Length > 1 && supplementary.Length > 0)
             {
                 var triple = candidates.Except(supplementary).ToArray();
