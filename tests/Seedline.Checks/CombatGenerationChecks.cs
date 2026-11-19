@@ -19,6 +19,7 @@ public static partial class Checks
 {
     private static async Task CheckCombatGeneration()
     {
+        await CheckCombatGenerationPolicy();
         string? expected = null;
         string? transformed = null;
         string? entropyResult = null;
