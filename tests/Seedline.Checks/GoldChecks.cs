@@ -47,6 +47,7 @@ public static partial class Checks
             await CheckDummyReload(false);
             await CheckDummyReload(true);
             await CheckRewardSupplies();
+            await CheckPotionRewardPolicies();
             await CheckCardRewards();
             await CheckPermanentSelection();
             await CheckNonCombatPolicies();
