@@ -88,6 +88,22 @@ public static partial class Checks
             Assert(scope.Random.Position(other) == beforeOther + 1, "automatic debuff targets use the Other group");
             await CardCmd.AutoPlay(context, combat.CreateCard<Defy>(player), candidates[0]);
             Assert(scope.Random.Position(other) == beforeOther + 1, "automatic play preserves a supplied target without consuming selection");
+            var stampede = (StampedePower)ModelDb.Power<StampedePower>().ToMutable();
+            AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Owner)).SetValue(stampede, player.Creature);
+            AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Amount)).SetValue(stampede, 2);
+            var stampedeCards = new[] { combat.CreateCard<StrikeIronclad>(player), combat.CreateCard<StrikeIronclad>(player) };
+            foreach (var card in stampedeCards)
+                player.PlayerCombatState.Hand.AddInternal(card);
+            var beforeStampede = scope.Random.Position(damage);
+            var stampedeHp = combat.Enemies.ToDictionary(e => e, e => e.CurrentHp);
+            var expectedStampedeTargets = Enumerable.Range(0, 2).Select(i => combat.Enemies
+                .OrderBy(e => AddressRandom.UInt64(scope.Seed, damage.At(beforeStampede + i).With(EnemyOccurrences.Info(e).Address.Key)))
+                .ThenBy(e => EnemyOccurrences.Info(e).Address.Key, StringComparer.Ordinal).First()).ToArray();
+            await stampede.AfterAutoPostPlayPhaseEntered(context, player);
+            Assert(stampedeCards.All(c => c.Pile == player.PlayerCombatState.DiscardPile) &&
+                scope.Random.Position(damage) == beforeStampede + 2 && scope.Random.Position(other) == beforeOther + 1 &&
+                combat.Enemies.All(e => e.CurrentHp == stampedeHp[e] - 6 * expectedStampedeTargets.Count(t => t == e)),
+                "Stampede's end-turn hook plays both attacks against addressed direct-damage targets without losing their source");
             var orb = ModelDb.Orb<LightningOrb>().ToMutable();
             orb.Owner = player;
             var beforeLightning = scope.Random.Position(lightning);

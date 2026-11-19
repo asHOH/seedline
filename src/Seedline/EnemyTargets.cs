@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -16,8 +17,6 @@ namespace Seedline;
 
 internal static class EnemyTargets
 {
-    private static readonly AsyncLocal<CardModel?> autoCard = new();
-
     internal static string CardGroup(CardModel card) => card.Type == CardType.Attack ||
         card is BubbleBubble or CaptureSpirit or DeadlyPoison or Judgement or KnifeTrap or Snakebite
         ? "Direct damage" : "Other";
@@ -38,9 +37,8 @@ internal static class EnemyTargets
     private static Creature? Lightning(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Lightning");
     private static Creature? Relics(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Forgotten Soul / Obsidian Vice");
     private static Creature? Other(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Other");
-    private static Creature? AutoTarget(Rng rng, IEnumerable<Creature> candidates)
+    private static Creature? AutoTarget(Rng rng, IEnumerable<Creature> candidates, CardModel card)
     {
-        var card = autoCard.Value ?? throw new InvalidOperationException("Missing automatic-play source.");
         // Ally targeting is outside the enemy-target policy.
         return card.TargetType == TargetType.AnyAlly ? rng.NextItem(candidates) : Select(candidates, CardGroup(card));
     }
@@ -88,21 +86,31 @@ internal static class EnemyTargets
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) => Replace(instructions, nameof(Other));
     }
 
-    [HarmonyPatch(typeof(CardCmd), nameof(CardCmd.AutoPlay))]
-    private static class AutoPlaySource
-    {
-        private static void Prefix(CardModel card, out CardModel? __state)
-        {
-            __state = autoCard.Value;
-            autoCard.Value = card;
-        }
-        private static void Finalizer(CardModel? __state) => autoCard.Value = __state;
-    }
-
     [HarmonyPatch]
     private static class AutoPlayTargets
     {
         private static MethodBase TargetMethod() => RewardPatches.AsyncMethod(typeof(CardCmd), nameof(CardCmd.AutoPlay));
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) => Replace(instructions, nameof(AutoTarget), 2);
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
+        {
+            var card = AccessTools.Field(__originalMethod.DeclaringType, "card");
+            var count = 0;
+            foreach (var instruction in instructions)
+            {
+                if ((instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt) &&
+                    instruction.operand is MethodInfo method && method.DeclaringType == typeof(Rng) &&
+                    method.Name == nameof(Rng.NextItem) && method.GetGenericArguments().SequenceEqual([typeof(Creature)]))
+                {
+                    // Read the operation's card even when callers inline the AutoPlay async entry point.
+                    yield return new CodeInstruction(OpCodes.Ldarg_0).MoveLabelsFrom(instruction);
+                    yield return new CodeInstruction(OpCodes.Ldfld, card);
+                    instruction.opcode = OpCodes.Call;
+                    instruction.operand = AccessTools.Method(typeof(EnemyTargets), nameof(AutoTarget));
+                    count++;
+                }
+                yield return instruction;
+            }
+            if (count != 2)
+                throw new InvalidOperationException($"Expected two automatic-play target selections, found {count}.");
+        }
     }
 }
