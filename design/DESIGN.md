@@ -601,7 +601,7 @@ Other-source consumption can shorten future marker lifetimes; existing lifetimes
 
 **Alignment:** with identical subsequent draw requests and eligibility, and no borrowing, acquire and skip share the future sequence until expiry.
 
-**Vanilla deviation — NoSL 3:** skipping a chest, visiting a shop, then acquiring another chest's relic can slightly shift later character-specific reward probabilities.
+**Vanilla deviation — NoSL 3:** chest-marker lifetimes can slightly change later character-specific reward probabilities, as in the [skip–shop–acquire example](#chest-marker-probabilities).
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events).
 
@@ -651,11 +651,11 @@ Baseline: [shop mechanics](#shop-and-courier-rng).
 
 #### Wongos
 
-The featured Rare uses shop stock. Suppress generation when unaffordable as a [consistency fix](#vanilla-deviations).
+The featured Rare uses shop stock. Suppress generation when unaffordable.
 
 **Identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from its source without placing a new marker. This retains [vanilla's promotion of skipped identities](#relic-bags).
 
-**Vanilla deviation — NoSL 3:** sourcing the featured Rare from shop stock removes its vanilla advancement of shop-ineligible Rares toward later generic rewards.
+**Vanilla deviation — NoSL 3:** the featured Rare no longer increases shop-ineligible Rares' chances in later generic rewards.
 
 Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
@@ -763,7 +763,9 @@ An offer is **Rare-eligible** if at least one slot has positive Rare probability
 
 This excludes the first two three-card offers using normal-fight rarity rules after an offset reset without elite intervention. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Vanilla deviation — NoSL 3:** extra Rares in elite and fixed-odds offers are deferred, changing acquisition opportunities; additional Rares beyond the single pending one are omitted. **Frequency:** rare — about **0.2%**.
+**Vanilla deviation — NoSL 3:** elite and fixed-odds offers never contain multiple Rares. **Frequency:** about one multi-Rare offer per 500 runs in the [A7+ calibration](#rarity-calibration).
+
+**Vanilla deviation — NoSL 3:** if an offer would contain three or more Rares, only one additional Rare is offered later. **Frequency:** much rarer than the previous deviation (qualitative judgment).
 
 ##### A0–6: Rare delivery
 
@@ -794,7 +796,7 @@ These triples follow shared consumption across sources.
 
 **Rationale:** these entries approximate an Act 1 opening of two normal fights. Later-act openings are covered by the average calibration.
 
-**Vanilla deviation — NoSL 3:** shared Uncommon rates remove elites' advantage (about 0.14 extra Uncommons per three-card non-Rare offer near zero starting offset) and change source- and route-specific rates. Few elite rewards, some Rare-bearing, limit the impact; elites retain relic, gold and higher Rare-chance incentives.
+**Vanilla deviation — NoSL 3:** shared rates change Uncommon frequencies across sources and routes, including removing elites' advantage (about 0.14 Uncommons per three-card non-Rare offer near zero starting offset).
 
 ##### Supplementary cards
 
@@ -930,11 +932,11 @@ Remaining counts and ID positions carry between selections in every act.
 
 **Wrapping:** when all counts reach zero, refill them from act-available, unvisited IDs and restart priorities, continuing the roll sequences. ID sequences wrap in their established order, excluding visited IDs.
 
-**Vanilla deviation — NoSL 3:** refreshed condition priorities after wrapping can change expected event exposure. **Frequency:** rare (qualitative judgment).
+**Vanilla deviation — NoSL 3:** after wrapping, refreshed condition priorities can change each event's chance of appearing. **Frequency:** rare (qualitative judgment).
 
 **Fallback:** if the act has no eligible unvisited event, return `list[(n - 1) % list.Count]` from vanilla's original shuffled act list, where `n` is the 1-based act-local ordinary-event ordinal. Bypass eligibility and visited exclusions for this draw.
 
-**Vanilla deviation — NoSL 3:** ordinal indexing changes fallback probabilities conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
+**Vanilla deviation — NoSL 3:** ordinal indexing changes each event's chance of appearing on fallback, conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
 
 **Behavior preservation:** before count refill or ID wrapping, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting random state + same selected event leaves the same random state. Cross-run and SL correlations change.
 
@@ -944,7 +946,7 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 
 Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection). Record the visit and leave the act-local ordinary-event ordinal unchanged.
 
-**Vanilla deviation — NoSL 3:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes later ordinary-event availability.
+**Vanilla deviation — NoSL 3:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes each ordinary event's chance of appearing later.
 
 ### Ancient offerings
 
