@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Merchant;
 using MegaCrit.Sts2.Core.Entities.Potions;
@@ -157,6 +158,7 @@ public static partial class Checks
             Assert(identities.Count == 96 && identities.Distinct().Count() == 96,
                 "generic draws expose every eligible ordinary relic once across borrowing and rarity fallback");
             CheckChestDepletion();
+            CheckChestFallbackLifetime();
             foreach (var (source, firstDonor, secondDonor) in new[]
                 { ("generic", "Courier", "shop"), ("shop", "Courier", "generic"), ("Courier", "generic", "shop") })
             {
@@ -208,6 +210,36 @@ public static partial class Checks
                 $"{requested}: depleted chests preserve vanilla single-player rarity fallback");
             Assert(!consumed.Any(r => r.Id == offered.Id) && state.Random.Position(rarityAddress) == before,
                 $"{requested}: chest fallback preserves consumed identities and uses no additional rarity roll");
+        }
+    }
+
+    private static void CheckChestFallbackLifetime()
+    {
+        foreach (var (requested, delivered) in new[]
+            { (RelicRarity.Common, RelicRarity.Uncommon), (RelicRarity.Uncommon, RelicRarity.Rare), (RelicRarity.Common, RelicRarity.Rare) })
+        {
+            string? expected = null;
+            for (var branch = 0; branch < 2; branch++)
+            {
+                RunManager.Instance.CleanUp();
+                var run = StartGoldRun();
+                var player = run.Players[0];
+                foreach (var rarity in new[] { RelicRarity.Common, RelicRarity.Uncommon }
+                    .SkipWhile(r => r != requested).TakeWhile(r => r != delivered))
+                    for (var i = 0; i < RelicRewards.Pool(player).Count(r => r.Rarity == rarity); i++)
+                        RelicRewards.Draw(player, "generic", rarity);
+
+                var offered = RelicRewards.Draw(player, "generic", branch == 0 ? delivered : requested, chest: true, chestOrdinal: 7);
+                var state = RunCheckpoints.Require(run);
+                var marker = state.Rewards.Supply(RelicRewards.Address("generic", delivered)).Positions.Single(p => p.Carried?.Identity == offered.Id.Entry);
+                Assert(offered.Rarity == delivered && marker.Remaining > 0,
+                    $"{requested} to {delivered}: chest fixture has a positive marker lifetime");
+                var actual = RewardEntries.Find(offered) + JsonSerializer.Serialize(state.Rewards);
+                if (branch == 0)
+                    expected = actual;
+                else
+                    Assert(actual == expected, $"{requested} to {delivered}: fallback preserves the direct draw's entry address and marker state");
+            }
         }
     }
 }

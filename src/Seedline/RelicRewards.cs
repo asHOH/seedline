@@ -100,19 +100,18 @@ internal static class RelicRewards
                     return entry;
             return null;
         }
-        var lifetime = -1;
-        if (chest)
-        {
-            var eligible = Eligible(rarity);
-            var size = sources.SelectMany(s => rewards.Supply(Address(s, rarity)).Positions)
-                .Count(p => p.Entry != null && eligible.Contains(p.Entry.Identity));
-            lifetime = (int)(AddressRandom.Unit(AddressRandom.UInt64(state.Seed,
-                RandomAddress.For("marker lifetime", rarity.ToString()).At(chestOrdinal))) * size);
-        }
         SupplyEntry? chosen = null;
         foreach (var candidateRarity in rarities.Skip(Array.IndexOf(rarities, rarity)))
         {
             var eligible = Eligible(candidateRarity);
+            var lifetime = -1;
+            if (chest)
+            {
+                var size = sources.SelectMany(s => rewards.Supply(Address(s, candidateRarity)).Positions)
+                    .Count(p => p.Entry != null && eligible.Contains(p.Entry.Identity));
+                lifetime = (int)(AddressRandom.Unit(AddressRandom.UInt64(state.Seed,
+                    RandomAddress.For("marker lifetime", candidateRarity.ToString()).At(chestOrdinal))) * size);
+            }
             var supply = rewards.Supply(Address(source, candidateRarity));
             chosen = tail ? supply.Tail(eligible) ?? Borrow(candidateRarity, eligible)
                 : supply.Draw(eligible, borrow: e => Borrow(candidateRarity, e), remove: remove || (!chest && filter == null), lifetime: lifetime);
