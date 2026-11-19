@@ -280,8 +280,17 @@ public static partial class Checks
         foreach (var canonical in new AncientEventModel[] { ModelDb.AncientEvent<Orobas>(), ModelDb.AncientEvent<Pael>(), ModelDb.AncientEvent<Tezcatara>(), ModelDb.AncientEvent<Tanx>(), ModelDb.AncientEvent<Nonupeipe>() })
         {
             var source = (AncientEventModel)await Begin(canonical);
-            var menu = (IReadOnlyList<EventOption>)AccessTools.Method(source.GetType(), "GenerateInitialOptions").Invoke(source, [])!;
+            var menu = source.CurrentOptions;
             Assert(menu.Count == 3 && menu.Select(o => o.TextKey).Distinct().Count() == 3, $"{source.Id.Entry}: targeted Ancient pools retain three distinct menu choices");
+            if (source is Orobas or Pael or Tezcatara)
+            {
+                var expectedRng = new Rng(run.Rng.Seed, source.Id.Entry);
+                // Orobas also rolls Sea Glass's character and the Gem/Glass branch before the three pool draws.
+                for (var i = 0; i < (source is Orobas ? 5 : 3); i++)
+                    expectedRng.NextInt(1);
+                Assert(expectedRng.ToSerializable().Equals(source.Rng.ToSerializable()),
+                    $"{source.Id.Entry}: displayed menu retains vanilla event RNG position");
+            }
             if (source is Tanx or Nonupeipe)
                 Assert(menu.SequenceEqual(EventChoices.Order(source, menu, "main")), $"{source.Id.Entry}: menu follows fixed priority order");
         }
