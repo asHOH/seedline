@@ -21,6 +21,7 @@ public static partial class Checks
 {
     private static async Task CheckCombatShuffle()
     {
+        await CheckShufflePriorities();
         foreach (var size in new[] { 2000, 2001 })
         {
             var run = StartGoldRun();
