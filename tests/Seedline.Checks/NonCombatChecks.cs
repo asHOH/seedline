@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Map;
@@ -384,14 +385,42 @@ public static partial class Checks
         await Reset();
         foreach (var canonical in RelicRewards.Pool(player).Where(r => r.IsTradable).Take(7))
             player.AddRelicInternal(canonical.ToMutable());
+        RelicRewards.Initialize(player);
+        var traderRewards = RunCheckpoints.Require(run).Rewards;
+        var preview = traderRewards.Copy();
+        var eligibleRelics = RelicRewards.Pool(player).Where(r => r.IsAllowed(run)).Select(r => r.Id.Entry).ToHashSet();
+        var expectedReplacements = new List<SupplyEntry>();
+        for (var slot = 0; slot < 3; slot++)
+        {
+            var roll = AddressRandom.Unit(AddressRandom.UInt64(run.Rng.StringSeed,
+                RandomAddress.For("replacement rarity", ModelDb.Event<RelicTrader>().Id.Entry).At(slot)));
+            var rarity = roll < .5 ? RelicRarity.Common : roll < .83 ? RelicRarity.Uncommon : RelicRarity.Rare;
+            var supply = preview.Supply(RelicRewards.Address("Courier", rarity));
+            var tail = supply.Positions.Last(p => p.Entry is { } entry && eligibleRelics.Contains(entry.Identity));
+            expectedReplacements.Add(tail.Entry!);
+            supply.Positions.Remove(tail);
+        }
         var trader = (RelicTrader)await Begin(ModelDb.Event<RelicTrader>());
-        var outgoing = EventChoices.Outgoing(trader);
-        var replacements = (IReadOnlyList<RelicModel>)AccessTools.Property(typeof(RelicTrader), "NewRelics").GetValue(trader)!;
-        Assert(outgoing.Length == 3 && outgoing.Distinct().Count() == 3 && replacements.Count == 3 &&
-            replacements.All(r => RunCheckpoints.Require(run).Rewards.RetiredRelics.Contains(r.Id.Entry)), "Relic Trader assigns three owned relics and consumes all replacement offers");
+        var ownedProperty = AccessTools.Property(typeof(RelicTrader), "OwnedRelics");
+        var newProperty = AccessTools.Property(typeof(RelicTrader), "NewRelics");
+        var outgoing = (IReadOnlyList<RelicModel>)ownedProperty.GetValue(trader)!;
+        var replacements = (IReadOnlyList<RelicModel>)newProperty.GetValue(trader)!;
+        Assert(outgoing.Count == 3 && outgoing.Distinct().Count() == 3 && replacements.Count == 3 &&
+            replacements.All(r => traderRewards.RetiredRelics.Contains(r.Id.Entry)), "Relic Trader assigns three owned relics and consumes all replacement offers");
+        Assert(expectedReplacements.SequenceEqual(replacements.Select(RewardEntries.Find)),
+            "Relic Trader replacement slots use addressed rarity rolls and Courier tails with original entry addresses");
         var outgoingPairs = outgoing.Select(r => r.Id).ToHashSet();
-        await RelicCmd.Remove(outgoing[0]);
-        Assert(EventChoices.Outgoing(trader).Count(r => outgoingPairs.Contains(r.Id)) >= 2, "Relic Trader retains two outgoing identities after one owned relic disappears");
+        var originals = player.Relics.ToArray();
+        var retiredOffers = traderRewards.RetiredRelics.ToHashSet();
+        using (CardSelectorStack.SetTestSelector(new TestCardSelector()))
+            await trader.CurrentOptions[1].Chosen();
+        Assert(!player.Relics.Contains(outgoing[1]) && originals.Where(r => r != outgoing[1]).All(player.Relics.Contains) &&
+            player.Relics.Except(originals).Select(r => r.Id).SequenceEqual([replacements[1].Id]) && trader.IsFinished,
+            "Relic Trader's displayed middle choice exchanges only its cached outgoing/replacement pair");
+        Assert(ReferenceEquals(outgoing, ownedProperty.GetValue(trader)) && ReferenceEquals(replacements, newProperty.GetValue(trader)) &&
+            retiredOffers.SetEquals(traderRewards.RetiredRelics), "Relic Trader keeps both offer caches and generates no extra replacement on choice");
+        Assert(EventChoices.Outgoing(trader).Count(r => outgoingPairs.Contains(r.Id)) >= 2,
+            "Relic Trader retains two outgoing identities when one owned relic is replaced");
 
         await Reset();
         var conveyor = await Begin(ModelDb.Event<EndlessConveyor>());
