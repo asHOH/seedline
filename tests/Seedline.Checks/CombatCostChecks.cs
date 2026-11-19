@@ -17,6 +17,7 @@ public static partial class Checks
 {
     private static async Task CheckCombatCosts()
     {
+        await CheckCostPolicy();
         var run = StartGoldRun();
         var player = run.Players[0];
         var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
