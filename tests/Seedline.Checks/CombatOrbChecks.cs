@@ -1,5 +1,4 @@
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -7,7 +6,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
-using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Models.Orbs;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Runs;
@@ -26,14 +24,7 @@ public static partial class Checks
             var run = RunState.CreateForNewRun([player], ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(),
                 [], GameMode.Standard, false, 7, "ORBCHECK");
             RunManager.Instance.SetUpNewSingleplayer(run, true);
-            var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
-            combat.AddPlayer(player);
-            combat.Encounter!.GenerateMonstersWithSlots(run);
-            foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
-                combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
-            CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            var combat = CombatFixture.CreateActiveCombat(run);
             var scope = CombatStateScope.Require(combat);
             var address = scope.For("orb type");
             var queue = player.PlayerCombatState!.OrbQueue;
@@ -70,21 +61,14 @@ public static partial class Checks
             await OrbCmd.Channel<LightningOrb>(new ThrowingPlayerChoiceContext(), player);
             Assert(scope.Random.Position(address) == 5 && vanilla.Equals(run.Rng.CombatOrbGeneration.ToSerializable()),
                 "fixed channels preserve random-orb state and covered sources preserve vanilla RNG");
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, false);
+            CombatFixture.SetInProgress(false);
             await Play<Chaos>();
             Assert(scope.Random.Position(address) == 5, "ended combat consumes no random-orb opportunity");
             RunManager.Instance.CleanUp();
         }
         var otherRun = StartGoldRun();
         var otherPlayer = otherRun.Players[0];
-        var otherCombat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), otherRun);
-        otherCombat.AddPlayer(otherPlayer);
-        otherCombat.Encounter!.GenerateMonstersWithSlots(otherRun);
-        foreach (var (monster, slot) in otherCombat.Encounter.MonstersWithSlots)
-            otherCombat.AddCreature(otherCombat.CreateCreature(monster, CombatSide.Enemy, slot));
-        CombatManager.Instance.SetUpCombat(otherCombat);
-        var otherTurn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-        AccessTools.Property(otherTurn.GetType(), "IsInProgress").SetValue(otherTurn, true);
+        var otherCombat = CombatFixture.CreateActiveCombat(otherRun);
         var otherPower = (TrashToTreasurePower)ModelDb.Power<TrashToTreasurePower>().ToMutable();
         AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Owner)).SetValue(otherPower, otherPlayer.Creature);
         AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Amount)).SetValue(otherPower, 1);

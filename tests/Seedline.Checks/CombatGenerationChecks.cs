@@ -62,8 +62,7 @@ public static partial class Checks
                 "combat transformation batches preserve identity results across selection order and exclude originals");
             Assert(prepared.All(t => CardOccurrences.Info(t.Replacement!).Address.Contains("ordinary costs", StringComparison.Ordinal)),
                 "Entropy replacements draw from ordinary combat generation entries");
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            CombatFixture.SetInProgress(true);
             await CardCmd.Transform(prepared, run.Rng.CombatCardGeneration);
             Assert(prepared.All(t => t.Replacement!.Pile?.Type == PileType.Hand && t.Original.Pile == null),
                 "prepared combat transformations use the game's replacement and pile-movement path");

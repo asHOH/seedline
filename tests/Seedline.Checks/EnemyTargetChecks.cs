@@ -29,8 +29,7 @@ public static partial class Checks
             for (var i = 0; i < 3; i++)
                 combat.AddCreature(combat.CreateCreature(ModelDb.Monster<Axebot>().ToMutable(), CombatSide.Enemy, null));
             CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            CombatFixture.SetInProgress(true);
             foreach (var enemy in combat.Enemies)
                 await CreatureCmd.SetMaxAndCurrentHp(enemy, 1000);
             var scope = CombatStateScope.Require(combat);

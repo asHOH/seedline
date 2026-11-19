@@ -122,8 +122,7 @@ public static partial class Checks
                     (act == 0 ? CombatCards.Info(combatInnate).Key == CardOccurrences.Info(innate).Key :
                         CombatCards.Info(combatInnate).Key.Contains("second", StringComparison.Ordinal)),
                     "Innate uses its own opening priority while selection retains the ordinary source/rank key");
-                var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-                AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+                CombatFixture.SetInProgress(true);
 
                 // Compare the same live multiset at the same second-shuffle ordinal in both runs.
                 var live = draw.Cards.Where(c => CombatCards.Info(c).Address != removedAddress).ToArray();
@@ -245,8 +244,7 @@ public static partial class Checks
         var player = combat.Players[0];
         var pcs = player.PlayerCombatState!;
         var scope = CombatStateScope.Require(combat);
-        var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-        AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+        CombatFixture.SetInProgress(true);
         var context = new ThrowingPlayerChoiceContext();
         foreach (var card in pcs.DrawPile.Cards.ToArray())
         {
@@ -261,8 +259,7 @@ public static partial class Checks
             "large-deck reshuffle preserves exact vanilla order and RNG consumption after the permanent deck shrinks");
 
         RunManager.Instance.ActionExecutor.Pause();
-        await ((Task)AccessTools.Method(typeof(CombatManager), "StartTurn")
-            .Invoke(CombatManager.Instance, [turn, null])!).WaitAsync(TimeSpan.FromSeconds(15));
+        await CombatFixture.StartTurn();
         foreach (var card in pcs.Hand.Cards.ToArray())
         {
             card.RemoveFromCurrentPile();

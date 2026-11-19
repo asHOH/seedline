@@ -11,7 +11,6 @@ using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -38,14 +37,7 @@ public static partial class Checks
                     await CardPileCmd.Add(run.CreateCard(model, player), PileType.Deck);
             foreach (var defend in player.Deck.Cards.OfType<DefendIronclad>().Take(2))
                 CardCmd.Enchant<Goopy>(defend, 1);
-            var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
-            combat.AddPlayer(player);
-            combat.Encounter!.GenerateMonstersWithSlots(run);
-            foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
-                combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
-            CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            var combat = CombatFixture.CreateActiveCombat(run);
             var pcs = player.PlayerCombatState!;
             var scope = CombatStateScope.Require(combat);
             var strikes = pcs.DrawPile.Cards.OfType<StrikeIronclad>().Cast<CardModel>().ToArray();
@@ -233,17 +225,9 @@ public static partial class Checks
         {
             var run = StartGoldRun();
             var player = run.Players[0];
-            var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
-            combat.AddPlayer(player);
-            combat.Encounter!.GenerateMonstersWithSlots(run);
-            foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
-                combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
-            CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            var combat = CombatFixture.CreateActiveCombat(run);
             RunManager.Instance.ActionExecutor.Pause();
-            await ((Task)AccessTools.Method(typeof(CombatManager), "StartTurn")
-                .Invoke(CombatManager.Instance, [turn, null])!).WaitAsync(TimeSpan.FromSeconds(15));
+            await CombatFixture.StartTurn();
             var pcs = player.PlayerCombatState!;
             var scope = CombatStateScope.Require(combat);
             var defends = pcs.AllCards.OfType<DefendIronclad>().Cast<CardModel>()
@@ -372,14 +356,7 @@ public static partial class Checks
         {
             var run = StartGoldRun();
             var player = run.Players[0];
-            var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
-            combat.AddPlayer(player);
-            combat.Encounter!.GenerateMonstersWithSlots(run);
-            foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
-                combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
-            CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            var combat = CombatFixture.CreateActiveCombat(run);
             var pcs = player.PlayerCombatState!;
             var context = new ThrowingPlayerChoiceContext();
             var holograms = Enumerable.Range(0, 4).Select(_ => combat.CreateCard<Hologram>(player)).ToArray();

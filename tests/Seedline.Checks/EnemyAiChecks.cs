@@ -73,8 +73,7 @@ public static partial class Checks
             Assert(scope.Random.Position(scope.For("enemy intent", "INKLET").With("outer")) == 1 &&
                 scope.Random.Position(scope.For("enemy intent", "INKLET").With("middle")) == 1,
                 "Inklet middle and outer effective decisions have separate retained scopes");
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            CombatFixture.SetInProgress(true);
             var spawning = new MoveState("TEST_SUMMON", async _ =>
             {
                 await CreatureCmd.Add<TwoTailedRat>(combat, "first");
@@ -120,8 +119,7 @@ public static partial class Checks
         var owner = botCombat.CreateCreature(fabricator, CombatSide.Enemy, "first");
         botCombat.AddCreature(owner);
         CombatManager.Instance.SetUpCombat(botCombat);
-        var botTurn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-        AccessTools.Property(botTurn.GetType(), "IsInProgress").SetValue(botTurn, true);
+        CombatFixture.SetInProgress(true);
         fabricator.SetMoveImmediate((MoveState)fabricator.MoveStateMachine!.States["FABRICATE_MOVE"], true);
         var botVanilla = botRun.Rng.MonsterAi.ToSerializable();
         await fabricator.PerformMove();

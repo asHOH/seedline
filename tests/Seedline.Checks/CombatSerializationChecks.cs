@@ -1,5 +1,4 @@
 using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -39,10 +38,9 @@ public static partial class Checks
         foreach (var (monster, slot) in encounter.MonstersWithSlots)
             combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
         CombatManager.Instance.SetUpCombat(combat);
-        var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-        AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+        CombatFixture.SetInProgress(true);
         manager.ActionExecutor.Pause();
-        await ((Task)AccessTools.Method(typeof(CombatManager), "StartTurn").Invoke(CombatManager.Instance, [turn, null])!).WaitAsync(TimeSpan.FromSeconds(15));
+        await CombatFixture.StartTurn();
         Assert(manager.ChecksumTracker.NextId > 0 && player.PlayerCombatState!.Hand.Cards.Count == 5 &&
             player.PlayerCombatState.Phase == PlayerTurnPhase.Play,
             "opening turn completes with combat checksums enabled and occurrence-bearing cards in hand");

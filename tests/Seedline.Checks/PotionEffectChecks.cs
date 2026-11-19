@@ -126,8 +126,7 @@ public static partial class Checks
             foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
                 combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
             CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            CombatFixture.SetInProgress(true);
             var scope = CombatStateScope.Require(combat);
             var choice = new PotionChoice();
             var signature = new List<string>();

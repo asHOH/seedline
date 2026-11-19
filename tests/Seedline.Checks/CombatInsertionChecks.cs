@@ -1,12 +1,10 @@
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.Encounters;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace Seedline.Checks;
@@ -17,14 +15,7 @@ public static partial class Checks
     {
         var run = StartGoldRun();
         var player = run.Players[0];
-        var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
-        combat.AddPlayer(player);
-        combat.Encounter!.GenerateMonstersWithSlots(run);
-        foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
-            combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
-        CombatManager.Instance.SetUpCombat(combat);
-        var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-        AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+        var combat = CombatFixture.CreateActiveCombat(run);
         var scope = CombatStateScope.Require(combat);
         var draw = player.PlayerCombatState!.DrawPile;
         var discard = player.PlayerCombatState.DiscardPile;
@@ -76,7 +67,7 @@ public static partial class Checks
             scope.Random.Position(scope.For("insertion", "Metamorphosis", "Draw")) == 3,
             "Metamorphosis's actual play shares its insertion group and retains generated free attacks");
         Assert(shuffle.Equals(run.Rng.Shuffle.ToSerializable()), "covered random insertions preserve vanilla shuffle RNG");
-        AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, false);
+        CombatFixture.SetInProgress(false);
         var stopped = combat.CreateCard<Soul>(player);
         await CardPileCmd.Add(stopped, draw, CardPilePosition.Random);
         Assert(stopped.Pile == null && scope.Random.Position(soulAddress) == 2,

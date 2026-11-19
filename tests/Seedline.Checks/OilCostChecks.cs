@@ -32,8 +32,7 @@ public static partial class Checks
             foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
                 combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
             CombatManager.Instance.SetUpCombat(combat);
-            var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-            AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+            CombatFixture.SetInProgress(true);
             await CreatureCmd.SetMaxAndCurrentHp(combat.Enemies[0], 1000);
             var pcs = player.PlayerCombatState!;
             foreach (var card in pcs.DrawPile.Cards.ToArray())

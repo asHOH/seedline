@@ -54,8 +54,7 @@ public static partial class Checks
                 Assert(combat.Enemies.Take(3).Select(c => c.MaxHp).Distinct().Count() == 3 && oracle.Ordinal == 4,
                     "a three-value HP range exhausts without repeats, then still consumes one full-range fallback roll");
                 CombatManager.Instance.SetUpCombat(combat);
-                var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-                AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+                CombatFixture.SetInProgress(true);
                 foreach (var model in new MonsterModel[] { ModelDb.Monster<EyeWithTeeth>(), ModelDb.Monster<Parafright>(), ModelDb.Monster<GasBomb>() })
                 {
                     var fixedHp = combat.CreateCreature(model.ToMutable(), CombatSide.Enemy, null);
@@ -109,8 +108,7 @@ public static partial class Checks
         var scope = CombatStateScope.Begin(combat);
         var oracle = new EnemyHpOracle(seed, scope.Address);
         CombatManager.Instance.SetUpCombat(combat);
-        var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
-        AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+        CombatFixture.SetInProgress(true);
         var mercHp = oracle.Next(ModelDb.Monster<GremlinMerc>(), []);
         var merc = await CreatureCmd.Add<GremlinMerc>(combat);
         Assert(merc.MaxHp == mercHp, "Gremlin Merc uses the first combat HP roll");
