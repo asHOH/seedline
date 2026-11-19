@@ -354,9 +354,32 @@ public static partial class Checks
 
         await Reset();
         var ranwid = await Begin(ModelDb.Event<RanwidTheElder>());
-        var locked = (IReadOnlyList<EventOption>)AccessTools.Method(typeof(RanwidTheElder), "GenerateInitialOptions").Invoke(ranwid, [])!;
+        var locked = ranwid.CurrentOptions;
         Assert(locked.Any(o => o.TextKey.EndsWith("RELIC_LOCKED", StringComparison.Ordinal) && o.IsLocked),
             "Ranwid fallback opens its locked relic option with no tradable relics");
+
+        foreach (var reverse in new[] { false, true })
+        {
+            await Reset();
+            var relics = RelicRewards.Pool(player).Where(r => r.IsTradable).Take(4).ToArray();
+            foreach (var relic in reverse ? relics.Reverse() : relics)
+                player.AddRelicInternal(relic.ToMutable());
+            var before = player.Relics.ToArray();
+            var expectedSacrifice = before.Where(r => r.IsTradable)
+                .OrderBy(r => AddressRandom.UInt64(run.Rng.StringSeed,
+                    RandomAddress.For("relic sacrifice", ModelDb.Event<RanwidTheElder>().Id.Entry, r.Id.Entry)))
+                .ThenBy(r => r.Id.Entry, StringComparer.Ordinal).First();
+            var rarityAddress = RandomAddress.For("relic rarity", "generic");
+            ranwid = await Begin(ModelDb.Event<RanwidTheElder>());
+            var sacrifice = ranwid.CurrentOptions.Single(o => o.TextKey.EndsWith(".RELIC", StringComparison.Ordinal));
+            Assert(!sacrifice.IsLocked && RunCheckpoints.Require(run).Random.Position(rarityAddress) == 0,
+                $"Ranwid relic order {reverse}: nonempty sacrifice offer defers reward generation until choice");
+            using var selection = CardSelectorStack.SetTestSelector(new TestCardSelector());
+            await sacrifice.Chosen();
+            Assert(!player.Relics.Contains(expectedSacrifice) && before.Where(r => r != expectedSacrifice).All(player.Relics.Contains) &&
+                player.Relics.Except(before).Count() == 2 && RunCheckpoints.Require(run).Random.Position(rarityAddress) == 2 && ranwid.IsFinished,
+                $"Ranwid relic order {reverse}: the displayed choice sacrifices the fixed-priority relic and grants two generic rewards");
+        }
 
         await Reset();
         foreach (var canonical in RelicRewards.Pool(player).Where(r => r.IsTradable).Take(7))
