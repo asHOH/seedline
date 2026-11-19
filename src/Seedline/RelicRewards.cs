@@ -23,13 +23,20 @@ internal static class RelicRewards
     internal static IEnumerable<RelicModel> Pool(Player player) => ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(player.UnlockState)
         .Concat(player.Character.RelicPool.GetUnlockedRelics(player.UnlockState)).Where(r => rarities.Contains(r.Rarity));
 
-    private static int[] AllocationCounts(RelicRarity rarity, int poolSize) => rarity switch
+    internal static int[] AllocationCounts(RelicRarity rarity, int poolSize)
     {
-        RelicRarity.Common => [12, 9, 5],
-        RelicRarity.Uncommon => [14, 11, 7],
-        RelicRarity.Rare => [17, 13, 8],
-        _ => [0, poolSize, 0]
-    };
+        if (rarity == RelicRarity.Shop)
+            return [0, poolSize, 0];
+
+        int[] weights = [9, 7, 4];
+        var counts = weights.Select(weight => (int)((long)poolSize * weight / 20)).ToArray();
+        // Largest remainders; reverse source order preserves the vanilla Uncommon split.
+        foreach (var source in Enumerable.Range(0, sources.Length)
+            .OrderByDescending(i => (long)poolSize * weights[i] % 20).ThenByDescending(i => i)
+            .Take(poolSize - counts.Sum()))
+            counts[source]++;
+        return counts;
+    }
 
     internal static void Initialize(Player player)
     {
@@ -41,8 +48,6 @@ internal static class RelicRewards
             var pool = Pool(player).Where(r => r.Rarity == rarity).OrderBy(r => r.Id.Entry, StringComparer.Ordinal).ToArray();
             Shuffle(pool, state.Seed, RandomAddress.For("relic allocation", rarity.ToString()));
             var counts = AllocationCounts(rarity, pool.Length);
-            if (counts.Sum() != pool.Length)
-                throw new InvalidOperationException($"Seedline requires the fully unlocked {rarity} relic pool.");
             var start = 0;
             for (var source = 0; source < sources.Length; source++)
             {

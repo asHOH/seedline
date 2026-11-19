@@ -159,6 +159,7 @@ public static partial class Checks
             }
             Assert(identities.Count == 96 && identities.Distinct().Count() == 96,
                 "generic draws expose every eligible ordinary relic once across borrowing and rarity fallback");
+            await CheckRelicCompatibility();
             CheckChestDepletion();
             CheckChestFallbackLifetime();
             await CheckUniformPotionEvents();

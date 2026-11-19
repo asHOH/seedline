@@ -2,6 +2,8 @@
 
 [DESIGN.md](../design/DESIGN.md) owns gameplay rules; [CARD_ORDER.md](../design/CARD_ORDER.md) owns ranking.
 
+Allow altered relic and card pool sizes.
+
 ## State ownership
 
 `RunCheckpoints` snapshots counters, supplies, selection clocks, event state and removed-card history. `CombatStateScope` owns transient combat state rebuilt from checkpoints.

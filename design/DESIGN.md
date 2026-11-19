@@ -70,7 +70,7 @@ This deviation applies implicitly wherever its definition holds.
 
 Standalone StS2 v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
 
-Compare single-player runs, including Dread, with matching seeds, versions and rules, and all content unlocked.
+Compare single-player runs, including Dread, with matching seeds, versions and rules, and fully unlocked, unmodded content.
 
 Grant full content within new runs using this mod, preserving profile unlocks and Ascension limits.
 
