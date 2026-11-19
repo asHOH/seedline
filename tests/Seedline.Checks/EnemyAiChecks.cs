@@ -17,6 +17,8 @@ public static partial class Checks
 {
     private static async Task CheckEnemyAi()
     {
+        await CheckIntentSampling();
+        await CheckRatSampling();
         string? expected = null;
         for (var pass = 0; pass < 2; pass++)
         {
@@ -49,7 +51,10 @@ public static partial class Checks
                     branch.GetNextState(exo, run.Rng.MonsterAi);
             var next = branch.GetNextState(twig, run.Rng.MonsterAi);
             expected ??= first + next;
-            Assert(first + next == expected && EnemyOccurrences.Info(twig).Branches == 2,
+            var twigAddress = scope.For("enemy intent", twig.Monster!.Id.Entry);
+            Assert(first + next == expected && EnemyOccurrences.Info(twig).Branches == 2 &&
+                first == ExpectedIntent(scope.Seed, twigAddress.At(0), ("A", 1), ("B", 3)) &&
+                next == ExpectedIntent(scope.Seed, twigAddress.At(1), ("A", 1), ("B", 3)),
                 "enemy identity partitions preserve random branches across unrelated effective decisions");
             var forced = new RandomBranchState("FORCED");
             forced.AddBranch(a, MoveRepeatType.CanRepeatForever, 0);
@@ -58,9 +63,14 @@ public static partial class Checks
             var prior = scope.Random.Position(exoAddress);
             Assert(forced.GetNextState(exo, run.Rng.MonsterAi) == "B" && scope.Random.Position(exoAddress) == prior,
                 "effective-decision singletons skip RNG and select the positive-weight move after zero-weight entries");
+            Assert(forced.GetNextState(twig, run.Rng.MonsterAi) == "B" && EnemyOccurrences.Info(twig).Branches == 3,
+                "general weighted-priority singletons still consume their random-branch ordinal");
             forced.States[1] = new() { stateId = "B", repeatType = MoveRepeatType.CanRepeatForever, weightLambda = () => 0 };
-            Assert(forced.GetNextState(twig, run.Rng.MonsterAi) == "A" && EnemyOccurrences.Info(twig).Branches == 3,
+            Assert(forced.GetNextState(twig, run.Rng.MonsterAi) == "A" && EnemyOccurrences.Info(twig).Branches == 4,
                 "general all-zero branches retain the first-move fallback and consume their branch opportunity");
+            Assert(branch.GetNextState(twig, run.Rng.MonsterAi) == ExpectedIntent(scope.Seed, twigAddress.At(4), ("A", 1), ("B", 3)) &&
+                EnemyOccurrences.Info(twig).Branches == 5,
+                "weighted priorities resume at the exact ordinal after singleton and all-zero branches");
             var leafBranch = leaf.Monster!.MoveStateMachine!.States.Values.OfType<RandomBranchState>().Single();
             var opening = leafBranch.GetNextState(leaf, run.Rng.MonsterAi);
             leaf.Monster.MoveStateMachine.StateLog.Clear();
@@ -126,11 +136,31 @@ public static partial class Checks
         var bots = botCombat.Enemies.Where(c => c != owner).ToArray();
         var botScope = CombatStateScope.Require(botCombat);
         var botParent = EnemyOccurrences.Info(owner).Address;
+        var botAddress = botScope.For("bot generation", botParent.Key);
+        var expectedDefense = Fabricator.defenseSpawns.OrderBy(m => m.Id.Entry, StringComparer.Ordinal).ToArray();
+        var expectedOffense = Fabricator.aggroSpawns.OrderBy(m => m.Id.Entry, StringComparer.Ordinal).ToArray();
+        Assert(bots[0].Monster!.Id == expectedDefense[AddressRandom.IntInclusive(botScope.Seed, botAddress.At(0), 0, 1)].Id &&
+            bots[1].Monster!.Id == expectedOffense[AddressRandom.IntInclusive(botScope.Seed, botAddress.At(1), 0, 1)].Id,
+            "Fabricate selects exact bot identities from ID-ordered pools at successive occurrence-local ordinals");
         Assert(bots.Length == 2 && bots[0].Monster is Guardbot or Noisebot && bots[1].Monster is Zapbot or Stabbot &&
             botScope.Random.Position(botScope.For("bot generation", botParent.Key)) == 2 &&
             EnemyOccurrences.Info(bots[1]).Address == botParent.With("spawn").At(0).At(1) &&
             botVanilla.Equals(botRun.Rng.MonsterAi.ToSerializable()),
             "Fabricator's actual move shares bot identity progression across pools and one summon batch");
+        var lastOffense = bots[1].Monster!.Id;
+        foreach (var bot in bots) await CreatureCmd.Kill(bot);
+        await (Task)AccessTools.Method(typeof(Fabricator), "SpawnAggroBot").Invoke(fabricator, null)!;
+        var forcedBot = botCombat.Enemies.Single(c => c != owner);
+        Assert(forcedBot.Monster!.Id != lastOffense && botScope.Random.Position(botAddress) == 3,
+            "consecutive offensive generation excludes the last bot and consumes the forced singleton ordinal");
+        await CreatureCmd.Kill(forcedBot);
+        fabricator.SetMoveImmediate((MoveState)fabricator.MoveStateMachine!.States["FABRICATE_MOVE"], true);
+        await fabricator.PerformMove();
+        bots = botCombat.Enemies.Where(c => c != owner).ToArray();
+        Assert(bots[0].Monster!.Id == expectedDefense[AddressRandom.IntInclusive(botScope.Seed, botAddress.At(3), 0, 1)].Id &&
+            bots[1].Monster!.Id == expectedOffense[AddressRandom.IntInclusive(botScope.Seed, botAddress.At(4), 0, 1)].Id &&
+            botScope.Random.Position(botAddress) == 5 && botVanilla.Equals(botRun.Rng.MonsterAi.ToSerializable()),
+            "an intervening defensive bot restores the full offensive pool while preserving shared bot progression");
         RunManager.Instance.CleanUp();
     }
 }
