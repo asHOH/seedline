@@ -247,7 +247,8 @@ public static partial class Checks
         run.CurrentActIndex = 2;
         await CardPileCmd.Add(run.CreateCard<LanternKey>(player), PileType.Deck, skipVisuals: true);
         var priorEvents = JsonSerializer.Serialize(RunCheckpoints.Require(run).Events);
-        Assert(run.Act.PullNextEvent(run) is WarHistorianRepy && priorEvents == JsonSerializer.Serialize(RunCheckpoints.Require(run).Events) &&
+        Assert(run.Act.PullNextEvent(run) is WarHistorianRepy && run.VisitedEventIds.Contains(ModelDb.Event<WarHistorianRepy>().Id) &&
+            priorEvents == JsonSerializer.Serialize(RunCheckpoints.Require(run).Events) &&
             run.Odds.UnknownMapPoint.Roll([], run) == RoomType.Event && RunCheckpoints.Require(run).Random.Position(RandomAddress.For("room type").At(2)) == 0,
             "Lantern Key records Repy while bypassing ordinary-event selection and room-type advancement");
 
