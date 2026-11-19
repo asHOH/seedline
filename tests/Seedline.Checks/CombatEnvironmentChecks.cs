@@ -16,6 +16,7 @@ public static partial class Checks
     private static async Task CheckCombatEnvironment()
     {
         CheckEncounterSetup();
+        await CheckEnemyHp();
         foreach (var ascension in new[] { 0, 7 })
         {
             string? first = null;
