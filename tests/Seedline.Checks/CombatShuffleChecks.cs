@@ -1,12 +1,17 @@
 using HarmonyLib;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Extensions;
+using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Encounters;
+using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
 
@@ -29,7 +34,12 @@ public static partial class Checks
             }
             var combat = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
             combat.AddPlayer(player);
+            combat.Encounter!.GenerateMonstersWithSlots(run);
+            foreach (var (monster, slot) in combat.Encounter.MonstersWithSlots)
+                combat.AddCreature(combat.CreateCreature(monster, CombatSide.Enemy, slot));
             var vanilla = run.Rng.Shuffle.ToSerializable();
+            var referenceRng = new Rng(vanilla);
+            var expectedOpening = player.Deck.Cards.ToList().UnstableShuffle(referenceRng);
             CombatManager.Instance.SetUpCombat(combat);
             var scope = CombatStateScope.Require(combat);
             var large = size > 2000;
@@ -37,9 +47,26 @@ public static partial class Checks
                 vanilla.Equals(run.Rng.Shuffle.ToSerializable()) == !large, $"a {size}-card deck opens with the policy's shuffle RNG");
             if (large)
             {
+                Assert(player.PlayerCombatState!.DrawPile.Cards.Select(c => c.DeckVersion).SequenceEqual(expectedOpening) &&
+                    referenceRng.ToSerializable().Equals(run.Rng.Shuffle.ToSerializable()),
+                    "large-deck opening preserves exact vanilla copy order and RNG state");
                 player.Deck.RemoveInternal(player.Deck.Cards[^1]);
                 Assert(CombatCards.UseVanilla(player), "shrinking to 2000 after entry preserves the combat's vanilla selection and shuffle mode");
+                await CheckLargeDeckActions(combat);
             }
+            else
+            {
+                var extra = run.CreateCard<StrikeIronclad>(player);
+                CardOccurrences.Create(extra, filler.At(size).Key);
+                player.Deck.AddInternal(extra, silent: true);
+                Assert(!CombatCards.UseVanilla(player), "growing past 2000 after entry preserves controlled mode for this combat");
+            }
+            CombatManager.Instance.Reset(true);
+            var next = new CombatState(ModelDb.Encounter<AxebotsNormal>().ToMutable(), run);
+            next.AddPlayer(player);
+            CombatManager.Instance.SetUpCombat(next);
+            Assert(CombatCards.UseVanilla(player) == !large,
+                "the next combat re-evaluates deck size after either direction of threshold crossing");
             RunManager.Instance.CleanUp();
         }
         foreach (var act in new[] { 0, 2 })
@@ -211,5 +238,87 @@ public static partial class Checks
                 RunManager.Instance.CleanUp();
             }
         }
+    }
+
+    private static async Task CheckLargeDeckActions(CombatState combat)
+    {
+        var player = combat.Players[0];
+        var pcs = player.PlayerCombatState!;
+        var scope = CombatStateScope.Require(combat);
+        var turn = AccessTools.Field(typeof(CombatManager), "_turnState").GetValue(CombatManager.Instance)!;
+        AccessTools.Property(turn.GetType(), "IsInProgress").SetValue(turn, true);
+        var context = new ThrowingPlayerChoiceContext();
+        foreach (var card in pcs.DrawPile.Cards.ToArray())
+        {
+            card.RemoveFromCurrentPile();
+            pcs.DiscardPile.AddInternal(card);
+        }
+        var rng = new Rng(player.RunState.Rng.Shuffle.ToSerializable());
+        var expected = pcs.DiscardPile.Cards.ToList().StableShuffle(rng);
+        await CardPileCmd.Shuffle(context, player);
+        Assert(pcs.DrawPile.Cards.SequenceEqual(expected) && rng.ToSerializable().Equals(player.RunState.Rng.Shuffle.ToSerializable()) &&
+            scope.Random.Position(scope.For("shuffle")) == 0,
+            "large-deck reshuffle preserves exact vanilla order and RNG consumption after the permanent deck shrinks");
+
+        RunManager.Instance.ActionExecutor.Pause();
+        await ((Task)AccessTools.Method(typeof(CombatManager), "StartTurn")
+            .Invoke(CombatManager.Instance, [turn, null])!).WaitAsync(TimeSpan.FromSeconds(15));
+        foreach (var card in pcs.Hand.Cards.ToArray())
+        {
+            card.RemoveFromCurrentPile();
+            pcs.DiscardPile.AddInternal(card);
+        }
+        var defends = pcs.AllCards.OfType<DefendIronclad>().Cast<CardModel>().ToArray();
+        foreach (var card in defends)
+        {
+            card.RemoveFromCurrentPile();
+            pcs.Hand.AddInternal(card);
+        }
+        var keys = defends.Select(c => CombatCards.Info(c).Key).ToArray();
+        var selector = new TestCardSelector();
+        using (CardSelectorStack.SetTestSelector(selector))
+        {
+            selector.PrepareToSelect([defends[^1]]);
+            var chosen = (await CardSelectCmd.FromHandForDiscard(context, player,
+                new(CardSelectorPrefs.DiscardSelectionPrompt, 1), null, ModelDb.Card<Prepared>())).Single();
+            Assert(chosen == defends[^1] && defends.Select(c => CombatCards.Info(c).Key).SequenceEqual(keys) && scope.Selection.Clocks.Count == 0,
+                "large-deck manual choices preserve clicked logical copies without routing clocks");
+        }
+        pcs.Energy = 3;
+        await ((Task)AccessTools.Method(typeof(PlayCardAction), "ExecuteAction")
+            .Invoke(new PlayCardAction(defends[0], null), null)!).WaitAsync(TimeSpan.FromSeconds(15));
+        Assert(defends[0].Pile == pcs.DiscardPile && pcs.Energy == 2 &&
+            defends.Select(c => CombatCards.Info(c).Key).SequenceEqual(keys) && scope.Selection.Clocks.Count == 0,
+            "large-deck manual play spends resources without routing logical copies");
+
+        var selectionRng = new Rng(player.RunState.Rng.CombatCardSelection.ToSerializable());
+        var exhausted = selectionRng.NextItem(pcs.Hand.Cards);
+        var grit = combat.CreateCard<TrueGrit>(player);
+        pcs.PlayPile.AddInternal(grit);
+        await (Task)AccessTools.Method(typeof(TrueGrit), "OnPlay").Invoke(grit, [context, new CardPlay
+        {
+            Card = grit, Player = player, Target = null, ResultPile = PileType.Discard,
+            Resources = new() { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
+            IsAutoPlay = false, PlayIndex = 0, PlayCount = 1
+        }])!;
+        Assert(exhausted!.Pile == pcs.ExhaustPile && scope.Selection.Clocks.Count == 0 &&
+            selectionRng.ToSerializable().Equals(player.RunState.Rng.CombatCardSelection.ToSerializable()),
+            "large-deck random card selection retains the exact vanilla target and RNG state");
+
+        var theftCandidates = pcs.DrawPile.Cards.OfType<StrikeIronclad>()
+            .Where(c => player.Deck.Cards.Contains(c.DeckVersion!)).Take(2).Cast<CardModel>().ToArray();
+        foreach (var card in pcs.DrawPile.Cards.Concat(pcs.DiscardPile.Cards).Except(theftCandidates).ToArray())
+        {
+            card.RemoveFromCurrentPile();
+            pcs.ExhaustPile.AddInternal(card);
+        }
+        var stolen = selectionRng.NextItem(theftCandidates)!;
+        var hopper = ModelDb.Monster<ThievingHopper>().ToMutable();
+        combat.AddCreature(combat.CreateCreature(hopper, CombatSide.Enemy, null));
+        await (Task)AccessTools.Method(typeof(ThievingHopper), "ThieveryMove")
+            .Invoke(hopper, [new[] { player.Creature }])!;
+        Assert(!player.Deck.Cards.Contains(stolen.DeckVersion!) && theftCandidates.Single(c => c != stolen).Pile == pcs.DrawPile &&
+            selectionRng.ToSerializable().Equals(player.RunState.Rng.CombatCardSelection.ToSerializable()) && scope.Selection.Clocks.Count == 0,
+            "large-deck Hopper theft uses the vanilla per-copy selection and shared RNG position");
     }
 }

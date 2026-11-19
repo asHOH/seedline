@@ -15,6 +15,7 @@ public static partial class Checks
 {
     private static async Task CheckCombatEnvironment()
     {
+        CheckEncounterSetup();
         foreach (var ascension in new[] { 0, 7 })
         {
             string? first = null;
@@ -82,5 +83,49 @@ public static partial class Checks
             ordinary.Address == RandomAddress.For("combat", RoomType.Monster.ToString()).At(0).At(0).With("AXEBOTS_NORMAL"),
             "declined event layouts consume neither event battles nor ordinary combat opportunities");
         RunManager.Instance.CleanUp();
+    }
+
+    private static void CheckEncounterSetup()
+    {
+        EncounterModel[] models = [ModelDb.Encounter<SlitheringStranglerNormal>(), ModelDb.Encounter<BowlbugsNormal>(),
+            ModelDb.Encounter<ScrollsOfBitingNormal>(), ModelDb.Encounter<DecimillipedeElite>()];
+        string Signature(IEnumerable<(MonsterModel Monster, string? Slot)> monsters) => string.Join("|",
+            monsters.Select(pair => $"{pair.Monster.Id}:{pair.Slot}:" + (pair.Monster switch
+            {
+                ScrollOfBiting scroll => scroll.StarterMoveIdx,
+                DecimillipedeSegment segment => segment.StarterMoveIdx,
+                _ => -1
+            })));
+        foreach (var seed in new[] { "SETUP0", "SETUP1", "SETUP2" })
+            foreach (var floor in new[] { 1, 6 })
+                foreach (var model in models)
+                {
+                    var run = StartGoldRun(seed: seed);
+                    run.CurrentActIndex = run.Acts.ToList().FindIndex(a => a.AllEncounters.Any(e => e.Id == model.Id));
+                    Assert(run.CurrentActIndex >= 0, $"{model.Id}: setup fixture belongs to an ordinary encounter list");
+                    for (var i = 0; i < floor; i++)
+                        run.AppendToMapPointHistory(MapPointType.Unknown, RoomType.Event, ModelDb.Event<PunchOff>().Id);
+                    var random = RunCheckpoints.Require(run).Random;
+                    var counter = RandomAddress.For("combat", model.RoomType.ToString()).At(run.CurrentActIndex);
+                    for (var ordinal = 0; ordinal < 2; ordinal++)
+                    {
+                        var address = counter.At(ordinal).With(model.Id.Entry);
+                        var setup = RandomAddress.For("setup").With(address.Key);
+                        var reference = model.ToMutable();
+                        reference.DebugSetRng(AddressRandom.UInt64(seed, setup));
+                        var expected = (IReadOnlyList<(MonsterModel, string?)>)AccessTools.Method(model.GetType(), "GenerateMonsters")
+                            .Invoke(reference, null)!;
+                        var encounter = model.ToMutable();
+                        encounter.GenerateMonstersWithSlots(run);
+                        var combat = new CombatState(encounter, run);
+                        var scope = CombatStateScope.Prepare(combat);
+                        Assert(Signature(encounter.MonstersWithSlots) == Signature(expected) && scope.Address == address &&
+                            random.Position(counter) == ordinal,
+                            $"{model.Id}, floor {floor}, battle {ordinal + 1}: setup preserves vanilla composition, slots and starting states at its prescribed address");
+                        Assert(ReferenceEquals(scope, CombatStateScope.Begin(combat)) && random.Position(counter) == ordinal + 1,
+                            "setup and combat entry share one scope and commit exactly one category opportunity");
+                    }
+                    RunManager.Instance.CleanUp();
+                }
     }
 }
