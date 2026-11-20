@@ -7,13 +7,17 @@
 | [Card rarity](../design/DESIGN.md#rarity-calibration) | v0.111.0 calibration approximates vanilla Uncommon and shop Rare averages. | [A7+](reward-calibration/act3-results.json), [A0–6](reward-calibration/a6-results.json), [sensitivity](reward-calibration/results.json). |
 | [Event selection](#event-selection) | Retained versus refreshed priorities trade relative order against mismatch timing. | [Alternatives](../design/DESIGN.md#event-selection-alternatives). |
 | [Multi-Rare offers](#multi-rare-offers) | v0.111.0: **65 / 33,022 runs (0.1968%)** confirmed; six unresolved runs widen reconstruction to **0.1968–0.2150%**. | [Results](run-history/results.json), [cases](run-history/findings.json), [rejections](run-history/rejected.json). |
-| [Relic Trader](../design/DESIGN.md#relic-trader-alternatives) | With one inventory substitution, the selected assignment maximizes expected outgoing overlap among symmetric rules. | [Assumptions and results](relic-trader/results.json), [checks](relic-trader/validate.cjs). |
+| [Relic Trader](../design/DESIGN.md#outgoing-relic-assignment) | With one inventory substitution, the selected assignment maximizes expected outgoing overlap among symmetric rules. | [Assumptions and results](relic-trader/results.json), [checks](relic-trader/validate.cjs). |
 
 ## Methods
 
-[Calibration model](reward-calibration/calibrate.cjs) and [environment](reward-calibration/environment.cjs).
-
 Run commands from the repository root.
+
+### Rarity calibration
+
+The v0.111.0 [model](reward-calibration/calibrate.cjs) uses 200,000 calibration and 200,000 validation runs per difficulty, with identical [projected three-act routes and economy](reward-calibration/environment.cjs) for vanilla and mod. Fits include opening triples and A0–6 Common-first replacement.
+
+Main runs use A3+ gold, with A0–2 gold covered by [sensitivity studies](reward-calibration/results.json). Eligibility and event outcomes are approximated. Route assumptions accompany the results.
 
 ### [Event selection](../design/DESIGN.md#ordinary-event-selection)
 

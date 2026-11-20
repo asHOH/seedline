@@ -4,7 +4,7 @@
 
 Find source policies in the [Architecture overview](#architecture-overview); compare rarity and identity sharing in [Generation sharing](#generation-sharing).
 
-For descriptive background, see [Reference](#reference) for calibration and rejected alternatives, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
+See [Reference](#reference) for supporting analysis and rejected alternatives, [Research](../research/README.md) for methods, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
 
 ## Goals and principles
 
@@ -585,8 +585,6 @@ Resolve the choice before expiry, including `x = 0`. Permanent ineligibility or 
 
 Circlet rewards bypass markers: skipping leaves stock unchanged; acquisition retains [baseline identity removal](#relic-bags).
 
-**Rejected alternative:** a separate chest allocation adds unfairness between reward sources.
-
 ##### Finite-lifetime chest markers
 
 Use the [filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when its resolution exhausts eligible supply after borrowing. Each transfer decrements `x` and moves the marker to the supplying position. Collisions preserve each marker's lifetime and carried entry.
@@ -597,11 +595,9 @@ Before recording the offer, `S` counts currently available, chest-eligible share
 
 Other-source consumption can shorten future marker lifetimes; existing lifetimes remain fixed.
 
-**Probability:** a single acquisition matches vanilla's character-specific probabilities under the [reference assumptions](#chest-marker-probabilities).
-
 **Alignment:** with identical subsequent draw requests and eligibility, and no borrowing, acquire and skip share the future sequence until expiry.
 
-**Vanilla deviation — NoSL 3:** chest-marker lifetimes can slightly change later character-specific reward probabilities, as in the [skip–shop–acquire example](#chest-marker-probabilities).
+**Vanilla deviation — NoSL 3:** chest-marker lifetimes can slightly change later character-specific reward probabilities ([analysis](#chest-marker-probabilities)).
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events).
 
@@ -867,7 +863,7 @@ Baseline: [generation mechanics](#permanent-transformations-and-direct-additions
 
 Advance ordinals only for generated random combat-gold rewards. Gremlin Merc's half-gold reward uses the reduced range and advances the normal-fight ordinal.
 
-**Rationale and tradeoff:** reordering unreduced rewards preserves each category's individual gold amounts and totals under unchanged gold-gain modifiers, including Bowler Hat's truncation on each gold gain. Replacing one unreduced normal reward with an elite reward adds 11–26 base gold at A3+. [Rejected alternatives](#combat-gold-alternatives).
+**Rationale and tradeoff:** reordering unreduced rewards preserves each category's individual gold amounts and totals under unchanged gold-gain modifiers, including Bowler Hat's truncation on each gold gain. Replacing one unreduced normal reward with an elite reward adds 11–26 base gold at A3+.
 
 Baseline: [gold ranges and exceptions](#combat-gold-1).
 
@@ -910,7 +906,7 @@ At run start, independently shuffle each condition's IDs using `purpose = ID ord
 
 At act entry, rebuild each condition's sequence using only unvisited IDs available in that act. Preserve survivors' order and insert newly available IDs in their run-start order.
 
-**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` rolls from independent uniform sequences, addressed by `purpose = insertion` + act + condition key + surviving/incoming. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform. [Rejected alternatives](#event-selection-alternatives).
+**Sorted random priorities:** for `n` surviving and `m` incoming IDs, take the first `n` and `m` rolls from independent uniform sequences, addressed by `purpose = insertion` + act + condition key + surviving/incoming. Sort each set, assign it along its ID sequence in order, then merge by priority. The interleaving is uniform.
 
 **Remaining counts:** reset each condition's count to its number of act-available, unvisited IDs, even when the condition currently fails.
 
@@ -992,7 +988,7 @@ Consume all three replacements when offered, including borrowed generic entries.
 2. Select the three relics with the lowest minima across their three pair priorities.
 3. Apply pair-priority assignment to these relics and the three slots, reusing the same priorities.
 
-**Rationale:** Replacing one eligible owned relic retains at least two outgoing relics, with maximal expected outgoing overlap among rules treating identities symmetrically. See the [matching analysis and alternatives](#relic-trader-alternatives).
+**Rationale:** replacing one eligible owned relic retains at least two outgoing relics, with maximal expected outgoing overlap among rules treating identities symmetrically.
 
 Baseline: [shops, chests and relic events](#shops-chests-and-relic-events).
 
@@ -1115,7 +1111,7 @@ Use [combat-local sequences](#combat-addresses), partitioned by enemy identity e
 
 Use `CombatState.RoundNumber` at selection: starts at 1 and advances after the enemy turn.
 
-**Limit:** different selection counts can shift choices within a round. [Rejected alternatives](#rat-sampling-alternatives).
+**Limit:** different selection counts can shift choices within a round.
 
 #### Fabricator bot identities
 
@@ -1323,79 +1319,69 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 
 ## Reference
 
-[Event workbook](../docs/StS2_Events.xlsx): v0.113.1 vanilla offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
-
 ### Rarity calibration
 
-Measured in **v0.111.0**.
+The **v0.111.0** calibration approximates vanilla's average [displayed Uncommon counts](#uncommon-probabilities) and [shop Rare counts](#stock-and-prices), while spreading shop Rares across more visits.
 
-Calibration keeps [displayed Uncommon counts](#uncommon-probabilities) and [shop Rare counts](#stock-and-prices) close to vanilla averages, while spreading shop Rares across more visits.
-
-Uncommon rates below are non-Rare offers / rare-bearing companions:
-
-| Study | Design rates | Design − vanilla Uncommons per 100 slots |
+| Study | Design − vanilla Uncommons per 100 slots | Initial shops with ≥1 Rare character card, vanilla → design |
 |---|---|---|
-| [A7+](../research/reward-calibration/act3-results.json) | 38% / 39% | −0.01 |
-| [A0–6](../research/reward-calibration/a6-results.json) | 40% / 40.5% | +0.1 |
+| [A7+](../research/reward-calibration/act3-results.json) | −0.01 | 20% → 21% |
+| [A0–6](../research/reward-calibration/a6-results.json) | +0.1 | 42% → 44% |
 
-Initial shops with at least one Rare character card rise from **20% to 21%** at A7+ and **42% to 44%** at A0–6.
-
-The [model](../research/reward-calibration/calibrate.cjs) uses 200,000 calibration and 200,000 validation runs per difficulty, with the same [projected three-act routes and economy](../research/reward-calibration/environment.cjs) for vanilla and mod. Fits include opening triples and A0–6 Common-first replacement.
-
-Main runs use A3+ gold; A0–2 gold is a sensitivity case. Eligibility and event outcomes are approximated. Route assumptions and [sensitivity studies](../research/reward-calibration/results.json) accompany the results.
+These results use projected routes with approximated eligibility and event outcomes, not measured gameplay frequencies. See [methods and sensitivity studies](../research/README.md#rarity-calibration).
 
 ### Chest marker probabilities
 
-With a uniform unseen order, [finite-lifetime markers](#finite-lifetime-chest-markers) match vanilla's character-specific relic chances after one chest acquisition. Skipped chests followed by shops can change later chances.
+With uniform unseen order and fixed eligibility, one chest acquisition using [finite-lifetime markers](#finite-lifetime-chest-markers) matches vanilla's character-specific chances in generic rewards of that rarity, before borrowing or supply exhaustion. Uniform lifetimes affect character-specific positions like deleting a random chest-eligible position. Earlier draws can break uniformity.
 
-The comparison concerns generic rewards at one rarity, with fixed eligibility and before borrowing or supply exhaustion. Uniform lifetimes affect character-specific positions like deleting a random chest-eligible position; earlier draws can break uniformity.
-
-Examples contain one character-specific relic; all others are shared, and all are shop-eligible. The mod assigns one random relic to shop stock and uniformly orders the rest as generic stock; vanilla uses [independent bags](#relic-bags). The table gives the character-specific chance in the next generic reward.
+The examples contain one character-specific relic, with all others shared and all shop-eligible. The mod assigns one random relic to shop stock and uniformly orders the rest as generic stock. Vanilla uses [independent bags](#relic-bags). Each row gives the character-specific chance in the next generic reward.
 
 | Pool size | Sequence | Vanilla | Mod |
 |---|---|---|---|
 | 4 | Shop display → take chest relic | 37.5% | 37.5% |
 | 6 | Skip chest → shop display → take chest relic | 20.8% | 21.1% |
 
-The second example adds **0.3 percentage points** because shop consumption changes new lifetimes while preserving existing ones. Counting already displayed shop relics in `S` lowers the first example's mod chance to **33.3%**.
+The second example adds **0.3 percentage points** because shop consumption changes new lifetimes while preserving existing ones. Counting already displayed shop relics in `S` instead lowers the first example's mod chance to **33.3%**.
 
 ### Rejected alternatives
 
+#### Chest allocation
+
+A separate chest allocation adds unfairness between reward sources. [Chests](#relic-advancement) therefore use the generic relic supply.
+
 #### Combat-gold alternatives
 
-- **Shared rolls with independent compensation:** nonuniform A3+ normal gold at unchanged expectation (**Vanilla deviation — NoSL 3**); normal/elite reordering can change Bowler Hat totals by 1.
-- **Shared range-relative rolls:** vanilla distributions, but reordering can change A3+ base gold by 1.
+Compared with [category-specific gold rolls](#combat-gold), shared rolls have these tradeoffs.
+
+- **Independent compensation** makes A3+ normal gold nonuniform at unchanged expectation (**Vanilla deviation — NoSL 3**). Normal/elite reordering can change Bowler Hat totals by 1.
+- **Range-relative rolls** preserve vanilla distributions, but reordering can change A3+ base gold by 1.
 
 #### Event-selection alternatives
 
-For [condition priorities](#within-act-selection):
+For [within-act selection](#within-act-selection), retaining priorities in every act can cause earlier mismatches with differing survivor pools, despite better relative order with matching pools. Refreshing in every act improves same-ordinal matching but causes more Act 1 order reversals.
 
-- **Retained in every act:** differing survivor pools can cause earlier mismatches, despite better relative event order with matching pools.
-- **Refreshed in every act:** more Act 1 order reversals, despite better same-ordinal matching.
-
-Both [cross-act insertion](#act-entry-and-carryover) alternatives preserved less relative event order in simulations, despite sometimes delaying the first mismatch:
-
-- **Position priorities:** reserve incoming positions using shared output-position priorities.
-- **Weighted merging:** use shared rolls to choose surviving or incoming IDs proportionally to remaining counts.
+For [cross-act insertion](#act-entry-and-carryover), reserving incoming positions with shared output-position priorities, or choosing surviving/incoming IDs with shared rolls weighted by remaining counts, preserved less relative event order in [simulations](../research/README.md#event-selection), despite sometimes delaying the first mismatch.
 
 #### Relic Trader alternatives
 
-For one eligible relic removed/substituted and three distinct replacements matching by slot across runs, [analysis](../research/relic-trader/results.json) compares [the selected assignment](#outgoing-relic-assignment) with:
+For one eligible relic removed/substituted and three distinct replacements matching by slot across runs, [analysis](../research/relic-trader/results.json) compares the [selected assignment](#outgoing-relic-assignment) with two alternatives.
 
-- **Independent candidate priorities:** fewer matching outgoing/replacement pairs on average, equal expected outgoing overlap.
-- **Direct pairing over all eligible relics:** one inventory substitution can change two outgoing relics, despite more matching pairs on average.
+- **Independent candidate priorities** give equal expected outgoing overlap but fewer matching outgoing/replacement pairs on average.
+- **Direct pairing over all eligible relics** gives more matching pairs on average, but one inventory substitution can change two outgoing relics.
 
 #### Rat-sampling alternatives
 
-[Non-Summon choices](#rat-sampling):
+Alternatives to [non-Summon selection](#rat-sampling)
 
-- **Percentile sampling:** eligibility changes shift retained moves' roll intervals.
-- **Sequences per eligible move pair:** lose cross-pair alignment; selection-count differences persist.
-- **[Filtered draws](#filtered-draws):** retain filter-history differences after eligibility converges.
+- **Percentile sampling** shifts retained moves' roll intervals when eligibility changes.
+- **Sequences per eligible move pair** lose cross-pair alignment without resolving selection-count differences.
+- **[Filtered draws](#filtered-draws)** retain filter-history differences after eligibility converges.
 
 ## Appendix: existing mechanics
 
 Vanilla mechanics; [Catfood (v1.1.2) differences](#catfood-randomness-changes) are labeled.
+
+The [event workbook](../docs/StS2_Events.xlsx) covers v0.113.1 offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
 
 ### Rooms, events and combat
 
