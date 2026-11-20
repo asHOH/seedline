@@ -2,6 +2,10 @@
 
 For players choosing mods. See the [supported game setup and deployment steps](../README.md#supported-setup) to get started, or [implementation](implementation.md) for developer integration details.
 
+## New runs
+
+Seedline uses fully unlocked content in new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt summarizes the additions for you.
+
 ## RitsuLib
 
 RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, which supplies the runtime for StS2 v0.113.1. Untested versions produce a warning rather than a version-based startup failure. See the [supported save-data scope](implementation.md#ritsulib).

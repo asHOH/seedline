@@ -2,44 +2,34 @@
 
 A Slay the Spire 2 mod that gives same-seed runs similar gameplay experiences — rewards, choices and combat challenges — across different routes and decisions.
 
-In the base game, unrelated actions can shift later random results, making gameplay experiences diverge. Seedline aligns corresponding opportunities across rewards, shops, events and combat. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
+Seedline reduces the influence of unrelated actions on later luck. For example, your first shop can offer the same initial cards on different routes when eligible cards match.
 
-Choices still matter. Different decks, owned items, eligibility and numbers of rewards or effects used can change outcomes. Seedline preserves base-game behavior except for deliberate consistency tradeoffs and corrections. The [gameplay design](design/DESIGN.md) explains which experiences stay similar, what can still diverge, and changes to probabilities and save/load reroll options. The [card processing order](design/CARD_ORDER.md) is just a part of the design.
-
-See [compatibility and saves](docs/compatibility.md) for playing with other mods, [implementation and build checks](docs/implementation.md) for development, and [research](research/README.md) for evidence and methods, including [event workbook maintenance](research/README.md#event-workbook).
+Your choices still matter. Some probabilities and save/load reroll options change to keep experiences similar.
 
 ## Supported setup
 
-Requires **StS2 v0.113.1/d09d48e5** on Windows. Supports standard and Dread single-player runs without custom modifiers.
+Requires **StS2 v0.113.1** on Windows. Supports standard and Dread single-player runs without custom modifiers.
 
 ## Performance
 
-In [headless tests](research/README.md#performance), median added time was under **1.5 ms per tested operation** with 30 cards and **11–25 ms for whole-deck operations** at the **2,000-permanent-card** full-alignment limit, including **1,900 Angers**.
-
-| Operation (median ms) | 30 cards, vanilla | 30 cards, Seedline | 2,000 cards, vanilla | 2,000 cards, Seedline |
-|---|---:|---:|---:|---:|
-| Enter combat (includes shuffle) | 0.34 | 0.97 | 17.22 | 31.88 |
-| Opening shuffle | 0.02 | 0.62 | 0.30 | 11.66 |
-| Choose from hand | 0.12 | 0.41 | 0.16 | 1.11 |
-| Retrieve from discard | 0.28 | 1.04 | 1.69 | 26.33 |
-| Prepare save data | 0.56 | 2.02 | 1.20 | 19.26 |
+With 30-card decks, [benchmarks](research/README.md#performance) measured under **1.5 ms median added time per tested operation**.
 
 ## Deploy
 
-Follow the [build and validation instructions](docs/implementation.md#build-and-validate) to create the package in `artifacts/Seedline/`.
-
-Close the game, then run from the repository root in PowerShell 7, replacing the example game path with your installation:
+[Build and validate](docs/implementation.md#build-and-validate), then close the game. From the repository root in PowerShell 7, deploy using your game path:
 
 ```powershell
 ./scripts/deploy.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-Enable mods through the game's loader and start a new run with **Seedline / 不歪种神器** enabled.
-
-Seedline uses fully unlocked content in new runs while preserving profile unlocks and Ascension limits. If content is missing, the startup prompt summarizes the additions for you to accept or cancel.
-
-The notice follows the game's language setting and supports all 17 game languages.
+Enable **Seedline / 不歪种神器** in the game's mod loader and start a new run. New runs use fully unlocked content without changing profile unlocks or Ascension limits.
 
 ## Saves
 
-Keep the game build, Seedline and RitsuLib setup fixed throughout each run. Continuing with Seedline disabled can discard its state. See [save locations, backups and update guidance](docs/compatibility.md#saves).
+Keep the game build, Seedline and RitsuLib setup fixed during a run. Disabling Seedline can discard its saved state. See [compatibility and save guidance](docs/compatibility.md).
+
+## Learn more
+
+- [Gameplay design](design/DESIGN.md) — rules and tradeoffs.
+- [Development](docs/implementation.md) — building, testing and implementation.
+- [Research](research/README.md) — evidence and methods.

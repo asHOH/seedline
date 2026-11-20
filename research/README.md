@@ -19,7 +19,17 @@ The [benchmark](performance/Probe.cs) compares vanilla and Seedline in headless 
 
 Three paired runs produce 1,800 [samples](performance/samples.jsonl.gz), with three warmups and ten measurements per case. [Results](performance/results.json) report median timings and allocations. Added time is the difference between modded and vanilla medians.
 
-Timings cover the [listed operations](../README.md#performance), excluding fixture construction, rendering, disk writes and full reshuffles. The opening shuffle is timed inside combat setup, occurs exactly once and is included in combat-entry time.
+Median added time was under **1.5 ms per tested operation** with 30 cards and **11–25 ms for whole-deck operations** at the **2,000-permanent-card** full-alignment limit.
+
+| Operation (median ms) | 30 cards, vanilla | 30 cards, Seedline | 2,000 cards, vanilla | 2,000 cards, Seedline |
+|---|---:|---:|---:|---:|
+| Enter combat (includes shuffle) | 0.34 | 0.97 | 17.22 | 31.88 |
+| Opening shuffle | 0.02 | 0.62 | 0.30 | 11.66 |
+| Choose from hand | 0.12 | 0.41 | 0.16 | 1.11 |
+| Retrieve from discard | 0.28 | 1.04 | 1.69 | 26.33 |
+| Prepare save data | 0.56 | 2.02 | 1.20 | 19.26 |
+
+Timings exclude fixture construction, rendering, disk writes and full reshuffles. The opening shuffle is timed inside combat setup, occurs exactly once and is included in combat-entry time.
 
 ```powershell
 ./research/performance/run.ps1 -GameDir 'D:/Games/Slay the Spire 2'
