@@ -1,6 +1,20 @@
-# Implementation and compatibility
+# Implementation
 
-[DESIGN.md](../design/DESIGN.md) owns gameplay rules; [CARD_ORDER.md](../design/CARD_ORDER.md) owns ranking.
+For developers building, testing or changing Seedline. For supported mods and save precautions, see [player compatibility guidance](compatibility.md).
+
+## Build and validate
+
+Install the .NET SDK pinned in [global.json](../global.json). In PowerShell 7, run from the repository root, replacing the example game path with your installation:
+
+```powershell
+./scripts/verify.ps1 -GameDir 'D:/Games/Slay the Spire 2'
+```
+
+The command builds and checks the mod, using an isolated game copy for integration checks; allow disk space for that copy. Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK.
+
+Add `-RitsuLibDir '<extracted RitsuLib package>'` when using RitsuLib. Keep the [complete RitsuLib package](compatibility.md#ritsulib) for these checks.
+
+The validated package is written to `artifacts/Seedline/`. Follow the [deployment steps](../README.md#deploy) to install it.
 
 ## State and checkpoints
 
@@ -12,7 +26,7 @@
 
 ### Checkpoint contract
 
-Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla, Seedline (schema 6) and required RitsuLib payloads at the [standard modded save path](../README.md#saves).
+Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla saved state, Seedline saved state and required RitsuLib payloads at the [standard modded save path](compatibility.md#saves).
 
 - Capture freezes all payloads. Restore independent state copies, preserving parent-event reconstruction. Reload-count rewrites preserve the loaded snapshot.
 - Load all payloads from the same primary or backup. Recover from a complete backup only when the primary is missing, empty or has malformed JSON syntax.
@@ -20,7 +34,7 @@ Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one che
 
 Delegate discovery, deletion, completed-run cleanup and cloud operations to game facilities. Ordinary cloud writes exclude `.backup`. Single-file `CloudSaveStore.OverwriteCloudWithLocal` bypasses backup/repair filtering.
 
-## Compatibility
+## Mod integration
 
 Allow altered relic and card pool sizes.
 
@@ -28,7 +42,7 @@ Reject live run modifiers at startup, capture and restore. Preserve serialized s
 
 ### RitsuLib
 
-Support current-schema run/player `RunSavedData` slots. Exclude model-attached data, slot migrations, custom pile behavior and compatibility with other mods. Untested versions warn once per session without a version-based block. Activation and checkpoint validation remain required.
+Support current-schema run/player `RunSavedData` slots. Exclude model-attached data, slot migrations, custom pile behavior and compatibility with other mods. Apply the [untested-version warning](compatibility.md#ritsulib) once per session. Activation and checkpoint validation remain required.
 
 - Envelope presence must match activation, including empty envelopes.
 - Write captured bytes before RitsuLib's injection context and reattach the selected payload after its primary reread.
@@ -38,30 +52,4 @@ RitsuLib does not change Seedline's RNG behavior or state format.
 
 ### Modded characters
 
-- Retain alignment for rewards (including card offers from their pools), shops, chests, vanilla rooms/events, and vanilla enemy setup, HP and AI.
-- Leave card shuffling, insertion, selection, copy routing, changes to existing permanent cards, random costs, combat card generation, orb generation and player-side random targeting to game/mod behavior.
-
-### Tested mods
-
-- BaseLib
-- RitsuLib
-- JmcModLib
-- Loadout 2 — requires BaseLib. Tested only for card grants, adding Innate, and event jumps.
-- Auto-Anthonyology (东尼算法)
-- The Minions (仆从们)
-- Quick SL (快速SL) — requires JmcModLib
-- Quick Restart 2 (快速重启 2) — requires BaseLib
-- Minty Spire 2 — requires BaseLib
-- 劣人TV之尖塔MOD
-- Intent Graph (意图状态机)
-- DanmakuSpire (弹幕尖塔)
-- RegentFX (万象辉星)
-
-### Incompatible mods
-
-- CardAscension — replaces reward cards and crashes Seedline.
-- Combat Solver (战斗求解器) — rejects Seedline's card-play patches.
-
-## Verification limits
-
-Live Steam synchronization remains unverified.
+Apply the [modded-character alignment boundary](compatibility.md#modded-characters), preserving game/mod behavior outside it.
