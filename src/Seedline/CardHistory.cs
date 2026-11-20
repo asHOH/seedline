@@ -137,6 +137,7 @@ internal sealed class CardHistory
     {
         private static void Prefix(CardPile __instance, CardModel card)
         {
+            if (CharacterCompatibility.UseVanillaCards(card.Owner)) return;
             if (__instance.Type != PileType.Deck || !__instance.Cards.Contains(card) ||
                 CardOccurrences.Find(card) is not { Acquisition: not null } info ||
                 card.Owner?.RunState is not RunState run || RunCheckpoints.Find(run) is not { } state)

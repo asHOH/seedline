@@ -91,7 +91,9 @@ internal static class CardOccurrences
         foreach (var player in run.Players)
         {
             var index = 0;
-            foreach (var card in player.Deck.Cards.OrderBy(c => c, CardOrder.Permanent))
+            var ordered = CharacterCompatibility.UseVanillaCards(player) ? player.Deck.Cards.AsEnumerable() :
+                player.Deck.Cards.OrderBy(c => c, CardOrder.Permanent);
+            foreach (var card in ordered)
             {
                 var address = RandomAddress.For("card occurrence", "starting deck").At(index++).Key;
                 Create(card, address, true);
@@ -106,7 +108,8 @@ internal static class CardOccurrences
             return;
         var batch = added.ToArray();
         CardOffers.PrepareAcquisition(batch);
-        var fresh = batch.Where(c => Find(c) == null).OrderBy(c => c, CardOrder.Permanent).ToArray();
+        var fresh = (CharacterCompatibility.IsModdedRun ? batch.Where(c => Find(c) == null) :
+            batch.Where(c => Find(c) == null).OrderBy(c => c, CardOrder.Permanent)).ToArray();
         if (fresh.Length == 0 || fresh[0].Owner.RunState is not RunState run || RunCheckpoints.Find(run) is not { } state)
             return;
         CardHistory.AddressGrant(fresh, state, source?.Id.Entry ?? run.CurrentRoom?.ModelId?.Entry ?? "initial grants");
@@ -155,6 +158,7 @@ internal static class CardOccurrences
         {
             __state = copyGrant.Value;
             var player = (Player)AccessTools.Property(__instance.GetType(), "Owner").GetValue(__instance)!;
+            if (CharacterCompatibility.UseVanillaCards(player)) return;
             var state = RunCheckpoints.Require((RunState)player.RunState);
             var source = __instance is AbstractModel model ? model.Id.Entry : "CLONE_REST_SITE";
             var address = RandomAddress.For("card copy", source);

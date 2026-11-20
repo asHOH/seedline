@@ -18,8 +18,9 @@ internal static class CombatOrbs
 {
     private static readonly ConditionalWeakTable<OrbModel, CombatStateScope> pending = new();
 
-    private static OrbModel Choose(Rng _)
+    private static OrbModel Choose(Rng rng)
     {
+        if (CharacterCompatibility.IsModdedRun) return OrbModel.GetRandomOrb(rng);
         var scope = CombatStateScope.Require(CombatManager.Instance.DebugOnlyGetState()!);
         var address = scope.For("orb type");
         OrbModel[] pool = [ModelDb.Orb<LightningOrb>(), ModelDb.Orb<FrostOrb>(), ModelDb.Orb<DarkOrb>(),
@@ -29,7 +30,8 @@ internal static class CombatOrbs
 
     private static Task Channel(PlayerChoiceContext context, OrbModel orb, Player player)
     {
-        pending.Add(orb, CombatStateScope.Require((CombatState)player.Creature.CombatState!));
+        if (!CharacterCompatibility.UseVanillaCards(player))
+            pending.Add(orb, CombatStateScope.Require((CombatState)player.Creature.CombatState!));
         return OrbCmd.Channel(context, orb, player);
     }
 

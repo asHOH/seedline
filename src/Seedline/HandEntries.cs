@@ -110,7 +110,7 @@ internal static class HandEntries
     {
         private static bool Prefix(SneckoOil __instance, ref int __result)
         {
-            if (__instance.TestEnergyCostOverride >= 0)
+            if (CharacterCompatibility.UseVanillaCards(__instance.Owner) || __instance.TestEnergyCostOverride >= 0)
                 return true;
             __result = oilCosts.GetValue(__instance, Assign).Dequeue();
             return false;

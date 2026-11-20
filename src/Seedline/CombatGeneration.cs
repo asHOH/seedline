@@ -111,7 +111,7 @@ internal static class CombatGeneration
         private static bool Prefix(Player player, IEnumerable<CardModel> cards, int count, MethodBase __originalMethod,
             ref IEnumerable<CardModel> __result)
         {
-            if (source.Value is not { } generator)
+            if (CharacterCompatibility.UseVanillaCards(player) || source.Value is not { } generator)
                 return true;
             __result = Generate(player, cards, count, __originalMethod.Name == nameof(CardFactory.GetDistinctForCombat), generator);
             return false;
@@ -129,11 +129,13 @@ internal static class CombatGeneration
             return RewardPatches.Replace(instructions, m => m.Name == "CreateCard" && !m.IsGenericMethod,
                 AccessTools.Method(typeof(MythicForm), nameof(Created)));
         }
-        private static CardModel Choose(Rng _, IEnumerable<CardModel> cards)
+        private static CardModel Choose(Rng rng, IEnumerable<CardModel> cards)
         {
             var player = CombatManager.Instance.DebugOnlyGetState()!.Players[0];
+            if (CharacterCompatibility.UseVanillaCards(player)) return rng.NextItem(cards)!;
             return Draw(player, "ordinary costs", "Tarot", TarotCards.All, cards);
         }
-        private static CardModel Created(ICombatState _, CardModel card, Player player) => card;
+        private static CardModel Created(ICombatState combat, CardModel card, Player player) =>
+            CharacterCompatibility.UseVanillaCards(player) ? combat.CreateCard(card, player) : card;
     }
 }

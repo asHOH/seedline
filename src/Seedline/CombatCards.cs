@@ -26,6 +26,7 @@ internal static class CombatCards
     private const int maxControlledDeckSize = 2000;
     private static readonly ConditionalWeakTable<PlayerCombatState, object> vanillaDecks = new();
     internal static bool UseVanilla(Player? player) =>
+        CharacterCompatibility.UseVanillaCards(player) ||
         player?.PlayerCombatState is { } state && vanillaDecks.TryGetValue(state, out _);
 
     internal static void RecordOpeningDeckSize(Player player)
@@ -58,6 +59,7 @@ internal static class CombatCards
 
     private static void Prepare(Grant current, IEnumerable<CardModel> candidates)
     {
+        if (CharacterCompatibility.IsModdedRun) return;
         var fresh = candidates.Where(c => Find(c) == null && !current.Indices.ContainsKey(c) &&
             !c.HasBeenRemovedFromState && !c.Owner.Creature.IsDead).ToArray();
         IEnumerable<CardModel> ordered = fresh;
@@ -130,7 +132,8 @@ internal static class CombatCards
 
         private static void Postfix(CardPile __instance, CardModel card, bool __state)
         {
-            if (!__instance.IsCombatPile || card.Owner.Creature.CombatState is not CombatState combat)
+            if (CharacterCompatibility.UseVanillaCards(card.Owner) ||
+                !__instance.IsCombatPile || card.Owner.Creature.CombatState is not CombatState combat)
                 return;
             var occurrence = cards.GetValue(card, CreateOccurrence);
             if (__instance.Type == PileType.Hand)

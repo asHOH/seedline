@@ -18,6 +18,8 @@ internal static class CombatCosts
         internal int? Confused;
     }
     private static readonly AsyncLocal<DrawCost?> draw = new();
+    private static readonly Func<ConfusedPower, int> vanillaConfused = AccessTools.MethodDelegate<Func<ConfusedPower, int>>(
+        AccessTools.Method(typeof(ConfusedPower), "NextEnergyCost"));
     private static readonly AccessTools.FieldRef<ConfusedPower, int> testConfused =
         AccessTools.FieldRefAccess<ConfusedPower, int>("_testEnergyCostOverride");
 
@@ -39,6 +41,8 @@ internal static class CombatCosts
 
     private static int Confused(ConfusedPower power, CardModel card)
     {
+        if (CharacterCompatibility.UseVanillaCards(card.Owner))
+            return vanillaConfused(power);
         var scope = CombatStateScope.Require((CombatState)power.Owner.CombatState!);
         var value = testConfused(power) >= 0 ? testConfused(power)
             : scope.Random.NextIntInclusive(scope.For("Confused cost", Category(card)), 0, 3);
@@ -63,7 +67,7 @@ internal static class CombatCosts
     {
         private static bool Prefix(CardModel card, ref Task __result)
         {
-            if (!card.EnergyCost.CostsX)
+            if (CharacterCompatibility.UseVanillaCards(card.Owner) || !card.EnergyCost.CostsX)
                 return true;
             __result = Task.CompletedTask;
             return false;
@@ -92,6 +96,7 @@ internal static class CombatCosts
     {
         private static bool Prefix(Slither __instance, ref int __result)
         {
+            if (CharacterCompatibility.UseVanillaCards(__instance.Card.Owner)) return true;
             if (draw.Value is { Confused: int reused } current && current.Card == __instance.Card)
                 __result = reused;
             else if (__instance.TestEnergyCostOverride >= 0)

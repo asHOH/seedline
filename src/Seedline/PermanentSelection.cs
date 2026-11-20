@@ -25,13 +25,15 @@ internal static class PermanentSelection
 
     internal static IEnumerable<CardModel> UpgradeBatch(IEnumerable<CardModel> cards, int count)
     {
+        if (CharacterCompatibility.IsModdedRun) return cards.Take(count);
         var selected = Select(cards, count, Upgrade);
         foreach (var card in selected.OfType<DingyDagger>())
             RefillUpgrade(card);
         return selected;
     }
 
-    internal static CardModel? UpgradeOne(Rng _, IEnumerable<CardModel> cards) => UpgradeBatch(cards, 1).FirstOrDefault();
+    internal static CardModel? UpgradeOne(Rng rng, IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+        ? rng.NextItem(cards) : UpgradeBatch(cards, 1).FirstOrDefault();
 
     private static void RefillUpgrade(CardModel card)
     {
@@ -42,7 +44,7 @@ internal static class PermanentSelection
     }
 
     internal static CardModel? DowngradeOne(Rng rng, IEnumerable<CardModel> cards) =>
-        RefillDowngrade(rng, Select(cards, 1, Downgrade).FirstOrDefault());
+        CharacterCompatibility.IsModdedRun ? rng.NextItem(cards) : RefillDowngrade(rng, Select(cards, 1, Downgrade).FirstOrDefault());
 
     internal static CardModel? RefillDowngrade(Rng rng, CardModel? card)
     {
@@ -68,7 +70,7 @@ internal static class PermanentSelection
 
     internal static void Route(IReadOnlyList<CardModel> eligible, IReadOnlyCollection<CardModel> clicked, string operation)
     {
-        if (clicked.Count == 0)
+        if (clicked.Count == 0 || CharacterCompatibility.UseVanillaCards(clicked.First().Owner))
             return;
         var state = State(clicked.First());
         // Removal retires its inputs; Tooth uses upgrade routing because its stored cards return.

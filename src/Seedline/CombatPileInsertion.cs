@@ -31,7 +31,8 @@ internal static class CombatPileInsertion
                 _ when CombatGeneration.IsMetamorphosis => "Metamorphosis",
                 _ => null
             };
-            if (group != null && pile.IsCombatPile && card.Owner.Creature.CombatState is CombatState combat)
+            if (!CharacterCompatibility.UseVanillaCards(card.Owner) &&
+                group != null && pile.IsCombatPile && card.Owner.Creature.CombatState is CombatState combat)
             {
                 var scope = CombatStateScope.Require(combat);
                 index = (int)(scope.Random.NextUnit(scope.For("insertion", group, pile.Type.ToString())) * (pile.Cards.Count + 1));

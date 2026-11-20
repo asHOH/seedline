@@ -32,7 +32,8 @@ internal static class PermanentSelectionPatches
                 AccessTools.Method(typeof(UpgradeBatches), nameof(Snapshot))),
                 m => m.DeclaringType == typeof(Enumerable) && m.Name == nameof(Enumerable.Take),
                 AccessTools.Method(typeof(PermanentSelection), nameof(PermanentSelection.UpgradeBatch)));
-        private static List<CardModel> Snapshot(List<CardModel> cards, Rng _) => cards;
+        private static List<CardModel> Snapshot(List<CardModel> cards, Rng rng) =>
+            CharacterCompatibility.IsModdedRun ? cards.StableShuffle(rng) : cards;
     }
 
     [HarmonyPatch]
@@ -51,6 +52,7 @@ internal static class PermanentSelectionPatches
     {
         private static bool Prefix(ImprovementPower __instance, ref Task __result)
         {
+            if (CharacterCompatibility.UseVanillaCards(__instance.Owner.Player)) return true;
             foreach (var card in PermanentSelection.UpgradeBatch(__instance.Owner.Player!.Deck.Cards.Where(c => c.IsUpgradable), (int)__instance.Amount))
                 CardCmd.Upgrade(card);
             __result = Task.CompletedTask;
@@ -92,10 +94,14 @@ internal static class PermanentSelectionPatches
             if (lists != 2 || draws != 2)
                 throw new InvalidOperationException("Expected two Reflections selection batches.");
         }
-        private static List<CardModel> Downgrades(IEnumerable<CardModel> cards) => PermanentSelection.Select(cards, 2, PermanentSelection.Downgrade).ToList();
-        private static List<CardModel> Upgrades(IEnumerable<CardModel> cards) => PermanentSelection.UpgradeBatch(cards, 4).ToList();
-        private static CardModel? Downgrade(Rng rng, IEnumerable<CardModel> cards) => PermanentSelection.RefillDowngrade(rng, cards.FirstOrDefault());
-        private static CardModel Upgrade(Rng _, IEnumerable<CardModel> cards) => cards.First();
+        private static List<CardModel> Downgrades(IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+            ? cards.ToList() : PermanentSelection.Select(cards, 2, PermanentSelection.Downgrade).ToList();
+        private static List<CardModel> Upgrades(IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+            ? cards.ToList() : PermanentSelection.UpgradeBatch(cards, 4).ToList();
+        private static CardModel? Downgrade(Rng rng, IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+            ? rng.NextItem(cards) : PermanentSelection.RefillDowngrade(rng, cards.FirstOrDefault());
+        private static CardModel Upgrade(Rng rng, IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+            ? rng.NextItem(cards)! : cards.First();
     }
 
     [HarmonyPatch(typeof(SlipperyBridge), "GetNewRandomCard")]
@@ -103,14 +109,15 @@ internal static class PermanentSelectionPatches
     {
         private static void Prefix(CardModel? ____randomCardToLose)
         {
-            if (____randomCardToLose is not { } card)
+            if (CharacterCompatibility.IsModdedRun || ____randomCardToLose is not { } card)
                 return;
             var state = PermanentSelection.State(card);
             state.Selection.Renew(state.Seed, PermanentSelection.Bridge, PermanentSelection.Key(card));
         }
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, NextCard, AccessTools.Method(typeof(Bridge), nameof(Select)));
-        private static CardModel? Select(Rng _, IEnumerable<CardModel> cards) => PermanentSelection.Select(cards, 1, PermanentSelection.Bridge).FirstOrDefault();
+        private static CardModel? Select(Rng rng, IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+            ? rng.NextItem(cards) : PermanentSelection.Select(cards, 1, PermanentSelection.Bridge).FirstOrDefault();
     }
 
     [HarmonyPatch(typeof(BeautifulBracelet), nameof(BeautifulBracelet.AfterObtained))]
@@ -119,7 +126,8 @@ internal static class PermanentSelectionPatches
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(IEnumerableExtensions) && m.Name == nameof(IEnumerableExtensions.TakeRandom),
                 AccessTools.Method(typeof(Bracelet), nameof(Select)));
-        private static IEnumerable<CardModel> Select(IEnumerable<CardModel> cards, int count, Rng _) => PermanentSelection.Fixed(cards, count, "Beautiful Bracelet");
+        private static IEnumerable<CardModel> Select(IEnumerable<CardModel> cards, int count, Rng rng) => CharacterCompatibility.IsModdedRun
+            ? cards.TakeRandom(count, rng) : PermanentSelection.Fixed(cards, count, "Beautiful Bracelet");
     }
 
     [HarmonyPatch]
@@ -129,8 +137,9 @@ internal static class PermanentSelectionPatches
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(Rng) && m.Name == nameof(Rng.NextItem),
                 AccessTools.Method(typeof(Tooth), nameof(Select)));
-        private static SerializableCard Select(Rng _, IEnumerable<SerializableCard> cards)
+        private static SerializableCard Select(Rng rng, IEnumerable<SerializableCard> cards)
         {
+            if (CharacterCompatibility.IsModdedRun) return rng.NextItem(cards)!;
             var seed = RunCheckpoints.Require(RunManager.Instance.DebugOnlyGetState()!).Seed;
             return cards.OrderBy(c => AddressRandom.UInt64(seed, RandomAddress.For("Pael's Tooth return", Info(c).Key)))
                 .ThenBy(c => Info(c).Key, StringComparer.Ordinal).First();

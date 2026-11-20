@@ -34,7 +34,8 @@ internal static class CombatEnvironment
             if (runState is not RunState run || RunCheckpoints.Find(run) == null || __instance.HaveMonstersBeenGenerated)
                 return;
             var scope = CombatStateScope.Prepare(__instance, run);
-            ____rng = new Rng(AddressRandom.UInt64(scope.Seed, scope.For("setup")));
+            if (!CharacterCompatibility.IsModdedRun || __instance.GetType().Assembly == typeof(EncounterModel).Assembly)
+                ____rng = new Rng(AddressRandom.UInt64(scope.Seed, scope.For("setup")));
         }
     }
 
@@ -60,6 +61,8 @@ internal static class CombatEnvironment
             if (creating == null)
                 return true;
             var monster = __instance.Monster!;
+            if (CharacterCompatibility.IsModdedRun && monster.GetType().Assembly != typeof(MonsterModel).Assembly)
+                return true;
             var hp = RollHp(creating, monster.MinInitialHp, monster.MaxInitialHp,
                 creaturesOnSide.Select(c => c.MaxHp));
             originalHp(__instance) = ____maxHp = ____currentHp = hp;

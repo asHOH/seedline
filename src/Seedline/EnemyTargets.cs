@@ -33,14 +33,16 @@ internal static class EnemyTargets
             .ThenBy(c => EnemyOccurrences.Info(c).Address.Key, StringComparer.Ordinal).First();
     }
 
-    private static Creature? Damage(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Direct damage");
-    private static Creature? Lightning(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Lightning");
-    private static Creature? Relics(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Forgotten Soul / Obsidian Vice");
-    private static Creature? Other(Rng _, IEnumerable<Creature> candidates) => Select(candidates, "Other");
+    private static Creature? Choose(Rng rng, IEnumerable<Creature> candidates, string group) =>
+        CharacterCompatibility.IsModdedRun ? rng.NextItem(candidates) : Select(candidates, group);
+    private static Creature? Damage(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Direct damage");
+    private static Creature? Lightning(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Lightning");
+    private static Creature? Relics(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Forgotten Soul / Obsidian Vice");
+    private static Creature? Other(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Other");
     private static Creature? AutoTarget(Rng rng, IEnumerable<Creature> candidates, CardModel card)
     {
         // Ally targeting is outside the enemy-target policy.
-        return card.TargetType == TargetType.AnyAlly ? rng.NextItem(candidates) : Select(candidates, CardGroup(card));
+        return card.TargetType == TargetType.AnyAlly ? rng.NextItem(candidates) : Choose(rng, candidates, CardGroup(card));
     }
 
     private static IEnumerable<CodeInstruction> Replace(IEnumerable<CodeInstruction> instructions, string method, int count = 1) =>

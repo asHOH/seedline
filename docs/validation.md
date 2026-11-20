@@ -14,6 +14,14 @@
 
 **Note:** Loadout 2 verification only covers card grants, adding Innate, and event jumps.
 
+## Modded characters
+
+For modded characters:
+
+1. Seedline retains alignment for rewards (including card offers from their pools), shops, chests, vanilla rooms/events, and vanilla enemy setup, HP and AI.
+
+2. Seedline leaves Card shuffling, insertion, selection, copy routing, changes to existing permanent cards, random costs, combat card generation, orb generation and player-side random targeting to use the game/mod behavior.
+
 ## Verification limits
 
 Live Steam synchronization remain unverified.

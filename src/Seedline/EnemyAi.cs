@@ -41,6 +41,8 @@ internal static class EnemyAi
         {
             if (owner.CombatState is not CombatState combat || owner.Side != CombatSide.Enemy)
                 return true;
+            if (CharacterCompatibility.IsModdedRun && owner.Monster!.GetType().Assembly != typeof(MonsterModel).Assembly)
+                return true;
             var scope = CombatStateScope.Require(combat);
             var occurrence = EnemyOccurrences.Info(owner);
             var ordinal = occurrence.Branches++;

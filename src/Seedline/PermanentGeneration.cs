@@ -30,6 +30,8 @@ internal static class PermanentGeneration
     internal static CardTransformation[] Prepare(IEnumerable<CardTransformation> transformations)
     {
         var batch = transformations.ToArray();
+        if (batch.Length > 0 && CharacterCompatibility.UseVanillaCards(batch[0].Original.Owner))
+            return batch;
         if (batch.Length > 0 && !batch[0].IsInCombat)
             CardOccurrences.Prepare(batch.Select(t => t.Replacement).OfType<CardModel>(), batch[0].Original.Owner.Deck, null);
         var replacements = new Dictionary<CardModel, CardModel>();
@@ -115,18 +117,22 @@ internal static class PermanentGeneration
         private static List<CardModel> Resolve(IEnumerable<CardModel> selected)
         {
             var cards = selected.ToList();
+            if (CharacterCompatibility.IsModdedRun) return cards;
             foreach (var item in Prepare(cards.Select(c => new CardTransformation(c))))
                 prepared.Add(item.Original, item.Replacement!);
             return cards;
         }
         private static CardModel Replacement(CardModel original, bool isInCombat, Rng rng)
         {
+            if (CharacterCompatibility.UseVanillaCards(original.Owner))
+                return CardFactory.CreateRandomCardForTransform(original, isInCombat, rng);
             var replacement = prepared.GetValue(original, _ => throw new InvalidOperationException("Missing prepared transformation."));
             prepared.Remove(original);
             return replacement;
         }
         private static async Task<CardPileAddResult> Transform(CardModel original, Rng rng, CardPreviewStyle style) =>
-            (await CardCmd.Transform(original, Replacement(original, false, rng), style))!.Value;
+            CharacterCompatibility.UseVanillaCards(original.Owner) ? await CardCmd.TransformToRandom(original, rng, style) :
+                (await CardCmd.Transform(original, Replacement(original, false, rng), style))!.Value;
     }
 
     [HarmonyPatch]
@@ -135,8 +141,8 @@ internal static class PermanentGeneration
         private static MethodBase TargetMethod() => RewardPatches.AsyncMethod(typeof(PandorasBox), nameof(PandorasBox.AfterObtained));
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) => RewardPatches.Replace(instructions,
             m => m.DeclaringType == typeof(Enumerable) && m.Name == nameof(Enumerable.Select), AccessTools.Method(typeof(PandoraBatch), nameof(Deferred)));
-        private static IEnumerable<CardTransformation> Deferred(IEnumerable<CardModel> cards, Func<CardModel, CardTransformation> _) =>
-            cards.Select(c => new CardTransformation(c));
+        private static IEnumerable<CardTransformation> Deferred(IEnumerable<CardModel> cards, Func<CardModel, CardTransformation> transform) =>
+            CharacterCompatibility.IsModdedRun ? cards.Select(transform) : cards.Select(c => new CardTransformation(c));
     }
 
     [HarmonyPatch]

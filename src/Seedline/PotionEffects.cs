@@ -76,8 +76,10 @@ internal static class PotionEffects
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(CardFactory) && m.Name == nameof(CardFactory.GetDistinctForCombat),
                 AccessTools.Method(typeof(Factory), nameof(Create)), __originalMethod.DeclaringType!.DeclaringType == typeof(OrobicAcid) ? 3 : 1);
-        private static IEnumerable<CardModel> Create(Player player, IEnumerable<CardModel> cards, int count, Rng _)
+        private static IEnumerable<CardModel> Create(Player player, IEnumerable<CardModel> cards, int count, Rng rng)
         {
+            if (CharacterCompatibility.UseVanillaCards(player))
+                return CardFactory.GetDistinctForCombat(player, cards, count, rng);
             var generation = generating.Value ?? throw new InvalidOperationException("Missing potion generation source.");
             return Generate(player, generation.Potion, cards, count, generation.Supply);
         }
@@ -101,7 +103,7 @@ internal static class PotionEffects
     {
         private static void Postfix(Player __instance, PotionModel potion)
         {
-            if (types.Contains(potion.GetType()))
+            if (!CharacterCompatibility.UseVanillaCards(__instance) && types.Contains(potion.GetType()))
                 committed.AddOrUpdate(potion, new(Consume(__instance, potion.Id.Entry)));
         }
     }
@@ -111,7 +113,8 @@ internal static class PotionEffects
     {
         private static void Postfix(PotionReward __instance, bool ____wasTaken)
         {
-            if (____wasTaken || __instance.Potion is not { } potion || !types.Contains(potion.GetType()) ||
+            if (CharacterCompatibility.UseVanillaCards(__instance.Player) ||
+                ____wasTaken || __instance.Potion is not { } potion || !types.Contains(potion.GetType()) ||
                 skippedRewards.TryGetValue(__instance, out _))
                 return;
             Consume(__instance.Player, potion.Id.Entry);
@@ -134,6 +137,7 @@ internal static class PotionEffects
     {
         private static void Prefix(RewardsSet set)
         {
+            if (CharacterCompatibility.UseVanillaCards(set.Player)) return;
             foreach (var reward in set.Rewards.OfType<PotionReward>())
                 if (cauldronRewards.Remove(reward) && reward.Potion is { } potion && types.Contains(potion.GetType()))
                     RunCheckpoints.Require((RunState)set.Player.RunState).Random.Advance(RandomAddress.For("Cauldron exemption", potion.Id.Entry));
@@ -145,6 +149,7 @@ internal static class PotionEffects
     {
         private static void Prefix(IRunState runState)
         {
+            if (CharacterCompatibility.IsModdedRun) return;
             var random = RunCheckpoints.Require((RunState)runState).Random;
             foreach (var type in types)
             {
