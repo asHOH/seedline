@@ -395,11 +395,39 @@ Other new permanent cards use occurrence addresses; returns follow [lifetime rul
 | Permanently remove or combine cards | Retire the selected logical inputs. |
 | [Transform a card](#permanent-transformations-and-direct-card-additions) | Retire the original and initialize replacement selection state. |
 
+#### Combat-card key assignment
+
+**Scope:** combat-start selection keys and shuffle keys.
+
+Assign each logical occurrence either the [card key](#card-keys) or a priority-sequence ID + position, using the first applicable row:
+
+| Cards | Acts 1–2 | Act 3 |
+|---|---|---|
+| Defend and earlier processing order categories | First sequence, least useful first. | Same. |
+| Other starting Basics; eligible rewards/direct additions | Source-based keys below. | Second sequence, most useful first. |
+| Remaining cards | Second sequence: permanent cards in acquisition order, followed by new combat occurrences in creation order. | Both rows combined, most useful first. |
+
+**Rationale:** these directions anchor the least-useful cards in the first sequence and the most-useful cards in Act 3's second sequence.
+
+Number acquisition batches across the run and creation batches within each combat; order cards within each batch by [card processing order](#card-processing-order).
+
+At permanent removal, freeze the card's ordering properties and retain its entry through run end. Include retained entries in combat-start and opening-shuffle key assignment, but not in the shuffled pile. This prevents removal alone from shifting survivors' assignments. Additions and rank changes can still shift sequence positions.
+
+##### Source-based assignment — Acts 1–2
+
+Use [card keys](#card-keys) for:
+
+- Other starting Basics.
+- New reward cards, including supplementary cards and bundles.
+- [Transformations and direct additions](#permanent-transformations-and-direct-card-additions) with shared generation entries, allowing only unfiltered, rarity-only or transformation-filter-only generation.
+
+Copies enter the remaining group.
+
 #### Combat-card selection state
 
 For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [persistent clocks](#persistent-clocks) with one fixed selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
-**At combat start:** before selection effects, initialize each card's selection key using [priority assignment](#priority-assignment), treating Innate cards as ordinary and including retained entries for removed cards.
+**At combat start:** before selection effects, initialize each card's selection key using [combat-card key assignment](#combat-card-key-assignment), treating Innate cards as ordinary.
 
 **During combat:** take the first applicable key for a new occurrence:
 
@@ -1123,31 +1151,9 @@ Address each shuffle by `purpose = shuffle` + [combat address](#combat-addresses
 
 #### Priority assignment
 
-Derive each card's priority from the shuffle address + its [shuffle key](#card-identifiers), either a source-based card key or a priority-sequence ID + position reassigned at each shuffle.
+Use [combat-card key assignment](#combat-card-key-assignment) for shuffle keys, reassigning sequence positions at each shuffle. Derive each card's priority from the shuffle address + its [shuffle key](#card-identifiers).
 
-The opening Innate subgroup uses [processing order](#card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
-
-| Cards | Acts 1–2 | Act 3 |
-|---|---|---|
-| Defend and earlier processing order categories | First sequence, least useful first. | Same. |
-| Other starting Basics; eligible rewards/direct additions | Source-based keys below. | Second sequence, most useful first. |
-| Remaining cards | Second sequence: permanent cards in acquisition order, followed by new combat occurrences in creation order. | Both rows combined, most useful first. |
-
-**Rationale:** these directions anchor the least-useful cards in the first sequence and the most-useful cards in Act 3's second sequence.
-
-Number acquisition batches across the run and creation batches within each combat; order cards within each batch by [card processing order](#card-processing-order).
-
-Freeze the card's ordering properties at permanent removal and retain its entry through run end. Include it in opening priority assignment, then omit it from the shuffle. This prevents removal alone from shifting survivors' opening assignments and combat-selection keys. Additions and rank changes can still shift sequence positions.
-
-#### Source-based assignment — Acts 1–2
-
-Use [card keys](#card-keys) for:
-
-- Other starting Basics.
-- New reward cards, including supplementary cards and bundles.
-- [Transformations and direct additions](#permanent-transformations-and-direct-card-additions) with shared generation entries, allowing only unfiltered, rarity-only or transformation-filter-only generation.
-
-Copies enter the remaining group.
+For the opening shuffle, assign Innate cards their own priority sequence in [processing order](#card-processing-order), least useful first. Apply the shared assignment to the remaining cards.
 
 #### Vanilla deviations
 
