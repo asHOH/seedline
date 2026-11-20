@@ -18,11 +18,9 @@ With 30-card decks, [benchmarks](research/README.md#performance) measured under 
 
 ## Install
 
-Download the `Seedline-<version>.zip` asset from the [latest release](https://github.com/asHOH/StS2/releases/latest), not GitHub's source-code archive. Close the game and extract the `Seedline` folder into its `mods` folder, creating `mods` if needed.
+Download `Seedline-<version>.zip` from the [latest release](https://github.com/asHOH/StS2/releases/latest). Close the game and extract the `Seedline` folder into the game's `mods` folder, creating `mods` if needed.
 
 Enable **Seedline / 不歪种神器** in the game's mod loader and start a new run. New runs use fully unlocked content without changing profile unlocks or Ascension limits.
-
-To build from source, see [development instructions](docs/implementation.md#build-and-validate).
 
 ## Saves
 
