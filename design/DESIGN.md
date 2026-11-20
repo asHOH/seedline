@@ -426,7 +426,7 @@ Each potion type has its own run-wide effect ordinal:
 
 **Cauldron exception:** Each potion offered by Cauldron grants one exemption for its type — any action that would advance that type's effect ordinal consumes one available exemption instead. Unused exemptions expire at next-room entry.
 
-**Vanilla deviation — SL 5(↑):**  discarding, trading or skipping potions can reroll the next same-type potion's results. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
+**Vanilla deviation — SL 4(↑):**  discarding, trading or skipping potions can reroll the next same-type potion's results. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
 
 ### Rarity and identity sequences
 
@@ -496,20 +496,20 @@ Generate replacements for selected originals in [identity-only order](CARD_ORDER
 
 #### Future steering loss
 
-**Vanilla deviation — SL 5↓(↓):** fewer planning decisions based on steering later outcomes through earlier random consumption. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favorable orb sequence for the next battle.
+**Vanilla deviation — SL 4↓(↓):** fewer planning decisions based on steering later outcomes through earlier random consumption. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favorable orb sequence for the next battle.
 
 Applies implicitly wherever this definition holds.
 
 #### Within-room reroll loss
 
-**Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** some actions no longer change a room's random outcomes:
+**Vanilla deviation — SL 3A(↓), unless locally graded SL 4(↓):** some actions no longer change a room's random outcomes:
 
 - Other random effects, forced selections or failed operations.
 - Action/enumeration order or equivalent-copy choices.
 
 #### Changed eligible-set alternatives
 
-**Vanilla deviation — SL 4A:** preserving each selection's probabilities can still change the outcomes available when SL explores different eligible sets. Alternatives may improve or disappear.
+**Vanilla deviation — SL 3A:** preserving each selection's probabilities can still change the outcomes available when SL explores different eligible sets. Alternatives may improve or disappear.
 
 ## Source policies — Rewards
 
@@ -533,7 +533,7 @@ Without [borrowing](#borrowing), generic reward opportunities must eventually ex
 
 By default, hidden random relic rewards use the generic rewards source, including paid rewards and relic-triggered grants. Classify deferred rewards separately from their granting relic.
 
-**Vanilla deviation — SL 5↑:** generic relic grants in events can reveal exact next relic reward; vanilla only reveals next identity of a rarity.
+**Vanilla deviation — SL 4↑:** generic relic grants in events can reveal exact next relic reward; vanilla only reveals next identity of a rarity.
 
 #### Borrowing
 
@@ -583,7 +583,7 @@ Other-source consumption can shorten future marker lifetimes; existing lifetimes
 
 **Alignment:** with identical subsequent draw requests and eligibility, and no borrowing, acquire and skip share the future sequence until expiry.
 
-**Vanilla deviation — NoSL 3:** chest-marker lifetimes can slightly change later character-specific reward probabilities ([analysis](#chest-marker-probabilities)).
+**Vanilla deviation — NoSL 2:** chest-marker lifetimes can slightly change later character-specific reward probabilities ([analysis](#chest-marker-probabilities)).
 
 Baseline: [chest mechanics](#shops-chests-and-relic-events).
 
@@ -601,9 +601,9 @@ Each source has Common/Uncommon/Rare identity sequences over the full eligible p
 
 **Batches:** consume per potion and retain [source duplicate rules](#potions-1); regrouping `A | BCD` yields `ABC | D`, subject to filtering.
 
-**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
+**[Reroll loss](#within-room-reroll-loss) — SL 4(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
 
-**Vanilla deviation — SL 5:** Brew/Frond generation can now reroll later Alchemize potions, and vice versa.
+**Vanilla deviation — SL 4:** Brew/Frond generation can now reroll later Alchemize potions, and vice versa.
 
 #### Drop checks
 
@@ -623,7 +623,7 @@ Derive each drop-check roll from the drop-check ordinal.
 
 **Alignment boundary:** eligibility changes, including [relic floor cutoffs](#relic-bags), can weaken stock alignment.
 
-**Vanilla deviation — NoSL 4B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
+**Vanilla deviation — NoSL 3B↓:** fixed shop rarity offsets remove recent combat rarities' influence on shop Rare odds and change Rare clustering.
 
 **[Reroll loss](#within-room-reroll-loss):** restocks through interleaved purchase categories and effects.
 
@@ -637,7 +637,7 @@ The featured Rare uses shop stock. Suppress generation when unaffordable.
 
 **Identity removal:** for the featured Rare and Common purchase, resolve encountered markers normally, then remove the first shop-eligible entry from its source without placing a new marker. This retains [vanilla's promotion of skipped identities](#relic-bags).
 
-**Vanilla deviation — NoSL 3:** the featured Rare no longer increases shop-ineligible Rares' chances in later generic rewards.
+**Vanilla deviation — NoSL 2:** the featured Rare no longer increases shop-ineligible Rares' chances in later generic rewards.
 
 Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
@@ -737,9 +737,9 @@ An offer is **Rare-eligible** if at least one slot has positive Rare probability
 
 This excludes the first two three-card offers using normal-fight rarity rules after an offset reset without elite intervention. Delivery follows offer generation order, including extra offers and rerolls, and can wait across acts.
 
-**Vanilla deviation — NoSL 3:** elite and fixed-odds offers never contain multiple Rares. **Frequency:** about one multi-Rare offer per 500 runs in the [A7+ calibration](#rarity-calibration).
+**Vanilla deviation — NoSL 2:** elite and fixed-odds offers never contain multiple Rares. **Frequency:** about one multi-Rare offer per 500 runs in the [A7+ calibration](#rarity-calibration).
 
-**Vanilla deviation — NoSL 3:** if an offer would contain three or more Rares, only one additional Rare is offered later. **Frequency:** much rarer than the previous deviation (qualitative judgment).
+**Vanilla deviation — NoSL 2:** if an offer would contain three or more Rares, only one additional Rare is offered later. **Frequency:** much rarer than the previous deviation (qualitative judgment).
 
 ##### A0–6: Rare delivery
 
@@ -768,7 +768,7 @@ These triples follow shared consumption across sources.
 
 **Rationale:** these entries approximate an Act 1 opening of two normal fights. Later-act openings are covered by the average calibration.
 
-**Vanilla deviation — NoSL 3:** shared rates change Uncommon frequencies across sources and routes, including removing elites' advantage (about 0.14 Uncommons per three-card non-Rare offer near zero starting offset).
+**Vanilla deviation — NoSL 2:** shared rates change Uncommon frequencies across sources and routes, including removing elites' advantage (about 0.14 Uncommons per three-card non-Rare offer near zero starting offset).
 
 ##### Supplementary cards
 
@@ -786,7 +786,7 @@ Replace the first Common in offer entry order, or the first Uncommon if no Commo
 
 **Accepted tradeoff:** prior Rare counts and companion composition can weaken alignment between offers built from the same triple.
 
-**Vanilla deviation — NoSL 3:** Common-first replacement favors Uncommon companions in multi-Rare offers. **Frequency:** rare — about **2% of vanilla elite offers** in the [A0–6 calibration](#rarity-calibration).
+**Vanilla deviation — NoSL 2:** Common-first replacement favors Uncommon companions in multi-Rare offers. **Frequency:** rare — about **2% of vanilla elite offers** in the [A0–6 calibration](#rarity-calibration).
 
 ##### Presentation
 
@@ -839,7 +839,7 @@ For random results, transformations and additions share one uniform identity seq
 - **Transformations:** draw directly, filtering out the original identity; follow [lifetime](#out-of-combat-card-lifetime) and [batch](#transformation-batches) rules.
 - **Direct additions:** roll rarity at vanilla base odds using Fried Eel's sequence or Infested Automaton's event RNG; otherwise use the fixed rarity. Apply unavailable-rarity fallback within the source's eligible pool, then filter the identity sequence by rarity and source restrictions.
 
-**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** processing transformation batches in identity order removes order-dependent alternatives.
+**[Reroll loss](#within-room-reroll-loss) — SL 4(↓):** processing transformation batches in identity order removes order-dependent alternatives.
 
 Baseline: [generation mechanics](#permanent-transformations-and-direct-additions).
 
@@ -914,11 +914,11 @@ Each condition tracks both remaining selection attempts and its position in the 
 
 **Wrapping:** when all counts reach zero, refill them from act-available, unvisited IDs and restart priorities, continuing the roll sequences. ID sequences wrap in their established order, excluding visited IDs.
 
-**Vanilla deviation — NoSL 3:** after wrapping, refreshed condition priorities can change each event's chance of appearing. **Frequency:** rare (qualitative judgment).
+**Vanilla deviation — NoSL 2:** after wrapping, refreshed condition priorities can change each event's chance of appearing. **Frequency:** rare (qualitative judgment).
 
 **Fallback:** if the act has no eligible unvisited event, return `list[(n - 1) % list.Count]` from vanilla's original shuffled act list, where `n` is the 1-based act-local ordinary-event ordinal. Bypass eligibility and visited exclusions for this draw.
 
-**Vanilla deviation — NoSL 3:** ordinal indexing changes each event's chance of appearing on fallback, conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
+**Vanilla deviation — NoSL 2:** ordinal indexing changes each event's chance of appearing on fallback, conditioned on prior visits and eligibility. **Frequency:** effectively impossible (qualitative judgment).
 
 **Behavior preservation:** before count refill or ID wrapping, preserve vanilla's distribution when eligibility cannot inspect hidden order. With passing late eligibility checks, same starting random state + same selected event leaves the same random state. Cross-run and SL correlations change.
 
@@ -928,7 +928,7 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 
 Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection). Record the visit and leave the act-local ordinary-event ordinal unchanged.
 
-**Vanilla deviation — NoSL 3:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes each ordinary event's chance of appearing later.
+**Vanilla deviation — NoSL 2:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes each ordinary event's chance of appearing later.
 
 ### Ancient offerings
 
@@ -1009,7 +1009,7 @@ Apply [A0–6 replacement state](#a06-multiple-rares) and evaluate Swift eligibi
 | Share Knowledge: two supplementary positions | Event RNG. | Select uniformly among eligible supplementary positions, using `purpose = Wing Charm supplementary selection` + event ID when both qualify. |
 | Lasting Candy: added Power | `purpose = Wing Charm` + Power entry address, evaluated only when the Power is eligible. | Select the Power. |
 
-**Vanilla deviation — NoSL 3:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
+**Vanilla deviation — NoSL 2:** when Brain Leech consumes an opening non-Rare triple, its different rarity probabilities slightly change the enchanted card's rarity distribution.
 
 Baseline: [Wing Charm and earlier reward modifiers](#card-reward-offers-1).
 
@@ -1151,7 +1151,7 @@ Copies enter the remaining group.
 
 #### Vanilla deviations
 
-**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** pile insertions and reordering discarded copies tied by identity and upgrade level no longer reroll shuffles, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)). Fewer draw-order alternatives can weaken draw effects.
+**[Reroll loss](#within-room-reroll-loss) — SL 4(↓):** pile insertions and reordering discarded copies tied by identity and upgrade level no longer reroll shuffles, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)). Fewer draw-order alternatives can weaken draw effects.
 
 ### Random pile insertion
 
@@ -1301,7 +1301,7 @@ Address each batch by `purpose = potion card generation` + potion type + [effect
 
 Use one [identity sequence](#rarity-and-identity-sequences) per batch.
 
-**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** other potion types and [combat card generation](#combat-card-generation-and-transformations) no longer reroll a potion's generated cards.
+**[Reroll loss](#within-room-reroll-loss) — SL 4(↓):** other potion types and [combat card generation](#combat-card-generation-and-transformations) no longer reroll a potion's generated cards.
 
 Baseline: [potion card-generation mechanics](#potion-card-generation).
 
@@ -1324,10 +1324,10 @@ Consistency fixes with no gameplay impact are ungraded.
 | Grade | Impact |
 |---|---|
 | **1** | Presentation only. |
-| **3** | Unnoticeable and neutral gameplay changes. |
-| **4A** | Noticeable and neutral. |
-| **4B** | Unnoticeable and non-neutral. |
-| **5** | Noticeable and non-neutral. |
+| **2** | Unnoticeable and neutral gameplay changes. |
+| **3A** | Noticeable and neutral. |
+| **3B** | Unnoticeable and non-neutral. |
+| **4** | Noticeable and non-neutral. |
 
 **Play modes:**
 
@@ -1336,7 +1336,7 @@ Consistency fixes with no gameplay impact are ungraded.
 
 Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
 
-**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe within-room exploration at any grade: `5(↓)` changes strategy while simplifying exploration.
+**Strategy-change notation:** on 3B/4, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe within-room exploration at any grade: `4(↓)` changes strategy while simplifying exploration.
 
 Rare deviations include a **Frequency:** field.
 
@@ -1374,7 +1374,7 @@ A separate chest allocation adds unfairness between reward sources. [Chests](#re
 
 Compared with [category-specific gold rolls](#combat-gold), shared rolls have these tradeoffs.
 
-- **Independent compensation** makes A3+ normal gold nonuniform at unchanged expectation (**Vanilla deviation — NoSL 3**). Normal/elite reordering can change Bowler Hat totals by 1.
+- **Independent compensation** makes A3+ normal gold nonuniform at unchanged expectation (**Vanilla deviation — NoSL 2**). Normal/elite reordering can change Bowler Hat totals by 1.
 - **Range-relative rolls** preserve vanilla distributions, but reordering can change A3+ base gold by 1.
 
 #### Event-selection alternatives
