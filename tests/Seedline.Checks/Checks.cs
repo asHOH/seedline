@@ -57,6 +57,8 @@ public static partial class Checks
             var provenance = RunCheckpoints.Require(snapshot);
             var schema = snapshot.SchemaVersion;
             var original = RunCheckpoints.Encode(snapshot);
+            Assert(JsonNode.Parse(original)!["seedline"]!["schema_version"]!.GetValue<int>() == RunCheckpoints.SchemaVersion,
+                "checkpoint records the current Seedline schema");
             var release = JsonNode.Parse(System.IO.File.ReadAllText(Path.Combine(Path.GetDirectoryName(OS.GetExecutablePath())!, "release_info.json")))!;
             Assert(JsonNode.Parse(original)!["seedline"]!["game_build"]!.GetValue<string>() == $"{release["version"]}/{release["commit"]}",
                 "checkpoint records the loaded game build");
@@ -93,7 +95,6 @@ public static partial class Checks
 
             await CheckStores(snapshot, schema, original, provenance);
             CheckRejections(snapshot, schema, original);
-            CheckEarlierSchemas(original, schema);
             await CheckCloud(snapshot, schema);
             await CheckDisk(snapshot, schema);
 
@@ -176,10 +177,10 @@ public static partial class Checks
             root => { if (!root.Remove("_ritsulib")) root["_ritsulib"] = new JsonObject { ["version"] = 1, ["run_saved_data"] = new JsonObject() }; },
             root => root.Remove("seedline"),
             root => root["seedline"]!["schema_version"] = RunCheckpoints.SchemaVersion + 1,
-            root => root["seedline"]!["schema_version"] = 1,
-            root => root["seedline"]!["schema_version"] = 3,
-            root => root["seedline"]!["schema_version"] = 4,
+            root => root["seedline"]!["schema_version"] = RunCheckpoints.SchemaVersion - 1,
+            root => root["seedline"]!.AsObject().Remove("schema_version"),
             root => root["seedline"]!["schema_version"] = "invalid",
+            root => root["seedline"]!.AsObject().Remove("rewards"),
             root => root["seedline"]!.AsObject().Remove("random_positions"),
             root => root["seedline"]!.AsObject().Remove("selection"),
             root => root["seedline"]!["selection"] = null,
@@ -257,18 +258,6 @@ public static partial class Checks
             catch (InvalidDataException) { Assert(true, $"{mode} rejected"); }
         }
         snapshot.GameMode = GameMode.Standard;
-    }
-
-    private static void CheckEarlierSchemas(byte[] original, int schema)
-    {
-        foreach (var version in Enumerable.Range(1, RunCheckpoints.SchemaVersion - 1))
-        {
-            var legacy = JsonNode.Parse(original)!.AsObject();
-            legacy["seedline"]!["schema_version"] = version;
-            legacy["seedline"]!.AsObject().Remove("rewards");
-            try { RunCheckpoints.Decode(legacy.ToJsonString(), schema); throw new Exception("Earlier reward history was accepted."); }
-            catch (InvalidDataException) { Assert(true, $"schema {version} requires a fresh run for reward history"); }
-        }
     }
 
     private static bool SameState(CheckpointState left, CheckpointState right) =>

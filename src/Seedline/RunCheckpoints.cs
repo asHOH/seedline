@@ -17,7 +17,7 @@ internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Rand
 
 internal static class RunCheckpoints
 {
-    internal const int SchemaVersion = 6;
+    internal const int SchemaVersion = 1;
     private static readonly ConditionalWeakTable<RunState, CheckpointState> runs = new();
     private static readonly ConditionalWeakTable<SerializableRun, CheckpointState> snapshots = new();
 
