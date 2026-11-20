@@ -154,8 +154,8 @@ A source policy may cover:
 - **Triple sequence:** a card identity sequence consumed in complete consecutive groups of three entries (**triples**).
 - **Ordinal:** an opportunity's position within its category. Counts are run-wide unless scoped; scoped counts reset for each scope instance.
 - **Logical occurrence / physical copy:** a logical occurrence is a persistent record for one copy; a physical copy is the card currently associated with that record.
-- **Occurrence address:** a logical occurrence's source ID, distinct for each copy.
-- **Card key:** a persistent card ID for selection and source-based shuffling.
+- **[Occurrence address](#card-identifiers):** a logical occurrence's source ID, distinct for each copy.
+- **[Card key](#card-identifiers):** a persistent card ID for selection and source-based shuffling.
 - **Selection key:** a candidate's ID for a selection purpose.
 - **[Selection state](#addressing-and-state):** hidden information carried by a logical occurrence that governs its future selection.
 - **Routing:** selecting logical occurrences among eligible cards with the same identity and gameplay-relevant status, then associating them with player-selected physical copies.
@@ -377,6 +377,17 @@ Apply [fixed-priority sampling](#fixed-selection-priorities) afresh per opportun
 
 **Selection state:** an occurrence's address, card key and any local selection keys, [clocks and renewal counts](#persistent-clocks).
 
+#### Card identifiers
+
+These identifiers belong to the logical occurrence. [Routing](#routing) can associate that occurrence with a physical copy.
+
+| Identifier | Role |
+|---|---|
+| [Occurrence address](#card-occurrence-addresses) | Identifies the logical copy and its source. |
+| [Card key](#card-keys) | Persistent ID that can serve as a selection or shuffle key. |
+| [Selection key](#rng-derivation-and-addressing) | Identifies the card for selection randomness. |
+| [Shuffle key](#priority-assignment) | Identifies the card for shuffle randomness. |
+
 #### Shared addresses
 
 ##### Event addresses
@@ -432,7 +443,7 @@ Other new permanent cards use occurrence addresses; returns follow [lifetime rul
 
 For combat [selection](#random-combat-card-selection) and [routing](#combat-card-routing), use combat-local [persistent clocks](#persistent-clocks) with one fixed selection key per occurrence. Use a separate per-occurrence renewal count within each sharing scope.
 
-**At combat start:** before selection effects, use each card's key from [shuffle-key assignment](#priority-assignment) without Innate separation, including retained entries for removed cards. Innate separation applies only to shuffling.
+**At combat start:** before selection effects, initialize each card's selection key using [priority assignment](#priority-assignment), treating Innate cards as ordinary and including retained entries for removed cards.
 
 **During combat:** take the first applicable key for a new occurrence:
 
@@ -1137,7 +1148,7 @@ Address each shuffle by `purpose = shuffle` + [combat address](#combat-addresses
 
 #### Priority assignment
 
-Derive each card's priority from the shuffle address + its **shuffle key**: a source-based key or priority-sequence ID + position reassigned at each shuffle.
+Derive each card's priority from the shuffle address + its [shuffle key](#card-identifiers), either a source-based card key or a priority-sequence ID + position reassigned at each shuffle.
 
 The opening Innate subgroup uses [processing order](#card-processing-order), least useful first, with its own priority sequence. For ordinary cards, the first applicable row wins:
 
