@@ -1,6 +1,6 @@
 # Implementation
 
-For developers building, testing or changing Seedline. For supported mods and save precautions, see [player compatibility guidance](compatibility.md).
+For developers. See [compatibility and saves](compatibility.md) for player guidance.
 
 ## Build and validate
 
@@ -10,11 +10,12 @@ Install the .NET SDK pinned in [global.json](../global.json). In PowerShell 7, r
 ./scripts/verify.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
-The command builds and checks the mod, using an isolated game copy for integration checks; allow disk space for that copy. Use `-Dotnet 'path/to/dotnet.exe'` for a portable SDK.
+Integration checks use an isolated game copy, so allow disk space for it.
 
-Add `-RitsuLibDir '<extracted RitsuLib package>'` when using RitsuLib. Keep the [complete RitsuLib package](compatibility.md#ritsulib) for these checks.
+- For a portable SDK, add `-Dotnet 'path/to/dotnet.exe'`.
+- With RitsuLib, add `-RitsuLibDir '<extracted RitsuLib package>'`, using the [complete package](compatibility.md#ritsulib).
 
-The validated package is written to `artifacts/Seedline/`. Follow the [deployment steps](../README.md#deploy) to install it.
+The validated package is written to `artifacts/Seedline/`. See [deployment](../README.md#build-and-deploy).
 
 ## State and checkpoints
 
@@ -26,7 +27,7 @@ The validated package is written to `artifacts/Seedline/`. Follow the [deploymen
 
 ### Checkpoint contract
 
-Implement [saved-state guarantees](../design/DESIGN.md#saved-state) with one checkpoint combining vanilla saved state, Seedline saved state and required RitsuLib payloads at the [standard modded save path](compatibility.md#saves).
+Store vanilla, Seedline and required RitsuLib state in one checkpoint at the [modded save path](compatibility.md#saves), following the [saved-state guarantees](../design/DESIGN.md#saved-state).
 
 - Capture freezes all payloads. Restore independent state copies, preserving parent-event reconstruction. Reload-count rewrites preserve the loaded snapshot.
 - Load all payloads from the same primary or backup. Recover from a complete backup only when the primary is missing, empty or has malformed JSON syntax.
@@ -52,4 +53,5 @@ RitsuLib does not change Seedline's RNG behavior or state format.
 
 ### Modded characters
 
-Apply the [modded-character alignment boundary](compatibility.md#modded-characters), preserving game/mod behavior outside it.
+- Retain alignment for rewards (including card offers from their pools), shops, chests, vanilla rooms/events, and vanilla enemy setup, HP and AI.
+- Leave card shuffling, insertion, selection, copy routing, changes to existing permanent cards, random costs, combat card generation, orb generation and player-side random targeting to game/mod behavior.

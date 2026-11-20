@@ -1,6 +1,6 @@
 # Compatibility and saves
 
-For players choosing mods. See the [supported game setup and deployment steps](../README.md#supported-setup) to get started, or [implementation](implementation.md) for developer integration details.
+For players. See [setup and installation](../README.md#supported-setup) or [developer integration details](implementation.md).
 
 ## New runs
 
@@ -8,12 +8,11 @@ Seedline uses fully unlocked content in new runs while preserving profile unlock
 
 ## RitsuLib
 
-RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, which supplies the runtime for StS2 v0.113.1. Untested versions produce a warning rather than a version-based startup failure. See the [supported save-data scope](implementation.md#ritsulib).
+RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, the runtime for StS2 v0.113.1. Untested versions warn. See the [supported save-data scope](implementation.md#ritsulib).
 
 ## Modded characters
 
-- Seedline retains alignment for rewards (including card offers from their pools), shops, chests, vanilla rooms/events, and vanilla enemy setup, HP and AI.
-- Card shuffling, insertion, selection, copy routing, changes to existing permanent cards, random costs, combat card generation, orb generation and player-side random targeting follow game/mod behavior.
+Rewards, shops, chests, base-game rooms/events and base-game enemies remain aligned. Many card and player-side combat effects, including shuffles and random targeting, keep their original behavior. See the [exact support boundary](implementation.md#modded-characters).
 
 ## Tested mods
 
@@ -40,10 +39,6 @@ RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, whi
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, Seedline and RitsuLib setup fixed throughout each run. Continuing with Seedline disabled can discard its state.
 
-Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves.
+Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. Live Steam synchronization remains unverified.
 
 Start a new run after incompatible updates.
-
-### Verification limits
-
-Live Steam synchronization remains unverified.
