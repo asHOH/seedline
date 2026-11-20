@@ -2,19 +2,21 @@
 
 A Slay the Spire 2 mod that gives same-seed runs similar gameplay experiences — rewards, choices and combat challenges — across different routes and decisions.
 
-Seedline reduces the influence of unrelated actions on later luck. For example, your first shop can offer the same initial cards on different routes when eligible cards match.
+Seedline reduces the influence of unrelated actions on later luck. For example, in the base game, reshuffling your deck an extra time in one fight can change your opening hand in the next. Seedline keeps each fight's shuffles separate, so that extra shuffle alone won't change your next opening hand.
 
-Your choices still matter. Some probabilities and save/load reroll options change to keep experiences similar.
+To keep same-seed experiences similar, Seedline changes some reward probabilities and how actions affect later random results.
+
+If you save and reload to try different actions (SL), expect more changes from the base game. Some actions that previously let you reroll an outcome no longer do, so you may find this way of playing very different. See the [gameplay changes](design/DESIGN.md#shared-vanilla-deviations) for details.
 
 ## Supported setup
 
-Requires **StS2 v0.113.1** on Windows. Supports standard and Dread single-player runs without custom modifiers.
+Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player runs without custom modifiers. [RitsuLib](docs/compatibility.md#ritsulib) is optional.
 
 ## Performance
 
 With 30-card decks, [benchmarks](research/README.md#performance) measured under **1.5 ms median added time per tested operation**.
 
-## Deploy
+## Build and deploy
 
 [Build and validate](docs/implementation.md#build-and-validate), then close the game. From the repository root in PowerShell 7, deploy using your game path:
 
