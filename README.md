@@ -6,11 +6,23 @@ In the base game, unrelated actions can shift later random results. Seedline ali
 
 Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve outcome consistency.
 
-Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation and compatibility](docs/implementation.md) and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
+Designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation and compatibility](docs/implementation.md) and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
 
 ## Supported setup
 
-Requires **StS2 v0.113.1/d09d48e5** on Windows. Supports standard and Dread single-player runs without custom modifiers. Compare runs with matching seeds, game/mod versions and rules. Disable Catfood.
+Requires **StS2 v0.113.1/d09d48e5** on Windows. Supports standard and Dread single-player runs without custom modifiers.
+
+## Performance
+
+In [headless tests](research/README.md#performance), median added time was under **1.5 ms per tested operation** with 30 cards and **11–25 ms for whole-deck operations** at the **2,000-permanent-card** full-alignment limit, including **1,900 Angers**.
+
+| Operation (median ms) | 30 cards, vanilla | 30 cards, Seedline | 2,000 cards, vanilla | 2,000 cards, Seedline |
+|---|---:|---:|---:|---:|
+| Enter combat (includes shuffle) | 0.34 | 0.97 | 17.22 | 31.88 |
+| Opening shuffle | 0.02 | 0.62 | 0.30 | 11.66 |
+| Choose from hand | 0.12 | 0.41 | 0.16 | 1.11 |
+| Retrieve from discard | 0.28 | 1.04 | 1.69 | 26.33 |
+| Prepare save data | 0.56 | 2.02 | 1.20 | 19.26 |
 
 ## Build and validate
 

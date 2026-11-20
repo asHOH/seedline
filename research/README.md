@@ -13,6 +13,19 @@
 
 Run commands from the repository root.
 
+### Performance
+
+The [benchmark](performance/Probe.cs) compares vanilla and Seedline in headless StS2 v0.113.1, using Release builds on a Ryzen 9 8940HX. Fresh Ironclad runs cover Acts 1 and 3 with mixed/duplicate-heavy 30-card decks or 2,000 permanent cards including **1,900 Angers**, without combat powers.
+
+Three paired runs produce 1,800 [samples](performance/samples.jsonl.gz), with three warmups and ten measurements per case. [Results](performance/results.json) report median timings and allocations. Added time is the difference between modded and vanilla medians.
+
+Timings cover the [listed operations](../README.md#performance), excluding fixture construction, rendering, disk writes and full reshuffles. The opening shuffle is timed inside combat setup, occurs exactly once and is included in combat-entry time.
+
+```powershell
+./research/performance/run.ps1 -GameDir 'D:/Games/Slay the Spire 2'
+node research/performance/summarize.mjs '<printed evidence directory>'
+```
+
 ### Rarity calibration
 
 The v0.111.0 [model](reward-calibration/calibrate.cjs) uses 200,000 calibration and 200,000 validation runs per difficulty, with identical [projected three-act routes and economy](reward-calibration/environment.cjs) for vanilla and mod. Fits include opening triples and A0–6 Common-first replacement.
