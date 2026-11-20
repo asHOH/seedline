@@ -1,10 +1,10 @@
 # Seedline
 
-A Slay the Spire 2 mod that keeps same-seed runs comparable across different routes and decisions.
+A Slay the Spire 2 mod that gives same-seed runs similar gameplay experiences — rewards, choices and combat challenges — across different routes and decisions.
 
-In the base game, unrelated actions can shift later random results, making gameplay experience diverge. Seedline reduces that interference across rewards, shops, events and combat. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
+In the base game, unrelated actions can shift later random results, making gameplay experiences diverge. Seedline aligns corresponding opportunities across rewards, shops, events and combat. For example, each run's first shop can offer the same initial cards on different floors when eligible cards match.
 
-Choices still matter. Different decks, owned items, eligibility and numbers of rewards or effects used can change outcomes. Seedline preserves base-game behavior except for deliberate consistency tradeoffs and corrections. The [gameplay design](design/DESIGN.md) explains what stays comparable, what can still diverge, and changes to probabilities and save/load reroll options. The [card processing order](design/CARD_ORDER.md) is just a part of the design.
+Choices still matter. Different decks, owned items, eligibility and numbers of rewards or effects used can change outcomes. Seedline preserves base-game behavior except for deliberate consistency tradeoffs and corrections. The [gameplay design](design/DESIGN.md) explains which experiences stay similar, what can still diverge, and changes to probabilities and save/load reroll options. The [card processing order](design/CARD_ORDER.md) is just a part of the design.
 
 See [compatibility and saves](docs/compatibility.md) for playing with other mods, [implementation and build checks](docs/implementation.md) for development, and [research](research/README.md) for evidence and methods, including [event workbook maintenance](research/README.md#event-workbook).
 

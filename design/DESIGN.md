@@ -8,13 +8,13 @@ See [Reference](#reference) for deviation grading, supporting analysis and rejec
 
 ## Goals and principles
 
-**Goal:** keep rewards, choices and combat challenges in same-seed runs comparable across different routes and decisions. Align choices and combat challenges at corresponding opportunities — such as each run's first shop or third normal-fight reward — even on different floors.
+**Goal:** give same-seed runs similar gameplay experiences — rewards, choices and combat challenges — across different routes and decisions. Align corresponding opportunities, such as each run's first shop or third normal-fight reward.
 
 **Fairness principle:** preserve meaningful consequences while minimizing unrelated future gameplay changes.
 
 **Preservation:** retain vanilla gameplay except for deliberate alignment tradeoffs or corrections to unintended behavior.
 
-**Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that make same-seed runs less comparable, often early or mid-game. Differences caused solely by unequal consumption of intentionally shared sequences are benign, including late-game divergence.
+**Same-seed divergence (歪种):** outcome differences from uncontrolled randomness that make same-seed gameplay experiences diverge, often early or mid-game. Differences caused solely by unequal consumption of intentionally shared sequences are benign, including late-game divergence.
 
 **Batch-order neutrality:** changing click or enumeration order for the same batch must preserve which identities or statuses are affected and the subsequent random state, unless the effect is explicitly order-dependent. This should preserve presentation order and gameplay effects.
 
@@ -26,7 +26,7 @@ Vanilla deviations are assessed separately for **NoSL** (no save/loading) and **
 
 Standalone StS2 v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
 
-Compare single-player runs, including Dread, with matching seeds, versions and rules, and fully unlocked, unmodded content.
+Applies to single-player runs, including Dread, with matching seeds, versions and rules, and fully unlocked, unmodded content.
 
 Grant full content within new runs using this mod, preserving profile unlocks and Ascension limits.
 
