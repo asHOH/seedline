@@ -38,12 +38,12 @@ Consistency fixes with no gameplay impact are ungraded.
 
 **Play modes:**
 
-- **NoSL:** no save/loading; assess in-room and upper-level strategy.
-- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and in-room choices affecting later rooms, such as which potions to carry.
+- **NoSL:** no save/loading; assess within-room and upper-level strategy.
+- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and within-room choices affecting later rooms, such as which potions to carry.
 
 Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
 
-**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe in-room exploration at any grade: `5(↓)` changes strategy while simplifying exploration.
+**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe within-room exploration at any grade: `5(↓)` changes strategy while simplifying exploration.
 
 Rare deviations include a **Frequency:** field.
 
@@ -51,16 +51,16 @@ The deviations below are shared across policies.
 
 #### Future steering loss
 
-**Vanilla deviation — SL 5↓(↓):** applies when changes remove planning decisions based on steering later outcomes through earlier consumption of shared randomness. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favored orb sequence for the next battle.
+**Vanilla deviation — SL 5↓(↓):** fewer planning decisions based on steering later outcomes through earlier random consumption. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favorable orb sequence for the next battle.
 
-This deviation applies implicitly wherever its definition holds.
+Applies implicitly wherever this definition holds.
 
 #### Within-room reroll loss
 
-**Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** fewer alternatives from replaying a room through:
+**Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** some actions no longer change a room's random outcomes:
 
-- Unrelated random consumption, forced selections or failed operations.
-- Click/enumeration order or equivalent-copy choices.
+- Other random effects, forced selections or failed operations.
+- Action/enumeration order or equivalent-copy choices.
 
 #### Changed eligible-set alternatives
 
@@ -459,7 +459,7 @@ Each potion type has its own run-wide effect ordinal:
 
 **Cauldron exception:** Each potion offered by Cauldron grants one exemption for its type — any action that would advance that type's effect ordinal consumes one available exemption instead. Unused exemptions expire at next-room entry.
 
-**Vanilla deviation — SL 5(↑):** discard, trade and reward skips advance the next same-type effect batch. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
+**Vanilla deviation — SL 5(↑):**  discarding, trading or skipping potions can reroll the next same-type potion's results. Preserving favorable randomness for later combats therefore requires picking up and keeping other same-type potions.
 
 ### Rarity and identity sequences
 
@@ -547,7 +547,7 @@ Without [borrowing](#borrowing), generic reward opportunities must eventually ex
 
 By default, hidden random relic rewards use the generic rewards source, including paid rewards and relic-triggered grants. Classify deferred rewards separately from their granting relic.
 
-**Vanilla deviation — SL 5↑:** events now allow foreseeing future relic rewards.
+**Vanilla deviation — SL 5↑:** generic relic grants in events can reveal exact next relic reward; vanilla only reveals next identity of a rarity.
 
 #### Borrowing
 
@@ -565,7 +565,7 @@ Baseline: [relic bags](#relic-bags).
 
 #### Reward generation
 
-On entering a non-empty chest room, advance the chest ordinal once and generate both gold and relic rewards.
+On entering a nonempty chest room, advance the chest ordinal once and generate both gold and relic rewards.
 
 - **Gold:** generate base gold from the chest ordinal, independently of combat gold.
 - **Relic:** consume one generic rarity-roll entry, derive the [marker-lifetime roll](#finite-lifetime-chest-markers), and exclude the drawn identity from later chests.
@@ -591,7 +591,7 @@ Circlet rewards bypass markers: skipping leaves stock unchanged; acquisition ret
 
 Use the [filtered-draw advancement and collision rules](#filtered-draws). A chest marker expires after `x` eligible-entry advances or when its resolution exhausts eligible supply after borrowing. Each transfer decrements `x` and moves the marker to the supplying position. Collisions preserve each marker's lifetime and carried entry.
 
-**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + non-empty chest ordinal. Use the delivered rarity, including fallback.
+**Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + nonempty chest ordinal. Use the delivered rarity, including fallback.
 
 Before recording the offer, `S` counts currently available, chest-eligible shared identities of that rarity across the generic, shop and Courier sequences, including the drawn entry. Exclude previous chest offers and consumed entries, including unbought shop displays.
 
@@ -621,7 +621,7 @@ Each source has Common/Uncommon/Rare identity sequences over the full eligible p
 
 **[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** Alchemize with full slots can no longer bypass an unwanted potion.
 
-**Vanilla deviation — SL 5:** Brew/Frond and Alchemize now share a sequence.
+**Vanilla deviation — SL 5:** Brew/Frond generation can now reroll later Alchemize potions, and vice versa.
 
 #### Drop checks
 
@@ -1060,7 +1060,7 @@ Baseline: [potion sacrifice selection](#potions-1).
 
 Reflections processes downgrades and refills in ascending pre-selection downgrade-clock order, then determines upgrade candidates.
 
-**[Reroll loss](#within-room-reroll-loss):** in vanilla, buying Royal Stamp before Whetstone can change Whetstone's targets via shared `NonCombatGeneration` RNG.
+**[Reroll loss](#within-room-reroll-loss):** unrelated random effects no longer reroll upgrade targets, including buying Royal Stamp before Whetstone.
 
 Baseline: [card selection](#card-state-and-selection) and [Wongos](#shops-chests-and-relic-events).
 
@@ -1123,9 +1123,9 @@ Use `purpose = bot generation` + [Fabricator occurrence](#enemy-occurrence-addre
 
 #### Vanilla deviations
 
-**[Reroll loss](#within-room-reroll-loss):** in the [small-slime example](#enemy-ai-1), killing either small slime gives Twig M the same next intent.
+**[Reroll loss](#within-room-reroll-loss):** fewer intent alternatives from enemy kill/stun timing ([small-slime example](#enemy-ai-1)).
 
-**[Eligible-set alternatives](#changed-eligible-set-alternatives):** in the [reference examples](#enemy-ai-1), Flyconid/Twig M lose vanilla's guaranteed non-attacking option; trying both rat survivors finds Screech with probability `2/3`, up from `1/2`.
+**[Eligible-set alternatives](#changed-eligible-set-alternatives):** survivor and move-eligibility changes can improve or worsen attainable intents ([Flyconid/Twig M and rat examples](#enemy-ai-1)).
 
 Baseline: [enemy AI mechanics](#enemy-ai-1).
 
@@ -1167,7 +1167,7 @@ Copies enter the remaining group.
 
 #### Vanilla deviations
 
-**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** fewer draw/discard alternatives can weaken all cards with a draw effect. Reordering the same discarded cards gives the same shuffle, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)).
+**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** pile insertions and reordering discarded copies tied by identity and upgrade level no longer reroll shuffles, including which Frantic Escape cost is drawn first ([baseline](#combat-setup-and-shuffles)). Fewer draw-order alternatives can weaken draw effects.
 
 ### Random pile insertion
 
@@ -1219,8 +1219,6 @@ Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker
 
 **[Reroll loss](#within-room-reroll-loss):** unrelated sources, forced selections or discard order.
 
-**[Eligible-set alternatives](#changed-eligible-set-alternatives):** persistent clocks.
-
 Baseline: [card selection](#card-state-and-selection) and [shuffle mechanics](#combat-setup-and-shuffles).
 
 ### Thieving Hopper
@@ -1246,8 +1244,6 @@ Use [opportunity-specific selection priorities](#opportunity-specific-selection-
 
 **[Reroll loss](#within-room-reroll-loss):** other groups or forced targets.
 
-**[Eligible-set alternatives](#changed-eligible-set-alternatives):** selection priorities.
-
 Baseline: [random enemy targeting](#random-enemy-targeting).
 
 ### Combat card generation and transformations
@@ -1271,9 +1267,7 @@ For Entropy, follow [transformation batch rules](#transformation-batches); apply
 
 **[Reroll loss](#within-room-reroll-loss):** other pools, cost groups or unrelated sources.
 
-**Vanilla deviation — SL 4A:** ordinary-cost generation and Entropy now share a sequence.
-
-**[Reroll loss](#within-room-reroll-loss):** Entropy's identity-order batch processing.
+**[Reroll loss](#within-room-reroll-loss):** reordering same-pool ordinary-cost generation and Entropy, or reordering Entropy's batch inputs.
 
 Baseline: [combat generation and transformation mechanics](#combat-card-generation-and-transformations-1).
 
@@ -1323,7 +1317,7 @@ Address each batch by `purpose = potion card generation` + potion type + [effect
 
 Use one [identity sequence](#rarity-and-identity-sequences) per batch.
 
-**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** other potion types no longer change a potion's generated cards.
+**[Reroll loss](#within-room-reroll-loss) — SL 5(↓):** other potion types and [combat card generation](#combat-card-generation-and-transformations) no longer reroll a potion's generated cards.
 
 Baseline: [potion card-generation mechanics](#potion-card-generation).
 
