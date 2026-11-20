@@ -39,6 +39,8 @@ Rewards, shops, chests, base-game rooms/events and base-game enemies remain alig
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, Seedline and RitsuLib setup fixed throughout each run. Continuing with Seedline disabled can discard its state.
 
-Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. Live Steam synchronization remains unverified.
+Seedline saves use the game's existing Steam Cloud support. Cloud save handling is covered by simulated tests. Live synchronization remains unverified.
+
+Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves.
 
 Start a new run after incompatible updates.
