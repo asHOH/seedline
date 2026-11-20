@@ -29,5 +29,5 @@ Keep the game build, Seedline and RitsuLib setup fixed during a run. Disabling S
 ## Learn more
 
 - [Gameplay design](design/DESIGN.md) — rules and tradeoffs.
-- [Development](docs/implementation.md) — building, testing and implementation.
+- [Development](docs/development.md) — building, testing and releases.
 - [Research](research/README.md) — evidence and methods.
