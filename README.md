@@ -6,7 +6,7 @@ In the base game, unrelated actions can shift later random results. Seedline ali
 
 Choices still matter: decks, owned items, eligibility and the number of rewards or effects used can change outcomes. The mod makes deliberate changes to some probabilities and reroll options to improve outcome consistency.
 
-Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation](docs/implementation.md), [validation results](docs/validation.md), and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
+Authoritative designs: [gameplay rules](design/DESIGN.md) and [card processing order](design/CARD_ORDER.md). Guides: [implementation and compatibility](docs/implementation.md) and [research](research/README.md), including [event workbook maintenance](research/README.md#event-workbook).
 
 ## Supported setup
 
@@ -40,7 +40,7 @@ The notice follows the game's language setting and supports all 17 game language
 
 ## RitsuLib compatibility
 
-RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, which supplies the runtime for StS2 v0.113.1. Untested versions produce a warning rather than a version-based startup failure. See the [tested versions](docs/validation.md#tested-mods) and [supported save-data scope](docs/implementation.md#checkpoint-contract).
+RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, which supplies the runtime for StS2 v0.113.1. Untested versions produce a warning rather than a version-based startup failure. See the [tested mods](docs/implementation.md#tested-mods) and [supported save-data scope](docs/implementation.md#ritsulib).
 
 Add `-RitsuLibDir '<extracted RitsuLib package>'` to the build-and-validate command when using RitsuLib.
 
@@ -48,6 +48,6 @@ Add `-RitsuLibDir '<extracted RitsuLib package>'` to the build-and-validate comm
 
 Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, Seedline and RitsuLib setup fixed throughout each run: continuing with Seedline disabled can discard its state.
 
-Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. See [cloud verification limits](docs/validation.md#verification-limits).
+Keep copies of the checkpoint and its `.backup` outside the game's save directory. Steam startup synchronization can replace or remove local saves. See [cloud verification limits](docs/implementation.md#verification-limits).
 
 Start a new run after incompatible updates.
