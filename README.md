@@ -16,15 +16,13 @@ Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dre
 
 With 30-card decks, [benchmarks](research/README.md#performance) measured under **1.5 ms median added time per tested operation**.
 
-## Build and deploy
+## Install
 
-[Build and validate](docs/implementation.md#build-and-validate), then close the game. From the repository root in PowerShell 7, deploy using your game path:
-
-```powershell
-./scripts/deploy.ps1 -GameDir 'D:/Games/Slay the Spire 2'
-```
+Download the `Seedline-<version>.zip` asset from the [latest release](https://github.com/asHOH/StS2/releases/latest), not GitHub's source-code archive. Close the game and extract the `Seedline` folder into its `mods` folder, creating `mods` if needed.
 
 Enable **Seedline / 不歪种神器** in the game's mod loader and start a new run. New runs use fully unlocked content without changing profile unlocks or Ascension limits.
+
+To build from source, see [development instructions](docs/implementation.md#build-and-validate).
 
 ## Saves
 

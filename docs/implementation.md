@@ -15,7 +15,37 @@ Integration checks use an isolated game copy, so allow disk space for it.
 - For a portable SDK, add `-Dotnet 'path/to/dotnet.exe'`.
 - With RitsuLib, add `-RitsuLibDir '<extracted RitsuLib package>'`, using the [complete package](compatibility.md#ritsulib).
 
-The validated package is written to `artifacts/Seedline/`. See [deployment](../README.md#build-and-deploy).
+The validated package is written to `artifacts/Seedline/`. Close the game, then deploy from the repository root using your game path:
+
+```powershell
+./scripts/deploy.ps1 -GameDir 'D:/Games/Slay the Spire 2'
+```
+
+Enable Seedline in the game's mod loader and start a new run.
+
+## Releases
+
+Build and test locally against the supported game installation. Hosted CI lacks the required game assemblies and executable, so release packaging reuses `verify.ps1` instead of maintaining a separate CI build.
+
+1. Set the same version in `src/Seedline/Seedline.json` and `src/Seedline/Seedline.csproj`, and add release notes in `docs/releases/<version>.md`.
+2. Commit the release changes and start from a clean working tree.
+3. Run the packaging command below. It runs all checks and creates `artifacts/Seedline-<version>.zip` and its `.sha256` checksum. Include RitsuLib when validating its support. `-Dotnet` accepts a portable SDK.
+
+```powershell
+./scripts/package-release.ps1 -GameDir 'D:/Games/Slay the Spire 2' -RitsuLibDir '<complete RitsuLib package>'
+```
+
+Tag the tested commit, push it, and create a draft with both assets. Replace the example version for each release. These commands require GitHub CLI authentication and repository write access.
+
+```powershell
+$version = '0.1.0'
+git tag -a "v$version" -m "Seedline $version"
+git push origin HEAD
+git push origin "v$version"
+gh release create "v$version" "artifacts/Seedline-$version.zip" "artifacts/Seedline-$version.zip.sha256" --verify-tag --draft --title "Seedline $version" --notes-file "docs/releases/$version.md"
+```
+
+Check the uploaded assets and notes, then publish with `gh release edit "v$version" --draft=false --latest`. Releases remain private while the repository is private. Do not reuse a published version for different binaries.
 
 ## State and checkpoints
 

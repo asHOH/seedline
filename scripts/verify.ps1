@@ -12,6 +12,8 @@ $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
 $env:DOTNET_CLI_HOME = Join-Path $repo '.cache/dotnet-home'
 $env:NUGET_PACKAGES = Join-Path $repo '.cache/nuget'
 
+& (Join-Path $PSScriptRoot 'test-release-package.ps1')
+
 & $Dotnet restore Seedline.slnx --nologo -m:1
 if ($LASTEXITCODE) { throw 'Restore failed.' }
 & $Dotnet format Seedline.slnx --verify-no-changes --no-restore
