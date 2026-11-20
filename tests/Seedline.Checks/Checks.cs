@@ -104,6 +104,7 @@ public static partial class Checks
             Assert(RunCheckpoints.Require(fresh).Random.NextUInt64(address) == openingRoll && live.Position(address) == 2,
                 "same-seed runs reproduce rolls independently of UUID and other run consumption");
             manager.CleanUp();
+            await CheckModifierCheckpoints();
             await CheckGameplayRewards();
             await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
             ((SceneTree)Engine.GetMainLoop()).Quit();
@@ -197,6 +198,9 @@ public static partial class Checks
             root => root["seedline"]!["seed"] = "another seed",
             root => root["schema_version"] = schema + 1,
             root => root["modifiers"] = null,
+            root => root["modifiers"] = new JsonArray((JsonNode?)null),
+            root => root["modifiers"] = new JsonArray(new JsonObject { ["id"] = null }),
+            root => root["is_custom_game"] = true,
             root => root["rng"] = null,
             root => root["players"] = new JsonArray((JsonNode?)null),
             root => root["acts"] = null,

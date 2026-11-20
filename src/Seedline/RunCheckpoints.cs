@@ -24,7 +24,7 @@ internal static class RunCheckpoints
     internal static void Start(RunState run)
     {
         ModEntry.CheckOtherMods();
-        CheckScope(run.GameMode, run.IsCustomGame, run.Players.Count, run.Modifiers.Count);
+        CheckLiveScope(run);
         RunContent.Grant(run);
         runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed), RitsuBridge.Capture(run)));
     }
@@ -32,12 +32,16 @@ internal static class RunCheckpoints
     internal static void Capture(RunState run, SerializableRun save)
     {
         if (runs.TryGetValue(run, out var state))
+        {
+            CheckLiveScope(run);
             snapshots.Add(save, state.Copy() with { Ritsu = RitsuBridge.Capture(run) });
+        }
     }
 
     internal static void Restore(RunState run, SerializableRun save)
     {
         ModEntry.CheckOtherMods();
+        CheckLiveScope(run);
         var state = Require(save);
         if (run.Rng.StringSeed != state.Seed)
             throw new InvalidDataException("Seedline checkpoint belongs to another run.");
@@ -137,15 +141,24 @@ internal static class RunCheckpoints
             save.Modifiers == null || save.Acts == null || save.SerializableOdds == null ||
             save.SerializableSharedRelicGrabBag == null || save.ExtraFields == null ||
             save.Players.Any(player => player == null) || save.Acts.Any(act => act == null) ||
+            save.Modifiers.Any(modifier => modifier?.Id == null) ||
             save.CurrentActIndex < 0 || save.CurrentActIndex >= save.Acts.Count)
             throw new InvalidDataException("Seedline checkpoint is incomplete or belongs to another run.");
-        CheckScope(save.GameMode, save.IsCustomGame, save.Players.Count, save.Modifiers.Count);
+        CheckScope(save.GameMode, save.IsCustomGame, save.Players.Count);
         CardOccurrences.Validate(save);
     }
 
-    private static void CheckScope(GameMode mode, bool custom, int players, int modifiers)
+    private static void CheckLiveScope(RunState run)
     {
-        if (players != 1 || custom || modifiers != 0 || mode is not (GameMode.Standard or GameMode.Dread))
-            throw new InvalidDataException("Seedline supports standard and Dread single-player runs without custom modifiers.");
+        CheckScope(run.GameMode, run.IsCustomGame, run.Players.Count);
+        // Mods may carry save-only data in serialized modifiers and consume it during reconstruction.
+        if (run.Modifiers.Count != 0)
+            throw new InvalidDataException("Seedline does not support live run modifiers.");
+    }
+
+    private static void CheckScope(GameMode mode, bool custom, int players)
+    {
+        if (players != 1 || custom || mode is not (GameMode.Standard or GameMode.Dread))
+            throw new InvalidDataException("Seedline supports non-custom standard and Dread single-player runs.");
     }
 }
