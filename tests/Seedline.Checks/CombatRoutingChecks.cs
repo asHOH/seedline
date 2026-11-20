@@ -85,6 +85,17 @@ public static partial class Checks
                 Assert(scope.Selection.Get(scope.Seed, discardScope, CombatCards.Info(clicked).Key).Renewals == 1,
                     "a committed selection renews its logical clock exactly once");
 
+                var unroutedHand = pcs.Hand.Cards.ToArray();
+                var unroutedKeys = unroutedHand.Select(c => CombatCards.Info(c).Key).ToArray();
+                var routingBefore = JsonSerializer.Serialize(scope.Selection);
+                selector.PrepareToSelect([unroutedHand[^1]]);
+                var unrouted = (await CardSelectCmd.FromHand(context, player,
+                    new(CardSelectorPrefs.DiscardSelectionPrompt, 1), null, null!)).Single();
+                Assert(unrouted == unroutedHand[^1] && pcs.Hand.Cards.SequenceEqual(unroutedHand) &&
+                    unroutedHand.Select(c => CombatCards.Info(c).Key).SequenceEqual(unroutedKeys) &&
+                    JsonSerializer.Serialize(scope.Selection) == routingBefore,
+                    "source-less hand selection preserves the clicked copy, hand order, logical keys and routing clocks");
+
                 var eligible = pcs.Hand.Cards.ToArray();
                 var exhaustScope = scope.For("combat routing", "exhaust", clicked.Id.Entry);
                 var logicalPicks = scope.Selection.Copy().Select(scope.Seed, exhaustScope,

@@ -127,8 +127,8 @@ internal static class CombatRouting
     [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromHand))]
     private static class HandChoice
     {
-        private static void Prefix(Player player, Func<CardModel, bool>? filter, AbstractModel source, out Choice? __state) =>
-            __state = RouteChoices(player) ? new(player.PlayerCombatState!.Hand.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source)) : null;
+        private static void Prefix(Player player, Func<CardModel, bool>? filter, AbstractModel? source, out Choice? __state) =>
+            __state = source != null && RouteChoices(player) ? new(player.PlayerCombatState!.Hand.Cards.Where(c => filter?.Invoke(c) ?? true), Operation(source)) : null;
         private static void Postfix(Choice? __state, ref Task<IEnumerable<CardModel>> __result) => __result = Complete(__result, __state);
     }
 
