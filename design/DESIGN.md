@@ -426,7 +426,7 @@ Other new permanent cards use occurrence addresses; returns follow [lifetime rul
 | Change status or eligibility | The change itself preserves the occurrence and its selection state through equivalence-class splits and merges, subject to [upgrade/downgrade refills](#permanent-upgrades-and-downgrades). |
 | Copy a card | Create a new occurrence and selection state from the granting source. Consume no routing clocks. |
 | Permanently remove or combine cards | Retire the selected logical inputs. |
-| [Transform a card](#permanent-transformations-and-direct-additions) | Retire the original and initialize replacement selection state. |
+| [Transform a card](#permanent-transformations-and-direct-card-additions) | Retire the original and initialize replacement selection state. |
 
 #### Combat-card selection state
 
@@ -576,10 +576,10 @@ Silver Crucible's empty chest room generates neither reward and leaves the chest
 
 **Intent:** spread acquisition's character-specific probability increase across later positions.
 
-Draw the next eligible shared relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers).
+Draw the next eligible non-character-specific relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers).
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as a [relic entry](#opportunity-consumption-timing).
+- **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as a relic entry.
 
 Resolve the choice before expiry, including `x = 0`. Permanent ineligibility or acquisition elsewhere clears the carried entry, preserving the marker's lifetime.
 
@@ -591,7 +591,7 @@ Use the [filtered-draw advancement and collision rules](#filtered-draws). A ches
 
 **Lifetime:** use `x = floor(u * S)`, with uniform `u` in `[0, 1)` addressed by `purpose = marker lifetime` + rarity + nonempty chest ordinal. Use the delivered rarity, including fallback.
 
-Before recording the offer, `S` counts currently available, chest-eligible shared identities of that rarity across the generic, shop and Courier sequences, including the drawn entry. Exclude previous chest offers and consumed entries, including unbought shop displays.
+Before recording the offer, `S` counts currently available, chest-eligible non-character-specific identities of that rarity across the generic, shop and Courier sequences, including the drawn entry. Exclude previous chest offers and consumed entries, including unbought shop displays.
 
 Other-source consumption can shorten future marker lifetimes; existing lifetimes remain fixed.
 
@@ -1338,7 +1338,7 @@ These results use projected routes with approximated eligibility and event outco
 
 With uniform unseen order and fixed eligibility, one chest acquisition using [finite-lifetime markers](#finite-lifetime-chest-markers) matches vanilla's character-specific chances in generic rewards of that rarity, before borrowing or supply exhaustion. Uniform lifetimes affect character-specific positions like deleting a random chest-eligible position. Earlier draws can break uniformity.
 
-The examples contain one character-specific relic, with all others shared and all shop-eligible. The mod assigns one random relic to shop stock and uniformly orders the rest as generic stock. Vanilla uses [independent bags](#relic-bags). Each row gives the character-specific chance in the next generic reward.
+The examples contain one character-specific relic, with all others non-character-specific and all shop-eligible. The mod assigns one random relic to shop stock and uniformly orders the rest as generic stock. Vanilla uses [independent bags](#relic-bags). Each row gives the character-specific chance in the next generic reward.
 
 | Pool size | Sequence | Vanilla | Mod |
 |---|---|---|---|
@@ -1383,7 +1383,7 @@ Alternatives to [non-Summon selection](#rat-sampling)
 
 ## Appendix: existing mechanics
 
-Vanilla mechanics; [Catfood (v1.1.2) differences](#catfood-randomness-changes) are labeled.
+Vanilla mechanics, with differences noted for [Catfood v1.1.2](#catfood-randomness-changes), a mod used in earlier same-seed competitions.
 
 The [event workbook](../docs/StS2_Events.xlsx) covers v0.113.1 offers and eligibility for **61 ordinary events, forced War Historian Repy and 8 Ancients**.
 
@@ -1583,7 +1583,7 @@ Direct random effects and automatic enemy targeting share run-wide `CombatTarget
 
 #### Relic bags
 
-**Two overlapping bags:** the player bag contains **122 ordinary relics** — 26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 shared + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only shared relics. Each bag shuffles its per-rarity lists separately.
+**Two overlapping bags:** the player bag contains **122 ordinary relics** — 26 Common, 32 Uncommon, 38 Rare, 26 Shop (115 non-character-specific + 7 character-specific). The chest bag (`SharedRelicGrabBag`) contains only non-character-specific relics. Each bag shuffles its per-rarity lists separately.
 
 **Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare, using player `Rewards` for ordinary rewards, event RNG for event rewards, `Shops` for shops and `TreasureRoomRelics` for chests. Fixed-rarity requests skip the roll, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front.
 
@@ -1610,7 +1610,7 @@ One-rarity example, front at left; `K` is character-specific. Acquire and skip a
 
 Front bias can affect several later positions, depending on bag composition.
 
-**Chest probability:** with a uniform unseen player-bag order, acquiring an independently selected shared identity raises the character-specific chance at every remaining position from `C/N` to `C/(N-1)`; e.g. `5/100` → `5/99`. Here `N` counts remaining identities of one rarity and `C` its character-specific identities. These marginal probabilities assume no further observations or restrictions; preceding filtered draws can invalidate uniformity.
+**Chest probability:** with a uniform unseen player-bag order, acquiring an independently selected non-character-specific identity raises the character-specific chance at every remaining position from `C/N` to `C/(N-1)`; e.g. `5/100` → `5/99`. Here `N` counts remaining identities of one rarity and `C` its character-specific identities. These marginal probabilities assume no further observations or restrictions; preceding filtered draws can invalidate uniformity.
 
 **Floor eligibility:** these 17 relics require `TotalFloor < 41` in standard single-player or `< 38` in multiplayer (`RelicLists` and `RelicModel.IsAllowed`): Amethyst Aubergine, Book of Five Rings, Bowler Hat, Dragon Fruit, Frozen Egg, Girya, Juzu Bracelet, Lasting Candy, Lucky Fysh, Meal Ticket, Molten Egg, Old Coin, Planisphere, Shovel, Toxic Egg, White Beast Statue and White Star. The cutoff uses total floor, not whether a chest was visited.
 
