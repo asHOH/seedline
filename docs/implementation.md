@@ -18,6 +18,6 @@ Capture freezes every payload; restoration copies state independently. Reload-co
 
 Load all payloads from the same primary or backup. Recover from a complete backup only when the primary file is missing, empty or has malformed JSON syntax. Reject continuation for missing/incompatible required state, invalid run data or changed build/setup, preserving files. Required capture/write/restore failures abort, preserving prior checkpoints; emit `Saved` after successful writing.
 
-**RitsuLib scope:** official v0.6.14, current-schema run/player `RunSavedData` slots. Excludes model-attached data, slot migrations, custom pile behavior and compatibility with other mods.
+**RitsuLib scope:** current-schema run/player `RunSavedData` slots. Untested versions warn once per session rather than blocking solely on version; activation and checkpoint validation remain required. Excludes model-attached data, slot migrations, custom pile behavior and compatibility with other mods.
 
 RitsuLib envelope presence must match activation, including empty envelopes. Write captured bytes before its injection context; reattach the selected payload after its primary reread. Validate live slot values before setup because retained JSON can conceal failed imports. Seedline RNG behavior and state format are unchanged by RitsuLib.

@@ -2,19 +2,26 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 
 namespace Seedline;
 
-// shortcut: v0.6.14 run/player slots only; extend when another compatibility target is accepted.
+// Current-schema run/player slots only.
 internal static class RitsuBridge
 {
     internal const string PatchId = "com.ritsukage.sts2-RitsuLib.framework-core";
 
     // The first checkpoint operation runs after both mods have had a chance to initialize.
-    private static readonly Lazy<Type?> frameworkType = new(() => AccessTools.TypeByName("STS2RitsuLib.RitsuLibFramework"));
+    private static readonly Lazy<Type?> frameworkType = new(() =>
+    {
+        var framework = AccessTools.TypeByName("STS2RitsuLib.RitsuLibFramework");
+        if (framework != null && framework.Assembly.GetName().Version is not { Major: 0, Minor: 6, Build: 14 or 15, Revision: 0 })
+            Log.Warn($"Seedline: untested RitsuLib version {framework.Assembly.GetName().Version}; continuing with checkpoint validation enabled.");
+        return framework;
+    });
 
     private static JsonObject EmptyDocument() => new() { ["version"] = 1, ["run_saved_data"] = new JsonObject() };
 
@@ -24,9 +31,8 @@ internal static class RitsuBridge
         if (framework == null && !ModManager.Mods.Any(m => m.manifest?.id == "STS2-RitsuLib" &&
             m.state is ModLoadState.Loaded or ModLoadState.Failed))
             return false;
-        if (framework?.Assembly.GetName().Version != new Version(0, 6, 14, 0) ||
-            AccessTools.Property(framework, "IsActive").GetValue(null) is not true)
-            throw new InvalidDataException("Seedline requires active RitsuLib v0.6.14 when installed.");
+        if (framework == null || AccessTools.Property(framework, "IsActive")?.GetValue(null) is not true)
+            throw new InvalidDataException("Seedline requires active RitsuLib when installed.");
         return true;
     }
 

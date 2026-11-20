@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -39,13 +40,22 @@ public static partial class Checks
     private static async Task CheckRitsu()
     {
         var mod = ModManager.GetLoadedMods().Single(m => m.manifest?.id == "STS2-RitsuLib");
-        Assert(mod.manifest?.version == "0.6.14" && mod.errors is not { Count: > 0 }, "official RitsuLib v0.6.14 loaded");
+        var expectedVersion = System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_VERSION");
+        Assert(mod.manifest?.version == expectedVersion && mod.errors is not { Count: > 0 }, $"requested RitsuLib {expectedVersion} loaded");
         var framework = RitsuType("RitsuLibFramework");
         Assert((bool)AccessTools.Property(framework, "IsActive").GetValue(null)! &&
-            framework.Assembly.GetName().Version == new Version(0, 6, 14, 0), "RitsuLib runtime initialized at pinned version");
+            framework.Assembly.GetName().Version?.ToString(3) == expectedVersion, "RitsuLib runtime initialized at requested version");
         var order = ModManager.GetLoadedMods().Select(m => m.manifest?.id).ToList();
         Assert((order.IndexOf("STS2-RitsuLib") < order.IndexOf(ModEntry.Id)) ==
             (System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_FIRST") == "1"), "requested initializer order exercised");
+
+        var versionWarnings = 0;
+        void ObserveVersionWarning(LogLevel level, string message, int skipFrames)
+        {
+            if (message.StartsWith("Seedline: untested RitsuLib version", StringComparison.Ordinal))
+                versionWarnings++;
+        }
+        Log.LogCallback += ObserveVersionWarning;
 
         var monitor = new Harmony("Seedline.Checks.RitsuWrites");
         foreach (var storeType in new[] { typeof(MockGodotFileIo), typeof(GodotFileIo), typeof(CloudSaveStore) })
@@ -225,6 +235,9 @@ public static partial class Checks
         Assert(SaveManager.Instance.LoadRunSave().Success, "combined saving resumes after capture failure without leaked injection context");
         manager.CleanUp();
         Assert(observedWrites > 0, "real store hooks observe complete bytes without a RitsuLib injection context");
+        Log.LogCallback -= ObserveVersionWarning;
+        Assert(versionWarnings == (expectedVersion is "0.6.14" or "0.6.15" ? 0 : 1),
+            "tested RitsuLib versions stay quiet; untested versions warn only once across checkpoint operations");
         monitor.UnpatchAll(monitor.Id);
     }
 

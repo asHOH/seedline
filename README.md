@@ -40,7 +40,7 @@ The notice follows the game's language setting and supports all 17 game language
 
 ## RitsuLib compatibility
 
-RitsuLib is optional. Use the official [v0.6.14 package](https://github.com/BAKAOLC/STS2-RitsuLib/releases/download/v0.6.14/STS2.RitsuLib.0.6.14.github.zip), keeping its `compat/0.113.0` directory, which supplies the runtime for StS2 v0.113.1. See the [supported save-data scope](docs/implementation.md#checkpoint-contract).
+RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, which supplies the runtime for StS2 v0.113.1. Untested versions produce a warning rather than a version-based startup failure. See the [tested versions](docs/validation.md#tested-mods) and [supported save-data scope](docs/implementation.md#checkpoint-contract).
 
 Add `-RitsuLibDir '<extracted RitsuLib package>'` to the build-and-validate command when using RitsuLib.
 

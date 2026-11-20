@@ -53,10 +53,10 @@ foreach ($name in 'Seedline', 'Seedline.Checks') {
 if ($RitsuLibDir) {
     $ritsuPackage = (Resolve-Path -LiteralPath $RitsuLibDir).Path
     $manifest = Get-Content -LiteralPath (Join-Path $ritsuPackage 'mod_manifest.json') -Raw | ConvertFrom-Json
-    # RitsuLib v0.6.14 names its v0.113.1-compatible runtime directory 0.113.0.
-    if ($manifest.id -ne 'STS2-RitsuLib' -or $manifest.version -ne '0.6.14' -or
+    # RitsuLib names its v0.113.1-compatible runtime directory 0.113.0.
+    if ($manifest.id -ne 'STS2-RitsuLib' -or
         !(Test-Path -LiteralPath (Join-Path $ritsuPackage 'compat/0.113.0/STS2-RitsuLib.dll'))) {
-        throw 'Checks require the complete official RitsuLib v0.6.14 package, including compat/0.113.0.'
+        throw 'Checks require the complete RitsuLib package, including compat/0.113.0.'
     }
     $ritsuTarget = Join-Path $hostDir 'mods/STS2-RitsuLib'
     New-Item -ItemType Directory -Path $ritsuTarget -Force | Out-Null
@@ -73,6 +73,7 @@ $start.Environment['APPDATA'] = $runDir
 $start.Environment['LOCALAPPDATA'] = $runDir
 $start.Environment['SEEDLINE_CHECK_ROOT'] = $runDir
 $start.Environment['SEEDLINE_RITSU_CHECKS'] = if ($RitsuLibDir) { '1' } else { '0' }
+$start.Environment['SEEDLINE_RITSU_VERSION'] = if ($RitsuLibDir) { $manifest.version } else { '' }
 $start.Environment['SEEDLINE_RITSU_FIRST'] = if ($RitsuFirst) { '1' } else { '0' }
 foreach ($argument in '--headless', '--audio-driver', 'Dummy', '--force-steam=off', '--log-file', (Join-Path $runDir 'game.log')) {
     $start.ArgumentList.Add($argument)
