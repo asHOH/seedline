@@ -4,7 +4,7 @@
 
 Find source policies in the [Architecture overview](#architecture-overview); compare rarity and identity sharing in [Generation sharing](#generation-sharing).
 
-See [Reference](#reference) for supporting analysis and rejected alternatives, [Research](../research/README.md) for methods, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
+See [Reference](#reference) for deviation grading, supporting analysis and rejected alternatives, [Research](../research/README.md) for methods, and [Appendix](#appendix-existing-mechanics) for existing mechanics.
 
 ## Goals and principles
 
@@ -20,51 +20,7 @@ See [Reference](#reference) for supporting analysis and rejected alternatives, [
 
 ### Vanilla deviations
 
-Assess a seed's first playthrough.
-
-Consistency fixes with no gameplay impact are ungraded.
-
-**Unnoticeable:** imperceptible across runs, considering frequency and effect size; effects on win chance provide supporting evidence. Use 500 runs as a rough benchmark, with the [A7+ one-Rare cap](#a7-one-rare-per-offer-and-deferral) as the reference.
-
-**Neutral:** an informed player would make no meaningful change to strategy.
-
-| Grade | Impact |
-|---|---|
-| **1** | Presentation only. |
-| **3** | Unnoticeable and neutral gameplay changes. |
-| **4A** | Noticeable and neutral. |
-| **4B** | Unnoticeable and non-neutral. |
-| **5** | Noticeable and non-neutral. |
-
-**Play modes:**
-
-- **NoSL:** no save/loading; assess within-room and upper-level strategy.
-- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and within-room choices affecting later rooms, such as which potions to carry.
-
-Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
-
-**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe within-room exploration at any grade: `5(↓)` changes strategy while simplifying exploration.
-
-Rare deviations include a **Frequency:** field.
-
-The deviations below are shared across policies.
-
-#### Future steering loss
-
-**Vanilla deviation — SL 5↓(↓):** fewer planning decisions based on steering later outcomes through earlier random consumption. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favorable orb sequence for the next battle.
-
-Applies implicitly wherever this definition holds.
-
-#### Within-room reroll loss
-
-**Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** some actions no longer change a room's random outcomes:
-
-- Other random effects, forced selections or failed operations.
-- Action/enumeration order or equivalent-copy choices.
-
-#### Changed eligible-set alternatives
-
-**Vanilla deviation — SL 4A:** preserving each selection's probabilities can still change the outcomes available when SL explores different eligible sets. Alternatives may improve or disappear.
+Vanilla deviations are assessed separately for **NoSL** (no save/loading) and **SL** (save/load exploration). See [grading and notation](#deviation-grading) for presentation, noticeability and strategic impact, and [shared deviations](#shared-vanilla-deviations) for effects referenced across policies.
 
 ## Scope
 
@@ -535,6 +491,25 @@ Preserve display order and intentionally sequential effects; reward offers use t
 A transformation batch comprises the originals selected together.
 
 Generate replacements for selected originals in [identity-only order](CARD_ORDER.md#identity-only-order). Within each input identity, pair replacements in generation order with originals in pre-transformation presentation order.
+
+### Shared vanilla deviations
+
+#### Future steering loss
+
+**Vanilla deviation — SL 5↓(↓):** fewer planning decisions based on steering later outcomes through earlier random consumption. For example, [combat-local random orbs](#random-orb-types) prevent arranging a favorable orb sequence for the next battle.
+
+Applies implicitly wherever this definition holds.
+
+#### Within-room reroll loss
+
+**Vanilla deviation — SL 4A(↓), unless locally graded SL 5(↓):** some actions no longer change a room's random outcomes:
+
+- Other random effects, forced selections or failed operations.
+- Action/enumeration order or equivalent-copy choices.
+
+#### Changed eligible-set alternatives
+
+**Vanilla deviation — SL 4A:** preserving each selection's probabilities can still change the outcomes available when SL explores different eligible sets. Alternatives may improve or disappear.
 
 ## Source policies — Rewards
 
@@ -1335,6 +1310,35 @@ Baseline: [potion card-generation mechanics](#potion-card-generation).
 Add a separate mode for players who want vanilla save/load (SL) behavior. Minimize SL deviations, accepting reduced same-seed consistency where needed.
 
 ## Reference
+
+### Deviation grading
+
+Assess a seed's first playthrough.
+
+Consistency fixes with no gameplay impact are ungraded.
+
+**Unnoticeable:** imperceptible across runs, considering frequency and effect size; effects on win chance provide supporting evidence. Use 500 runs as a rough benchmark, with the [A7+ one-Rare cap](#a7-one-rare-per-offer-and-deferral) as the reference.
+
+**Neutral:** an informed player would make no meaningful change to strategy.
+
+| Grade | Impact |
+|---|---|
+| **1** | Presentation only. |
+| **3** | Unnoticeable and neutral gameplay changes. |
+| **4A** | Noticeable and neutral. |
+| **4B** | Unnoticeable and non-neutral. |
+| **5** | Noticeable and non-neutral. |
+
+**Play modes:**
+
+- **NoSL:** no save/loading; assess within-room and upper-level strategy.
+- **SL:** explores every available action sequence from the current save before committing to the next saved state. Assess the best attainable room outcomes, upper-level decisions and within-room choices affecting later rooms, such as which potions to carry.
+
+Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal, and `SL x` when only SL is affected.
+
+**Strategy-change notation:** on 4B/5, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe within-room exploration at any grade: `5(↓)` changes strategy while simplifying exploration.
+
+Rare deviations include a **Frequency:** field.
 
 ### Rarity calibration
 
