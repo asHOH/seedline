@@ -30,10 +30,11 @@ try {
     if (($names -join ',') -ne 'Seedline/LICENSE,Seedline/Seedline.dll,Seedline/Seedline.json') {
         throw 'Release archive contains unexpected entries.'
     }
-    foreach ($name in 'Seedline.dll', 'Seedline.json') {
+    foreach ($name in 'Seedline.dll', 'Seedline.json', 'LICENSE') {
+        $sourcePath = if ($name -eq 'LICENSE') { "$fixture/$name" } else { "$fixture/artifacts/Seedline/$name" }
         $reader = [IO.StreamReader]::new($zip.GetEntry("Seedline/$name").Open())
         try {
-            if ($reader.ReadToEnd() -ne (Get-Content -Raw -LiteralPath "$fixture/artifacts/Seedline/$name")) {
+            if ($reader.ReadToEnd() -ne (Get-Content -Raw -LiteralPath $sourcePath)) {
                 throw "Archive content differs from validated package: $name"
             }
         }
