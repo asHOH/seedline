@@ -353,7 +353,7 @@ A player action does not advance a gameplay selector's clocks merely because it 
 
 **Scope:** [out-of-combat](#out-of-combat-card-routing) and [combat](#combat-card-routing) operations on player-selected cards. These policies define equivalence and operation sharing.
 
-Use [persistent clocks](#persistent-clocks) for selection. An already randomly selected logical target bypasses routing.
+Use [persistent clocks](#persistent-clocks) to select a logical occurrence, then associate it with the clicked equivalent copy. This makes hidden-state selection independent of which copy is clicked. An already randomly selected logical target bypasses routing.
 
 **Routing boundary:** preserve display order. Apply effects at the clicked copies' pile positions and follow the source's movement and ordering rules. For example, Hologram removes the clicked discard entry, and All for One later reads the remaining entries in discard order.
 
@@ -659,6 +659,8 @@ Baseline: [Wongos offers and rewards](#shops-chests-and-relic-events).
 
 **Scope:** initial generation and reachable rerolls for the offer groups below.
 
+Own-character random-rarity offers simulate Rare positions separately from card identity generation. Sharing card sequences across sources keeps cards together when Rare timing changes which source offers them.
+
 #### Offer groups
 
 Upgrade rules and the number taken leave identity sharing unchanged.
@@ -708,16 +710,6 @@ Scroll Boxes' ordinary bundles use their Common triple's offer address. Sea Glas
 At the source's random upgrade check, use a uniform `[0, 1)` roll derived from `purpose = upgrade` + the card's [entry address](#entry-addresses).
 
 Baseline upgrade chances: [card rarity and upgrades](#card-reward-offers-1).
-
-#### Offer procedure
-
-For own-character random-rarity offers:
-
-1. Simulate three slots (all five for Brain Leech's Share Knowledge) under [Rare timing and delivery](#rare-timing-and-delivery).
-2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple.
-3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
-
-Replacements precede reward enchantments; [presentation swaps](#presentation) follow step 3.
 
 #### Rare timing and delivery
 
@@ -773,8 +765,6 @@ Deliver every threshold crossing immediately.
 
 Own-character random-rarity offers use two triple sequences independent of the luck thresholds. The **non-Rare sequence** supplies three Common/Uncommon cards per triple; the **rare-bearing sequence** supplies a Rare followed by two Common/Uncommon cards before presentation swaps.
 
-**Rationale:** shared sequences preserve triple alignment when a Rare moves between sources; separate normal/elite sequences advance differently.
-
 ##### Uncommon probabilities
 
 Use these Uncommon probabilities for each Common/Uncommon entry, except for the opening triples:
@@ -824,6 +814,16 @@ Resolve Defect's two independent 1% [triple-Claw substitution checks](#card-rewa
 
 - **No substitution:** consume one Common triple. It supplies both Common cards in bundle one and the first Common card in bundle two; generate the remaining Common and both Uncommons with event RNG.
 - **Triple-Claw exception:** if either bundle is replaced, generate any remaining ordinary bundle entirely with event RNG.
+
+#### Offer procedure
+
+For own-character random-rarity offers, simulate Rare positions excluding cards added by modifiers such as Lasting Candy.
+
+1. Simulate three slots (all five for Brain Leech's Share Knowledge) under [Rare timing and delivery](#rare-timing-and-delivery), recording delivered Rare positions.
+2. Consume the next [rare-bearing triple](#offer-sequences) if a Rare was delivered, otherwise the next non-Rare triple. This supplies the initial card identities and Common/Uncommon rarities.
+3. Append any [supplementary cards](#supplementary-cards), then apply [A0–6 extra-Rare replacements](#a06-multiple-rares) where applicable.
+
+Apply reward enchantments after replacements, then [swap](#presentation) the Rares generated for the simulated slots into their recorded positions.
 
 #### Rerolls
 
@@ -912,14 +912,14 @@ At act entry, rebuild each condition's sequence using only unvisited IDs availab
 
 #### Within-act selection
 
+Each condition tracks both remaining selection attempts and its position in the event-ID sequence. Tracking these separately lets a failed condition check consume an attempt without skipping an event. Both carry between selections in every act.
+
 **Priority persistence:**
 
 | Act | Condition priorities and roll sequences | Alignment aim |
 |---|---|---|
 | 1 | Initialize at act entry; retain between selections. | Match relative event order. |
 | 2–3 | Refresh priorities from remaining counts using new sequences at each selection. | Delay the act's first mismatch when earlier visits leave different pools. |
-
-Remaining counts and ID positions carry between selections in every act.
 
 1. At the times above, initialize priority `-ln(U) / n_c` for each remaining count `n_c > 0`. Draw successive independent uniform `U ∈ (0, 1)` rolls from sequences addressed by `purpose = condition selection` + condition key. In Acts 2–3, also include the act-local ordinary-event ordinal.
 2. Decrement the lowest-priority condition's count. If its predicate passes and an unvisited ID remains, try the next unvisited ID and advance the ID position, including on late eligibility failure.
