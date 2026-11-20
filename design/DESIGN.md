@@ -1317,6 +1317,10 @@ Use one [identity sequence](#rarity-and-identity-sequences) per batch.
 
 Baseline: [potion card-generation mechanics](#potion-card-generation).
 
+## Deferred plans
+
+Add a separate mode for players who want vanilla save/load (SL) behavior. Minimize SL deviations, accepting reduced same-seed consistency where needed.
+
 ## Reference
 
 ### Rarity calibration
