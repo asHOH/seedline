@@ -1,6 +1,9 @@
-.*/
+# Local caches, tool installations and machine-specific Codex settings.
+/.cache/
+/.tools/
+/.codex/
+/.agents/
 node_modules/
-*.ndjson
 ~$*.xlsx
 
 # Local artifact workspaces and reproducible scratch results.
@@ -16,3 +19,6 @@ node_modules/
 **/bin/
 **/obj/
 /artifacts/
+
+# Steam uploader logs may be written beside the command's working directory.
+mod-uploader.log

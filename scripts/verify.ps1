@@ -13,6 +13,7 @@ $env:DOTNET_CLI_HOME = Join-Path $repo '.cache/dotnet-home'
 $env:NUGET_PACKAGES = Join-Path $repo '.cache/nuget'
 
 & (Join-Path $PSScriptRoot 'test-release-package.ps1')
+& (Join-Path $PSScriptRoot 'test-workshop-package.ps1')
 
 & $Dotnet restore Seedline.slnx --nologo -m:1
 if ($LASTEXITCODE) { throw 'Restore failed.' }

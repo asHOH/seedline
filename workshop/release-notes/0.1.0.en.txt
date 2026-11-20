@@ -1,0 +1,8 @@
+[b]v0.1.0 · Initial Workshop release[/b]
+
+[list]
+[*]Reduces same-seed differences in rewards, rooms, events and combat randomness.
+[*]Provides fully unlocked content within new runs while preserving profile progress and Ascension limits.
+[*]Supports standard and Dread single-player runs on Windows with StS2 v0.113.1 public-beta.
+[*]Optional RitsuLib integration. Start a new run when first enabling Seedline.
+[/list]

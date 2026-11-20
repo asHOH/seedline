@@ -1,0 +1,9 @@
+Generated with the built-in imagegen tool.
+The upload export is resized to 512 x 512 without changing the composition.
+
+Use case: ads-marketing.
+Create one polished square Steam Workshop thumbnail for Seedline, a Slay the Spire 2 mod. Its purpose is to keep same-seed rewards and challenges aligned even when players take different routes. This is symbolic cover art, not a gameplay screenshot.
+Composition: a bold central enchanted golden seed-shaped relic, with a subtle curling sprout motif, floating before a dark jagged spire silhouette. Two distinct luminous branching map paths rise around the central seed, with a few paired matching card-shaped reward nodes, communicating different paths and consistent luck. Keep the icon simple and striking at tiny thumbnail size, not a complex diagram. The seed and two curving paths form one unified recognizable emblem.
+Style: richly painted dark-fantasy deckbuilding game illustration, expressive inked contours, sculpted painterly shapes, restrained texture, warm gold light against deep midnight teal and charcoal, soft atmospheric depth. Crisp silhouette and strong contrast. No characters.
+Text: none. No letters, numbers, watermark, UI, border or additional logo. Leave safe breathing room around the central emblem.
+Deliver a square PNG, preferably 512 by 512 pixels, opaque background.

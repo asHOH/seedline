@@ -35,6 +35,8 @@ From a clean working tree, package against the supported game installation. Incl
 
 Packaging runs `verify.ps1` and creates `artifacts/Seedline-<version>.zip` and its `.sha256` checksum.
 
+For Steam Workshop, follow the [private publication workflow](../workshop/README.md). Page text and artwork sources live in `workshop/`; upload workspaces stay in ignored `artifacts/`.
+
 With GitHub CLI authenticated for repository write access, tag the tested commit and create a draft:
 
 ```powershell
