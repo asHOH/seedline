@@ -1127,7 +1127,7 @@ Baseline: [enemy AI mechanics](#enemy-ai-1).
 
 ### Card shuffling
 
-**Intent:** align cards by source in Acts 1–2 and usefulness rank in Act 3.
+**Intent:** align cards by source in Acts 1–2. By Act 3, decks may differ too much for source-based matching to remain useful, so align by usefulness rank instead.
 
 **Scope:** opening and later shuffles, using cards' current [logical associations](#routing). Results are independent of input pile order.
 
@@ -1147,9 +1147,11 @@ The opening Innate subgroup uses [processing order](#card-processing-order), lea
 | Other starting Basics; eligible rewards/direct additions | Source-based keys below. | Second sequence, most useful first. |
 | Remaining cards | Second sequence: permanent cards in acquisition order, followed by new combat occurrences in creation order. | Both rows combined, most useful first. |
 
+**Rationale:** these directions anchor the least-useful cards in the first sequence and the most-useful cards in Act 3's second sequence.
+
 Number acquisition batches across the run and creation batches within each combat; order cards within each batch by [card processing order](#card-processing-order).
 
-Freeze the card's ordering properties at permanent removal and retain its entry through run end. Include it in opening priority assignment, then omit it from the shuffle. Additions and rank changes can still shift sequence positions.
+Freeze the card's ordering properties at permanent removal and retain its entry through run end. Include it in opening priority assignment, then omit it from the shuffle. This prevents removal alone from shifting survivors' opening assignments and combat-selection keys. Additions and rank changes can still shift sequence positions.
 
 #### Source-based assignment — Acts 1–2
 
