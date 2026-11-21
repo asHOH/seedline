@@ -24,7 +24,13 @@ The algorithms behind it are complex, but you don't need to understand them. Wit
 If all major decisions stay the same, yes! The catch is that Slay the Spire 2 has a lot of major decisions. So expect less divergence between same-seed runs, not a guarantee that they will never diverge.
 
 [b]Does it change vanilla probabilities?[/b]
-Yes. For example, we fully preserve vanilla Rare-card probabilities, but keeping card rewards consistent requires normal fights and elites to have the same Uncommon-card rates. This means elite rewards offer about 0.15 fewer Uncommon cards on average than in vanilla, while the overall Uncommon-card rate stays roughly the same. This is the mod's largest probability adjustment, but it is still small compared with the roughly 1.1 Uncommon cards you can expect to see in a single normal-fight reward.
+Yes. For example, we preserve vanilla Rare-card probabilities, but keeping card rewards consistent requires normal fights and elites to have the same Uncommon-card rates. This means elite rewards offer about 0.15 fewer Uncommon cards on average than in vanilla, while the overall Uncommon-card rate stays roughly the same. This is the mod's largest probability adjustment, but it is still small compared with the roughly 1.1 Uncommon cards you can expect to see in a single normal-fight reward.
+
+[b]Doesn't Catfood already prevent same-seed divergence?[/b]
+Catfood pioneered efforts to prevent same-seed divergence, but its probabilities differ substantially from vanilla, making it less suited to everyday play. It also falls far, far short of Seedline at keeping same-seed runs consistent.
+
+[b]What's one difference between Seedline and Catfood?[/b]
+Catfood separates card rewards by normal fights versus elites. Seedline separates them by whether the reward contains a Rare card.
 
 [b]Can I use save/load to try different actions?[/b]
 Yes, but save/load gives you far fewer ways to manipulate outcomes. This is a tradeoff for consistency: the actions that let you reroll results through save/load can also make same-seed runs diverge when you play without reloading. Better support for vanilla-style save/load play is planned.
@@ -45,7 +51,10 @@ No. Seedline and vanilla run saves are not interchangeable. Start a new run afte
 Leave a comment on this page or join QQ group 609823795. Include versions, enabled mods, and relevant logs or screenshots.
 
 [b]Is this project open source?[/b]
-Yes. The source code and detailed design are available on [url=https://github.com/asHOH/seedline]GitHub[/url].
+Yes. The source code and detailed design are available on [url=https://github.com/asHOH/seedline]GitHub[/url]. Stars are welcome!
+
+[b]Was this project written by AI?[/b]
+For the design, 10% comes from mechanics already present in Catfood, 80% is my own, and only 10% comes from original AI ideas I adopted after discussing them with it. The code was entirely written by AI. However, designing this mod took more than ten times as long as writing the code. AI was frankly terrible at design, so during that stage I mainly used it to gather and organize information.
 
 [b]What's planned next?[/b]
 Support for vanilla-style save/load play, broader mod compatibility, designs for Blitz and multiplayer modes, and write-ups explaining how Seedline works.
