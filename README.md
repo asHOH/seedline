@@ -18,7 +18,9 @@ With 30-card decks, [benchmarks](research/README.md#performance) measured under 
 
 ## Install
 
-Download `Seedline-<version>.zip` from the [latest release](https://github.com/asHOH/seedline/releases/latest). Close the game and extract the `Seedline` folder into the game's `mods` folder, creating `mods` if needed.
+Subscribe on [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3843171761) (recommended).
+
+For manual installation, download `Seedline-<version>.zip` from the [latest release](https://github.com/asHOH/seedline/releases/latest). Close the game and extract the `Seedline` folder into the game's `mods` folder, creating `mods` if needed.
 
 Enable **Seedline / 不歪种神器** in the game's mod loader and start a new run. New runs use fully unlocked content without changing profile unlocks or Ascension limits.
 
