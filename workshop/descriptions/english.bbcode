@@ -1,38 +1,48 @@
-Keep rewards, choices and combat challenges closer across different routes and decisions on the same seed. Designed for everyday play and same-seed competitions.
+The same seed can play out very differently in Slay the Spire 2. That amazing seed you shared with a friend turns into a nightmare for them. A brutal seed ends your win streak, but feels easy when you replay it to see what went wrong...
 
-For example, reshuffling an extra time in one fight no longer changes the next fight’s opening hand by itself.
+Try Seedline.
+
+With over 200 hours of design and refinement, Seedline brings same-seed runs closer together while leaving vanilla probabilities almost unchanged.
+
+Sharing seeds with friends means sharing more of the highs and lows. Replaying a tough seed becomes more useful for learning. Same-seed races between skilled players become fairer.
+
+A simple example: reshuffling an extra time in one fight no longer changes the next fight's opening hand by itself.
+
+The algorithms behind it are complex, but you don't need to understand them. With Seedline enabled, playing feels just like vanilla. Whether you're building a win streak or hunting for a great seed, just enjoy the added consistency.
 
 [b]Requirements[/b]
 
 [list]
-[*]Windows and StS2 v0.113.1 (build d09d48e5) on public-beta.
+[*]Windows and StS2 v0.113.1 on public-beta.
 [*]Standard and Dread single-player runs only. Multiplayer, Blitz and custom modifiers are unsupported.
-[*]Subscribe, enable Seedline in the game’s mod list, and start a new run.
-[*]Disable Catfood, CardAscension and Combat Solver before playing.
+[*]Supports most commonly used mods, including modded characters, but is incompatible with Combat Solver.
 [/list]
 
 [b]Q&A[/b]
 
 [b]Does this guarantee identical outcomes?[/b]
-No. Your choices still affect results. Seedline reduces changes caused by unrelated actions.
+If all major decisions stay the same, yes! The catch is that Slay the Spire 2 has a lot of major decisions. So expect less divergence between same-seed runs, not a guarantee that they will never diverge.
 
 [b]Does it change vanilla probabilities?[/b]
-Yes. Some reward probabilities change, along with how actions affect later random outcomes.
+Yes. For example, we fully preserve vanilla Rare-card probabilities, but keeping card rewards consistent requires normal fights and elites to have the same Uncommon-card rates. This means elite rewards offer about 0.15 fewer Uncommon cards on average than in vanilla, while the overall Uncommon-card rate stays roughly the same. This is the mod's largest probability adjustment, but it is still small compared with the roughly 1.1 Uncommon cards you can expect to see in a single normal-fight reward.
 
-[b]Can I save and reload?[/b]
-Yes, but some outcomes that previously changed when you tried different actions will no longer reroll.
+[b]Can I use save/load to try different actions?[/b]
+Yes, but save/load gives you far fewer ways to manipulate outcomes. This is a tradeoff for consistency: the actions that let you reroll results through save/load can also make same-seed runs diverge when you play without reloading. Better support for vanilla-style save/load play is planned.
 
 [b]Do I need everything unlocked?[/b]
-No. New runs have fully unlocked content without changing your profile unlocks or Ascension limits.
+No. Seedline automatically uses fully unlocked content without changing your profile's unlock progress.
 
 [b]Are other mods required?[/b]
-No. RitsuLib is optional.
+No. Seedline also supports commonly used mods such as RitsuLib, BaseLib and Quick SL.
 
 [b]Does it work with modded characters?[/b]
-Partially. Their shuffles, random card selections and other combat effects may retain their original behavior.
+Most out-of-combat effects are supported, but most in-combat randomness, including shuffles, still follows the original rules.
 
-[b]Can I update or disable it mid-run?[/b]
-Keep the game version, Seedline and RitsuLib setup fixed during a run. Continuing with Seedline disabled can discard its saved state. Start a new run after incompatible updates.
+[b]Can I enable or disable Seedline mid-run?[/b]
+No. Seedline and vanilla run saves are not interchangeable. Start a new run after incompatible updates.
 
 [b]Where can I report a problem?[/b]
-Use this item’s [b]Bug Reports & Feedback[/b] discussion. Include versions, enabled mods, seed, reproduction steps and relevant logs or screenshots.
+Leave a comment on this page or join QQ group 609823795. Include versions, enabled mods, and relevant logs or screenshots.
+
+[b]What's planned next?[/b]
+Support for vanilla-style save/load play, broader mod compatibility, designs for Blitz and multiplayer modes, and write-ups explaining how Seedline works.
