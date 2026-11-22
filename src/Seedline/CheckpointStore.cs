@@ -22,7 +22,6 @@ internal static class CheckpointStore
     {
         try
         {
-            ModEntry.CheckOtherMods();
             var primary = ReadOne(store, path, gameSchema);
             if (primary.Success || primary.Status is not (ReadSaveStatus.FileNotFound or ReadSaveStatus.JsonParseError or ReadSaveStatus.FileEmpty))
                 return primary;

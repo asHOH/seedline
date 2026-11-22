@@ -238,12 +238,18 @@ public static partial class Checks
         mods.Add(catfood);
         try
         {
-            ModEntry.CheckOtherMods();
-            throw new Exception("Catfood was accepted.");
-        }
-        catch (InvalidOperationException)
-        {
-            Assert(true, "Catfood rejected regardless of initializer order");
+            var fresh = RunState.CreateForNewRun([Player.CreateForNewRun<Ironclad>(UnlockState.all, 1)],
+                ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "CFCRACINGCHECK");
+            RunCheckpoints.Start(fresh);
+            Assert(RunCheckpoints.Require(fresh).Seed == "CFCRACINGCHECK", "CFCRacing presence does not block new runs");
+            var store = new MockGodotFileIo("cfcracing");
+            store.WriteFile(path, json);
+            var loaded = CheckpointStore.Read(store, path, schema);
+            Assert(loaded.Success, "CFCRacing presence does not block checkpoint reads");
+            var restored = RunState.FromSerializable(loaded.SaveData!);
+            RunCheckpoints.Restore(restored, loaded.SaveData!);
+            Assert(SameState(RunCheckpoints.Require(restored), RunCheckpoints.Require(snapshot)),
+                "CFCRacing presence does not block checkpoint restoration");
         }
         finally { mods.Remove(catfood); }
 

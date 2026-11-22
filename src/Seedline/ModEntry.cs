@@ -40,16 +40,4 @@ public static class ModEntry
             throw;
         }
     }
-
-    internal static void CheckOtherMods()
-    {
-        // Check at run entry too: Catfood may initialize after this mod.
-        if (ModManager.Mods.Any(m => m.state == ModLoadState.Loaded &&
-            (IsCatfood(m.manifest?.id) || m.assemblies.Any(a => IsCatfood(a.GetName().Name)))))
-            throw new InvalidOperationException("Disable Catfood before starting or continuing a Seedline run.");
-    }
-
-    private static bool IsCatfood(string? name) => name != null &&
-        (name.Contains("catfood", StringComparison.OrdinalIgnoreCase) ||
-         name.Contains("CFCRacing", StringComparison.OrdinalIgnoreCase));
 }

@@ -23,7 +23,6 @@ internal static class RunCheckpoints
 
     internal static void Start(RunState run)
     {
-        ModEntry.CheckOtherMods();
         CheckLiveScope(run);
         RunContent.Grant(run);
         runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed), RitsuBridge.Capture(run)));
@@ -40,7 +39,6 @@ internal static class RunCheckpoints
 
     internal static void Restore(RunState run, SerializableRun save)
     {
-        ModEntry.CheckOtherMods();
         CheckLiveScope(run);
         var state = Require(save);
         if (run.Rng.StringSeed != state.Seed)
