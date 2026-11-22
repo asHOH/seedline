@@ -1,5 +1,3 @@
-<a id="seedline"></a>
-
 # 不歪种神器 (Seedline)
 
 注：机翻
@@ -10,9 +8,7 @@ Seedline 减少无关操作对后续运气的影响。例如，原版中某场�
 
 为了让同种子体验更接近，Seedline 调整了部分奖励概率，以及操作影响后续随机结果的方式。
 
-如果你通过存读档尝试不同操作（SL），与原版的差异会更明显。一些原本能重掷结果的操作不再有效，因此这种玩法的体验可能变化很大。详见[玩法变化](design/DESIGN.zh-CN.md#shared-vanilla-deviations)。
-
-<a id="supported-setup"></a>
+如果你通过存读档尝试不同操作（SL），与原版的差异会更明显。一些原本能重掷结果的操作不再有效，因此这种玩法的体验可能变化很大。详见[玩法变化](design/DESIGN.zh-CN.md#共享原版偏差)。
 
 ## 支持环境
 
@@ -20,29 +16,21 @@ Seedline 减少无关操作对后续运气的影响。例如，原版中某场�
 
 本模组使用全部已解锁内容，不改变档案解锁状态或进阶上限。
 
-<a id="install"></a>
-
 ## 安装
 
 推荐在 [Steam 创意工坊](https://steamcommunity.com/sharedfiles/filedetails/?id=3843171761)订阅。
 
 手动安装时，从[最新发布](https://github.com/asHOH/seedline/releases/latest)下载 `Seedline-<version>.zip`。关闭游戏，将 `Seedline` 文件夹解压到游戏的 `mods` 文件夹（例如D:\Programs\Steam\steamapps\common\Slay the Spire 2\mods）；若不存在则创建 `mods`。
 
-<a id="saves"></a>
-
 ## 存档
 
 一局中请保持游戏版本、Seedline 和 RitsuLib 配置不变。禁用 Seedline 可能丢失其存档状态。详见[兼容性与存档说明](docs/compatibility.md)。
-
-<a id="learn-more"></a>
 
 ## 进一步了解
 
 - [玩法设计](design/DESIGN.zh-CN.md)——规则与取舍。
 - [开发](docs/development.md)——构建、测试与发布。
 - [研究](research/README.md)——证据与方法。
-
-<a id="license"></a>
 
 ## 许可证
 
