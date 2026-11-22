@@ -3,7 +3,7 @@
   "name": "Seedline",
   "author": "asHOH",
   "description": "Aligned rewards, rooms, events and permanent-card selection.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "has_dll": true,
   "has_pck": false,
   "affects_gameplay": true,

@@ -1,0 +1,3 @@
+[b]v0.1.1[/b]
+
+允许同时启用 CFCRacing/Catfood 模组。

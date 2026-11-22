@@ -1,0 +1,3 @@
+[b]v0.1.1[/b]
+
+Allow CFCRacing/Catfood to be enabled alongside Seedline.
