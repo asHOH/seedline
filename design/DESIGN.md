@@ -885,7 +885,9 @@ Baseline: [gold ranges and exceptions](#combat-gold-1).
 
 **Scope:** Trash Heap, Doll Room, Fake Merchant stock, Neow's Bones' Ancient relic pair, and other rewards exclusive to events.
 
-Use [event RNG](#event-addresses) for reward identities, random rarities and Fake Merchant's price rolls.
+Use [event RNG](#event-addresses) for reward identities and random rarities.
+
+Use event RNG for random event gold amounts and costs. This retains vanilla RNG treatment except for Fake Merchant's price.
 
 Neow's Bones' curse follows [direct additions](#permanent-transformations-and-direct-card-additions).
 
@@ -957,6 +959,10 @@ Baseline: [event selection and wrapping](#event-and-encounter-identities); [cond
 Enter War Historian Repy directly, bypassing [ordinary-event selection](#ordinary-event-selection). Record the visit and leave the act-local ordinary-event ordinal unchanged.
 
 **Vanilla deviation — NoSL 2:** bypassing [vanilla's ordinary-list consumption](#event-and-encounter-identities) changes each ordinary event's chance of appearing later.
+
+### Event menus and branches
+
+Retain vanilla event RNG for random menus and branches in Tinker Time, Trial and Colorful Philosophers.
 
 ### Ancient offerings
 
