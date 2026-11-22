@@ -10,19 +10,15 @@ If you save and reload to try different actions (SL), expect more changes from t
 
 ## Supported setup
 
-Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player runs without custom modifiers. [RitsuLib](docs/compatibility.md#ritsulib) is optional.
+Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player runs without custom modifiers.
 
-## Performance
-
-With 30-card decks, [benchmarks](research/README.md#performance) measured under **1.5 ms median added time per tested operation**.
+Seedline runs use fully unlocked content without changing profile unlocks or Ascension limits.
 
 ## Install
 
 Subscribe on [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3843171761) (recommended).
 
-For manual installation, download `Seedline-<version>.zip` from the [latest release](https://github.com/asHOH/seedline/releases/latest). Close the game and extract the `Seedline` folder into the game's `mods` folder, creating `mods` if needed.
-
-Enable **Seedline / 不歪种神器** in the game's mod loader and start a new run. New runs use fully unlocked content without changing profile unlocks or Ascension limits.
+For manual installation, download `Seedline-<version>.zip` from the [latest release](https://github.com/asHOH/seedline/releases/latest). Close the game and extract the `Seedline` folder into the game's `mods` folder (for example, D:\Programs\Steam\steamapps\common\Slay the Spire 2\mods), creating `mods` if needed.
 
 ## Saves
 
