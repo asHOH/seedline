@@ -26,6 +26,11 @@ Seedline 减少无关操作对后续运气的影响。例如，原版中某场�
 
 一局中请保持游戏版本、Seedline 和 RitsuLib 配置不变。禁用 Seedline 可能丢失其存档状态。详见[兼容性与存档说明](docs/compatibility.md)。
 
+## 问题反馈
+
+请优先在 Steam 创意工坊讨论区反馈，也可联系 QQ 群 **609823795**，说明预期与实际表现和复现步骤。
+按反引号（`` ` ``）或单引号（`'`）打开控制台，运行 `getlogs seedline`，将生成的 ZIP 私信给维护者。
+
 ## 进一步了解
 
 - [玩法设计](design/DESIGN.zh-CN.md)——规则与取舍。
