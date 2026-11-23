@@ -4,7 +4,7 @@ Build, test and release Seedline. See [Implementation](implementation.md) for st
 
 ## Build and validate
 
-Install the .NET SDK pinned in [global.json](../global.json). In PowerShell 7, run from the repository root, replacing the example game path with your installation:
+Install a .NET SDK compatible with [global.json](../global.json). In PowerShell 7, run from the repository root, replacing the example game path with your installation:
 
 ```powershell
 ./scripts/verify.ps1 -GameDir 'D:/Games/Slay the Spire 2'
