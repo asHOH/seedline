@@ -75,6 +75,7 @@ internal static class CombatEnvironment
     {
         private static bool Prefix(ToughEgg __instance, ref Task __result)
         {
+            if (RunScope.Bypasses(__instance.CombatState.RunState)) return true;
             __result = Apply(__instance);
             return false;
         }

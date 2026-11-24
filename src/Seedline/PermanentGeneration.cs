@@ -54,6 +54,8 @@ internal static class PermanentGeneration
 
     internal static List<CardCreationResult> Generate(Player player, int count, CardCreationOptions options, string source)
     {
+        if (RunScope.Bypasses(player.RunState))
+            return CardFactory.CreateForReward(player, count, options).ToList();
         options = Hook.ModifyCardRewardCreationOptions(player.RunState, player, options);
         var pool = options.CardPools.Single();
         var eligible = options.GetPossibleCards(player).Where(c => c.IsAllowedInRun(player.RunState) &&
@@ -117,7 +119,7 @@ internal static class PermanentGeneration
         private static List<CardModel> Resolve(IEnumerable<CardModel> selected)
         {
             var cards = selected.ToList();
-            if (CharacterCompatibility.IsModdedRun) return cards;
+            if (RunScope.IsBypassed || CharacterCompatibility.IsModdedRun) return cards;
             foreach (var item in Prepare(cards.Select(c => new CardTransformation(c))))
                 prepared.Add(item.Original, item.Replacement!);
             return cards;
@@ -142,7 +144,7 @@ internal static class PermanentGeneration
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) => RewardPatches.Replace(instructions,
             m => m.DeclaringType == typeof(Enumerable) && m.Name == nameof(Enumerable.Select), AccessTools.Method(typeof(PandoraBatch), nameof(Deferred)));
         private static IEnumerable<CardTransformation> Deferred(IEnumerable<CardModel> cards, Func<CardModel, CardTransformation> transform) =>
-            CharacterCompatibility.IsModdedRun ? cards.Select(transform) : cards.Select(c => new CardTransformation(c));
+            RunScope.IsBypassed || CharacterCompatibility.IsModdedRun ? cards.Select(transform) : cards.Select(c => new CardTransformation(c));
     }
 
     [HarmonyPatch]
@@ -176,8 +178,9 @@ internal static class PermanentGeneration
             return __originalMethod.DeclaringType!.DeclaringType == typeof(MuseumOfTorture) ? instructions : RewardPatches.Replace(instructions,
                 m => m.DeclaringType == typeof(List<CardModel>) && m.Name == "Remove", AccessTools.Method(typeof(Curses), nameof(Remove)));
         }
-        private static CardModel Choose(Rng _, IEnumerable<CardModel> eligible) => Draw(RunManager.Instance.DebugOnlyGetState()!.Players[0], ModelDb.CardPool<CurseCardPool>(), eligible, false);
-        private static CardModel Created(IRunState _, CardModel card, Player player) => card;
-        private static bool Remove(List<CardModel> cards, CardModel card) => cards.Remove(card.CanonicalInstance);
+        private static CardModel Choose(Rng rng, IEnumerable<CardModel> eligible) => RunScope.IsBypassed ? rng.NextItem(eligible)!
+            : Draw(RunManager.Instance.DebugOnlyGetState()!.Players[0], ModelDb.CardPool<CurseCardPool>(), eligible, false);
+        private static CardModel Created(IRunState run, CardModel card, Player player) => RunScope.Bypasses(run) ? run.CreateCard(card, player) : card;
+        private static bool Remove(List<CardModel> cards, CardModel card) => cards.Remove(RunScope.IsBypassed ? card : card.CanonicalInstance);
     }
 }

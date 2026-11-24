@@ -27,8 +27,9 @@ internal static class ChestRewards
                 AccessTools.Method(typeof(Generate), nameof(Draw)), 2);
         }
 
-        private static RelicRarity Roll(Rng _)
+        private static RelicRarity Roll(Rng rng)
         {
+            if (RunScope.IsBypassed) return RelicFactory.RollRarity(rng);
             var run = RunManager.Instance.DebugOnlyGetState()!;
             var state = RunCheckpoints.Require(run);
             var ordinal = state.Random.Advance(RandomAddress.For("chest"));
@@ -37,8 +38,9 @@ internal static class ChestRewards
             return RelicRewards.Roll(run.Players[0], "generic");
         }
 
-        private static RelicModel Draw(RelicGrabBag _, RelicRarity rarity, IRunState run) =>
-            RelicRewards.Draw(run.Players[0], "generic", rarity, chest: true, chestOrdinal: Current((RunState)run).Ordinal);
+        private static RelicModel? Draw(RelicGrabBag bag, RelicRarity rarity, IRunState run) =>
+            RunScope.Bypasses(run) ? bag.PullFromFront(rarity, run)
+                : RelicRewards.Draw(run.Players[0], "generic", rarity, chest: true, chestOrdinal: Current((RunState)run).Ordinal);
     }
 
     [HarmonyPatch]
@@ -48,6 +50,7 @@ internal static class ChestRewards
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(Rng) && m.Name == "NextInt",
                 AccessTools.Method(typeof(Gold), nameof(Amount)));
-        private static int Amount(Rng _, int minimum, int maximum) => Current(RunManager.Instance.DebugOnlyGetState()!).Gold;
+        private static int Amount(Rng rng, int minimum, int maximum) => RunScope.IsBypassed ? rng.NextInt(minimum, maximum)
+            : Current(RunManager.Instance.DebugOnlyGetState()!).Gold;
     }
 }

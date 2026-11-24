@@ -65,6 +65,7 @@ internal static class SpecialCardRewards
     {
         private static bool Prefix(ScrollBoxes __instance, ref Task __result)
         {
+            if (RunScope.Bypasses(__instance.Owner.RunState)) return true;
             __result = Obtain(__instance.Owner);
             return false;
         }
@@ -124,6 +125,7 @@ internal static class SpecialCardRewards
         private static MethodBase TargetMethod() => RewardPatches.AsyncMethod(typeof(Kaleidoscope), "AfterObtained");
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, m => m.Name == "get_NonCombatGeneration", AccessTools.Method(typeof(KaleidoscopeRng), nameof(Event)));
-        private static Rng Event(PlayerRngSet _) => CardRewards.EventRng(RunManager.Instance.DebugOnlyGetState()!.Players[0]);
+        private static Rng Event(PlayerRngSet rng) => RunScope.IsBypassed ? rng.NonCombatGeneration
+            : CardRewards.EventRng(RunManager.Instance.DebugOnlyGetState()!.Players[0]);
     }
 }

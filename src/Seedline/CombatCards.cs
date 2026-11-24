@@ -31,6 +31,7 @@ internal static class CombatCards
 
     internal static void RecordOpeningDeckSize(Player player)
     {
+        if (RunScope.Bypasses(player.RunState)) return;
         if (player.Deck.Cards.Count > maxControlledDeckSize)
             vanillaDecks.GetOrCreateValue(player.PlayerCombatState!);
         if (UseVanilla(player))
@@ -66,7 +67,7 @@ internal static class CombatCards
 
     private static void Prepare(Grant current, IEnumerable<CardModel> candidates)
     {
-        if (CharacterCompatibility.IsModdedRun) return;
+        if (RunScope.IsBypassed || CharacterCompatibility.IsModdedRun) return;
         var fresh = candidates.Where(c => Find(c) == null && !current.Indices.ContainsKey(c) &&
             !c.HasBeenRemovedFromState && !c.Owner.Creature.IsDead).ToArray();
         IEnumerable<CardModel> ordered = fresh;

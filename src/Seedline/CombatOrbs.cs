@@ -20,7 +20,7 @@ internal static class CombatOrbs
 
     private static OrbModel Choose(Rng rng)
     {
-        if (CharacterCompatibility.IsModdedRun) return OrbModel.GetRandomOrb(rng);
+        if (RunScope.IsBypassed || CharacterCompatibility.IsModdedRun) return OrbModel.GetRandomOrb(rng);
         var scope = CombatStateScope.Require(CombatManager.Instance.DebugOnlyGetState()!);
         var address = scope.For("orb type");
         OrbModel[] pool = [ModelDb.Orb<LightningOrb>(), ModelDb.Orb<FrostOrb>(), ModelDb.Orb<DarkOrb>(),

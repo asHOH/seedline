@@ -37,6 +37,7 @@ internal static class HandEntries
         private static void Prefix(Player player, out Batch? __state)
         {
             __state = batch.Value;
+            if (RunScope.Bypasses(player.RunState)) return;
             batch.Value = new(player.PlayerCombatState!.DrawPile.Cards);
         }
         private static void Finalizer(Batch? __state) => batch.Value = __state;
@@ -48,6 +49,7 @@ internal static class HandEntries
         private static void Prefix(AggressionPower __instance, out Batch? __state)
         {
             __state = batch.Value;
+            if (RunScope.Bypasses(__instance.Owner.Player!.RunState)) return;
             batch.Value = new(__instance.Owner.Player!.PlayerCombatState!.DiscardPile.Cards.Where(c => c.Type == CardType.Attack));
         }
         private static void Finalizer(Batch? __state) => batch.Value = __state;
@@ -63,6 +65,7 @@ internal static class HandEntries
         private static void Prefix(IEnumerable<CardModel> cards, object[] __args, out Batch? __state)
         {
             __state = batch.Value;
+            if (RunScope.IsBypassed) return;
             if (__args[1] is CardPile { Type: not PileType.Hand } || __args[1] is PileType type && type != PileType.Hand)
                 return;
             var candidates = cards.ToArray();

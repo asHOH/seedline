@@ -24,6 +24,8 @@ internal static class RunCheckpoints
 
     internal static void Start(RunState run)
     {
+        if (RunScope.Bypasses(run))
+            return;
         ModEntry.LogLoadedMods();
         CheckLiveScope(run);
         RunContent.Grant(run);
@@ -52,6 +54,8 @@ internal static class RunCheckpoints
 
     internal static void Restore(RunState run, SerializableRun save)
     {
+        if (RunScope.Bypasses(run))
+            return;
         ModEntry.LogLoadedMods();
         try
         {

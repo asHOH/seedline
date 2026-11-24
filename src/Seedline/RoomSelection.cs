@@ -27,6 +27,7 @@ internal static class RoomSelection
         private static bool Prefix(IEnumerable<RoomType> blacklist, IRunState runState, Dictionary<RoomType, float> ____nonEventOdds,
             Dictionary<RoomType, float> ____baseOdds, ref RoomType __result)
         {
+            if (RunScope.Bypasses(runState)) return true;
             var allowed = Hook.ModifyUnknownMapPointRoomTypes(runState, ____nonEventOdds.Keys.Append(RoomType.Event).Except(blacklist).ToHashSet());
             if (allowed.SetEquals(new[] { RoomType.Event }))
             {
@@ -125,6 +126,7 @@ internal static class RoomSelection
     {
         private static bool Prefix(RunState runState, RoomSet ____rooms, ref EventModel __result)
         {
+            if (RunScope.Bypasses(runState)) return true;
             __result = SelectEvent(runState, ____rooms.events);
             runState.AddVisitedEvent(__result);
             return false;

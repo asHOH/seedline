@@ -149,7 +149,7 @@ internal static class PotionEffects
     {
         private static void Prefix(IRunState runState)
         {
-            if (CharacterCompatibility.IsModdedRun) return;
+            if (RunScope.Bypasses(runState) || CharacterCompatibility.IsModdedRun) return;
             var random = RunCheckpoints.Require((RunState)runState).Random;
             foreach (var type in types)
             {

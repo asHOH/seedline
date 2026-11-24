@@ -26,11 +26,11 @@ Vanilla deviations are assessed separately for **NoSL** (no save/loading) and **
 
 Standalone StS2 v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
 
-Applies to single-player runs, including Dread, with matching seeds, versions and rules, and fully unlocked, unmodded content.
+Applies to standard and Dread single-player runs with matching seeds, versions and rules, and fully unlocked, unmodded content.
 
 Grant full content within new runs using this mod, preserving profile unlocks and Ascension limits.
 
-**Exclude:** Blitz mode, tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
+**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.
 

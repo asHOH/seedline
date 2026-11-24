@@ -65,7 +65,7 @@ internal static class EnemyAi
     {
         private static bool Prefix(RandomBranchState __instance, Creature owner, ref string __result)
         {
-            if (owner.CombatState is not CombatState combat || owner.Side != CombatSide.Enemy)
+            if (owner.CombatState is not CombatState combat || owner.Side != CombatSide.Enemy || RunScope.Bypasses(combat.RunState))
                 return true;
             if (CharacterCompatibility.IsModdedRun && owner.Monster!.GetType().Assembly != typeof(MonsterModel).Assembly)
             {
@@ -135,8 +135,9 @@ internal static class EnemyAi
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(Rng) && m.Name == nameof(Rng.NextItem),
                 AccessTools.Method(typeof(FabricatorBots), nameof(Choose)));
 
-        private static MonsterModel Choose(Rng _, IEnumerable<MonsterModel> candidates)
+        private static MonsterModel Choose(Rng rng, IEnumerable<MonsterModel> candidates)
         {
+            if (RunScope.IsBypassed) return rng.NextItem(candidates)!;
             var fabricator = source.Value ?? throw new InvalidOperationException("Missing Fabricator source.");
             var scope = CombatStateScope.Require((CombatState)fabricator.CombatState);
             var address = scope.For("bot generation", EnemyOccurrences.Info(fabricator.Creature).Address.Key);

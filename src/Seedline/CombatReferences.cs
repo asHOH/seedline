@@ -182,6 +182,11 @@ internal static class CombatReferences
     private static async Task PendingAutoPlay(PlayerChoiceContext context, CardModel card, Creature? target,
         AutoPlayType type, bool skipXCapture, bool skipCardPileVisuals)
     {
+        if (RunScope.Bypasses(card.Owner.RunState))
+        {
+            await CardCmd.AutoPlay(context, card, target, type, skipXCapture, skipCardPileVisuals);
+            return;
+        }
         var frame = pending.Value ?? throw new InvalidOperationException("Missing pending auto-play frame.");
         if (frame.Repeats > 0) frame.Cards.Add(card);
         try { await CardCmd.AutoPlay(context, card, target, type, skipXCapture, skipCardPileVisuals); }
@@ -197,6 +202,7 @@ internal static class CombatReferences
         private static void Prefix(ref IEnumerable<CardModel> cardsToDiscard, out PendingFrame? __state)
         {
             __state = pending.Value;
+            if (RunScope.IsBypassed) return;
             cardsToDiscard = cardsToDiscard.ToArray();
             var frame = new PendingFrame(__state);
             frame.Cards.UnionWith(cardsToDiscard);
@@ -224,10 +230,16 @@ internal static class CombatReferences
         private static void AddSly(List<CardModel> cards, CardModel card)
         {
             cards.Add(card);
+            if (RunScope.Bypasses(card.Owner.RunState)) return;
             pending.Value!.Sly.Add(card);
         }
         private static async Task AfterDiscard(ICombatState combat, PlayerChoiceContext context, CardModel card)
         {
+            if (RunScope.Bypasses(combat.RunState))
+            {
+                await Hook.AfterCardDiscarded(combat, context, card);
+                return;
+            }
             var frame = pending.Value!;
             try { await Hook.AfterCardDiscarded(combat, context, card); }
             finally { if (!frame.Sly.Contains(card)) frame.Cards.Remove(card); }
@@ -243,6 +255,7 @@ internal static class CombatReferences
         private static void Prefix(CardModel __instance, out PendingFrame? __state)
         {
             __state = pending.Value;
+            if (RunScope.Bypasses(__instance.Owner.RunState)) return;
             pending.Value = new(__state, __instance is DecisionsDecisions ? __instance.DynamicVars.Repeat.IntValue : 0);
         }
         private static void Finalizer(PendingFrame? __state) => pending.Value = __state;
@@ -270,9 +283,10 @@ internal static class CombatReferences
         private static List<CardModel> List(IEnumerable<CardModel> cards)
         {
             var result = cards.ToList();
+            if (RunScope.IsBypassed) return result;
             pending.Value!.Cards.UnionWith(result);
             return result;
         }
-        private static IEnumerable<CardModel> Take(IEnumerable<CardModel> cards, int count) => List(cards.Take(count));
+        private static IEnumerable<CardModel> Take(IEnumerable<CardModel> cards, int count) => RunScope.IsBypassed ? cards.Take(count) : List(cards.Take(count));
     }
 }

@@ -123,6 +123,7 @@ internal static class PotionRewards
         private static bool Prefix(Player player, int count, Rng rng, IEnumerable<PotionModel>? blacklist,
             ref IEnumerable<PotionModel> __result)
         {
+            if (RunScope.Bypasses(player.RunState)) return true;
             var source = ReferenceEquals(rng, player.PlayerRng.Shops) ? (ShopRewards.IsInitial ? "shop" : "Courier") : "generic";
             var options = PotionFactory.GetPotionOptions(player).Except(blacklist ?? []).ToList();
             var result = new List<PotionModel>();
@@ -142,6 +143,7 @@ internal static class PotionRewards
     {
         private static bool Prefix(PotionRewardOdds __instance, Player player, RoomType roomType, ref bool __result)
         {
+            if (RunScope.Bypasses(player.RunState)) return true;
             if (Hook.ShouldForcePotionReward(player.RunState, player, roomType))
                 __result = true;
             else
@@ -159,6 +161,7 @@ internal static class PotionRewards
     {
         private static bool Prefix(Alchemize __instance, ref Task __result)
         {
+            if (RunScope.Bypasses(__instance.Owner.RunState)) return true;
             __result = Play(__instance.Owner);
             return false;
         }
@@ -181,6 +184,7 @@ internal static class PotionRewards
     {
         private static bool Prefix(Creature? target, ref Task __result)
         {
+            if (RunScope.IsBypassed) return true;
             ArgumentNullException.ThrowIfNull(target);
             __result = Fill(target!.Player!);
             return false;
@@ -192,6 +196,7 @@ internal static class PotionRewards
     {
         private static bool Prefix(DelicateFrond __instance, ref Task __result)
         {
+            if (RunScope.Bypasses(__instance.Owner.RunState)) return true;
             __instance.Flash();
             __result = Fill(__instance.Owner);
             return false;
@@ -205,6 +210,7 @@ internal static class PotionRewards
         [AccessTools.Method(typeof(AlchemicalCoffer), "AfterObtained"), AccessTools.Method(typeof(PhialHolster), "AfterObtained")];
         private static bool Prefix(RelicModel __instance, ref Task __result)
         {
+            if (RunScope.Bypasses(__instance.Owner.RunState)) return true;
             __result = Pickup(__instance);
             return false;
         }
@@ -238,8 +244,9 @@ internal static class PotionRewards
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(Rng) && m.Name == "NextItem" &&
                 m.IsGenericMethod && m.GetGenericArguments()[0] == typeof(PotionModel), AccessTools.Method(typeof(EventPotions), nameof(Choose)));
 
-        private static PotionModel? Choose(Rng _, IEnumerable<PotionModel> candidates)
+        private static PotionModel? Choose(Rng rng, IEnumerable<PotionModel> candidates)
         {
+            if (RunScope.IsBypassed) return rng.NextItem(candidates);
             var options = candidates.ToArray();
             if (options.Length == 0)
                 return null;

@@ -4,6 +4,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.Events;
+using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Random;
@@ -30,6 +31,7 @@ internal static class EventChoices
     {
         private static void Prefix(AncientEventModel __instance, ref List<EventOption> pool1, ref List<EventOption> pool2, ref List<EventOption> pool3)
         {
+            if (RunScope.Bypasses(__instance.Owner!.RunState)) return;
             // Singleton pools retain the vanilla RNG calls for the other menu components.
             if (__instance is Tezcatara)
                 pool1 = Order(__instance, pool1, "1").Take(1).ToList();
@@ -62,8 +64,9 @@ internal static class EventChoices
             if (count != 1)
                 throw new InvalidOperationException("Expected one Ancient menu shuffle.");
         }
-        private static List<EventOption> Shuffle(List<EventOption> options, Rng _, AncientEventModel source)
+        private static List<EventOption> Shuffle(List<EventOption> options, Rng rng, AncientEventModel source)
         {
+            if (RunScope.Bypasses(source.Owner!.RunState)) return options.UnstableShuffle(rng);
             var ordered = Order(source, options, "main");
             options.Clear();
             options.AddRange(ordered);
@@ -76,6 +79,7 @@ internal static class EventChoices
     {
         private static bool Prefix(TheFutureOfPotions __instance, ref Dictionary<PotionModel, CardType>? ____cardTypes, ref Dictionary<PotionModel, CardType> __result)
         {
+            if (RunScope.Bypasses(__instance.Owner!.RunState)) return true;
             ____cardTypes ??= AssignTypes(__instance);
             __result = ____cardTypes;
             return false;
@@ -117,8 +121,9 @@ internal static class EventChoices
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) => RewardPatches.Replace(instructions,
             m => m.DeclaringType == typeof(Rng) && m.Name == nameof(Rng.NextItem) && m.GetGenericArguments()[0] == typeof(RelicModel),
             AccessTools.Method(typeof(RanwidRelic), nameof(Choose)));
-        private static RelicModel? Choose(Rng _, IEnumerable<RelicModel> relics)
+        private static RelicModel? Choose(Rng rng, IEnumerable<RelicModel> relics)
         {
+            if (RunScope.IsBypassed) return rng.NextItem(relics);
             var state = RunCheckpoints.Require(RunManager.Instance.DebugOnlyGetState()!);
             return relics.OrderBy(r => AddressRandom.UInt64(state.Seed, RandomAddress.For("relic sacrifice", "RANWID_THE_ELDER", r.Id.Entry)))
                 .ThenBy(r => r.Id.Entry, StringComparer.Ordinal).FirstOrDefault();
@@ -146,6 +151,7 @@ internal static class EventChoices
     {
         private static bool Prefix(RelicTrader __instance, ref IReadOnlyList<RelicModel>? ____ownedRelics, ref IReadOnlyList<RelicModel> __result)
         {
+            if (RunScope.Bypasses(__instance.Owner!.RunState)) return true;
             ____ownedRelics ??= Outgoing(__instance);
             __result = ____ownedRelics;
             return false;
@@ -192,8 +198,9 @@ internal static class EventChoices
             if (count != 1)
                 throw new InvalidOperationException("Expected one random dish roll.");
         }
-        private static float Roll(Rng _, float maximum, EndlessConveyor source)
+        private static float Roll(Rng rng, float maximum, EndlessConveyor source)
         {
+            if (RunScope.Bypasses(source.Owner!.RunState)) return rng.NextFloat(maximum);
             var player = source.Owner!;
             var previous = (string)AccessTools.Field(typeof(EndlessConveyor), "_lastDishId").GetValue(source)!;
             var grabs = (int)AccessTools.Field(typeof(EndlessConveyor), "_numOfGrabs").GetValue(source)!;

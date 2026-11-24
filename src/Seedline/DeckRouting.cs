@@ -29,6 +29,11 @@ internal static class DeckRouting
 
         private static void Prefix(MethodBase __originalMethod, Player player, object[] __args, out CardModel[] __state)
         {
+            if (RunScope.Bypasses(player.RunState))
+            {
+                __state = [];
+                return;
+            }
             var filter = __args.OfType<Func<CardModel, bool>>().FirstOrDefault();
             __state = player.Deck.Cards.Where(c => __originalMethod.Name switch
             {
@@ -69,6 +74,7 @@ internal static class DeckRouting
 
         private static Task<IEnumerable<CardModel>> Store(Player player, CardSelectorPrefs prefs, Func<CardModel, bool>? filter)
         {
+            if (RunScope.Bypasses(player.RunState)) return CardSelectCmd.FromDeckForRemoval(player, prefs, filter);
             bool Eligible(CardModel c) => c.IsRemovable && (filter?.Invoke(c) ?? true);
             var deck = player.Deck.Cards.ToArray();
             return Complete(CardSelectCmd.FromDeckGeneric(player, prefs, Eligible,
@@ -78,6 +84,7 @@ internal static class DeckRouting
         private static Task<IEnumerable<CardModel>> Transform(Player player, CardSelectorPrefs prefs,
             Func<CardModel, bool>? filter, Func<CardModel, int>? sortingOrder)
         {
+            if (RunScope.Bypasses(player.RunState)) return CardSelectCmd.FromDeckGeneric(player, prefs, filter, sortingOrder);
             var eligible = player.Deck.Cards.Where(c => filter?.Invoke(c) ?? true).ToArray();
             if (sortingOrder != null)
                 eligible = eligible.OrderBy(sortingOrder).ToArray();

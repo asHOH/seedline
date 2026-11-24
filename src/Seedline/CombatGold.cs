@@ -15,7 +15,7 @@ internal static class CombatGold
 
     private static void Postfix(AbstractRoom room, List<Reward> __result)
     {
-        if (room is not CombatRoom || room.RoomType is not (RoomType.Monster or RoomType.Elite))
+        if (RunScope.IsBypassed || room is not CombatRoom || room.RoomType is not (RoomType.Monster or RoomType.Elite))
             return;
         var address = RandomAddress.For("gold reward", room.RoomType == RoomType.Monster ? "normal" : "elite");
         foreach (var reward in __result.OfType<GoldReward>())

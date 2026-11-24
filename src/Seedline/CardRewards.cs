@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
@@ -20,6 +21,8 @@ internal static class CardRewards
 
     internal static List<CardCreationResult> Generate(Player player, int cardCount, CardCreationOptions options, CardOfferKind kind)
     {
+        if (RunScope.Bypasses(player.RunState))
+            return CardFactory.CreateForReward(player, cardCount, options).ToList();
         var originalPools = options.CardPools.ToArray();
         var own = kind == CardOfferKind.OwnCharacter;
         var other = kind == CardOfferKind.OtherCharacter;

@@ -44,7 +44,7 @@ public static partial class Checks
                 await CheckRitsu();
             Assert(ModManager.GetLoadedMods().Any(m => m.manifest?.id == ModEntry.Id && m.errors is not { Count: > 0 }), "built-in loader and explicit initializer");
             Assert(Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer)))?.Owners.Contains(ModEntry.Id) == true &&
-                Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer)))?.Owners.Contains(ModEntry.Id) == true, "both multiplayer entry guards installed");
+                Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer)))?.Owners.Contains(ModEntry.Id) == true, "both multiplayer bypass entry points installed");
 
             var player = Player.CreateForNewRun<Ironclad>(UnlockState.all, 1);
             var state = RunState.CreateForNewRun([player], ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "CHECKPOINTCHECK");

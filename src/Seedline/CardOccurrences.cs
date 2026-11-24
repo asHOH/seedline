@@ -104,7 +104,7 @@ internal static class CardOccurrences
 
     internal static void Prepare(IEnumerable<CardModel> added, CardPile pile, AbstractModel? source)
     {
-        if (pile.Type != PileType.Deck)
+        if (RunScope.IsBypassed || pile.Type != PileType.Deck)
             return;
         var batch = added.ToArray();
         CardOffers.PrepareAcquisition(batch);
@@ -240,6 +240,8 @@ internal static class CardOccurrences
                 AccessTools.Method(typeof(StoredReturn), nameof(Remove)));
         private static bool Remove(List<SerializableCard> stored, SerializableCard returned)
         {
+            if (RunScope.IsBypassed)
+                return stored.Remove(returned);
             // SerializableCard.Equals ignores the occurrence metadata of otherwise identical copies.
             var index = stored.FindIndex(card => ReferenceEquals(card, returned));
             if (index < 0)

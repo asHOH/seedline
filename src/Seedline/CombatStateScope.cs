@@ -62,12 +62,20 @@ internal sealed class CombatStateScope(string seed, RandomAddress address, Rando
     [HarmonyPatch(typeof(CombatRoom), "StartCombat")]
     private static class RoomStart
     {
-        private static void Prefix(CombatRoom __instance) => Begin(__instance.CombatState);
+        private static void Prefix(CombatRoom __instance)
+        {
+            if (!RunScope.Bypasses(__instance.CombatState.RunState))
+                Begin(__instance.CombatState);
+        }
     }
 
     [HarmonyPatch(typeof(CombatManager), nameof(CombatManager.SetUpCombat))]
     private static class SetUp
     {
-        private static void Prefix(CombatState state) => Begin(state);
+        private static void Prefix(CombatState state)
+        {
+            if (!RunScope.Bypasses(state.RunState))
+                Begin(state);
+        }
     }
 }

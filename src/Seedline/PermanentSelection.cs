@@ -32,14 +32,14 @@ internal static class PermanentSelection
 
     internal static IEnumerable<CardModel> UpgradeBatch(IEnumerable<CardModel> cards, int count)
     {
-        if (CharacterCompatibility.IsModdedRun) return cards.Take(count);
+        if (RunScope.IsBypassed || CharacterCompatibility.IsModdedRun) return cards.Take(count);
         var selected = Select(cards, count, Upgrade);
         foreach (var card in selected.OfType<DingyDagger>())
             RefillUpgrade(card);
         return selected;
     }
 
-    internal static CardModel? UpgradeOne(Rng rng, IEnumerable<CardModel> cards) => CharacterCompatibility.IsModdedRun
+    internal static CardModel? UpgradeOne(Rng rng, IEnumerable<CardModel> cards) => RunScope.IsBypassed || CharacterCompatibility.IsModdedRun
         ? rng.NextItem(cards) : UpgradeBatch(cards, 1).FirstOrDefault();
 
     private static void RefillUpgrade(CardModel card)
@@ -54,7 +54,7 @@ internal static class PermanentSelection
     }
 
     internal static CardModel? DowngradeOne(Rng rng, IEnumerable<CardModel> cards) =>
-        CharacterCompatibility.IsModdedRun ? rng.NextItem(cards) : RefillDowngrade(rng, Select(cards, 1, Downgrade).FirstOrDefault());
+        RunScope.IsBypassed || CharacterCompatibility.IsModdedRun ? rng.NextItem(cards) : RefillDowngrade(rng, Select(cards, 1, Downgrade).FirstOrDefault());
 
     internal static CardModel? RefillDowngrade(Rng rng, CardModel? card)
     {

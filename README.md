@@ -12,6 +12,8 @@ If you save and reload to try different actions (SL), expect more changes from t
 
 Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player runs without custom modifiers.
 
+Multiplayer, Blitz and Daily runs play normally with Seedline inactive. Other custom single-player runs remain unsupported.
+
 Seedline runs use fully unlocked content without changing profile unlocks or Ascension limits.
 
 ## Install

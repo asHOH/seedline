@@ -14,7 +14,7 @@ internal static class CombatPileInsertion
 {
     // Defer the gap roll until the actual card and destination are available after vanilla guards.
     private const int randomGap = -2;
-    private static int Defer(Rng _, int maximum) => randomGap;
+    private static int Defer(Rng rng, int maximum) => RunScope.IsBypassed ? rng.NextInt(maximum) : randomGap;
 
     private static void Insert(CardPile pile, CardModel card, int index, bool silent)
     {

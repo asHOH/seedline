@@ -1,12 +1,18 @@
 using System.Text.Json;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Exceptions;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Saves.Migrations;
 
 namespace Seedline;
 
 internal static class CheckpointStore
 {
+    private static readonly Func<MigrationManager, string, string?> repairJson =
+        AccessTools.MethodDelegate<Func<MigrationManager, string, string?>>(AccessTools.Method(typeof(MigrationManager), "RepairCommonJsonErrors"));
+
     internal static async Task Write(ISaveStore store, string path, SerializableRun save, bool synchronous, Action? saved)
     {
         var stage = "encode";
@@ -30,7 +36,8 @@ internal static class CheckpointStore
         }
     }
 
-    internal static ReadSaveResult<SerializableRun> Read(ISaveStore store, string path, int gameSchema)
+    internal static ReadSaveResult<SerializableRun> Read(ISaveStore store, string path, int gameSchema,
+        MigrationManager? vanilla = null)
     {
         ModEntry.LogLoadedMods();
         var selectedPath = path;
@@ -38,14 +45,14 @@ internal static class CheckpointStore
         var primaryFailure = "";
         try
         {
-            var primary = ReadOne(store, path, gameSchema, ref context);
+            var primary = ReadOne(store, path, gameSchema, ref context, vanilla);
             if (primary.Success || primary.Status is not (ReadSaveStatus.FileNotFound or ReadSaveStatus.JsonParseError or ReadSaveStatus.FileEmpty))
                 return primary;
 
             primaryFailure = $"primary={primary.Status} {primary.ErrorMessage}; {context}";
             selectedPath = path + ".backup";
             context = "run=unknown";
-            var backup = ReadOne(store, selectedPath, gameSchema, ref context);
+            var backup = ReadOne(store, selectedPath, gameSchema, ref context, vanilla);
             if (backup.Success)
             {
                 Log.Warn($"Seedline: recovered complete checkpoint from {selectedPath}; {primaryFailure}; {RunCheckpoints.Describe(backup.SaveData!)}.");
@@ -62,7 +69,8 @@ internal static class CheckpointStore
         }
     }
 
-    private static ReadSaveResult<SerializableRun> ReadOne(ISaveStore store, string path, int gameSchema, ref string context)
+    private static ReadSaveResult<SerializableRun> ReadOne(ISaveStore store, string path, int gameSchema, ref string context,
+        MigrationManager? vanilla)
     {
         if (!store.FileExists(path))
             return new ReadSaveResult<SerializableRun>(ReadSaveStatus.FileNotFound);
@@ -75,6 +83,8 @@ internal static class CheckpointStore
             var root = document.RootElement;
             if (root.ValueKind == JsonValueKind.Object)
             {
+                if (vanilla != null && Bypasses(root))
+                    return vanilla.LoadSave<SerializableRun>(path);
                 root.TryGetProperty("seedline", out var state);
                 var floor = root.TryGetProperty("map_point_history", out var history) && history.ValueKind == JsonValueKind.Array
                     ? history.EnumerateArray().Where(act => act.ValueKind == JsonValueKind.Array).Sum(act => act.GetArrayLength()).ToString()
@@ -85,10 +95,21 @@ internal static class CheckpointStore
         }
         catch (JsonException error)
         {
+            if (vanilla != null && repairJson(vanilla, json) is { } repaired)
+            {
+                // Inspect repaired JSON only to route bypassed modes; never repair a Seedline checkpoint.
+                using var document = JsonDocument.Parse(repaired);
+                if (Bypasses(document.RootElement))
+                    return vanilla.LoadSave<SerializableRun>(path);
+            }
             context += $"\n{error}";
             return new ReadSaveResult<SerializableRun>(ReadSaveStatus.JsonParseError, error.Message);
         }
     }
+
+    private static bool Bypasses(JsonElement root) => root.ValueKind == JsonValueKind.Object &&
+        !root.TryGetProperty("seedline", out _) && root.TryGetProperty("game_mode", out var mode) &&
+        mode.ValueKind == JsonValueKind.String && Enum.TryParse<GameMode>(mode.GetString(), true, out var value) && RunScope.Bypasses(value);
 
     private static string Field(JsonElement element, string name) =>
         element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) &&

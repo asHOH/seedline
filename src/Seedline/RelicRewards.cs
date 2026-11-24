@@ -188,6 +188,7 @@ internal static class RelicRewards
 
         private static bool Prefix(Player player, object[] __args, ref RelicModel __result)
         {
+            if (RunScope.Bypasses(player.RunState)) return true;
             var rarity = __args.OfType<RelicRarity>().Cast<RelicRarity?>().FirstOrDefault() ?? Roll(player, "generic");
             var filter = __args.OfType<Func<RelicModel, bool>>().FirstOrDefault();
             // Wongos is the sole filtered front caller in the supported build.
@@ -204,6 +205,7 @@ internal static class RelicRewards
     {
         private static bool Prefix(Player player, RelicRarity rarity, Func<RelicModel, bool> filter, ref RelicModel __result)
         {
+            if (RunScope.Bypasses(player.RunState)) return true;
             __result = Draw(player, ShopRewards.IsInitial ? "shop" : "Courier", rarity, filter);
             return false;
         }
@@ -217,7 +219,8 @@ internal static class RelicRewards
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod) =>
             RewardPatches.Replace(instructions, m => m.DeclaringType == typeof(RelicFactory) && m.Name == "RollRarity",
                 AccessTools.Method(typeof(ShopRarity), nameof(Choose)), __originalMethod.Name == "GetDefaultRelicEntries" ? 2 : 1);
-        private static RelicRarity Choose(Rng _) => Roll(RunManager.Instance.DebugOnlyGetState()!.Players[0], ShopRewards.IsInitial ? "shop" : "Courier");
+        private static RelicRarity Choose(Rng rng) => RunScope.IsBypassed ? RelicFactory.RollRarity(rng)
+            : Roll(RunManager.Instance.DebugOnlyGetState()!.Players[0], ShopRewards.IsInitial ? "shop" : "Courier");
     }
 
     [HarmonyPatch(typeof(RelicTrader), "get_NewRelics")]
@@ -225,6 +228,7 @@ internal static class RelicRewards
     {
         private static bool Prefix(RelicTrader __instance, ref IReadOnlyList<RelicModel>? ____newRelics, ref IReadOnlyList<RelicModel> __result)
         {
+            if (RunScope.Bypasses(__instance.Owner!.RunState)) return true;
             if (____newRelics == null)
             {
                 var state = RunCheckpoints.Require((RunState)__instance.Owner!.RunState);
@@ -244,7 +248,7 @@ internal static class RelicRewards
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) =>
             RewardPatches.Replace(instructions, m => m.Name == "UnstableShuffle" && m.IsGenericMethod &&
                 m.GetGenericArguments()[0] == typeof(RelicModel), AccessTools.Method(typeof(NeowPair), nameof(Shuffle)));
-        private static List<RelicModel> Shuffle(List<RelicModel> relics, Rng _) =>
-            relics.UnstableShuffle(CardRewards.EventRng(RunManager.Instance.DebugOnlyGetState()!.Players[0]));
+        private static List<RelicModel> Shuffle(List<RelicModel> relics, Rng rng) =>
+            relics.UnstableShuffle(RunScope.IsBypassed ? rng : CardRewards.EventRng(RunManager.Instance.DebugOnlyGetState()!.Players[0]));
     }
 }

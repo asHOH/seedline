@@ -32,6 +32,11 @@ internal static class ShopRewards
     private static void Prefix(Player player, out Shop? __state)
     {
         __state = current;
+        if (RunScope.Bypasses(player.RunState))
+        {
+            current = null;
+            return;
+        }
         var state = RunCheckpoints.Require((RunState)player.RunState);
         current = new(state, state.Random.Advance(RandomAddress.For("shop")));
     }
@@ -53,6 +58,7 @@ internal static class ShopRewards
         private static IEnumerable<MethodBase> TargetMethods() => typeof(CardFactory).GetMethods().Where(m => m.Name == "CreateForMerchant");
         private static bool Prefix(Player player, IEnumerable<CardModel> options, IEnumerable<CardModel> blacklist, object[] __args, ref CardCreationResult __result)
         {
+            if (RunScope.Bypasses(player.RunState)) return true;
             var state = RunCheckpoints.Require((RunState)player.RunState);
             var type = __args.OfType<CardType>().Cast<CardType?>().FirstOrDefault();
             var requested = __args.OfType<CardRarity>().Cast<CardRarity?>().FirstOrDefault();
@@ -101,6 +107,7 @@ internal static class ShopRewards
             .Select(t => AccessTools.Method(t, "CalcCost"));
         private static bool Prefix(MerchantEntry __instance, Player ____player, ref int ____cost)
         {
+            if (RunScope.Bypasses(____player.RunState)) return true;
             AbstractModel? model = __instance switch
             {
                 MerchantCardEntry c => c.CreationResult?.Card,

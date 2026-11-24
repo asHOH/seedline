@@ -34,7 +34,7 @@ internal static class EnemyTargets
     }
 
     private static Creature? Choose(Rng rng, IEnumerable<Creature> candidates, string group) =>
-        CharacterCompatibility.IsModdedRun ? rng.NextItem(candidates) : Select(candidates, group);
+        RunScope.IsBypassed || CharacterCompatibility.IsModdedRun ? rng.NextItem(candidates) : Select(candidates, group);
     private static Creature? Damage(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Direct damage");
     private static Creature? Lightning(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Lightning");
     private static Creature? Relics(Rng rng, IEnumerable<Creature> candidates) => Choose(rng, candidates, "Forgotten Soul / Obsidian Vice");

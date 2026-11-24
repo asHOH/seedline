@@ -17,6 +17,7 @@ internal static class RewardEntries
 
     private static void Postfix(AbstractModel __instance, AbstractModel __result)
     {
+        if (RunScope.IsBypassed) return;
         if (__instance is CardModel original && __result is CardModel copy)
             CardOccurrences.Recreate(original, copy);
         else if (Find(__instance) is { } entry)
