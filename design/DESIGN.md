@@ -183,7 +183,7 @@ Rules: [rarity and identity sequences](#rarity-and-identity-sequences).
 | [Lasting Candy / The Future of Potions](#type-specific-offers) | Candy: source sequences or fixed Rare. Future of Potions: fixed rarity. | Shared own-character Power sequences per rarity (Uncommon/Rare); Future of Potions derives Attack/Skill draws from the vanilla event seed. |
 | [Colorless offers: Lead Paperweight / Brain Leech's Rip](#other-offer-groups) | Shared sequence at source odds. | Shared Uncommon/Rare identity sequences. |
 | [Other-character offers: Kaleidoscope / Colorful Philosophers / Sea Glass](#other-offer-groups) | Kaleidoscope: event RNG. Others: fixed rarity. | Shared sequences per character and rarity. |
-| [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Separate expanded-pool sequences. |
+| [Prismatic Gem / Dingy Rug](#prismatic-gem-and-dingy-rug) | Source state. | Gem: separate expanded-pool sequences. Rug: colorless replacements by original entry. Candy: separate colorless Power sequences. |
 
 #### Other card generation
 
@@ -812,7 +812,7 @@ Replace the first Common in offer entry order, or the first Uncommon if no Commo
 
 **Replacement state:** identity and [upgrade roll](#upgrade-rolls) come from the new Rare entry. Retain the replaced slot's Wing Charm priority or supplementary-card membership and its offer address.
 
-**Accepted tradeoff:** prior Rare counts and companion composition can weaken alignment between offers built from the same triple.
+**Tradeoff:** prior Rare counts and companion composition can weaken alignment between offers built from the same triple.
 
 **Vanilla deviation — NoSL 2:** Common-first replacement favors Uncommon companions in multi-Rare offers. **Frequency:** rare — about **2% of vanilla elite offers** in the [A0–6 calibration](#rarity-calibration).
 
@@ -847,16 +847,31 @@ Rerolls of Kaleidoscope's Neow offers are unreachable.
 
 #### Prismatic Gem and Dingy Rug
 
-Select the identity sequences for the complete request:
+Preserve [vanilla pool-modification restrictions](#card-reward-offers-1). Changing pools preserves luck state and opening-triple progression.
 
-- **Unchanged eligible pool:** reuse its existing sequences, including Rug's fixed-Common or already-colorless offers.
-- **Expanded eligible pool:** use independent sequences for the effective expanded pool, retaining the source's triple or individual-entry draws. All results, including own-character cards, consume entries from these sequences.
+**Prismatic Gem:** before Rug's additions, use independent sequences when Gem expands the eligible pool and existing sequences otherwise. Retain the source's triple or individual-entry draws, including Power sequences for Lasting Candy.
 
-Changing pools preserves luck state and opening-triple progression.
+**Tradeoff:** Gem sacrifices alignment with the unexpanded pool to avoid rebuilding sequences when the pool expands.
 
-Lasting Candy draws from the inherited pool's Power sequences while retaining its source rarity-roll sequence position.
+**Dingy Rug:** generate the source's base offer without Rug, retaining Gem when owned. Consume all original entries, including those replaced below. Fixed-Common and already-colorless offers are unchanged. Lasting Candy follows its separate rule below.
 
-**Accepted tradeoff:** separate sequences sacrifice alignment with the unexpanded pool to avoid rebuilding sequences when the pool expands.
+After [extra-Rare replacements](#a06-multiple-rares) and before reward modifiers, process cards in entry order. The original entry below is the entry present after extra-Rare replacement, not the displaced companion.
+
+1. Count eligible colorless and non-colorless identities of the card's rarity, retaining source filters and excluding earlier retained or replacement identities in the batch.
+2. Derive a uniform `[0, 1)` roll from `purpose = Rug replacement` + the original card's entry address. Replace it when the roll is below `colorless count / total count`.
+3. Give the replacement entry the address `purpose = Rug colorless identity` + original entry address. Use it to select uniformly among eligible same-rarity colorless identities in card-ID order.
+
+Follow [extra-Rare replacement state](#a06-multiple-rares), also retaining the card's simulated Rare position.
+
+Non-Candy Rug replacements have no shared colorless identity sequence.
+
+**Rationale:** card reward triples are consumed as a whole. Tying Rug replacements to their original entries preserves that grouping. Carrying colorless results forward in a shared sequence would let earlier Rug replacement counts shift replacements in later offers.
+
+**Alignment limit:** an entry's replacement and identity rolls remain fixed, but its replacement decision and colorless identity can still differ when eligible candidates change, including batch exclusions.
+
+**Lasting Candy:** while Rug is owned, apply duplicate exclusions to the post-Rug offer; choose colorlessness at the count-weighted probability above using the next `[0, 1)` roll. Draw from and advance only the chosen Power identity sequence.
+
+Use dedicated color-choice roll and colorless Power identity sequences, partitioned by rarity and shared with and without Gem.
 
 ### Permanent transformations and direct card additions
 
@@ -1381,6 +1396,12 @@ The second example adds **0.3 percentage points** because shop consumption chang
 #### Chest allocation
 
 A separate chest allocation adds unfairness between reward sources. [Chests](#relic-advancement) therefore use the generic relic supply.
+
+#### Prismatic Gem alternatives
+
+Sharing offer ordinals between [expanded and original pools](#prismatic-gem-and-dingy-rug) lets pre-Gem consumption shift post-Gem offers.
+
+Restarting both sequences at Orobas breaks offer continuity without Gem. Gem's broad pool limits whole-offer matches and can change matched cards' usefulness.
 
 #### Combat-gold alternatives
 
