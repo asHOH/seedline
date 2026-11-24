@@ -11,6 +11,15 @@ public static class ModEntry
 {
     public const string Id = "Seedline";
     internal static string GameBuild { get; private set; } = "";
+    private static bool loggedMods;
+
+    internal static void LogLoadedMods()
+    {
+        if (loggedMods || ModManager.State != ModManagerState.Initialized)
+            return;
+        Log.Info($"Seedline: loaded mods: {string.Join(", ", ModManager.GetLoadedMods().Select(m => $"{m.manifest?.id}@{m.manifest?.version}"))}.");
+        loggedMods = true;
+    }
 
     public static void Initialize()
     {
@@ -32,7 +41,7 @@ public static class ModEntry
             foreach (var patch in typeof(ModEntry).Assembly.GetTypes().Where(t => t.IsDefined(typeof(HarmonyPatch), false))
                 .OrderByDescending(CombatRouting.IsChoicePatch))
                 harmony.CreateClassProcessor(patch).Patch();
-            Log.Info($"Seedline: Reward supplies and checkpoints initialized for {GameBuild}.");
+            Log.Info($"Seedline: version={typeof(ModEntry).Assembly.GetName().Version}; Reward supplies and checkpoints initialized for {GameBuild}; checkpoint schema={RunCheckpoints.SchemaVersion}.");
         }
         catch
         {

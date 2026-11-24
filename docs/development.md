@@ -23,6 +23,10 @@ The validated package is written to `artifacts/Seedline/`. Close the game, then 
 
 Follow the [activation steps](../README.md#install).
 
+## Diagnostics
+
+Seedline records versions, run context and checkpoint failures in the game's log. Individual random decisions are not logged, so gameplay reports also need the affected save and reproduction steps.
+
 ## Releases
 
 Set matching versions in `src/Seedline/Seedline.json` and `src/Seedline/Seedline.csproj`. Add short release notes in `docs/releases/<version>.md`, then commit the changes.

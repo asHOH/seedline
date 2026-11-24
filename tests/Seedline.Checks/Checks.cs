@@ -38,6 +38,7 @@ public static partial class Checks
         try
         {
             await (NGame.Instance ?? throw new InvalidOperationException("Game has not started.")).GameStartupComplete;
+            CheckEnvironmentDiagnostics();
             if (System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_CHECKS") == "1")
                 await CheckRitsu();
             Assert(ModManager.GetLoadedMods().Any(m => m.manifest?.id == ModEntry.Id && m.errors is not { Count: > 0 }), "built-in loader and explicit initializer");
@@ -97,6 +98,7 @@ public static partial class Checks
             CheckRejections(snapshot, schema, original);
             await CheckCloud(snapshot, schema);
             await CheckDisk(snapshot, schema);
+            await CheckDiagnostics(snapshot, schema);
 
             var fresh = RunState.CreateForNewRun([Player.CreateForNewRun<Ironclad>(UnlockState.all, 1)],
                 ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "STAGE1CHECK");

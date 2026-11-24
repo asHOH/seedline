@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 
@@ -23,34 +24,60 @@ internal static class RunCheckpoints
 
     internal static void Start(RunState run)
     {
+        ModEntry.LogLoadedMods();
         CheckLiveScope(run);
         RunContent.Grant(run);
         runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed), RitsuBridge.Capture(run)));
+        Log.Info($"Seedline: run state initialized; {Describe(run)}.");
     }
 
     internal static void Capture(RunState run, SerializableRun save)
     {
         if (runs.TryGetValue(run, out var state))
         {
-            CheckLiveScope(run);
-            snapshots.Add(save, state.Copy() with { Ritsu = RitsuBridge.Capture(run) });
+            try
+            {
+                CheckLiveScope(run);
+                snapshots.Add(save, state.Copy() with { Ritsu = RitsuBridge.Capture(run) });
+            }
+            catch (Exception error)
+            {
+                Log.Error($"Seedline: checkpoint capture failed; {Describe(run)}\n{error}");
+                throw;
+            }
         }
     }
 
     internal static void Restore(RunState run, SerializableRun save)
     {
-        CheckLiveScope(run);
-        var state = Require(save);
-        if (run.Rng.StringSeed != state.Seed)
-            throw new InvalidDataException("Seedline checkpoint belongs to another run.");
-        RitsuBridge.ValidateRestored(run, state.Ritsu);
-        runs.Add(run, state.Copy());
+        ModEntry.LogLoadedMods();
+        try
+        {
+            CheckLiveScope(run);
+            var state = Require(save);
+            if (run.Rng.StringSeed != state.Seed)
+                throw new InvalidDataException($"Seedline checkpoint seed mismatch: saved={state.Seed}, live={run.Rng.StringSeed}.");
+            RitsuBridge.ValidateRestored(run, state.Ritsu);
+            runs.Add(run, state.Copy());
+        }
+        catch (Exception error)
+        {
+            Log.Error($"Seedline: checkpoint restore failed; {Describe(save)}\n{error}");
+            throw;
+        }
+        Log.Info($"Seedline: run state restored; {Describe(run)}; reloads={save.NumReloads}.");
     }
 
     internal static CheckpointState Require(RunState run) => runs.TryGetValue(run, out var state)
         ? state : throw new InvalidOperationException("Seedline state is missing from this run.");
 
     internal static CheckpointState? Find(RunState run) => runs.TryGetValue(run, out var state) ? state : null;
+
+    private static string Describe(RunState run) =>
+        $"run={Find(run)?.RunId}; seed={run.Rng.StringSeed}; act={run.CurrentActIndex + 1}; floor={run.TotalFloor}; character={string.Join(",", run.Players.Select(p => p.Character.Id))}; ascension={run.AscensionLevel}; mode={run.GameMode}";
+
+    internal static string Describe(SerializableRun save) =>
+        $"run={(snapshots.TryGetValue(save, out var state) ? state.RunId.ToString() : "unknown")}; seed={save.SerializableRng?.Seed}; act_index={save.CurrentActIndex}; floor={save.MapPointHistory?.Sum(act => act?.Count ?? 0)}; reloads={save.NumReloads}";
 
     internal static CheckpointState Require(SerializableRun save)
     {
@@ -93,15 +120,28 @@ internal static class RunCheckpoints
     internal static SerializableRun Decode(string json, int gameSchema)
     {
         using var document = JsonDocument.Parse(json);
-        var root = document.RootElement;
-        if (root.ValueKind != JsonValueKind.Object ||
-            !root.TryGetProperty("seedline", out var state) || state.ValueKind != JsonValueKind.Object ||
-            !state.TryGetProperty("schema_version", out var version) ||
-            version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out var number) || number != SchemaVersion ||
-            !state.TryGetProperty("game_build", out var build) || build.GetString() != ModEntry.GameBuild ||
-            !state.TryGetProperty("run_id", out var id) || !id.TryGetGuid(out var runId) || runId == Guid.Empty ||
-            !state.TryGetProperty("seed", out var seed) || seed.ValueKind != JsonValueKind.String)
-            throw new InvalidDataException("Missing or incompatible Seedline checkpoint metadata. Save preserved.");
+        return Decode(document.RootElement, gameSchema);
+    }
+
+    internal static SerializableRun Decode(JsonElement root, int gameSchema)
+    {
+        if (root.ValueKind != JsonValueKind.Object)
+            throw new InvalidDataException("Checkpoint root must be an object.");
+        var state = RequiredField(root, "seedline");
+        if (state.ValueKind != JsonValueKind.Object)
+            throw new InvalidDataException("Checkpoint field seedline must be an object.");
+        var version = RequiredField(state, "schema_version");
+        if (version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out var number) || number != SchemaVersion)
+            throw new InvalidDataException($"Seedline checkpoint schema mismatch: expected={SchemaVersion}, actual={version.GetRawText()}.");
+        var build = RequiredField(state, "game_build");
+        if (build.ValueKind != JsonValueKind.String || build.GetString() != ModEntry.GameBuild)
+            throw new InvalidDataException($"Seedline checkpoint game build mismatch: expected={ModEntry.GameBuild}, actual={build.GetRawText()}.");
+        var id = RequiredField(state, "run_id");
+        if (id.ValueKind != JsonValueKind.String || !id.TryGetGuid(out var runId) || runId == Guid.Empty)
+            throw new InvalidDataException($"Seedline checkpoint run_id must be a nonempty GUID; actual={id.GetRawText()}.");
+        var seed = RequiredField(state, "seed");
+        if (seed.ValueKind != JsonValueKind.String)
+            throw new InvalidDataException("Seedline checkpoint seed must be a string.");
 
         SerializableRun save;
         try
@@ -114,11 +154,12 @@ internal static class RunCheckpoints
             throw new InvalidDataException("Seedline checkpoint contains invalid run data. Save preserved.", error);
         }
         if (save.SchemaVersion != gameSchema)
-            throw new InvalidDataException("Unsupported vanilla checkpoint schema. Save preserved.");
-        if (!state.TryGetProperty("random_positions", out var positions) || !state.TryGetProperty("rewards", out var rewards) ||
-            !state.TryGetProperty("selection", out var selection) || !state.TryGetProperty("events", out var events) ||
-            !state.TryGetProperty("card_history", out var cards))
-            throw new InvalidDataException("Missing Seedline random, reward or selection state. Save preserved.");
+            throw new InvalidDataException($"Vanilla checkpoint schema mismatch: expected={gameSchema}, actual={save.SchemaVersion}.");
+        var positions = RequiredField(state, "random_positions");
+        var rewards = RequiredField(state, "rewards");
+        var selection = RequiredField(state, "selection");
+        var events = RequiredField(state, "events");
+        var cards = RequiredField(state, "card_history");
         var random = RandomState.Read(seed.GetString()!, positions);
         var restored = new CheckpointState(runId, seed.GetString()!, random, RitsuBridge.Read(root, save))
         {
@@ -132,16 +173,28 @@ internal static class RunCheckpoints
         return save;
     }
 
+    private static JsonElement RequiredField(JsonElement parent, string name) => parent.TryGetProperty(name, out var value)
+        ? value : throw new InvalidDataException($"Missing checkpoint field {name}.");
+
     private static void Validate(SerializableRun save, CheckpointState state)
     {
         RitsuBridge.CheckConfiguration(state.Ritsu != null);
-        if (string.IsNullOrEmpty(state.Seed) || save.SerializableRng?.Seed != state.Seed || save.Players == null ||
-            save.Modifiers == null || save.Acts == null || save.SerializableOdds == null ||
-            save.SerializableSharedRelicGrabBag == null || save.ExtraFields == null ||
-            save.Players.Any(player => player == null) || save.Acts.Any(act => act == null) ||
-            save.Modifiers.Any(modifier => modifier?.Id == null) ||
-            save.CurrentActIndex < 0 || save.CurrentActIndex >= save.Acts.Count)
-            throw new InvalidDataException("Seedline checkpoint is incomplete or belongs to another run.");
+        if (string.IsNullOrEmpty(state.Seed) || save.SerializableRng?.Seed != state.Seed)
+            throw new InvalidDataException($"Checkpoint seed mismatch: seedline={state.Seed}, vanilla={save.SerializableRng?.Seed ?? "missing"}.");
+        if (save.Players == null || save.Players.Any(player => player == null))
+            throw new InvalidDataException("Checkpoint players is missing or contains null entries.");
+        if (save.Modifiers == null || save.Modifiers.Any(modifier => modifier?.Id == null))
+            throw new InvalidDataException("Checkpoint modifiers is missing or contains entries without an ID.");
+        if (save.Acts == null || save.Acts.Any(act => act == null))
+            throw new InvalidDataException("Checkpoint acts is missing or contains null entries.");
+        if (save.SerializableOdds == null)
+            throw new InvalidDataException("Checkpoint odds is missing.");
+        if (save.SerializableSharedRelicGrabBag == null)
+            throw new InvalidDataException("Checkpoint shared_relic_grab_bag is missing.");
+        if (save.ExtraFields == null)
+            throw new InvalidDataException("Checkpoint extra_fields is missing.");
+        if (save.CurrentActIndex < 0 || save.CurrentActIndex >= save.Acts.Count)
+            throw new InvalidDataException($"Checkpoint current_act_index out of range: actual={save.CurrentActIndex}, act_count={save.Acts.Count}.");
         CheckScope(save.GameMode, save.IsCustomGame, save.Players.Count);
         CardOccurrences.Validate(save);
     }
