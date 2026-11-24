@@ -9,5 +9,9 @@
   "SharedPotions": "Potions partagées",
   "Acts": "Actes",
   "Ancients": "Anciens",
-  "Events": "Événements"
+  "Events": "Événements",
+  "DiagnosticsTitle": "Diagnostic Seedline",
+  "ExportDiagnostics": "Exporter",
+  "DiagnosticsSaved": "Rapport enregistré :\n{0}\n\nEnvoyez ce fichier ZIP avec une brève description du problème.",
+  "DiagnosticsFailed": "Impossible d’exporter le diagnostic :\n{0}"
 }

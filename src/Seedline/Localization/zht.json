@@ -9,5 +9,9 @@
   "SharedPotions": "通用藥水",
   "Acts": "章節",
   "Ancients": "先古之民",
-  "Events": "事件"
+  "Events": "事件",
+  "DiagnosticsTitle": "不歪種神器診斷報告",
+  "ExportDiagnostics": "匯出",
+  "DiagnosticsSaved": "報告已儲存：\n{0}\n\n請傳送此 ZIP 檔案，並簡要說明遇到的問題。",
+  "DiagnosticsFailed": "無法匯出診斷報告：\n{0}"
 }

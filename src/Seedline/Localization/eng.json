@@ -9,5 +9,9 @@
   "SharedPotions": "Shared Potions",
   "Acts": "Acts",
   "Ancients": "Ancients",
-  "Events": "Events"
+  "Events": "Events",
+  "DiagnosticsTitle": "Seedline diagnostics",
+  "ExportDiagnostics": "Export",
+  "DiagnosticsSaved": "Report saved:\n{0}\n\nSend this ZIP with a short description of the problem.",
+  "DiagnosticsFailed": "Could not export diagnostics:\n{0}"
 }

@@ -9,5 +9,9 @@
   "SharedPotions": "Ortak İksirler",
   "Acts": "Bölümler",
   "Ancients": "Kadimler",
-  "Events": "Olaylar"
+  "Events": "Olaylar",
+  "DiagnosticsTitle": "Seedline tanılama",
+  "ExportDiagnostics": "Dışa aktar",
+  "DiagnosticsSaved": "Rapor kaydedildi:\n{0}\n\nBu ZIP dosyasını sorunun kısa bir açıklamasıyla birlikte gönderin.",
+  "DiagnosticsFailed": "Tanılama dışa aktarılamadı:\n{0}"
 }

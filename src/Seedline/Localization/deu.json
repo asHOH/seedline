@@ -9,5 +9,9 @@
   "SharedPotions": "Klassenübergreifende Tränke",
   "Acts": "Akte",
   "Ancients": "Uralte",
-  "Events": "Ereignisse"
+  "Events": "Ereignisse",
+  "DiagnosticsTitle": "Seedline-Diagnose",
+  "ExportDiagnostics": "Exportieren",
+  "DiagnosticsSaved": "Bericht gespeichert:\n{0}\n\nSende diese ZIP-Datei mit einer kurzen Beschreibung des Problems.",
+  "DiagnosticsFailed": "Diagnose konnte nicht exportiert werden:\n{0}"
 }

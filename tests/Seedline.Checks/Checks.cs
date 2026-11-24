@@ -39,6 +39,7 @@ public static partial class Checks
         {
             await (NGame.Instance ?? throw new InvalidOperationException("Game has not started.")).GameStartupComplete;
             CheckEnvironmentDiagnostics();
+            await CheckExportMenu();
             if (System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_CHECKS") == "1")
                 await CheckRitsu();
             Assert(ModManager.GetLoadedMods().Any(m => m.manifest?.id == ModEntry.Id && m.errors is not { Count: > 0 }), "built-in loader and explicit initializer");
@@ -66,6 +67,7 @@ public static partial class Checks
             Assert(provenance.Seed == "STAGE1CHECK" && provenance.RunId != Guid.Empty, "new run receives provenance before initialization");
 
             await SaveManager.Instance.SaveRun(null, saveProgress: false);
+            await CheckDiagnosticExport(snapshot);
             var regeneratedRoll = live.NextUInt64(address);
             Assert(RunCheckpoints.Encode(snapshot).SequenceEqual(original), "capture freezes random state before later generation");
             var loaded = SaveManager.Instance.LoadRunSave();

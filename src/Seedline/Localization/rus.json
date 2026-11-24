@@ -9,5 +9,9 @@
   "SharedPotions": "Общие зелья",
   "Acts": "Акты",
   "Ancients": "Древние",
-  "Events": "События"
+  "Events": "События",
+  "DiagnosticsTitle": "Диагностика Seedline",
+  "ExportDiagnostics": "Экспорт",
+  "DiagnosticsSaved": "Отчёт сохранён:\n{0}\n\nОтправьте этот ZIP-файл с кратким описанием проблемы.",
+  "DiagnosticsFailed": "Не удалось экспортировать диагностику:\n{0}"
 }

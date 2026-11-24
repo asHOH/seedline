@@ -9,5 +9,9 @@
   "SharedPotions": "โพชันที่ใช้ร่วมกัน",
   "Acts": "บท",
   "Ancients": "ผู้บรรพกาล",
-  "Events": "เหตุการณ์"
+  "Events": "เหตุการณ์",
+  "DiagnosticsTitle": "ข้อมูลวินิจฉัย Seedline",
+  "ExportDiagnostics": "ส่งออก",
+  "DiagnosticsSaved": "บันทึกรายงานแล้ว:\n{0}\n\nส่งไฟล์ ZIP นี้พร้อมคำอธิบายปัญหาสั้น ๆ",
+  "DiagnosticsFailed": "ไม่สามารถส่งออกข้อมูลวินิจฉัยได้:\n{0}"
 }

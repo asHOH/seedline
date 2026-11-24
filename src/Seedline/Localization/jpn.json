@@ -9,5 +9,9 @@
   "SharedPotions": "共通のポーション",
   "Acts": "アクト",
   "Ancients": "古代の存在",
-  "Events": "イベント"
+  "Events": "イベント",
+  "DiagnosticsTitle": "Seedline 診断情報",
+  "ExportDiagnostics": "エクスポート",
+  "DiagnosticsSaved": "レポートを保存しました：\n{0}\n\nこの ZIP ファイルと問題の簡単な説明を送ってください。",
+  "DiagnosticsFailed": "診断情報を出力できませんでした：\n{0}"
 }

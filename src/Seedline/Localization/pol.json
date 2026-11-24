@@ -9,5 +9,9 @@
   "SharedPotions": "Wspólne mikstury",
   "Acts": "Akty",
   "Ancients": "Pradawni",
-  "Events": "Wydarzenia"
+  "Events": "Wydarzenia",
+  "DiagnosticsTitle": "Diagnostyka Seedline",
+  "ExportDiagnostics": "Eksportuj",
+  "DiagnosticsSaved": "Raport zapisany:\n{0}\n\nWyślij ten plik ZIP z krótkim opisem problemu.",
+  "DiagnosticsFailed": "Nie udało się wyeksportować diagnostyki:\n{0}"
 }

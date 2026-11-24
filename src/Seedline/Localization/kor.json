@@ -9,5 +9,9 @@
   "SharedPotions": "공용 포션",
   "Acts": "막",
   "Ancients": "고대인",
-  "Events": "이벤트"
+  "Events": "이벤트",
+  "DiagnosticsTitle": "Seedline 진단 정보",
+  "ExportDiagnostics": "내보내기",
+  "DiagnosticsSaved": "보고서 저장 완료:\n{0}\n\n이 ZIP 파일과 함께 문제에 대한 간단한 설명을 보내 주세요.",
+  "DiagnosticsFailed": "진단 정보를 내보낼 수 없습니다:\n{0}"
 }
