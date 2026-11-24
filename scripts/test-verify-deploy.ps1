@@ -12,10 +12,29 @@ foreach ($name in 'test-release-package', 'test-workshop-package', 'test-copy-ga
 }
 @'
 $failure = Get-Content -LiteralPath "$PSScriptRoot/failure.txt"
+if ($args[0] -eq 'build' -and $failure -ne 'build') {
+    'built' | Set-Content -LiteralPath "$PSScriptRoot/built.signal"
+}
+if ($args[0] -eq 'format') {
+    if (!(Test-Path -LiteralPath "$PSScriptRoot/built.signal")) { throw 'Formatting started before build completed.' }
+    'started' | Set-Content -LiteralPath "$PSScriptRoot/format-started.signal"
+    $deadline = [DateTime]::UtcNow.AddSeconds(10)
+    while (!(Test-Path -LiteralPath "$PSScriptRoot/checks.signal")) {
+        if ([DateTime]::UtcNow -gt $deadline) { throw 'Formatting did not overlap game checks.' }
+        Start-Sleep -Milliseconds 10
+    }
+    'done' | Set-Content -LiteralPath "$PSScriptRoot/format-done.signal"
+}
 $global:LASTEXITCODE = if ($args[0] -eq $failure) { 1 } else { 0 }
 '@ | Set-Content -LiteralPath "$fixture/dotnet.ps1"
 @'
 param([string]$GameDir, [string]$RitsuLibDir, [switch]$RitsuFirst)
+'started' | Set-Content -LiteralPath "$PSScriptRoot/../checks.signal"
+$deadline = [DateTime]::UtcNow.AddSeconds(10)
+while (!(Test-Path -LiteralPath "$PSScriptRoot/../format-started.signal")) {
+    if ([DateTime]::UtcNow -gt $deadline) { throw 'Game checks did not overlap formatting.' }
+    Start-Sleep -Milliseconds 10
+}
 if ((Get-Content -LiteralPath "$PSScriptRoot/../failure.txt") -eq 'checks') {
     throw 'Simulated game check failure'
 }
@@ -23,6 +42,7 @@ if ((Get-Content -LiteralPath "$PSScriptRoot/../failure.txt") -eq 'checks') {
 @'
 param([string]$GameDir)
 $repo = Split-Path -Parent $PSScriptRoot
+if (!(Test-Path -LiteralPath "$repo/format-done.signal")) { throw 'Deployment ran before formatting completed.' }
 if ((Get-Content -Raw -LiteralPath "$repo/artifacts/Seedline/Seedline.dll").Trim() -ne 'Fresh assembly' -or
     !(Test-Path -LiteralPath "$repo/artifacts/Seedline/Seedline.json")) {
     throw 'Deployment ran before packaging.'
@@ -54,6 +74,7 @@ foreach ($case in $cases.Keys) {
     Set-Location $originalLocation
     foreach ($name in $environment.Keys) { [Environment]::SetEnvironmentVariable($name, $environment[$name]) }
     $global:LASTEXITCODE = 0
+    Get-ChildItem -LiteralPath $fixture -Filter '*.signal' -File | Remove-Item
     $failure = if ($case -eq 'deploy-failure') { 'deploy' } elseif ($case -in 'default', 'deploy') { 'none' } else { $case }
     $failure | Set-Content -LiteralPath "$fixture/failure.txt"
     'Stale assembly' | Set-Content -LiteralPath "$fixture/artifacts/Seedline/Seedline.dll"
@@ -63,6 +84,7 @@ foreach ($case in $cases.Keys) {
     $failureMessage = $null
     try { & "$fixture/scripts/verify.ps1" @arguments | Out-Null }
     catch { $failureMessage = $_.Exception.Message }
+    if (Get-Job) { throw "Formatting job was not cleaned up after $case" }
     if ($failureMessage -ne $cases[$case] -or ($null -eq $cases[$case] -and $LASTEXITCODE -ne 0)) {
         throw "Unexpected verifier result for ${case}: exit code $LASTEXITCODE, error $failureMessage"
     }

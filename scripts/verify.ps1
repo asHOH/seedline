@@ -20,16 +20,29 @@ $env:NUGET_PACKAGES = Join-Path $repo '.cache/nuget'
 
 & $Dotnet restore Seedline.slnx --nologo -m:1
 if ($LASTEXITCODE) { throw 'Restore failed.' }
-& $Dotnet format Seedline.slnx --verify-no-changes --no-restore
-if ($LASTEXITCODE) { throw 'Formatting check failed.' }
 & $Dotnet build Seedline.slnx -c Release --no-restore --nologo -m:1
 if ($LASTEXITCODE) { throw 'Build failed.' }
-& $Dotnet run --project tests/Seedline.Tests -c Release --no-build -- -noLogo
-if ($LASTEXITCODE) { throw 'Foundation tests failed.' }
-& (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR
-if ($RitsuLibDir) {
-    & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR -RitsuLibDir $RitsuLibDir
-    & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR -RitsuLibDir $RitsuLibDir -RitsuFirst
+
+$formatJob = Start-ThreadJob -ArgumentList $Dotnet, $repo -ScriptBlock {
+    param($Dotnet, $repo)
+    $ErrorActionPreference = 'Stop'
+    Set-Location $repo
+    & $Dotnet format Seedline.slnx --verify-no-changes --no-restore
+    if ($LASTEXITCODE) { throw 'Formatting check failed.' }
+}
+try {
+    & $Dotnet run --project tests/Seedline.Tests -c Release --no-build -- -noLogo
+    if ($LASTEXITCODE) { throw 'Foundation tests failed.' }
+    & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR
+    if ($RitsuLibDir) {
+        & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR -RitsuLibDir $RitsuLibDir
+        & (Join-Path $PSScriptRoot 'check-game.ps1') -GameDir $env:STS2_GAME_DIR -RitsuLibDir $RitsuLibDir -RitsuFirst
+    }
+    $formatJob | Receive-Job -Wait -ErrorAction Stop
+}
+finally {
+    $formatJob | Stop-Job
+    $formatJob | Remove-Job
 }
 
 $package = Join-Path $repo 'artifacts/Seedline'
