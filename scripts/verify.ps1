@@ -1,7 +1,8 @@
 param(
     [Parameter(Mandatory = $true)][string]$GameDir,
     [string]$Dotnet = 'dotnet',
-    [string]$RitsuLibDir
+    [string]$RitsuLibDir,
+    [switch]$Deploy
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
@@ -14,6 +15,7 @@ $env:NUGET_PACKAGES = Join-Path $repo '.cache/nuget'
 
 & (Join-Path $PSScriptRoot 'test-release-package.ps1')
 & (Join-Path $PSScriptRoot 'test-workshop-package.ps1')
+& (Join-Path $PSScriptRoot 'test-verify-deploy.ps1')
 
 & $Dotnet restore Seedline.slnx --nologo -m:1
 if ($LASTEXITCODE) { throw 'Restore failed.' }
@@ -35,3 +37,6 @@ Copy-Item -LiteralPath 'src/Seedline/bin/Release/net9.0/Seedline.dll', 'src/Seed
 $unexpected = Get-ChildItem -LiteralPath $package -File | Where-Object Name -NotIn 'Seedline.dll', 'Seedline.json'
 if ($unexpected) { throw 'Package contains unexpected files.' }
 Write-Output "All checks passed. Package: $package"
+if ($Deploy) {
+    & (Join-Path $PSScriptRoot 'deploy.ps1') -GameDir $env:STS2_GAME_DIR
+}

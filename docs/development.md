@@ -14,6 +14,7 @@ Integration checks use an isolated game copy, so allow disk space for it.
 
 - For a portable SDK, add `-Dotnet 'path/to/dotnet.exe'`.
 - With RitsuLib, add `-RitsuLibDir '<extracted RitsuLib package>'`, using the [complete package](compatibility.md#ritsulib).
+- To deploy after all checks pass, close the game and add `-Deploy`.
 
 The validated package is written to `artifacts/Seedline/`. Close the game, then deploy:
 
