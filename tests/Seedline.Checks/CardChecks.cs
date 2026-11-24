@@ -258,6 +258,7 @@ public static partial class Checks
             RunManager.Instance.CleanUp();
             await CheckCardRewardSources();
             CheckCardOfferPolicies();
+            await CheckRugRewards();
             CheckWingCharmPolicies();
         }
         finally

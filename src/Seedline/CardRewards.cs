@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Events;
+using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
@@ -27,8 +28,14 @@ internal static class CardRewards
         if (options.RngOverride != null)
             copy.WithRngOverride(options.RngOverride);
         options = Hook.ModifyCardRewardCreationOptions(player.RunState, player, copy);
-        var pool = options.GetPossibleCards(player).Where(c => c.IsAllowedInRun(player.RunState) &&
+        var rug = player.GetRelic<DingyRug>() != null && originalPools.Any(p => !p.IsColorless) &&
+            (candy ? originalPools.Any(p => p.IsColorless) : options.Flags.HasFlag(CardCreationFlags.IsCardReward) &&
+                !options.Flags.HasFlag(CardCreationFlags.NoCardPoolModifications));
+        // Keep the modified options for reward hooks, especially Candy's inherited pool.
+        var basePools = options.CardPools.Where(p => !rug || !p.IsColorless).ToArray();
+        var expandedPool = options.GetPossibleCards(player).Where(c => c.IsAllowedInRun(player.RunState) &&
             c.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare).Distinct().ToArray();
+        var pool = expandedPool.Where(c => !rug || candy || !c.Pool.IsColorless).ToArray();
         if (pool.Length == 0)
             throw new InvalidOperationException("Empty card reward pool.");
         var state = RunCheckpoints.Require((RunState)player.RunState);
@@ -40,7 +47,7 @@ internal static class CardRewards
             timing.Offset = -0.05;
         }
         var scarcity = player.RunState.AscensionLevel >= 7;
-        var addressPool = candy ? options.CardPools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
+        var addressPool = candy ? basePools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
             .Where(c => c.Type == CardType.Power && c.IsAllowedInRun(player.RunState)) : pool;
         var poolIds = string.Join("/", addressPool.Select(c => c.Pool.Id.Entry).Distinct().Order(StringComparer.Ordinal));
         var rarities = pool.Select(c => c.Rarity).Distinct().ToArray();
@@ -120,7 +127,18 @@ internal static class CardRewards
                         rarity = rarity == CardRarity.Common ? CardRarity.Uncommon : rarity == CardRarity.Uncommon ? CardRarity.Rare : CardRarity.Common;
                 }
                 CardModel card;
-                if (typed && types[0] != CardType.Power)
+                if (candy && rug)
+                {
+                    var eligible = pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)).ToArray();
+                    var colorless = state.Random.NextUnit(RandomAddress.For("Rug color choice", rarity.ToString()!)) <
+                        (double)eligible.Count(c => c.Pool.IsColorless) / eligible.Length;
+                    var full = options.CardPools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
+                        .Where(c => c.Rarity == rarity && c.Type == CardType.Power && c.IsAllowedInRun(player.RunState) && c.Pool.IsColorless == colorless);
+                    var address = colorless ? RandomAddress.For("card identity", "Rug Power", rarity.ToString()!) :
+                        RandomAddress.For("card identity", "Power", poolIds, rarity.ToString()!);
+                    card = CardGeneration.Draw(player, address, full, eligible.Where(c => c.Pool.IsColorless == colorless));
+                }
+                else if (typed && types[0] != CardType.Power)
                 {
                     var eventId = ModelDb.GetId<TheFutureOfPotions>();
                     var address = RandomAddress.For("event card", eventId.Entry, rarity.ToString()!, types[0].ToString());
@@ -136,7 +154,7 @@ internal static class CardRewards
                 }
                 else
                 {
-                    var full = options.CardPools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
+                    var full = basePools.SelectMany(p => p.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint))
                         .Where(c => c.Rarity == rarity && c.IsAllowedInRun(player.RunState) && (!typed || c.Type == CardType.Power));
                     card = Draw(rarity.Value, typed ? "Power" : other ? "other character" : "colorless", full);
                 }
@@ -145,6 +163,8 @@ internal static class CardRewards
                 Add(card, false);
             }
         }
+        if (rug && !candy)
+            ReplaceWithRug(player, cards, expandedPool);
         foreach (var result in cards)
             if (!options.Flags.HasFlag(CardCreationFlags.NoUpgradeRoll))
                 CardGeneration.Upgrade(player, result.Card);
@@ -175,7 +195,7 @@ internal static class CardRewards
             odds = options.RarityOdds.ToString(),
             offer,
             pool = poolIds,
-            eligible = pool.Select(c => c.Id.Entry),
+            eligible = expandedPool.Select(c => c.Id.Entry),
             rarityBefore,
             rarityAfter = timing,
             cards = cards.Select(c => new { identity = c.Card.Id.Entry, occurrence = CardOccurrences.Find(c.Card)?.Address, c.Card.CurrentUpgradeLevel })
@@ -190,6 +210,28 @@ internal static class CardRewards
         CardModel Draw(CardRarity rarity, string supply, IEnumerable<CardModel> full) => CardGeneration.Draw(player,
             RandomAddress.For("card identity", supply, poolIds, rarity.ToString()), full,
             pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)));
+    }
+
+    private static void ReplaceWithRug(Player player, List<CardCreationResult> cards, CardModel[] pool)
+    {
+        var state = RunCheckpoints.Require((RunState)player.RunState);
+        var retained = new HashSet<ModelId>();
+        for (var i = 0; i < cards.Count; i++)
+        {
+            var original = cards[i].Card;
+            var eligible = pool.Where(c => c.Rarity == original.Rarity && !retained.Contains(c.Id)).ToArray();
+            var colorless = eligible.Where(c => c.Pool.IsColorless).OrderBy(c => c.Id.Entry, StringComparer.Ordinal).ToArray();
+            var originalAddress = CardOccurrences.Info(original).Address;
+            if (Unit(state, "Rug replacement", originalAddress) < (double)colorless.Length / eligible.Length)
+            {
+                var address = RandomAddress.For("Rug colorless identity").With(originalAddress);
+                var card = CardGeneration.Create(player,
+                    colorless[AddressRandom.IntInclusive(state.Seed, address, 0, colorless.Length - 1)], address.Key);
+                CardOffers.Recreate(original, card);
+                cards[i] = new(card);
+            }
+            retained.Add(cards[i].Card.Id);
+        }
     }
 
     internal static double Unit(CheckpointState state, string purpose, string address) =>
