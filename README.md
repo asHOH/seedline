@@ -32,7 +32,7 @@ Keep the game build, Seedline and RitsuLib setup fixed during a run. Disabling S
 
 Report problems in Steam Workshop discussions (preferred) or QQ group **609823795**: describe expected versus actual behavior and steps to reproduce.
 
-Press the backtick (`` ` ``) or apostrophe (`'`) key to open the in-game console, run `getlogs seedline`, and send the generated ZIP privately to the maintainer.
+In Settings, choose **Seedline diagnostics → Export diagnostics** and send the generated ZIP privately to the maintainer.
 
 ## Learn more
 

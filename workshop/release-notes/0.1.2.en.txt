@@ -1,0 +1,8 @@
+[b]v0.1.2[/b]
+
+[list]
+[*]Export diagnostics from Settings.
+[*]Improve Dingy Rug reward alignment.
+[*]Support nine custom modifiers.
+[*]Fix crashes in unsupported modes. Seedline stays inactive.
+[/list]
