@@ -30,7 +30,7 @@ Applies to standard and Dread single-player runs with matching seeds, versions a
 
 Grant full content within new runs using this mod, preserving profile unlocks and Ascension limits.
 
-**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), custom-run modifiers, repeat visits to the same event, and content removed by game updates.
+**Exclude:** tutorial overrides (including scripted rewards and boss discovery order), unsupported [custom-run modifiers](#custom-run-modifiers), repeat visits to the same event, and content removed by game updates.
 
 **Numerical scope:** exclude negligible probability differences caused solely by rounding or exact sampling boundaries.
 
@@ -1366,6 +1366,17 @@ Grade modes independently: `NoSL x, SL y` when they differ, `NoSL x` when equal,
 **Strategy-change notation:** on 3B/4, **↓** means simpler meaningful decisions, **↑** more complex ones; no direct arrow means altered tradeoffs. For SL, parenthesized arrows describe within-room exploration at any grade: `4(↓)` changes strategy while simplifying exploration.
 
 Rare deviations include a **Frequency:** field.
+
+### Custom-run modifiers
+
+Support any combination of Flight, Murderous, Terminal, Night Terrors, Midas, Big Game Hunter, Character Cards, Hoarder and Draft.
+
+| Modifier | Strategy |
+|---|---|
+| Big Game Hunter | Qualifying elite offers use fixed-Rare triples without resetting the combat rarity offset. |
+| Character Cards | Use Prismatic Gem's expanded-pool addressing, sharing sequences for matching pools. |
+| Hoarder | Address copies by the triggering occurrence and copy index, preserving the enclosing acquisition batch. |
+| Draft | Ten three-card offers consume shared base-odds reward sequences and Rare-luck state, leaving the combat rarity offset unchanged. |
 
 ### Rarity calibration
 

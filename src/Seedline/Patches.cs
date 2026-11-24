@@ -14,7 +14,7 @@ internal static class SavePatch
     private static bool Prefix(SerializableRun save, bool isMultiplayer, ISaveStore ____saveStore,
         IProfileIdProvider ____profileIdProvider, bool ____forceSynchronous, Action? ___Saved, ref Task __result)
     {
-        if (isMultiplayer || RunScope.Bypasses(save.GameMode))
+        if (isMultiplayer || RunScope.Bypasses(save))
             return true;
         var path = RunSaveManager.GetRunSavePath(____profileIdProvider.CurrentProfileId, RunSaveManager.runSaveFileName);
         __result = CheckpointStore.Write(____saveStore, path, save, ____forceSynchronous, ___Saved);
@@ -37,7 +37,7 @@ internal static class LoadPatch
     [HarmonyPriority(Priority.Last), HarmonyAfter(RitsuBridge.PatchId)]
     private static void Postfix(ReadSaveResult<SerializableRun> __result)
     {
-        if (__result.SaveData is { } save && !RunScope.Bypasses(save.GameMode))
+        if (__result.SaveData is { } save && !RunScope.Bypasses(save))
             RitsuBridge.Attach(save, RunCheckpoints.Require(save).Ritsu);
     }
 }

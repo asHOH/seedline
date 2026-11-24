@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Events;
+using MegaCrit.Sts2.Core.Models.Modifiers;
 using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MegaCrit.Sts2.Core.Runs;
@@ -32,6 +33,7 @@ internal static class CardOccurrences
     private sealed record CopyGrant(RandomAddress Address, RandomState Random, Dictionary<CardModel, int>? Indices)
     {
         internal long? Ordinal { get; set; }
+        internal int NextIndex;
     }
     private static readonly AsyncLocal<CopyGrant?> copyGrant = new();
     internal const string SavedName = "SeedlineOccurrence";
@@ -141,11 +143,26 @@ internal static class CardOccurrences
                 if (copyGrant.Value is { } grant)
                 {
                     grant.Ordinal ??= grant.Random.Advance(grant.Address);
-                    var address = grant.Address.At(grant.Ordinal.Value).At(grant.Indices?.GetValueOrDefault(mutableCard) ?? 0).Key;
+                    var address = grant.Address.At(grant.Ordinal.Value).At(grant.Indices?.GetValueOrDefault(mutableCard) ?? grant.NextIndex++).Key;
                     Create(__result, address);
                 }
             }
         }
+    }
+
+    [HarmonyPatch(typeof(Hoarder), nameof(Hoarder.AfterCardChangedPiles))]
+    private static class HoarderCopies
+    {
+        private static void Prefix(Hoarder __instance, CardModel card, out CopyGrant? __state)
+        {
+            __state = copyGrant.Value;
+            if (CharacterCompatibility.UseVanillaCards(card.Owner) || card.Pile?.Type != PileType.Deck)
+                return;
+            var state = RunCheckpoints.Require((RunState)card.Owner.RunState);
+            // Keep the enclosing acquisition batch, but identify each trigger independently of traversal order.
+            copyGrant.Value = new(RandomAddress.For("card copy", __instance.Id.Entry).With(Info(card).Address), state.Random, null);
+        }
+        private static void Finalizer(CopyGrant? __state) => copyGrant.Value = __state;
     }
 
     [HarmonyPatch]

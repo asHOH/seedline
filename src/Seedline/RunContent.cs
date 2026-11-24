@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Ftue;
 using MegaCrit.Sts2.Core.Nodes.Multiplayer;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
+using MegaCrit.Sts2.Core.Nodes.Screens.CustomRun;
 using MegaCrit.Sts2.Core.Nodes.Screens.Dread;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Timeline.Epochs;
@@ -23,7 +24,7 @@ namespace Seedline;
 internal static class RunContent
 {
     internal static bool Covers(StartRunLobby lobby) => lobby.NetService.Type == NetGameType.Singleplayer &&
-        !lobby.IsCustom && lobby.GameMode is GameMode.Standard or GameMode.Dread;
+        lobby.GameMode is GameMode.Standard or GameMode.Dread && lobby.Modifiers.All(m => RunScope.Supports(m.Id));
 
     internal static void Grant(RunState run)
     {
@@ -104,7 +105,8 @@ internal static class ContentNoticePatch
     private static IEnumerable<MethodBase> TargetMethods() =>
     [
         AccessTools.Method(typeof(NCharacterSelectScreen), "OnEmbarkPressed"),
-        AccessTools.Method(typeof(NDreadScreen), "OnEmbarkPressed")
+        AccessTools.Method(typeof(NDreadScreen), "OnEmbarkPressed"),
+        AccessTools.Method(typeof(NCustomRunScreen), "OnEmbarkPressed")
     ];
 
     internal static bool Prefix(Control __instance, StartRunLobby ____lobby, MethodBase __originalMethod)

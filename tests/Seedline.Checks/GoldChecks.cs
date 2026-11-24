@@ -39,6 +39,7 @@ public static partial class Checks
             await CheckRunContent();
             TestMode.IsOn = true;
             await CheckModeBypass();
+            await CheckSupportedModifiers();
             await CheckCharacterCompatibility();
             foreach (var ascension in new[] { 0, 7 })
                 await CheckGoldGeneration(ascension);

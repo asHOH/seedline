@@ -2,6 +2,7 @@ using System.Text.Json;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Exceptions;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Migrations;
@@ -109,7 +110,10 @@ internal static class CheckpointStore
 
     private static bool Bypasses(JsonElement root) => root.ValueKind == JsonValueKind.Object &&
         !root.TryGetProperty("seedline", out _) && root.TryGetProperty("game_mode", out var mode) &&
-        mode.ValueKind == JsonValueKind.String && Enum.TryParse<GameMode>(mode.GetString(), true, out var value) && RunScope.Bypasses(value);
+        mode.ValueKind == JsonValueKind.String && Enum.TryParse<GameMode>(mode.GetString(), true, out var value) &&
+        (RunScope.Bypasses(value) || root.TryGetProperty("modifiers", out var modifiers) && modifiers.ValueKind == JsonValueKind.Array &&
+            modifiers.EnumerateArray().Any(m => m.ValueKind == JsonValueKind.Object && m.TryGetProperty("id", out var id) &&
+                id.ValueKind == JsonValueKind.String && !RunScope.Supports(ModelId.Deserialize(id.GetString()!))));
 
     private static string Field(JsonElement element, string name) =>
         element.ValueKind == JsonValueKind.Object && element.TryGetProperty(name, out var value) &&

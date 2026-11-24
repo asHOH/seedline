@@ -79,6 +79,7 @@ internal static class RunCheckpoints
         ? state : throw new InvalidOperationException("Seedline state is missing from this run.");
 
     internal static CheckpointState? Find(RunState run) => runs.TryGetValue(run, out var state) ? state : null;
+    internal static CheckpointState? Find(SerializableRun save) => snapshots.TryGetValue(save, out var state) ? state : null;
 
     private static string Describe(RunState run) =>
         $"run={Find(run)?.RunId}; seed={run.Rng.StringSeed}; act={run.CurrentActIndex + 1}; floor={run.TotalFloor}; character={string.Join(",", run.Players.Select(p => p.Character.Id))}; ascension={run.AscensionLevel}; mode={run.GameMode}";
@@ -202,21 +203,21 @@ internal static class RunCheckpoints
             throw new InvalidDataException("Checkpoint extra_fields is missing.");
         if (save.CurrentActIndex < 0 || save.CurrentActIndex >= save.Acts.Count)
             throw new InvalidDataException($"Checkpoint current_act_index out of range: actual={save.CurrentActIndex}, act_count={save.Acts.Count}.");
-        CheckScope(save.GameMode, save.IsCustomGame, save.Players.Count);
+        CheckScope(save.GameMode, save.Players.Count);
         CardOccurrences.Validate(save);
     }
 
     private static void CheckLiveScope(RunState run)
     {
-        CheckScope(run.GameMode, run.IsCustomGame, run.Players.Count);
+        CheckScope(run.GameMode, run.Players.Count);
         // Mods may carry save-only data in serialized modifiers and consume it during reconstruction.
-        if (run.Modifiers.Count != 0)
-            throw new InvalidDataException("Seedline does not support live run modifiers.");
+        if (run.Modifiers.Any(m => !RunScope.Supports(m.Id)))
+            throw new InvalidDataException("Unsupported modifiers were added to an active Seedline run.");
     }
 
-    private static void CheckScope(GameMode mode, bool custom, int players)
+    private static void CheckScope(GameMode mode, int players)
     {
-        if (players != 1 || custom || mode is not (GameMode.Standard or GameMode.Dread))
-            throw new InvalidDataException("Seedline supports non-custom standard and Dread single-player runs.");
+        if (players != 1 || mode is not (GameMode.Standard or GameMode.Dread))
+            throw new InvalidDataException("Seedline supports standard and Dread single-player runs.");
     }
 }

@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Models.Modifiers;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Managers;
+using MegaCrit.Sts2.Core.Saves.Migrations;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using MegaCrit.Sts2.Core.Saves.Test;
 using MegaCrit.Sts2.Core.Unlocks;
@@ -30,20 +31,11 @@ public static partial class Checks
             throw new InvalidOperationException(message);
         }
 
-        foreach (var (mode, custom, players, modifier) in new[]
-        {
-            (GameMode.Standard, true, 1, false), (GameMode.Standard, false, 2, false),
-            (GameMode.Standard, false, 1, true)
-        })
-        {
-            var invalid = RunState.CreateForNewRun(Enumerable.Range(1, players)
-                .Select(id => Player.CreateForNewRun<Ironclad>(UnlockState.all, (ulong)id)).ToArray(),
-                ActModel.GetDefaultList().Select(act => act.ToMutable()).ToList(),
-                modifier ? [ModelDb.Modifier<DeprecatedModifier>().ToMutable()] : [], mode, custom, 7, "MODIFIERSCOPE");
-            Reject(() => RunCheckpoints.Start(invalid),
-                $"startup rejects mode={mode}, custom={custom}, players={players}, live modifier={modifier}");
-            Assert(RunCheckpoints.Find(invalid) == null, "rejected startup attaches no Seedline state");
-        }
+        var invalid = RunState.CreateForNewRun(Enumerable.Range(1, 2)
+            .Select(id => Player.CreateForNewRun<Ironclad>(UnlockState.all, (ulong)id)).ToArray(),
+            ActModel.GetDefaultList().Select(act => act.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "MODIFIERSCOPE");
+        Reject(() => RunCheckpoints.Start(invalid), "single-player startup rejects a two-player run");
+        Assert(RunCheckpoints.Find(invalid) == null, "rejected startup attaches no Seedline state");
 
         var run = StartGoldRun();
         try
@@ -57,23 +49,24 @@ public static partial class Checks
             snapshot.Modifiers.Add(payload);
             var bytes = RunCheckpoints.Encode(snapshot);
             var store = new MockGodotFileIo("modifier-payload");
-            var path = RunSaveManager.GetRunSavePath(1, RunSaveManager.runSaveFileName);
-            await CheckpointStore.Write(store, path, snapshot, false, null);
-            var loaded = CheckpointStore.Read(store, path, snapshot.SchemaVersion).SaveData!;
+            var saves = new RunSaveManager(1, store, new MigrationManager(store));
+            await saves.SaveRun(snapshot, false);
+            var loaded = saves.LoadRunSave().SaveData!;
             Assert(loaded.Modifiers.Single().Props!.strings!.Single().value == "save-only payload" &&
                 RunCheckpoints.Encode(loaded).SequenceEqual(bytes), "serialized modifier payload round-trips unchanged");
 
             loaded.NumReloads++;
-            await CheckpointStore.Write(store, path, loaded, false, null);
-            var rewritten = CheckpointStore.Read(store, path, snapshot.SchemaVersion).SaveData!;
+            await saves.SaveRun(loaded, false);
+            var rewritten = saves.LoadRunSave().SaveData!;
             Assert(rewritten.NumReloads == loaded.NumReloads &&
                 rewritten.Modifiers.Single().Props!.strings!.Single().value == "save-only payload",
                 "reload-count rewrite retains save-only modifier data");
 
             RunManager.Instance.CleanUp();
             var restored = RunState.FromSerializable(rewritten);
-            Reject(() => RunCheckpoints.Restore(restored, rewritten), "restoration rejects a modifier left in the live run");
-            Assert(RunCheckpoints.Find(restored) == null, "rejected restoration leaves Seedline state unattached");
+            RunCheckpoints.Restore(restored, rewritten);
+            Assert(RunScope.Bypasses(restored) && RunCheckpoints.Find(restored) == null,
+                "restoration bypasses an unsupported modifier left in the live run");
 
             // Simulate a mod consuming its save-only carrier after reconstructing its own state.
             AccessTools.Property(typeof(RunState), nameof(RunState.Modifiers)).SetValue(restored, Array.Empty<ModifierModel>());

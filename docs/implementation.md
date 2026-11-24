@@ -24,9 +24,9 @@ Delegate discovery, deletion, completed-run cleanup and cloud operations to game
 
 Allow altered relic and card pool sizes.
 
-Bypass multiplayer, Blitz and Daily.
+Bypass multiplayer, Blitz, Daily and unsupported [custom-run modifiers](../design/DESIGN.md#custom-run-modifiers).
 
-For active Seedline runs, reject live run modifiers at startup, capture and restore. Preserve serialized save-only modifier payloads through checkpoint writes and reload-count rewrites, provided their owning mod consumes them before run setup.
+Preserve save-only modifier payloads until their owning mod consumes them before run setup. Seedline envelopes require strict loading. Reject unsupported modifiers added mid-run at capture.
 
 ### RitsuLib
 

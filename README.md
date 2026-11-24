@@ -10,9 +10,11 @@ If you save and reload to try different actions (SL), expect more changes from t
 
 ## Supported setup
 
-Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player runs without custom modifiers.
+Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player.
 
-Multiplayer, Blitz and Daily runs play normally with Seedline inactive. Other custom single-player runs remain unsupported.
+Custom runs may have any combination of **Flight, Murderous, Terminal, Night Terrors, Midas, Big Game Hunter, Character Cards, Hoarder and Draft**.
+
+Multiplayer, Blitz, Daily and runs containing any other modifier play normally with Seedline inactive.
 
 Seedline runs use fully unlocked content without changing profile unlocks or Ascension limits.
 

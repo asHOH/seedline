@@ -111,7 +111,7 @@ public static partial class Checks
         }
         lobby.GameMode = GameMode.Standard;
         var custom = new StartRunLobby(GameMode.Standard, true, new NetSingleplayerGameService(), null!, 1);
-        Assert(!RunContent.Covers(custom), "custom lobby stays outside the content grant");
+        Assert(RunContent.Covers(custom), "custom lobby without modifiers receives the content grant");
         foreach (var type in new[] { typeof(NCharacterSelectScreen), typeof(NDreadScreen) })
             Assert(Harmony.GetPatchInfo(AccessTools.Method(type, "OnEmbarkPressed"))?.Owners.Contains(ModEntry.Id) == true,
                 $"{type.Name}: notice intercepts Start before the original handler");

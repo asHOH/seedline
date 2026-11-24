@@ -207,7 +207,6 @@ public static partial class Checks
             root => root["modifiers"] = null,
             root => root["modifiers"] = new JsonArray((JsonNode?)null),
             root => root["modifiers"] = new JsonArray(new JsonObject { ["id"] = null }),
-            root => root["is_custom_game"] = true,
             root => root["rng"] = null,
             root => root["players"] = new JsonArray((JsonNode?)null),
             root => root["acts"] = null,

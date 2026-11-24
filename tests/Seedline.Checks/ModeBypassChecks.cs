@@ -55,18 +55,22 @@ public static partial class Checks
         TestMode.IsOn = true;
         try
         {
-            foreach (var (mode, multiplayer, count, custom) in new[]
+            foreach (var (mode, multiplayer, count, custom, modifier) in new[]
             {
-                (GameMode.Blitz, false, 1, false), (GameMode.Daily, false, 1, false),
-                (GameMode.Standard, true, 1, false), (GameMode.Standard, true, 2, true)
-            })
+                (GameMode.Blitz, false, 1, false, (ModifierModel?)null),
+                (GameMode.Daily, false, 1, false, ModelDb.Modifier<DeprecatedModifier>()),
+                (GameMode.Standard, true, 1, false, null),
+                (GameMode.Standard, true, 2, true, ModelDb.Modifier<DeprecatedModifier>())
+            }.Concat(ModelDb.GoodModifiers.Concat(ModelDb.BadModifiers).Where(m => !RunScope.Supports(m.Id))
+                .Select(m => (GameMode.Standard, false, 1, true, (ModifierModel?)m)))
+                .Append((GameMode.Dread, false, 1, true, ModelDb.Modifier<DeprecatedModifier>())))
             {
                 manager.CleanUp();
-                var label = $"{mode}, multiplayer={multiplayer}, players={count}, custom={custom}";
+                var label = $"{mode}, multiplayer={multiplayer}, players={count}, custom={custom}, modifier={modifier?.Id}";
                 var unlocks = new UnlockState(EpochModel.AllEpochIds.Except([EpochModel.GetId<Fool6Epoch>()]), [], 0);
                 var players = Enumerable.Range(1, count).Select(id => Player.CreateForNewRun<Ironclad>(unlocks, (ulong)id)).ToArray();
                 var run = RunState.CreateForNewRun(players, ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(),
-                    mode == GameMode.Daily || custom ? [ModelDb.Modifier<DeprecatedModifier>().ToMutable()] : [],
+                    modifier != null ? [ModelDb.Modifier<Flight>().ToMutable(), modifier.ToMutable()] : [],
                     mode, custom, mode == GameMode.Blitz ? 0 : 7, "MODEBYPASS");
                 if (multiplayer)
                 {
