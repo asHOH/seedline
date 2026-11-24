@@ -11,6 +11,7 @@ Install a .NET SDK compatible with [global.json](../global.json). In PowerShell 
 ```
 
 Integration checks use an isolated game copy, so allow disk space for it.
+Later runs reuse game files whose sizes and modification times match. Test mods and save directories are refreshed each run.
 
 - For a portable SDK, add `-Dotnet 'path/to/dotnet.exe'`.
 - With RitsuLib, add `-RitsuLibDir '<extracted RitsuLib package>'`, using the [complete package](compatibility.md#ritsulib).

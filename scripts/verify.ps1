@@ -15,6 +15,7 @@ $env:NUGET_PACKAGES = Join-Path $repo '.cache/nuget'
 
 & (Join-Path $PSScriptRoot 'test-release-package.ps1')
 & (Join-Path $PSScriptRoot 'test-workshop-package.ps1')
+& (Join-Path $PSScriptRoot 'test-copy-game-files.ps1')
 & (Join-Path $PSScriptRoot 'test-verify-deploy.ps1')
 
 & $Dotnet restore Seedline.slnx --nologo -m:1

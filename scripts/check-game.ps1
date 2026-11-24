@@ -13,7 +13,7 @@ if ($assemblyHash -ne '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C
 $suite = if ($RitsuLibDir) { 'ritsu' } else { 'standalone' }
 $hostDir = Join-Path $repo ".cache/$suite-host"
 $runDir = Join-Path $repo (".cache/$suite-checks/" + [guid]::NewGuid().ToString())
-New-Item -ItemType Directory -Path $hostDir, $runDir -Force | Out-Null
+New-Item -ItemType Directory -Path $runDir -Force | Out-Null
 $settingsDir = Join-Path $runDir 'SlayTheSpire2/default/1'
 New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
 $modOrder = if ($RitsuFirst) { @('STS2-RitsuLib', 'Seedline', 'Seedline.Checks') } else { @('Seedline', 'STS2-RitsuLib', 'Seedline.Checks') }
@@ -28,17 +28,7 @@ $settings | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $setti
 
 # Keep the installed game and its saves outside the test host.
 if ($game -ne $hostDir) {
-    Copy-Item -LiteralPath (Join-Path $game 'SlayTheSpire2.exe'), (Join-Path $game 'release_info.json') -Destination $hostDir -Force
-    foreach ($file in Get-ChildItem -LiteralPath $game -File | Where-Object Extension -In '.dll', '.pck') {
-        $target = Join-Path $hostDir $file.Name
-        Copy-Item -LiteralPath $file.FullName -Destination $target -Force
-    }
-    $managed = Join-Path $hostDir 'data_sts2_windows_x86_64'
-    New-Item -ItemType Directory -Path $managed -Force | Out-Null
-    foreach ($file in Get-ChildItem -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64') -File) {
-        $target = Join-Path $managed $file.Name
-        Copy-Item -LiteralPath $file.FullName -Destination $target -Force
-    }
+    & (Join-Path $PSScriptRoot 'copy-game-files.ps1') -GameDir $game -HostDir $hostDir
 }
 # Rebuild the isolated host's mod set so previous installations cannot load alongside this build.
 $hostMods = Join-Path $hostDir 'mods'

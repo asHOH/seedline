@@ -7,7 +7,7 @@ Copy-Item -LiteralPath "$PSScriptRoot/verify.ps1" -Destination "$fixture/scripts
 'Fresh assembly' | Set-Content -LiteralPath "$fixture/src/Seedline/bin/Release/net9.0/Seedline.dll"
 '{}' | Set-Content -LiteralPath "$fixture/src/Seedline/Seedline.json"
 # Run the real verifier with isolated dependencies, without building or deploying to a game.
-foreach ($name in 'test-release-package', 'test-workshop-package', 'test-verify-deploy') {
+foreach ($name in 'test-release-package', 'test-workshop-package', 'test-copy-game-files', 'test-verify-deploy') {
     '' | Set-Content -LiteralPath "$fixture/scripts/$name.ps1"
 }
 @'
