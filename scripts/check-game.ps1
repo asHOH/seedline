@@ -10,7 +10,7 @@ $assemblyHash = (Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x
 if ($assemblyHash -ne '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3') {
     throw 'Checks require v0.113.1 build d09d48e5.'
 }
-$suite = if ($RitsuLibDir) { 'ritsu' } else { 'stage1' }
+$suite = if ($RitsuLibDir) { 'ritsu' } else { 'standalone' }
 $hostDir = Join-Path $repo ".cache/$suite-host"
 $runDir = Join-Path $repo (".cache/$suite-checks/" + [guid]::NewGuid().ToString())
 New-Item -ItemType Directory -Path $hostDir, $runDir -Force | Out-Null

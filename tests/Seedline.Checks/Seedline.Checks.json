@@ -1,6 +1,6 @@
 {
   "id": "Seedline.Checks",
-  "name": "Seedline Stage 1 checks",
+  "name": "Seedline integration checks",
   "author": "Seedline contributors",
   "version": "0.1.0",
   "has_dll": true,

@@ -47,7 +47,7 @@ public static partial class Checks
                 Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer)))?.Owners.Contains(ModEntry.Id) == true, "both multiplayer entry guards installed");
 
             var player = Player.CreateForNewRun<Ironclad>(UnlockState.all, 1);
-            var state = RunState.CreateForNewRun([player], ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "STAGE1CHECK");
+            var state = RunState.CreateForNewRun([player], ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "CHECKPOINTCHECK");
             var manager = RunManager.Instance;
             manager.SetUpNewSingleplayer(state, true);
             var address = RandomAddress.For("foundation check", "reward");
@@ -64,7 +64,7 @@ public static partial class Checks
             var release = JsonNode.Parse(System.IO.File.ReadAllText(Path.Combine(Path.GetDirectoryName(OS.GetExecutablePath())!, "release_info.json")))!;
             Assert(JsonNode.Parse(original)!["seedline"]!["game_build"]!.GetValue<string>() == $"{release["version"]}/{release["commit"]}",
                 "checkpoint records the loaded game build");
-            Assert(provenance.Seed == "STAGE1CHECK" && provenance.RunId != Guid.Empty, "new run receives provenance before initialization");
+            Assert(provenance.Seed == "CHECKPOINTCHECK" && provenance.RunId != Guid.Empty, "new run receives provenance before initialization");
 
             await SaveManager.Instance.SaveRun(null, saveProgress: false);
             await CheckDiagnosticExport(snapshot);
@@ -103,7 +103,7 @@ public static partial class Checks
             await CheckDiagnostics(snapshot, schema);
 
             var fresh = RunState.CreateForNewRun([Player.CreateForNewRun<Ironclad>(UnlockState.all, 1)],
-                ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "STAGE1CHECK");
+                ActModel.GetDefaultList().Select(a => a.ToMutable()).ToList(), [], GameMode.Standard, false, 7, "CHECKPOINTCHECK");
             manager.SetUpNewSingleplayer(fresh, true);
             Assert(RunCheckpoints.Require(manager.ToSave(null)).RunId != provenance.RunId, "same-seed new runs have independent provenance");
             Assert(RunCheckpoints.Require(fresh).Random.NextUInt64(address) == openingRoll && live.Position(address) == 2,
@@ -165,10 +165,10 @@ public static partial class Checks
             ParentEventId = ModelDb.Event<BattlewornDummy>().Id,
             IsPreFinished = true,
             ShouldResumeParentEvent = true,
-            EncounterState = new Dictionary<string, string> { ["stage1"] = "preserved" }
+            EncounterState = new Dictionary<string, string> { ["test_payload"] = "preserved" }
         };
         var parent = RunCheckpoints.Decode(Encoding.UTF8.GetString(RunCheckpoints.Encode(snapshot)), schema).PreFinishedRoom!;
-        Assert(parent.ParentEventId == snapshot.PreFinishedRoom.ParentEventId && parent.IsPreFinished && parent.EncounterState["stage1"] == "preserved", "parent-event reconstruction payload round-trip");
+        Assert(parent.ParentEventId == snapshot.PreFinishedRoom.ParentEventId && parent.IsPreFinished && parent.EncounterState["test_payload"] == "preserved", "parent-event reconstruction payload round-trip");
         snapshot.PreFinishedRoom = null;
     }
 
@@ -337,7 +337,7 @@ public static partial class Checks
 
     private static async Task CheckDisk(SerializableRun snapshot, int schema)
     {
-        const string directory = "user://stage1-disk";
+        const string directory = "user://checkpoint-disk";
         var store = new GodotFileIo(directory);
         const string path = "current_run.save";
         await CheckpointStore.Write(store, path, snapshot, false, null);
