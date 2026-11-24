@@ -116,6 +116,15 @@ internal static class CombatShuffle
             var order = priorities[a].CompareTo(priorities[b]);
             return order != 0 ? order : StringComparer.Ordinal.Compare(CombatCards.Info(a).Address, CombatCards.Info(b).Address);
         });
+        DecisionTrace.Record("shuffle", () => new
+        {
+            seed = scope.Seed,
+            combat = scope.Address.Key,
+            address = address.Key,
+            opening = current.Opening,
+            stage = "before modifiers",
+            order = cards.Select(c => new { identity = c.Id.Entry, occurrence = CombatCards.Info(c).Address, key = keys[c], selectionKey = CombatCards.Info(c).Key, priority = priorities[c] })
+        });
         return cards;
     }
 

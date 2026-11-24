@@ -98,6 +98,7 @@ public static partial class Checks
             Directory.CreateDirectory(logDirectory);
             System.IO.File.WriteAllText(Path.Combine(logDirectory, "seedline-export-check.log"), "Seedline export diagnostic fixture");
             var stateBefore = RunCheckpoints.Encode(snapshot);
+            DecisionTrace.Record("export-number-fixture", () => new { seed = "76561123456789012", priority = 76561123456789012UL });
             exportGate = new TaskCompletionSource();
             exportPaths.Clear();
             button.EmitSignal(NClickableControl.SignalName.Released, button);
@@ -124,6 +125,13 @@ public static partial class Checks
                     "exported ZIP contains game metadata, logs, screenshot and checkpoint pair");
                 using var reader = new StreamReader(zip.Entries.Single(e => e.FullName.EndsWith("/current_run.save")).Open());
                 Assert(reader.ReadToEnd().Contains("\"seedline\""), "game exporter retains Seedline checkpoint data");
+                using var trace = new StreamReader(zip.GetEntry("logs/seedline/decisions.jsonl")!.Open());
+                var records = trace.ReadToEnd().Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(line => System.Text.Json.Nodes.JsonNode.Parse(line)!).ToArray();
+                var numeric = records.Single(r => (string?)r["kind"] == "export-number-fixture")["data"]!;
+                Assert((string?)numeric["seed"] == "76561123456789012" && (string?)numeric["priority"] == "76561123456789012" &&
+                    records.Any(r => (string?)r["kind"] == "checkpoint-written"),
+                    "one-click ZIP includes flushed decisions and preserves diagnostic numbers through the real sanitizer");
             }
             Assert(System.IO.File.ReadAllBytes(savePath).SequenceEqual(before) && RunCheckpoints.Encode(snapshot).SequenceEqual(stateBefore),
                 "export leaves checkpoint files and captured random state unchanged");

@@ -33,6 +33,7 @@ internal static class CardRewards
             throw new InvalidOperationException("Empty card reward pool.");
         var state = RunCheckpoints.Require((RunState)player.RunState);
         var timing = state.Rewards.Rare;
+        var rarityBefore = timing.Copy();
         if (timing.Act != player.RunState.CurrentActIndex)
         {
             timing.Act = player.RunState.CurrentActIndex;
@@ -166,6 +167,19 @@ internal static class CardRewards
             }
         }
         CardOffers.NumberOffer(cards.Select(c => c.Card));
+        DecisionTrace.Record("card-reward", () => new
+        {
+            seed = state.Seed,
+            kind = kind.ToString(),
+            source = options.Source.ToString(),
+            odds = options.RarityOdds.ToString(),
+            offer,
+            pool = poolIds,
+            eligible = pool.Select(c => c.Id.Entry),
+            rarityBefore,
+            rarityAfter = timing,
+            cards = cards.Select(c => new { identity = c.Card.Id.Entry, occurrence = CardOccurrences.Find(c.Card)?.Address, c.Card.CurrentUpgradeLevel })
+        });
         return cards;
 
         void Add(CardModel card, bool supplementary)

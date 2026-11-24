@@ -56,6 +56,14 @@ internal static class CombatSelection
     {
         var eligible = candidates.ToArray();
         count = Math.Clamp(count, 0, eligible.Length);
+        DecisionTrace.Record("combat-selection", () => new
+        {
+            group,
+            count,
+            rule = count == 0 ? "empty" : eligible.Length == 1 ? "singleton" : preserveWhole && count == eligible.Length ? "whole set" : "clocks",
+            candidates = eligible.Select(c => new { identity = c.Id.Entry, occurrence = CombatCards.Find(c)?.Address, key = CombatCards.Find(c)?.Key }),
+            incidental = preserveWhole && count == eligible.Length && eligible.Length > 1 && incidental
+        });
         if (count == 0)
             return [];
         if (eligible.Length == 1)
@@ -80,6 +88,7 @@ internal static class CombatSelection
             var j = scope.Random.NextIntInclusive(address, 0, i);
             (result[i], result[j]) = (result[j], result[i]);
         }
+        DecisionTrace.Record("incidental-order", () => new { seed = scope.Seed, address = address.Key, after = scope.Random.Position(address), order = result.Select(c => CombatCards.Info(c).Address) });
         return result;
     }
 

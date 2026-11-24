@@ -29,6 +29,7 @@ internal static class RunCheckpoints
         RunContent.Grant(run);
         runs.Add(run, new CheckpointState(Guid.NewGuid(), run.Rng.StringSeed, new RandomState(run.Rng.StringSeed), RitsuBridge.Capture(run)));
         Log.Info($"Seedline: run state initialized; {Describe(run)}.");
+        DecisionTrace.Record("run-start", () => new { run = Find(run)!.RunId, seed = run.Rng.StringSeed });
     }
 
     internal static void Capture(RunState run, SerializableRun save)
@@ -39,6 +40,7 @@ internal static class RunCheckpoints
             {
                 CheckLiveScope(run);
                 snapshots.Add(save, state.Copy() with { Ritsu = RitsuBridge.Capture(run) });
+                DecisionTrace.Record("checkpoint-capture", () => new { run = state.RunId, seed = state.Seed, floor = run.TotalFloor, reloads = save.NumReloads });
             }
             catch (Exception error)
             {
@@ -66,6 +68,7 @@ internal static class RunCheckpoints
             throw;
         }
         Log.Info($"Seedline: run state restored; {Describe(run)}; reloads={save.NumReloads}.");
+        DecisionTrace.Record("checkpoint-restore", () => new { run = Find(run)!.RunId, seed = run.Rng.StringSeed, floor = run.TotalFloor, reloads = save.NumReloads });
     }
 
     internal static CheckpointState Require(RunState run) => runs.TryGetValue(run, out var state)

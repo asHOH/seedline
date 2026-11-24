@@ -63,6 +63,10 @@ public static partial class Checks
                 var state = (RandomBranchState)creature.Monster!.MoveStateMachine!.States[branch];
                 Assert(state.GetNextState(creature, run.Rng.MonsterAi) == expected && scope.Random.Position(address) == ordinal,
                     $"{creature.Monster.Id}: exact percentile result and effective-decision consumption at {ordinal}");
+                var evidence = DecisionRecords("enemy-percentile").Last()["data"]!;
+                Assert((string?)evidence["selected"] == expected && (string?)evidence["after"] == ordinal.ToString() &&
+                    evidence["moves"]!.AsArray().Count == moves.Length,
+                    "enemy diagnostic records include actual effective weights, result and advancement");
             }
             foreach (var exo in exos)
             {

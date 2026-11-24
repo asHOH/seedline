@@ -28,8 +28,10 @@ internal sealed class SelectionState
     internal void Renew(string seed, RandomAddress scope, string key)
     {
         var clock = Get(seed, scope, key);
+        var before = clock.Remaining;
         clock.Renewals = checked(clock.Renewals + 1);
         clock.Remaining = Roll(seed, scope.With(key), clock.Renewals);
+        DecisionTrace.Record("selection-renew", () => new { seed, scope = scope.Key, key, before, after = clock.Remaining, clock.Renewals });
     }
 
     internal string[] Select(string seed, RandomAddress scope, IEnumerable<string> eligible, int count)
@@ -43,6 +45,15 @@ internal sealed class SelectionState
         if (count == 0)
             return [];
         var minimum = ordered[count - 1].Clock.Remaining;
+        DecisionTrace.Record("selection", () => new
+        {
+            seed,
+            scope = scope.Key,
+            count,
+            subtract = minimum,
+            candidates = ordered.Select(p => new { key = p.Key, before = p.Clock.Remaining, p.Clock.Renewals }),
+            selected = ordered.Take(count).Select(p => p.Key)
+        });
         for (var i = 0; i < ordered.Length; i++)
             ordered[i].Clock.Remaining = i < count ? 0 : ordered[i].Clock.Remaining - minimum;
         return ordered.Take(count).Select(p => p.Key).ToArray();

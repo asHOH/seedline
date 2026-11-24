@@ -44,6 +44,9 @@ public static partial class Checks
             CombatManager.Instance.SetUpCombat(combat);
             var scope = CombatStateScope.Require(combat);
             var large = size > 2000;
+            if (!large)
+                Assert(DecisionRecords("shuffle").Last()["data"]!["order"]!.AsArray().Count == size,
+                    "large controlled shuffle diagnostics retain every logical occurrence and assigned key");
             Assert(CombatCards.UseVanilla(player) == large && scope.Random.Position(scope.For("shuffle")) == (large ? 0 : 1) &&
                 vanilla.Equals(run.Rng.Shuffle.ToSerializable()) == !large, $"a {size}-card deck opens with the policy's shuffle RNG");
             if (large)

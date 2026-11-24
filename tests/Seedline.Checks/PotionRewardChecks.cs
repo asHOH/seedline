@@ -76,6 +76,11 @@ public static partial class Checks
         await Play();
         Assert(live.Random.Position(effects) == 0 && JsonSerializer.Serialize(live.Rewards) == supplies,
             "Alchemize with full slots preserves effects rarity and identity progression");
+        var preview = DecisionRecords("potion-generation").Last();
+        var grantResult = DecisionRecords("potion-grant-result").Last();
+        Assert((bool)preview["data"]!["preview"]! && !(bool)grantResult["data"]!["acquired"]! &&
+            !DecisionRecords("potion-grant-commit").Any(r => (string?)r["context"]!["run"] == live.RunId.ToString()),
+            "full-slot Alchemize diagnostics identify a preview and failed grant without a live commit");
         owner.Potions.First().Discard();
         var existing = owner.Potions.ToArray();
         await Play();
@@ -83,6 +88,9 @@ public static partial class Checks
         Assert(acquired.CanBeGeneratedInCombat && RewardEntries.Find(acquired) != null &&
             live.Random.Position(effects) == 1 && combatRng.Equals(combatRun.Rng.CombatPotionGeneration.ToSerializable()),
             "successful Alchemize grants an eligible addressed potion and preserves vanilla combat RNG");
+        Assert((string?)DecisionRecords("potion-grant-commit").Last()["data"]!["rarityPosition"] == "1" &&
+            (bool)DecisionRecords("potion-grant-result").Last()["data"]!["acquired"]!,
+            "successful Alchemize diagnostics record the actual committed advancement");
         RunManager.Instance.CleanUp();
 
         foreach (var room in new[] { RoomType.Monster, RoomType.Elite })

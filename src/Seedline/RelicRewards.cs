@@ -106,6 +106,8 @@ internal static class RelicRewards
             return null;
         }
         SupplyEntry? chosen = null;
+        var removeEntry = remove || (!chest && filter == null);
+        var advancement = tail ? "tail" : removeEntry ? "remove" : "filtered marker";
         foreach (var candidateRarity in rarities.Skip(Array.IndexOf(rarities, rarity)))
         {
             var eligible = Eligible(candidateRarity);
@@ -118,12 +120,35 @@ internal static class RelicRewards
                     RandomAddress.For("marker lifetime", candidateRarity.ToString()).At(chestOrdinal))) * size);
             }
             var supply = rewards.Supply(Address(source, candidateRarity));
+            DecisionTrace.Record("relic-request", () => new
+            {
+                seed = state.Seed,
+                supply = Address(source, candidateRarity).Key,
+                eligible = eligible.Order(StringComparer.Ordinal),
+                tail,
+                advancement,
+                chest,
+                lifetime
+            });
             chosen = tail ? supply.Tail(eligible) ?? Borrow(candidateRarity, eligible)
-                : supply.Draw(eligible, borrow: e => Borrow(candidateRarity, e), remove: remove || (!chest && filter == null), lifetime: lifetime);
+                : supply.Draw(eligible, borrow: e => Borrow(candidateRarity, e), remove: removeEntry, lifetime: lifetime);
             if (chosen != null)
                 break;
         }
         var result = chosen == null ? RelicFactory.FallbackRelic : pool[chosen.Identity];
+        DecisionTrace.Record("relic-reward", () => new
+        {
+            seed = state.Seed,
+            source,
+            requestedRarity = rarity.ToString(),
+            deliveredRarity = result.Rarity.ToString(),
+            identity = result.Id.Entry,
+            entry = chosen?.Address,
+            tail,
+            advancement = chosen == null ? "none" : advancement,
+            chest,
+            chestOrdinal
+        });
         if (chosen != null)
             RewardEntries.Attach(result, chosen);
         if (chest)

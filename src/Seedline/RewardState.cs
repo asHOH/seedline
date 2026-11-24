@@ -18,16 +18,31 @@ internal sealed class RewardState
         return supply;
     }
 
-    internal SupplyEntry Draw(string seed, RandomAddress address, IEnumerable<string> pool, IEnumerable<string> eligible)
+    internal SupplyEntry Draw(string seed, RandomAddress address, IEnumerable<string> pool, IEnumerable<string> eligible, bool preview = false)
     {
         var identities = pool.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         var allowed = eligible.ToHashSet(StringComparer.Ordinal);
         allowed.IntersectWith(identities);
         if (allowed.Count == 0)
             throw new InvalidOperationException($"Empty eligible supply: {address.Key}");
-        return Supply(address).Draw(allowed, index => new(
+        var supply = Supply(address);
+        var before = supply.Generated;
+        var entry = supply.Draw(allowed, index => new(
             identities[AddressRandom.IntInclusive(seed, address.At(index), 0, identities.Length - 1)],
             address.At(index).Key), remove: allowed.SetEquals(identities))!;
+        DecisionTrace.Record("identity-draw", () => new
+        {
+            seed,
+            supply = address.Key,
+            preview,
+            generatedBefore = before,
+            generatedAfter = supply.Generated,
+            entry.Identity,
+            entry.Address,
+            eligible = allowed.Order(StringComparer.Ordinal),
+            advancement = allowed.SetEquals(identities) ? "remove" : "filtered marker"
+        });
+        return entry;
     }
 
     internal RewardState Copy() => new()

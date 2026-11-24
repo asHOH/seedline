@@ -32,6 +32,7 @@ internal sealed class CombatStateScope(string seed, RandomAddress address, Rando
                 throw new InvalidOperationException("Prepared combat opportunity changed before entry.");
             random.Advance(scope.Counter);
             scope.committed = true;
+            DecisionTrace.Record("combat-entry", () => new { seed = scope.Seed, combat = scope.Address.Key, counter = scope.Counter.Key, ordinal = scope.Ordinal });
         }
         return scope;
     }

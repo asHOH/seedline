@@ -111,6 +111,8 @@ public static partial class Checks
             manager.CleanUp();
             await CheckModifierCheckpoints();
             await CheckGameplayRewards();
+            CheckDecisionEvidence();
+            CheckDecisionRecordingCost();
             await System.IO.File.WriteAllTextAsync(Path.Combine(root, "result.json"), System.Text.Json.JsonSerializer.Serialize(new { success = true, checks = passed }));
             ((SceneTree)Engine.GetMainLoop()).Quit();
         }

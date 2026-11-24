@@ -21,6 +21,13 @@ internal static class CardRouting
             var chosen = keys.Select(k => byKey[k]).ToArray();
             var logical = chosen.Concat(copies.Except(chosen).OrderBy(address, StringComparer.Ordinal)).ToArray();
             var physical = picks.Concat(copies.Where(c => !clicked.Contains(c))).ToArray();
+            DecisionTrace.Record("routing", () => new
+            {
+                seed,
+                scope = scope.Key,
+                renew,
+                associations = physical.Select((card, i) => new { identity = card.Id.Entry, before = address(card), after = address(logical[i]), key = key(logical[i]) })
+            });
             if (!physical.SequenceEqual(logical, ReferenceEqualityComparer.Instance))
                 reassociate(physical, logical);
             if (renew)

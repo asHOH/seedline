@@ -19,6 +19,7 @@ internal static class CheckpointStore
                 store.WriteFile(path, bytes);
             else
                 await store.WriteFileAsync(path, bytes);
+            DecisionTrace.Record("checkpoint-written", () => new { checkpoint = RunCheckpoints.Describe(save) });
             stage = "saved callback (write completed)";
             saved?.Invoke();
         }

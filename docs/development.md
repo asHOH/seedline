@@ -27,7 +27,7 @@ Follow the [activation steps](../README.md#install).
 
 ## Diagnostics
 
-Seedline records versions, run context and checkpoint failures in the game's log. Individual random decisions are not logged, so gameplay reports also need the affected save and reproduction steps.
+Seedline automatically retains recent reward, shuffle, selection and enemy-intent decisions (up to 8 MiB). Settings → Export diagnostics includes them with the game's logs and saves.
 
 ## Releases
 

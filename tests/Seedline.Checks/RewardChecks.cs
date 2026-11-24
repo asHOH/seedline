@@ -153,6 +153,9 @@ public static partial class Checks
             for (var i = 0; i < 150; i++)
             {
                 var drawn = RelicRewards.Draw(player, "generic", RelicRarity.Common);
+                if (i == 0)
+                    Assert((string?)DecisionRecords("relic-reward").Last()["data"]!["advancement"] == "remove",
+                        "ordinary relic diagnostics describe actual removal rather than the optional request flag");
                 if (drawn is Circlet)
                     break;
                 identities.Add(drawn.Id);

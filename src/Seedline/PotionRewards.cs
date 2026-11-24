@@ -33,6 +33,8 @@ internal static class PotionRewards
         if (options.Length == 0)
             throw new InvalidOperationException("Cannot generate a potion from an empty pool.");
         var rarity = fixedRarity;
+        var rarityAddress = RandomAddress.For("potion rarity", source, uniform ? "uniform" : "standard");
+        var before = state.Random.Position(rarityAddress);
         if (rarity == null)
         {
             var roll = state.Random.NextUnit(RandomAddress.For("potion rarity", source, uniform ? "uniform" : "standard"));
@@ -46,9 +48,23 @@ internal static class PotionRewards
         }
         var pool = PotionFactory.GetPotionOptions(player).Where(p => p.Rarity == rarity).ToArray();
         var entry = state.Rewards.Draw(state.Seed, RandomAddress.For("potion identity", source, rarity.ToString()!),
-            pool.Select(p => p.Id.Entry), options.Where(p => p.Rarity == rarity).Select(p => p.Id.Entry));
+            pool.Select(p => p.Id.Entry), options.Where(p => p.Rarity == rarity).Select(p => p.Id.Entry), preview: preview != null);
         var potion = pool.Single(p => p.Id.Entry == entry.Identity);
         RewardEntries.Attach(potion, entry);
+        DecisionTrace.Record("potion-generation", () => new
+        {
+            seed = state.Seed,
+            source,
+            preview = preview != null,
+            rarity = rarity.ToString(),
+            fixedRarity = fixedRarity?.ToString(),
+            rarityAddress = rarityAddress.Key,
+            before,
+            after = state.Random.Position(rarityAddress),
+            eligible = options.Select(p => p.Id.Entry),
+            entry.Identity,
+            entry.Address
+        });
         return potion;
     }
 
@@ -71,6 +87,7 @@ internal static class PotionRewards
         try
         {
             var result = await PotionCmd.TryToProcure(potion, player, slot);
+            DecisionTrace.Record("potion-grant-result", () => new { seed = state.Seed, source, identity = potion.Id.Entry, acquired = result.success });
             if (result.success)
                 excluded?.Add(potion.Id.Entry);
             return result;
@@ -89,6 +106,14 @@ internal static class PotionRewards
             live.Random.Commit(RandomAddress.For("potion rarity", grant.Source, "standard"), grant.Preview.Random);
             var key = RandomAddress.For("potion identity", grant.Source, potion.Rarity.ToString()).Key;
             live.Rewards.Supplies[key] = grant.Preview.Rewards.Supplies[key];
+            DecisionTrace.Record("potion-grant-commit", () => new
+            {
+                seed = live.Seed,
+                source = grant.Source,
+                identity = potion.Id.Entry,
+                rarityPosition = live.Random.Position(RandomAddress.For("potion rarity", grant.Source, "standard")),
+                supply = key
+            });
         }
     }
 

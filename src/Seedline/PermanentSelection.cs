@@ -20,6 +20,13 @@ internal static class PermanentSelection
             return [];
         var state = State(cards[0]);
         var byKey = cards.ToDictionary(Key, StringComparer.Ordinal);
+        DecisionTrace.Record("permanent-selection", () => new
+        {
+            seed = state.Seed,
+            scope = scope.Key,
+            count,
+            candidates = cards.Select(c => new { identity = c.Id.Entry, key = Key(c), occurrence = CardOccurrences.Info(c).Address })
+        });
         return state.Selection.Select(state.Seed, scope, byKey.Keys, count).Select(key => byKey[key]).ToArray();
     }
 
@@ -40,7 +47,10 @@ internal static class PermanentSelection
         var state = State(card);
         var clock = state.Selection.Get(state.Seed, Upgrade, Key(card));
         if (clock.Remaining == 0)
+        {
             clock.Remaining = -Math.Log(state.Random.NextOpenUnit(RandomAddress.For("upgrade refill")));
+            DecisionTrace.Record("selection-refill", () => new { seed = state.Seed, scope = Upgrade.Key, key = Key(card), after = clock.Remaining, source = "upgrade refill" });
+        }
     }
 
     internal static CardModel? DowngradeOne(Rng rng, IEnumerable<CardModel> cards) =>
@@ -55,6 +65,7 @@ internal static class PermanentSelection
         // Midpoints keep the retained event RNG's exponential draw strictly inside (0, 1).
         state.Selection.Get(state.Seed, Downgrade, Key(card)).Remaining =
             -Math.Log(AddressRandom.OpenUnit(rng.NextUnsignedLong()));
+        DecisionTrace.Record("selection-refill", () => new { seed = state.Seed, scope = Downgrade.Key, key = Key(card), after = state.Selection.Clocks[Downgrade.With(Key(card)).Key].Remaining, source = "event RNG" });
         return card;
     }
 
@@ -64,8 +75,17 @@ internal static class PermanentSelection
         if (cards.Length == 0)
             return [];
         var seed = State(cards[0]).Seed;
-        return cards.OrderBy(c => AddressRandom.UInt64(seed, RandomAddress.For(purpose, Key(c))))
+        var selected = cards.OrderBy(c => AddressRandom.UInt64(seed, RandomAddress.For(purpose, Key(c))))
             .ThenBy(Key, StringComparer.Ordinal).Take(count).ToArray();
+        DecisionTrace.Record("fixed-selection", () => new
+        {
+            seed,
+            purpose,
+            count,
+            candidates = cards.Select(c => new { identity = c.Id.Entry, key = Key(c) }),
+            selected = selected.Select(Key)
+        });
+        return selected;
     }
 
     internal static void Route(IReadOnlyList<CardModel> eligible, IReadOnlyCollection<CardModel> clicked, string operation)
@@ -94,6 +114,14 @@ internal static class PermanentSelection
         }).OrderBy(g => g.Clock.Remaining / g.Copies.Length).ThenBy(g => g.Key, StringComparer.Ordinal).ToArray();
         var winner = types[0];
         var minimum = winner.Clock.Remaining / winner.Copies.Length;
+        DecisionTrace.Record("potion-sacrifice", () => new
+        {
+            seed = state.Seed,
+            scope = scope.Key,
+            selected = winner.Key,
+            subtract = minimum,
+            candidates = types.Select(t => new { identity = t.Key, count = t.Copies.Length, before = t.Clock.Remaining, t.Clock.Renewals })
+        });
         foreach (var other in types.Skip(1))
             other.Clock.Remaining = Math.Max(0, other.Clock.Remaining - other.Copies.Length * minimum);
         var copy = AddressRandom.IntInclusive(state.Seed,

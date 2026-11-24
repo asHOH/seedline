@@ -33,6 +33,13 @@ internal static class CombatCards
     {
         if (player.Deck.Cards.Count > maxControlledDeckSize)
             vanillaDecks.GetOrCreateValue(player.PlayerCombatState!);
+        if (UseVanilla(player))
+            DecisionTrace.Record("vanilla-combat-cards", () => new
+            {
+                character = player.Character.Id.Entry,
+                deckSize = player.Deck.Cards.Count,
+                reason = CharacterCompatibility.UseVanillaCards(player) ? "modded character" : "large deck"
+            });
     }
 
     private sealed class Grant(string source)
