@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -85,8 +86,16 @@ internal static class CardRewards
                     Unit(state, "card rarity", entryAddress.Key) < UncommonChance(scarcity, rareSlots.Count > 0, opening, slot)
                         ? CardRarity.Uncommon : CardRarity.Common);
                 var eligible = pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)).OrderBy(c => c.Id.Entry, StringComparer.Ordinal).ToArray();
+                var requestedRarity = rarity;
+                for (var attempt = 0; eligible.Length == 0 && attempt < 2; attempt++)
+                {
+                    rarity = rarity.GetNextHighestRarityWithWrapping();
+                    eligible = pool.Where(c => c.Rarity == rarity && cards.All(r => r.Card.Id != c.Id)).OrderBy(c => c.Id.Entry, StringComparer.Ordinal).ToArray();
+                }
                 if (eligible.Length == 0)
                     throw new InvalidOperationException("Triple has no distinct eligible card.");
+                if (rarity != requestedRarity)
+                    Log.Warn($"Seedline: card reward rarity fallback {requestedRarity} -> {rarity}; entry={entryAddress.Key}; pool={poolIds}.");
                 Add(CardGeneration.Create(player, eligible[AddressRandom.IntInclusive(state.Seed,
                     RandomAddress.For("card identity").With(entryAddress.Key), 0, eligible.Length - 1)], entryAddress.Key), false);
                 if (randomTriple && rareSlots.Count > 0 && slot == 0)

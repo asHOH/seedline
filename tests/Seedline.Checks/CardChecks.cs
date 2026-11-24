@@ -260,6 +260,15 @@ public static partial class Checks
             CheckCardOfferPolicies();
             await CheckRugRewards();
             CheckWingCharmPolicies();
+            RunManager.Instance.CleanUp();
+            run = StartGoldRun();
+            player = run.Players[0];
+            var fallbackPool = new[] { ModelDb.GetId<Anger>(), ModelDb.GetId<ShrugItOff>(), ModelDb.GetId<Inflame>() };
+            var fallbackCards = CardRewards.Generate(player, 3,
+                CardCreationOptions.ForRoom(player, RoomType.Boss).WithFilter(c => fallbackPool.Contains(c.Id)), CardOfferKind.OwnCharacter);
+            Assert(fallbackCards.Select(c => c.Card.Rarity).SequenceEqual([CardRarity.Common, CardRarity.Common, CardRarity.Uncommon]) &&
+                fallbackCards.Select(c => c.Card.Id).Distinct().Count() == 3,
+                "missing reward rarities fall through in vanilla order without repeating cards");
         }
         finally
         {
