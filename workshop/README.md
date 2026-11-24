@@ -10,6 +10,14 @@ Save generated `mod_id.txt` here. Subsequent preparation uses `-Update`, preserv
 
 `-IncludeGallery` synchronizes previews, deleting missing images.
 
-Uploader v0.2.0 writes English only. Add Chinese through language-aware editing. Change notes are bilingual.
+Uploader v0.2.0 writes English only. Change notes are bilingual.
+
+When description text changes, edit `descriptions/english.bbcode` and `descriptions/schinese.bbcode`, then run this standalone command in PowerShell 7 with Steam signed in:
+
+```powershell
+./scripts/update-workshop-descriptions.ps1 -GameDir 'D:/Games/Slay the Spire 2'
+```
+
+It uploads both descriptions to the existing item without changing binaries, titles, visibility or release notes. It is separate from release publishing and does not compare or skip unchanged text.
 
 Keep local text synchronized with online edits. QQ placeholders are acceptable privately.
