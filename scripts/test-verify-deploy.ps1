@@ -31,22 +31,50 @@ if ((Get-Content -LiteralPath "$repo/failure.txt") -eq 'deploy') { throw 'Simula
 $GameDir | Set-Content -LiteralPath "$repo/deployed.txt"
 '@ | Set-Content -LiteralPath "$fixture/scripts/deploy.ps1"
 
-$pwsh = (Get-Process -Id $PID).Path
-foreach ($case in 'default', 'deploy', 'restore', 'format', 'build', 'run', 'checks', 'deploy-failure') {
+# Keep verifier environment/location changes out of the caller with one child for all cases.
+@'
+param([string]$Fixture)
+$ErrorActionPreference = 'Stop'
+$originalLocation = Get-Location
+$environment = @{}
+foreach ($name in 'STS2_GAME_DIR', 'DOTNET_CLI_TELEMETRY_OPTOUT', 'DOTNET_SKIP_FIRST_TIME_EXPERIENCE', 'DOTNET_CLI_HOME', 'NUGET_PACKAGES') {
+    $environment[$name] = [Environment]::GetEnvironmentVariable($name)
+}
+$cases = [ordered]@{
+    default = $null
+    restore = 'Restore failed.'
+    format = 'Formatting check failed.'
+    build = 'Build failed.'
+    run = 'Foundation tests failed.'
+    checks = 'Simulated game check failure'
+    'deploy-failure' = 'Simulated deployment failure'
+    deploy = $null
+}
+foreach ($case in $cases.Keys) {
+    Set-Location $originalLocation
+    foreach ($name in $environment.Keys) { [Environment]::SetEnvironmentVariable($name, $environment[$name]) }
+    $global:LASTEXITCODE = 0
     $failure = if ($case -eq 'deploy-failure') { 'deploy' } elseif ($case -in 'default', 'deploy') { 'none' } else { $case }
     $failure | Set-Content -LiteralPath "$fixture/failure.txt"
     'Stale assembly' | Set-Content -LiteralPath "$fixture/artifacts/Seedline/Seedline.dll"
     if (Test-Path -LiteralPath "$fixture/deployed.txt") { Remove-Item -LiteralPath "$fixture/deployed.txt" }
-    $arguments = @('-NoProfile', '-File', "$fixture/scripts/verify.ps1",
-        '-GameDir', "$fixture/game path", '-Dotnet', "$fixture/dotnet.ps1")
-    if ($case -ne 'default') { $arguments += '-Deploy' }
-    $output = & $pwsh @arguments 2>&1 | Out-String
-    $expectedSuccess = $case -in 'default', 'deploy'
-    if (($LASTEXITCODE -eq 0) -ne $expectedSuccess) { throw "Unexpected verifier result for ${case}: $output" }
+    $arguments = @{ GameDir = "$fixture/game path"; Dotnet = "$fixture/dotnet.ps1" }
+    if ($case -ne 'default') { $arguments.Deploy = $true }
+    $failureMessage = $null
+    try { & "$fixture/scripts/verify.ps1" @arguments | Out-Null }
+    catch { $failureMessage = $_.Exception.Message }
+    if ($failureMessage -ne $cases[$case] -or ($null -eq $cases[$case] -and $LASTEXITCODE -ne 0)) {
+        throw "Unexpected verifier result for ${case}: exit code $LASTEXITCODE, error $failureMessage"
+    }
     $deployed = Test-Path -LiteralPath "$fixture/deployed.txt"
     if ($deployed -ne ($case -eq 'deploy')) { throw "Unexpected deployment for $case" }
     if ($deployed -and (Get-Content -LiteralPath "$fixture/deployed.txt") -ne (Resolve-Path -LiteralPath "$fixture/game path").Path) {
         throw 'Deployment received the wrong game directory.'
     }
 }
+Write-Output 'All 8 cases passed.'
+'@ | Set-Content -LiteralPath "$fixture/run-cases.ps1"
+$pwsh = (Get-Process -Id $PID).Path
+$output = & $pwsh -NoProfile -File "$fixture/run-cases.ps1" -Fixture $fixture 2>&1 | Out-String
+if ($LASTEXITCODE -or $output.Trim() -ne 'All 8 cases passed.') { throw "Verify/deploy checks failed: $output" }
 Write-Output 'Verify/deploy checks passed (no game installation changed).'
