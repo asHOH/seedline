@@ -10,8 +10,9 @@
   "Acts": "Akty",
   "Ancients": "Pradawni",
   "Events": "Wydarzenia",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "Diagnostyka Seedline",
-  "ExportDiagnostics": "Eksportuj",
+  "ExportDiagnostics": "Eksportuj diagnostykę",
   "DiagnosticsSaved": "Raport zapisany:\n{0}\n\nWyślij ten plik ZIP z krótkim opisem problemu.",
   "DiagnosticsFailed": "Nie udało się wyeksportować diagnostyki:\n{0}"
 }

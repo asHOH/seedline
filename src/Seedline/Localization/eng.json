@@ -10,8 +10,9 @@
   "Acts": "Acts",
   "Ancients": "Ancients",
   "Events": "Events",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "Seedline diagnostics",
-  "ExportDiagnostics": "Export",
+  "ExportDiagnostics": "Export diagnostics",
   "DiagnosticsSaved": "Report saved:\n{0}\n\nSend this ZIP with a short description of the problem.",
   "DiagnosticsFailed": "Could not export diagnostics:\n{0}"
 }

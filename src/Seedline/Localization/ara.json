@@ -10,8 +10,9 @@
   "Acts": "الفصول",
   "Ancients": "القدماء",
   "Events": "الأحداث",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "تشخيصات Seedline",
-  "ExportDiagnostics": "تصدير",
+  "ExportDiagnostics": "تصدير التشخيص",
   "DiagnosticsSaved": "تم حفظ التقرير:\n{0}\n\nأرسل ملف ZIP هذا مع وصف موجز للمشكلة.",
   "DiagnosticsFailed": "تعذر تصدير التشخيصات:\n{0}"
 }

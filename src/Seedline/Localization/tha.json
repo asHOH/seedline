@@ -10,8 +10,9 @@
   "Acts": "บท",
   "Ancients": "ผู้บรรพกาล",
   "Events": "เหตุการณ์",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "ข้อมูลวินิจฉัย Seedline",
-  "ExportDiagnostics": "ส่งออก",
+  "ExportDiagnostics": "ส่งออกข้อมูลวินิจฉัย",
   "DiagnosticsSaved": "บันทึกรายงานแล้ว:\n{0}\n\nส่งไฟล์ ZIP นี้พร้อมคำอธิบายปัญหาสั้น ๆ",
   "DiagnosticsFailed": "ไม่สามารถส่งออกข้อมูลวินิจฉัยได้:\n{0}"
 }

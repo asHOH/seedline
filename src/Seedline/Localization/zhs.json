@@ -10,8 +10,9 @@
   "Acts": "章节",
   "Ancients": "先古之民",
   "Events": "事件",
+  "DiagnosticsModName": "不歪种神器",
   "DiagnosticsTitle": "不歪种神器诊断报告",
-  "ExportDiagnostics": "导出",
+  "ExportDiagnostics": "导出诊断报告",
   "DiagnosticsSaved": "报告已保存：\n{0}\n\n请发送此 ZIP 文件，并简要说明遇到的问题。",
   "DiagnosticsFailed": "无法导出诊断报告：\n{0}"
 }

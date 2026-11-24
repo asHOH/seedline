@@ -10,8 +10,9 @@
   "Acts": "Bölümler",
   "Ancients": "Kadimler",
   "Events": "Olaylar",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "Seedline tanılama",
-  "ExportDiagnostics": "Dışa aktar",
+  "ExportDiagnostics": "Tanılamayı dışa aktar",
   "DiagnosticsSaved": "Rapor kaydedildi:\n{0}\n\nBu ZIP dosyasını sorunun kısa bir açıklamasıyla birlikte gönderin.",
   "DiagnosticsFailed": "Tanılama dışa aktarılamadı:\n{0}"
 }

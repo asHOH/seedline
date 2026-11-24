@@ -46,12 +46,20 @@ public static partial class Checks
             await ExportFrame();
             var panel = screen.GetNode<NSettingsPanel>("%GeneralSettings");
             var row = panel.Content.GetNode<Control>("SeedlineDiagnostics");
+            var divider = panel.Content.GetNode<ColorRect>("SeedlineDiagnosticsDivider");
+            var feedbackDivider = panel.Content.GetNode<ColorRect>("SendFeedbackDivider");
             var button = row.GetNode<NButton>("ExportButton");
             var original = screen.GetNode<NOpenFeedbackScreenButton>("%FeedbackButton");
             Assert(button.IsEnabled && button.FocusMode == Control.FocusModeEnum.All &&
                 button.GetNode<MegaLabel>("Label").Text == NoticeText.Get("ExportDiagnostics") &&
                 original.GetParent() == panel.Content.GetNode("SendFeedback"),
                 "main-menu settings expose a localized export button without replacing game feedback");
+            Assert(divider.GetIndex() == original.GetParent().GetIndex() + 1 && row.GetIndex() == divider.GetIndex() + 1 &&
+                divider.Color == feedbackDivider.Color && divider.CustomMinimumSize == feedbackDivider.CustomMinimumSize &&
+                divider.FocusMode == Control.FocusModeEnum.None && divider.Size.Y > 0 &&
+                divider.Position.Y >= original.GetParent<Control>().Position.Y + original.GetParent<Control>().Size.Y &&
+                row.Position.Y >= divider.Position.Y + divider.Size.Y,
+                "Seedline has a separate settings row using the game's divider style without adding a focus stop");
             Assert(original.FocusNeighborBottom == button.GetPath() && button.FocusNeighborTop == original.GetPath() &&
                 row.Position.Y >= original.GetParent<Control>().Position.Y + original.GetParent<Control>().Size.Y,
                 "export row fits the settings list and participates in controller navigation");
@@ -81,10 +89,11 @@ public static partial class Checks
             {
                 locale.SetLanguage(code);
                 localize.Invoke(screen, null);
-                Assert(row.GetNode<MegaRichTextLabel>("Label").Text == NoticeText.GetTemplate(code, "DiagnosticsTitle") &&
+                Assert(row.GetNode<MegaRichTextLabel>("Label").Text == NoticeText.GetTemplate(code, "DiagnosticsModName") &&
                     button.GetNode<MegaLabel>("Label").Text == NoticeText.GetTemplate(code, "ExportDiagnostics") &&
-                    screen.GetNode<NSettingsPanel>("%GeneralSettings").Content.GetChildren().Count(n => n.Name == "SeedlineDiagnostics") == 1,
-                    $"{code}: export controls follow the selected language without duplicate rows");
+                    screen.GetNode<NSettingsPanel>("%GeneralSettings").Content.GetChildren().Count(n => n.Name == "SeedlineDiagnostics") == 1 &&
+                    screen.GetNode<NSettingsPanel>("%GeneralSettings").Content.GetChildren().Count(n => n.Name == "SeedlineDiagnosticsDivider") == 1,
+                    $"{code}: export controls follow the selected language without duplicate rows or dividers");
                 Assert(NoticeText.Get("DiagnosticsSaved", "report.zip").Contains("report.zip") &&
                     NoticeText.Get("DiagnosticsFailed", "failure").Contains("failure"), $"{code}: export status templates format correctly");
             }
@@ -115,8 +124,8 @@ public static partial class Checks
             var description = result.GetNode<MegaRichTextLabel>("Description");
             MegaLabelHelper.ParseBbcode(description.Text);
             Assert(screen.Visible && button.IsEnabled && !result.NoButton.Visible && result.YesButton.HasFocus() &&
-                description.GetParsedText() == NoticeText.Get("DiagnosticsSaved", exportPaths[0]),
-                "successful export restores settings and displays bracket-containing paths literally");
+                description.GetParsedText() == NoticeText.Get("DiagnosticsSaved", exportPaths[0].Replace('\\', '/')),
+                "successful export restores settings and displays bracket-containing paths literally with consistent slashes");
             using (var zip = ZipFile.OpenRead(exportPaths[0]))
             {
                 var entries = zip.Entries.Select(e => e.FullName).ToArray();

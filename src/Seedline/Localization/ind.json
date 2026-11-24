@@ -10,8 +10,9 @@
   "Acts": "Bab",
   "Ancients": "Para Leluhur",
   "Events": "Peristiwa",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "Diagnostik Seedline",
-  "ExportDiagnostics": "Ekspor",
+  "ExportDiagnostics": "Ekspor diagnostik",
   "DiagnosticsSaved": "Laporan disimpan:\n{0}\n\nKirim berkas ZIP ini beserta deskripsi singkat masalahnya.",
   "DiagnosticsFailed": "Tidak dapat mengekspor diagnostik:\n{0}"
 }

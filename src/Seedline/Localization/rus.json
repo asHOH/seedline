@@ -10,8 +10,9 @@
   "Acts": "Акты",
   "Ancients": "Древние",
   "Events": "События",
+  "DiagnosticsModName": "Seedline",
   "DiagnosticsTitle": "Диагностика Seedline",
-  "ExportDiagnostics": "Экспорт",
+  "ExportDiagnostics": "Экспорт диагностики",
   "DiagnosticsSaved": "Отчёт сохранён:\n{0}\n\nОтправьте этот ZIP-файл с кратким описанием проблемы.",
   "DiagnosticsFailed": "Не удалось экспортировать диагностику:\n{0}"
 }

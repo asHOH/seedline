@@ -26,6 +26,11 @@ internal static class DiagnosticExport
         if (row == null)
         {
             var source = panel.Content.GetNode<Control>("SendFeedback");
+            var divider = (Control)panel.Content.GetNode<Control>("SendFeedbackDivider").Duplicate(0);
+            divider.Name = "SeedlineDiagnosticsDivider";
+            divider.UniqueNameInOwner = false;
+            panel.Content.AddChild(divider);
+            panel.Content.MoveChild(divider, source.GetIndex() + 1);
             row = (Control)source.Duplicate((int)(Node.DuplicateFlags.Scripts | Node.DuplicateFlags.Groups));
             row.Name = "SeedlineDiagnostics";
             row.UniqueNameInOwner = false;
@@ -34,12 +39,12 @@ internal static class DiagnosticExport
             var button = row.FindChildren("*", owned: false).OfType<NOpenFeedbackScreenButton>().Single();
             button.Name = "ExportButton";
             panel.Content.AddChild(row);
-            panel.Content.MoveChild(row, source.GetIndex() + 1);
+            panel.Content.MoveChild(row, divider.GetIndex() + 1);
             button.Connect(NClickableControl.SignalName.Released, Callable.From<NButton>(pressed => TaskHelper.RunSafely(Export(__instance, pressed))));
             panel.CallDeferred(NSettingsPanel.MethodName.RefreshSize);
             panel.CallDeferred(NSettingsPanel.MethodName.UpdateNavigation);
         }
-        row.GetNode<MegaRichTextLabel>("Label").Text = NoticeText.Get("DiagnosticsTitle");
+        row.GetNode<MegaRichTextLabel>("Label").Text = NoticeText.Get("DiagnosticsModName");
         row.GetNode<NButton>("ExportButton").GetNode<MegaLabel>("Label").SetTextAutoSize(NoticeText.Get("ExportDiagnostics"));
     }
 
@@ -63,7 +68,7 @@ internal static class DiagnosticExport
             await screen.AwaitProcessFrame();
             var path = GetLogsConsoleCmd.GetBugReportPath("-Seedline-" + Guid.NewGuid().ToString("N"));
             await GetLogsConsoleCmd.GrabLogs(path);
-            message = NoticeText.Get("DiagnosticsSaved", path);
+            message = NoticeText.Get("DiagnosticsSaved", path.Replace('\\', '/'));
         }
         catch (Exception error)
         {
