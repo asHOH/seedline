@@ -43,6 +43,7 @@ public static partial class Checks
             if (System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_CHECKS") == "1")
                 await CheckRitsu();
             Assert(ModManager.GetLoadedMods().Any(m => m.manifest?.id == ModEntry.Id && m.errors is not { Count: > 0 }), "built-in loader and explicit initializer");
+            CheckMultiplayerCompatibility();
             Assert(Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer)))?.Owners.Contains(ModEntry.Id) == true &&
                 Harmony.GetPatchInfo(AccessTools.Method(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer)))?.Owners.Contains(ModEntry.Id) == true, "both multiplayer bypass entry points installed");
 

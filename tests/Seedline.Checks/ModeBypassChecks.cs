@@ -92,6 +92,8 @@ public static partial class Checks
                     $"{label}: startup bypasses without Seedline state or unlock grants");
 
                 var snapshot = manager.ToSave(null);
+                if (multiplayer)
+                    CheckMultiplayerSavePacket(snapshot);
                 if (!multiplayer)
                 {
                     var json = JsonSerializationUtility.ToJson(snapshot).TrimEnd();
@@ -142,6 +144,8 @@ public static partial class Checks
                     await manager.SetUpSavedSingleplayer(run, snapshot);
                 Assert(RunScope.IsBypassed && RunCheckpoints.Find(run) == null && run.Modifiers.Count == snapshot.Modifiers.Count,
                     $"{label}: resume bypasses before modifier validation");
+                if (multiplayer)
+                    CheckMultiplayerSavePacket(manager.ToSave(null));
                 await CheckBypassedGameplay(run, label);
                 manager.CleanUp();
                 Assert(!RunScope.IsBypassed, "cleanup leaves no global bypass flag");

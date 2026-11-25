@@ -8,7 +8,7 @@ State and integration contracts for developers. See [Development](development.md
 
 `RunCheckpoints` snapshots counters, supplies, selection clocks, event state and removed-card history. `CombatStateScope` owns transient combat state rebuilt from checkpoints.
 
-`CardOccurrences` binds logical card records to physical objects. `CardOffers` tracks offers and key assignment. `CardHistory` stores frozen removals. Register saved card metadata before property-cache bit widths finalize so checksums and replays preserve it.
+`CardOccurrences` binds logical card records to physical objects. `CardOffers` tracks offers and key assignment. `CardHistory` stores frozen removals. Append saved card metadata after ordinary property IDs and before bit widths finalize so solo checksums and replays preserve it without shifting ordinary IDs. Exclude this local metadata from the multiplayer hash.
 
 ### Checkpoint contract
 

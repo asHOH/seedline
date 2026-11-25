@@ -14,7 +14,7 @@ Requires **StS2 v0.114.0 (`public-beta`)** on Windows. Supports standard and Dre
 
 Custom runs may have any combination of **Flight, Murderous, Terminal, Night Terrors, Midas, Big Game Hunter, Character Cards, Hoarder and Draft**.
 
-Multiplayer, Blitz, Daily and runs containing any other modifier play normally with Seedline inactive.
+Multiplayer, Blitz, Daily and runs containing any other modifier play normally with Seedline inactive. Other multiplayer players do not need Seedline installed.
 
 Seedline runs use fully unlocked content without changing profile unlocks or Ascension limits.
 

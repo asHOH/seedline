@@ -1,7 +1,6 @@
-using System.IO.Hashing;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using HarmonyLib;
@@ -38,18 +37,31 @@ internal static class CardOccurrences
     private static readonly AsyncLocal<CopyGrant?> copyGrant = new();
     internal const string SavedName = "SeedlineOccurrence";
 
-    [HarmonyPatch(typeof(ModelIdSerializationCache), "CachePropertiesForType")]
-    private static class RegisterSavedName
+    [HarmonyPatch(typeof(ModelIdSerializationCache), nameof(ModelIdSerializationCache.Init))]
+    internal static class RegisterSavedName
     {
-        private static void Postfix(XxHash32? hasher, Dictionary<string, int> ____propertyNameToNetIdMap,
-            List<string> ____netIdToPropertyNameMap)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            if (hasher == null || ____propertyNameToNetIdMap.ContainsKey(SavedName))
-                return;
-            // Register during initialization so the game's final bit width and hash include our property.
-            ____propertyNameToNetIdMap.Add(SavedName, ____netIdToPropertyNameMap.Count);
-            ____netIdToPropertyNameMap.Add(SavedName);
-            hasher.Append(Encoding.UTF8.GetBytes(SavedName));
+            var registered = false;
+            foreach (var instruction in instructions)
+            {
+                if (!registered && instruction.StoresField(AccessTools.Field(typeof(ModelIdSerializationCache), "_initialized")))
+                {
+                    // Append after ordinary IDs, before bit widths finalize. Local metadata is not part of the multiplayer hash.
+                    yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ModelIdSerializationCache), "_propertyNameToNetIdMap"))
+                        .MoveLabelsFrom(instruction);
+                    yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ModelIdSerializationCache), "_netIdToPropertyNameMap"));
+                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RegisterSavedName), nameof(Append)));
+                    registered = true;
+                }
+                yield return instruction;
+            }
+        }
+
+        private static void Append(Dictionary<string, int> names, List<string> ids)
+        {
+            if (names.TryAdd(SavedName, ids.Count))
+                ids.Add(SavedName);
         }
     }
 
