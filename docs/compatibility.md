@@ -8,13 +8,15 @@ Seedline uses fully unlocked content in new runs while preserving profile unlock
 
 ## RitsuLib
 
-RitsuLib is optional. Keep its complete package, including `compat/0.113.0`, the runtime for StS2 v0.113.1. Untested versions warn. See the [supported save-data scope](implementation.md#ritsulib).
+RitsuLib is optional. RitsuLib 0.6.15 fails to initialize on StS2 v0.114.0 because its patches target removed game methods. Seedline 0.1.3 is validated without RitsuLib. See the [supported save-data scope](implementation.md#ritsulib).
 
 ## Modded characters
 
 Rewards, shops, chests, base-game rooms/events and base-game enemies remain aligned. Many card and player-side combat effects, including shuffles and random targeting, keep their original behavior. See the [exact support boundary](implementation.md#modded-characters).
 
 ## Tested mods
+
+The following were tested on StS2 v0.113.1, not revalidated for v0.114.0. For the known RitsuLib failure, see [above](#ritsulib).
 
 - BaseLib
 - RitsuLib

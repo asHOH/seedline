@@ -10,7 +10,7 @@ If you save and reload to try different actions (SL), expect more changes from t
 
 ## Supported setup
 
-Requires **StS2 v0.113.1 (`public-beta`)** on Windows. Supports standard and Dread single-player.
+Requires **StS2 v0.114.0 (`public-beta`)** on Windows. Supports standard and Dread single-player.
 
 Custom runs may have any combination of **Flight, Murderous, Terminal, Night Terrors, Midas, Big Game Hunter, Character Cards, Hoarder and Draft**.
 

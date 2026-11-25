@@ -14,7 +14,7 @@ Integration checks use an isolated game copy, so allow disk space for it.
 Later runs reuse game files whose sizes and modification times match. Test mods and save directories are refreshed each run.
 
 - For a portable SDK, add `-Dotnet 'path/to/dotnet.exe'`.
-- With RitsuLib, add `-RitsuLibDir '<extracted RitsuLib package>'`, using the [complete package](compatibility.md#ritsulib).
+- To test RitsuLib integration, add `-RitsuLibDir '<complete RitsuLib package>'`. Check the [current compatibility status](compatibility.md#ritsulib) first.
 - To deploy after all checks pass, close the game and add `-Deploy`.
 
 The validated package is written to `artifacts/Seedline/`. Close the game, then deploy:
@@ -33,13 +33,15 @@ Seedline automatically retains recent reward, shuffle, selection and enemy-inten
 
 Set matching versions in `src/Seedline/Seedline.json` and `src/Seedline/Seedline.csproj`. Add short release notes in `docs/releases/<version>.md`, then commit the changes.
 
-From a clean working tree, package against the supported game installation. Include RitsuLib to validate both configurations:
+From a clean working tree, package against the supported game installation:
 
 ```powershell
-./scripts/package-release.ps1 -GameDir 'D:/Games/Slay the Spire 2' -RitsuLibDir '<complete RitsuLib package>'
+./scripts/package-release.ps1 -GameDir 'D:/Games/Slay the Spire 2'
 ```
 
 Packaging runs `verify.ps1` and creates `artifacts/Seedline-<version>.zip` and its `.sha256` checksum.
+
+When releasing with verified RitsuLib support, add `-RitsuLibDir '<complete RitsuLib package>'` to validate both load orders. Standalone releases do not require RitsuLib validation.
 
 For Steam Workshop, follow the [private publication workflow](../workshop/README.md). Page text and artwork sources live in `workshop/`; upload workspaces stay in ignored `artifacts/`.
 

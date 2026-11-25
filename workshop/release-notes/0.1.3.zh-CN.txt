@@ -1,0 +1,3 @@
+[b]v0.1.3[/b]
+
+适配 StS2 v0.114.0 public-beta。
