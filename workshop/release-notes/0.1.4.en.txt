@@ -1,0 +1,3 @@
+[b]v0.1.4[/b]
+
+Allow multiplayer with players who don't have Seedline. Seedline remains inactive in multiplayer.

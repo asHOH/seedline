@@ -3,7 +3,7 @@
   "name": "Seedline",
   "author": "asHOH",
   "description": "Aligned single-player rewards, rooms, and events.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "has_dll": true,
   "has_pck": false,
   "affects_gameplay": false,
