@@ -24,6 +24,7 @@ internal static class CombatPileInsertion
             {
                 Soul => "Soul",
                 Dazed => "Dazed",
+                Soot when CombatCards.IsTheSunGrant => "The Sun",
                 Soot => "Biiig Hug",
                 Beckon => "Soul Fysh",
                 Wither => "Aeonglass",

@@ -29,8 +29,8 @@ public static class ModEntry
         {
             GameBuild = Convert.ToHexString(SHA256.HashData(file)) switch
             {
-                "62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3" => "v0.113.1/d09d48e5",
-                _ => throw new InvalidOperationException("Seedline requires v0.113.1 build d09d48e5.")
+                "DDCEB87905B6096DEB7BE975922E24A53992453675DF26DF545B1C46B1826C5D" => "v0.114.0/a7b9a9c0",
+                _ => throw new InvalidOperationException("Seedline requires v0.114.0 build a7b9a9c0.")
             };
         }
 

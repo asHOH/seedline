@@ -52,6 +52,7 @@ internal static class CombatCards
     }
 
     private static readonly AsyncLocal<Grant?> grant = new();
+    internal static bool IsTheSunGrant => grant.Value?.Source == ModelDb.GetId<TheSun>().Entry;
     private static readonly ConditionalWeakTable<CardModel, CombatCardOccurrence> cards = new();
     private static readonly ConditionalWeakTable<CardModel, object> copies = new();
     internal static CombatCardOccurrence? Find(CardModel card) => cards.TryGetValue(card, out var info) ? info : null;
@@ -175,7 +176,7 @@ internal static class CombatCards
             typeof(NightmarePower), typeof(JugglingPower), typeof(MythicFormPower), typeof(EntropyPower),
             typeof(BurningSticks), typeof(MusicBox), typeof(HistoryCourse),
             typeof(Begone), typeof(BoostAway), typeof(BrightenUp), typeof(CollisionCourse), typeof(Compact),
-            typeof(CrashLanding), typeof(FightThrough), typeof(Florescence), typeof(Guards), typeof(GunkUp),
+            typeof(CrashLanding), typeof(FightThrough), typeof(Florescence), typeof(Growth), typeof(Guards), typeof(GunkUp),
             typeof(Jest), typeof(MightyShield), typeof(MightyWeapon), typeof(MourningBlow), typeof(Overclock),
             typeof(PrimalForce), typeof(PunchOfJoy), typeof(Rummage), typeof(SelfDeprecate), typeof(SorrowfulStrike),
             typeof(Turbo), typeof(Vitriol), typeof(EcstasyPower), typeof(EnnuiPower), typeof(SentryModePower),

@@ -24,7 +24,7 @@ Vanilla deviations are assessed separately for **NoSL** (no save/loading) and **
 
 ## Scope
 
-Standalone StS2 v0.113.1 (`public-beta`) mod for everyday play, also suited to competition.
+Standalone StS2 v0.114.0 (`public-beta`) mod for everyday play, also suited to competition.
 
 Applies to standard and Dread single-player runs with matching seeds, versions and rules, and fully unlocked, unmodded content.
 
@@ -1189,7 +1189,8 @@ Address sequences by `purpose = insertion` + [combat address](#combat-addresses)
 | Soul | Capture Spirit, Dirge, Grave Warden, Reave, Severance and Funerary Mask. |
 | Metamorphosis | Generated attacks. |
 | Dazed | Blessed Antler, Tea of Discourtesy, Mighty Weapon, Mighty Shield, Noisebot and Entomancer's Personal Hive. |
-| Biiig Hug | Soot. |
+| Biiig Hug | Soot from Biiig Hug. |
+| The Sun | Soot from The Sun. |
 | Soul Fysh | Beckon. |
 | Aeonglass | Wither. |
 | The Insatiable | Frantic Escape. |
@@ -1213,14 +1214,14 @@ Use [combat-card selection state](#combat-card-selection-state). Renew consumed 
 | Shared clock scope | Sources |
 |---|---|
 | Exhaust | Cinder, unupgraded True Grit |
-| Upgrade | Drain Power, Stone Cracker |
+| Upgrade | Drain Power, Stone Cracker, Tune |
 | Return | Anointed, Jeweled Mask, Power Cell, The World |
 | Auto-play | Beat Down, Uproar, Stampede, Simpleton, The Fool |
-| Sadness conversion | Punch of Joy, Ecstasy |
+| Sadness conversion | Punch of Joy, Ecstasy, Growth |
 
 Thrash, Hidden Gem, Bookmark, Mummified Hand, Aggression, Catastrophe and Seeker Strike each use a separate scope.
 
-**Consumption exceptions:** preserve clocks and renewal counts for empty or forced-singleton selections, and whole-set selections by Anointed, Drain Power, Stone Cracker, Seeker Strike, Aggression, Power Cell, The World and Ecstasy. Whole-set hand returns qualify only when every selected card fits.
+**Consumption exceptions:** preserve clocks and renewal counts for empty or forced-singleton selections, and whole-set selections by Anointed, Drain Power, Stone Cracker, Tune, Seeker Strike, Aggression, Power Cell, The World, Ecstasy and Punch of Joy. Whole-set hand returns qualify only when every selected card fits.
 
 **Whole-set ordering:** for the whole-set cases above except Seeker Strike, order the batch by logical occurrence address, then uniformly shuffle it if it contains at least two cards. Use one shared RNG addressed by `purpose = incidental shuffle` + [combat address](#combat-addresses).
 
@@ -1266,7 +1267,7 @@ Address sequences by `purpose = card generation` + [combat address](#combat-addr
 | Group | Pools and sources |
 |---|---|
 | Ordinary costs | One sequence per character pool, plus colorless, curse, status, Tarot (Mythic Form), combined other-character cards (The Lovers), and combined Wah/Cho/Ki cards (Ocarina); shared by ordinary-cost generation (including Jackpot and The Hierophant) and Entropy. |
-| Free this turn | Own-character pool; shared by generators making cards free this turn. |
+| Free this turn | One sequence per character pool; shared by generators making cards free this turn. |
 | Free this combat | Own-character Attacks; Metamorphosis. |
 | Splash | Combined other-character Attacks, uniform across identities. |
 
@@ -1724,23 +1725,23 @@ Front bias can affect several later positions, depending on bag composition.
 
 **Power Cell:** samples zero-cost non-Innate cards before zero-cost Innate cards, shuffling each tier separately.
 
-**Simpleton / The Fool:** re-evaluate hand candidates before each selection. Simpleton selects the lowest energy-cost tier without Unplayable (X last); The Fool prefers cards without Unplayable, falling back to the whole hand.
+**Simpleton / The Fool:** re-evaluate hand candidates before each selection. Simpleton selects the lowest energy-cost tier without Unplayable (X last); The Fool excludes Unplayable cards.
 
 #### Combat card generation and transformations
 
-**Uniform identity draws:** these generators and the [seven card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`. Mythic Form samples eligible identities from its 22-card Tarot pool through `CombatCardSelection`, allowing repeats and upgrading the first results according to its upgraded-stack count.
+**Uniform identity draws:** these generators and the [seven card-generating potions](#potion-card-generation) share run-wide `CombatCardGeneration`, with no rarity roll. Factories retain unlock/player-count restrictions and exclude Basic/Ancient/Event rarities and cards disallowed by `CanBeGeneratedInCombat`. Mythic Form samples eligible identities from its 22-card Tarot pool through `CombatCardSelection`, allowing repeats and generating unupgraded cards.
 
 | Pool / filter | Ordinary costs | Free this turn |
 |---|---|---|
 | Own character | Stoke, Call of the Void, Choices Paradox | Discovery, Mad Science's Chaos effect, Vexing Puzzlebox |
 | Own-character Attack | Calamity | Infernal Blade, Crossbow |
 | Own-character Skill | — | Distraction |
-| Own-character Shoot | — | Blot Out the Sky |
+| Fool Shoot, regardless of player character | — | Blot Out the Sky |
 | Own-character Power | Creative AI | Abundance, White Noise |
 | Own-character Common | Hello World | — |
 | Own-character zero-cost non-X | Jackpot | — |
 | Own-character Ethereal | Big Hat | — |
-| Colorless | Bundle of Joy, Jack of All Trades, Manifest Authority, Quasar, Spectrum Shift, Orange Dough, Toolbox; The Hierophant (−1 cost until turn end or play) | — |
+| Colorless | Bundle of Joy, Jack of All Trades, Manifest Authority, Quasar, Spectrum Shift, Orange Dough, Toolbox, The Hierophant | — |
 
 Metamorphosis generates own-character Attacks, free this combat. Splash offers three distinct Attacks from the combined other-character pools; the player-selected card is free this turn. The Lovers fills the hand from the same combined character pools, across card types. Jack of All Trades excludes itself.
 

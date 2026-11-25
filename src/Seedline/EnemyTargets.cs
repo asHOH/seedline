@@ -53,7 +53,7 @@ internal static class EnemyTargets
     private static class DamageSources
     {
         private static IEnumerable<MethodBase> TargetMethods() =>
-        [RewardPatches.AsyncMethod(typeof(AttackCommand), nameof(AttackCommand.Execute)),
+        [RewardPatches.AsyncMethod(typeof(AttackCommand), "ExecuteInternal"),
             RewardPatches.AsyncMethod(typeof(BeatDown), "OnPlay"), RewardPatches.AsyncMethod(typeof(BouncingFlask), "OnPlay"),
             RewardPatches.AsyncMethod(typeof(CacophonyPower), nameof(CacophonyPower.AfterCardDrawn)),
             RewardPatches.AsyncMethod(typeof(HauntPower), nameof(HauntPower.AfterCardPlayed)),

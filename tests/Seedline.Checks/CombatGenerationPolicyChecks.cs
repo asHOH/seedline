@@ -101,7 +101,16 @@ public static partial class Checks
                     () => puzzlebox.AfterPlayerTurnStart(context, player), "Vexing Puzzlebox shares filtered free generation");
                 player.RemoveRelicInternal(puzzlebox);
 
-                // Printed zero costs and the Hierophant's discount do not select a free-cost group.
+                var foolPool = ModelDb.CardPool<FoolCardPool>();
+                var foolCards = Pool(foolPool);
+                generated = await Generated("free this turn", foolPool.Id.Entry, foolCards,
+                    foolCards.Where(c => c.Tags.Contains(CardTag.Shoot)), 1, true,
+                    () => Play<BlotOutTheSky>(), "Blot Out the Sky on Ironclad");
+                Assert(generated.Single().Pool == foolPool && generated.Single().Tags.Contains(CardTag.Shoot) &&
+                    generated.Single().EnergyCost.GetWithModifiers(CostModifiers.All) == 0,
+                    "Blot Out the Sky generates a free Fool Shoot card for other characters");
+
+                // Printed zero costs do not select a free-cost group.
                 generated = await Generated("ordinary costs", ownId, own,
                     own.Where(c => c.EnergyCost.Canonical == 0 && !c.EnergyCost.CostsX), 3, false,
                     () => Play<Jackpot>(true), "upgraded Jackpot");
@@ -128,8 +137,8 @@ public static partial class Checks
 
                 generated = await Generated("ordinary costs", colorlessId, colorless, colorless, 3, true,
                     () => Play<TheHierophant>(), "The Hierophant");
-                Assert(generated.All(c => c.EnergyCost.GetWithModifiers(CostModifiers.All) == Math.Max(0, c.EnergyCost.Canonical - 1)),
-                    "The Hierophant preserves its minus-one discount in the ordinary group");
+                Assert(generated.All(c => c.EnergyCost.GetWithModifiers(CostModifiers.All) == c.EnergyCost.Canonical),
+                    "The Hierophant preserves ordinary card costs without a generation discount");
                 await Generated("ordinary costs", colorlessId, colorless, colorless.Where(c => c is not JackOfAllTrades), 1, true,
                     () => Play<JackOfAllTrades>(), "Jack of All Trades excludes itself in the shared colorless sequence");
 

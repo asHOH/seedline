@@ -7,8 +7,8 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $game = (Resolve-Path -LiteralPath $GameDir).Path
 $assemblyHash = (Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash
-if ($assemblyHash -ne '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3') {
-    throw 'Checks require v0.113.1 build d09d48e5.'
+if ($assemblyHash -ne 'DDCEB87905B6096DEB7BE975922E24A53992453675DF26DF545B1C46B1826C5D') {
+    throw 'Checks require v0.114.0 build a7b9a9c0.'
 }
 $suite = if ($RitsuLibDir) { 'ritsu' } else { 'standalone' }
 $hostDir = Join-Path $repo ".cache/$suite-host"

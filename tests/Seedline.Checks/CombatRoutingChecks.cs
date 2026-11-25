@@ -197,6 +197,109 @@ public static partial class Checks
         }
         await CheckCombatPlayRouting();
         await CheckPendingCombatRouting();
+        await CheckFlorescenceRouting();
+        await CheckWahKiRouting();
+    }
+
+    private static async Task CheckFlorescenceRouting()
+    {
+        foreach (var upgraded in new[] { false, true })
+        {
+            string? expected = null;
+            for (var branch = 0; branch < 2; branch++)
+            {
+                var run = StartGoldRun();
+                var player = run.Players[0];
+                var combat = CombatFixture.CreateActiveCombat(run);
+                var pcs = player.PlayerCombatState!;
+                foreach (var card in pcs.Hand.Cards.ToArray()) card.RemoveFromCurrentPile();
+                CardModel[] copies = [combat.CreateCard<StrikeIronclad>(player), combat.CreateCard<StrikeIronclad>(player)];
+                foreach (var card in copies) pcs.Hand.AddInternal(card);
+                var scope = CombatStateScope.Require(combat);
+                var address = scope.For("combat routing", "transformation", copies[0].Id.Entry);
+                var predicted = scope.Selection.Copy();
+                var key = predicted.Select(scope.Seed, address, copies.Select(c => CombatCards.Info(c).Key), 1).Single();
+                var clicked = copies[branch];
+                var florescence = combat.CreateCard<Florescence>(player);
+                if (upgraded) CardCmd.Upgrade(florescence);
+                pcs.PlayPile.AddInternal(florescence);
+                var selector = new TestCardSelector();
+                selector.PrepareToSelect([clicked]);
+                using (CardSelectorStack.SetTestSelector(selector))
+                {
+                    var play = new CardPlay
+                    {
+                        Card = florescence,
+                        Player = player,
+                        Target = null,
+                        ResultPile = PileType.Discard,
+                        Resources = new() { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
+                        IsAutoPlay = false,
+                        PlayIndex = 0,
+                        PlayCount = 1
+                    };
+                    await (Task)AccessTools.Method(typeof(Florescence), "OnPlay").Invoke(florescence,
+                        [new ThrowingPlayerChoiceContext(), play])!;
+                }
+                var shot = pcs.Hand.Cards.OfType<TheShot>().Single();
+                Assert(clicked.Pile == null && pcs.Hand.Cards[branch] == shot && shot.IsUpgraded == upgraded &&
+                    CombatCards.Info(clicked).Key == key && JsonSerializer.Serialize(scope.Selection) == JsonSerializer.Serialize(predicted),
+                    "Florescence uses transformation routing without renewing the retired input and replaces the clicked hand position");
+                Assert(CombatCards.Info(shot).Address == scope.For("token occurrence", shot.Id.Entry).At(0).Key,
+                    "Florescence assigns The Shot a fresh token occurrence");
+                var signature = JsonSerializer.Serialize(scope.Selection) + CombatCards.Info(copies[1 - branch]).Key + CombatCards.Info(shot).Key;
+                expected ??= signature;
+                Assert(signature == expected, "Florescence leaves identical logical state when either equivalent copy is chosen");
+                RunManager.Instance.CleanUp();
+            }
+        }
+    }
+
+    private static async Task CheckWahKiRouting()
+    {
+        string? expected = null;
+        for (var branch = 0; branch < 2; branch++)
+        {
+            var run = StartGoldRun();
+            var player = run.Players[0];
+            var combat = CombatFixture.CreateActiveCombat(run);
+            var pcs = player.PlayerCombatState!;
+            CardModel[] copies = [combat.CreateCard<Anger>(player), combat.CreateCard<Anger>(player)];
+            foreach (var card in copies) pcs.DiscardPile.AddInternal(card);
+            var wahKi = combat.CreateCard<WahKi>(player);
+            pcs.PlayPile.AddInternal(wahKi);
+            var scope = CombatStateScope.Require(combat);
+            var address = scope.For("combat routing", "choice:" + wahKi.Id.Entry, copies[0].Id.Entry);
+            var predicted = scope.Selection.Copy();
+            var key = predicted.Select(scope.Seed, address, copies.Select(c => CombatCards.Info(c).Key), 1).Single();
+            predicted.Renew(scope.Seed, address, key);
+            var clicked = copies[branch];
+            var selector = new TestCardSelector();
+            selector.PrepareToSelect([clicked]);
+            using (CardSelectorStack.SetTestSelector(selector))
+            {
+                var play = new CardPlay
+                {
+                    Card = wahKi,
+                    Player = player,
+                    Target = combat.Enemies[0],
+                    ResultPile = PileType.Discard,
+                    Resources = new() { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
+                    IsAutoPlay = false,
+                    PlayIndex = 0,
+                    PlayCount = 1
+                };
+                await (Task)AccessTools.Method(typeof(WahKi), "OnPlay").Invoke(wahKi,
+                    [new ThrowingPlayerChoiceContext(), play])!;
+            }
+            Assert(pcs.DrawPile.Cards[0] == clicked && pcs.DiscardPile.Cards.SequenceEqual([copies[1 - branch]]) &&
+                CombatCards.Info(clicked).Key == key && JsonSerializer.Serialize(scope.Selection) == JsonSerializer.Serialize(predicted),
+                "Wah Ki routes its discard choice in its own draw-top scope and preserves the unchosen discard entry");
+            var signature = CombatCards.Info(clicked).Key + JsonSerializer.Serialize(scope.Selection);
+            expected ??= signature;
+            Assert(signature == expected, "Wah Ki selects the same logical occurrence when either equivalent copy is clicked");
+            RunManager.Instance.CleanUp();
+        }
     }
 
     private static async Task CheckDrawGridRouting(CombatState combat, Player player)

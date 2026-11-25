@@ -35,19 +35,21 @@ internal static class CombatSelection
         AccessTools.Method(typeof(BeatDown), "OnPlay"), AccessTools.Method(typeof(Uproar), "OnPlay"),
         AccessTools.Method(typeof(Catastrophe), "OnPlay"), AccessTools.Method(typeof(DrainPower), "OnPlay"),
         AccessTools.Method(typeof(StoneCracker), nameof(StoneCracker.AfterRoomEntered)),
+        AccessTools.Method(typeof(TunePower), nameof(TunePower.AfterCardPlayed)),
         AccessTools.Method(typeof(AggressionPower), nameof(AggressionPower.BeforeSideTurnStart)),
         AccessTools.Method(typeof(EcstasyPower), nameof(EcstasyPower.AfterPlayerTurnStart)),
         AccessTools.Method(typeof(PunchOfJoy), "OnPlay"), AccessTools.Method(typeof(SeekerStrike), "OnPlay"),
+        AccessTools.Method(typeof(Growth), "OnPlay"),
         AccessTools.Method(typeof(TheFool), "OnPlay"), AccessTools.Method(typeof(PowerCell), nameof(PowerCell.BeforeSideTurnStart)),
         AccessTools.Method(typeof(Anointed), "OnPlay"), AccessTools.Method(typeof(TheWorld), "OnPlay")];
 
     internal static string Group(AbstractModel model) => model switch
     {
         Cinder or TrueGrit => "exhaust",
-        DrainPower or StoneCracker => "upgrade",
+        DrainPower or StoneCracker or TunePower => "upgrade",
         Anointed or JeweledMask or PowerCell or TheWorld => "return",
         BeatDown or Uproar or StampedePower or SimpletonPower or TheFool => "auto-play",
-        PunchOfJoy or EcstasyPower => "Sadness conversion",
+        PunchOfJoy or EcstasyPower or Growth => "Sadness conversion",
         _ => model.Id.Entry
     };
 
@@ -97,7 +99,7 @@ internal static class CombatSelection
         var current = source.Value ?? throw new InvalidOperationException("Missing combat selection source.");
         var model = current.Model;
         var eligible = candidates.ToArray();
-        var whole = model is Anointed or DrainPower or StoneCracker or SeekerStrike or AggressionPower or PowerCell or TheWorld or EcstasyPower;
+        var whole = model is Anointed or DrainPower or StoneCracker or TunePower or SeekerStrike or AggressionPower or PowerCell or TheWorld or EcstasyPower or PunchOfJoy;
         if (model is Anointed or AggressionPower or PowerCell or TheWorld && eligible.Length > 0)
             whole &= CardPile.MaxCardsInHand - eligible[0].Owner.PlayerCombatState!.Hand.Cards.Count >= Math.Min(count, eligible.Length);
         return Select(eligible, count, Group(model), whole, model is not SeekerStrike);
@@ -119,6 +121,7 @@ internal static class CombatSelection
         {
             BeatDown card => card.DynamicVars.Cards.IntValue,
             SeekerStrike card => card.DynamicVars.Cards.IntValue,
+            PunchOfJoy card => card.DynamicVars.Cards.IntValue,
             StoneCracker relic => relic.DynamicVars.Cards.IntValue,
             PowerCell relic => Math.Max(0, relic.DynamicVars.Cards.IntValue - current.PowerCellTaken),
             AggressionPower power => power.Amount,
@@ -193,7 +196,7 @@ internal static class CombatSelection
             if (type.DeclaringType != null)
                 type = type.DeclaringType;
             var expected = type == typeof(MummifiedHand) ? 4 :
-                type == typeof(Uproar) || type == typeof(Catastrophe) || type == typeof(TheFool) || type == typeof(PowerCell) ? 2 : 1;
+                type == typeof(Uproar) || type == typeof(Catastrophe) || type == typeof(PowerCell) ? 2 : 1;
             if (count != expected)
                 throw new InvalidOperationException($"Expected {expected} combat selection calls in {type.Name}, found {count}.");
         }

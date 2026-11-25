@@ -167,17 +167,22 @@ public static partial class Checks
 
         var returning = Card<Bolas>();
         var idle = Card<Bolas>();
-        void Played(CardModel card) => CombatManager.Instance.History.CardPlayFinished(combat, new()
+        void Played(CardModel card)
         {
-            Card = card,
-            Player = player,
-            Target = null,
-            ResultPile = PileType.Discard,
-            Resources = new() { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
-            IsAutoPlay = false,
-            PlayIndex = 0,
-            PlayCount = 1
-        });
+            var play = new CardPlay
+            {
+                Card = card,
+                Player = player,
+                Target = null,
+                ResultPile = PileType.Discard,
+                Resources = new() { EnergySpent = 0, EnergyValue = 0, StarsSpent = 0, StarValue = 0 },
+                IsAutoPlay = false,
+                PlayIndex = 0,
+                PlayCount = 1
+            };
+            CombatManager.Instance.History.CardPlayStarted(combat, play);
+            CombatManager.Instance.History.CardPlayFinished(combat, play);
+        }
         var coda = Card<Coda>();
         var beforeMelody = CardOrder.CaptureCombat(coda);
         var cho = Card<ChoLimbs>();

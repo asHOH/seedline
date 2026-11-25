@@ -80,7 +80,7 @@ Curses, Quests and Statuses use the [identity ranks](#identity-and-rarity-ranks)
 | 13 | Temporary keywords | `none < temporary Retain < temporary Sly < both`. |
 | 14 | Slither card's lasting energy cost | Lower < higher. |
 
-Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage accumulated by The Scythe, Sovereign Blade, The Shot, Rampage, Claw, Maul, Kingly Punch and Thrash.
+Carried values include Genetic Algorithm's Block, Show Off's Aim, and damage accumulated by The Scythe, Sovereign Blade, Rampage, Claw, Maul, Kingly Punch and Thrash.
 
 **Upgrade state:** unupgraded = currently unupgraded with no restoration pending; temporarily downgraded = currently downgraded with restoration pending. Exact current upgrade level breaks ties within the upgraded tier.
 

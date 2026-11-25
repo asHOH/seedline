@@ -107,9 +107,10 @@ public static partial class Checks
                 PlayIndex = 0,
                 PlayCount = 1
             };
-            async Task Invoke<T>() where T : CardModel
+            async Task Invoke<T>(bool upgraded = false) where T : CardModel
             {
                 var card = combat.CreateCard<T>(player);
+                if (upgraded) CardCmd.Upgrade(card);
                 pcs.PlayPile.AddInternal(card);
                 await (Task)AccessTools.Method(typeof(T), "OnPlay").Invoke(card, [context, Play(card)])!;
                 card.RemoveFromCurrentPile();
@@ -150,6 +151,42 @@ public static partial class Checks
             Assert(picked.All(c => c.IsUpgraded), "Drain Power continues Stone Cracker's clocks through a filtered batch");
             oracle.Check("Drain Power");
 
+            foreach (var card in upgrades)
+            {
+                if (card.IsUpgraded) CardCmd.Downgrade(card);
+                Move(card, pcs.Hand);
+            }
+            var tune = (await PowerCmd.Apply<TunePower>(context, player.Creature, 2, player.Creature, null))!;
+            async Task TriggerTune()
+            {
+                combat.RoundNumber++;
+                pcs.IncrementTurnNumber();
+                var kiPlay = Play(combat.CreateCard<KiChant>(player));
+                CombatManager.Instance.History.CardPlayStarted(combat, kiPlay);
+                await tune.AfterCardPlayed(context, kiPlay);
+            }
+            picked = oracle.Pick(upgrades, 2, "upgrade");
+            await TriggerTune();
+            Assert(upgrades.Where(c => c.IsUpgraded).ToHashSet().SetEquals(picked),
+                "Tune shares exact upgrade clocks with Stone Cracker and Drain Power");
+            oracle.Check("partial Tune");
+            var laterKi = Play(combat.CreateCard<KiChant>(player));
+            CombatManager.Instance.History.CardPlayStarted(combat, laterKi);
+            await tune.AfterCardPlayed(context, laterKi);
+            await tune.AfterCardPlayed(context, Play(combat.CreateCard<Anger>(player)));
+            Assert(upgrades.Count(c => c.IsUpgraded) == 2, "Tune ignores later Ki plays and non-Ki cards");
+            oracle.Check("non-triggering Tune");
+            oracle.Pick(upgrades.Where(c => c.IsUpgradable), 2, "upgrade", whole: true);
+            await TriggerTune();
+            Assert(upgrades.All(c => c.IsUpgraded), "whole-set Tune upgrades every eligible hand card");
+            oracle.Check("whole-set Tune");
+            CardCmd.Downgrade(upgrades[0]);
+            await TriggerTune();
+            Assert(upgrades[0].IsUpgraded, "singleton Tune retains existing selection history");
+            await TriggerTune();
+            oracle.Check("singleton and empty Tune");
+            player.Creature.RemovePowerInternal(tune);
+
             Clear();
             var attacks = Add<StrikeIronclad>(3, pcs.Hand);
             Add<DefendIronclad>(1, pcs.Hand);
@@ -177,6 +214,23 @@ public static partial class Checks
             oracle.Check("Beat Down");
 
             Clear();
+            var foolCards = Add<Anger>(3, pcs.Hand);
+            Add<Wound>(2, pcs.Hand);
+            first = oracle.Pick(foolCards, 1, "auto-play").Single();
+            second = oracle.Pick(foolCards.Where(c => c != first), 1, "auto-play").Single();
+            history = CombatManager.Instance.History.CardPlaysStarted.Count();
+            await Invoke<TheFool>();
+            Assert(CombatManager.Instance.History.CardPlaysStarted.Skip(history).Select(e => e.CardPlay.Card).SequenceEqual(new[] { first, second }),
+                "The Fool shares sequential auto-play clocks and excludes Unplayable cards");
+            oracle.Check("The Fool");
+            foreach (var card in pcs.Hand.Cards.Where(c => c is not Wound).ToArray()) Move(card, pcs.ExhaustPile);
+            history = CombatManager.Instance.History.CardPlaysStarted.Count();
+            await Invoke<TheFool>();
+            Assert(CombatManager.Instance.History.CardPlaysStarted.Count() == history && pcs.Hand.Cards.All(c => c is Wound),
+                "The Fool does not fall back to auto-playing an entirely Unplayable hand");
+            oracle.Check("Unplayable-only The Fool");
+
+            Clear();
             var sadness = Add<Sadness>(5, pcs.Hand);
             chosen = oracle.Pick(sadness, 1, "Sadness conversion").Single();
             await Invoke<PunchOfJoy>();
@@ -192,6 +246,32 @@ public static partial class Checks
             await ecstasy.AfterPlayerTurnStart(context, player);
             Assert(pcs.Hand.Cards.All(c => c is Joy), "whole-set Ecstasy converts the remaining Sadness");
             oracle.Check("whole-set Ecstasy");
+
+            Clear();
+            sadness = Add<Sadness>(4, pcs.Hand);
+            chosen = oracle.Pick(sadness, 1, "Sadness conversion").Single();
+            await Invoke<Growth>(upgraded: true);
+            var growth = pcs.Hand.Cards.OfType<Growth>().Single();
+            Assert(chosen.Pile == null && growth.IsUpgraded &&
+                CombatCards.Info(growth).Address == scope.For("card grant", ModelDb.GetId<Growth>().Entry).At(0).At(0).Key,
+                "Growth converts the clock-selected Sadness into an upgraded copy with a fresh Growth-source occurrence");
+            oracle.Check("Growth");
+            picked = oracle.Pick(pcs.Hand.Cards.OfType<Sadness>(), 2, "Sadness conversion");
+            await Invoke<PunchOfJoy>(upgraded: true);
+            Assert(picked.All(c => c.Pile == null) && pcs.Hand.Cards.Count(c => c is Joy) == 2,
+                "Punch of Joy+ selects both conversion targets through the shared clocks");
+            oracle.Check("partial Punch of Joy+");
+            await Invoke<Growth>();
+            Assert(!pcs.Hand.Cards.OfType<Sadness>().Any(), "singleton Growth converts the remaining Sadness");
+            await Invoke<Growth>();
+            oracle.Check("singleton and empty Growth");
+            Clear();
+            sadness = Add<Sadness>(2, pcs.Hand);
+            oracle.Pick(sadness, 2, "Sadness conversion", whole: true);
+            await Invoke<PunchOfJoy>(upgraded: true);
+            Assert(pcs.Hand.Cards.Count == 2 && pcs.Hand.Cards.All(c => c is Joy),
+                "whole-set Punch of Joy+ transforms both Sadness");
+            oracle.Check("whole-set Punch of Joy+");
 
             Clear();
             var returns = Add<Anger>(3, pcs.DiscardPile);

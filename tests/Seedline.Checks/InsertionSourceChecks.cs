@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Dread.Dominions;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace Seedline.Checks;
@@ -32,9 +33,9 @@ public static partial class Checks
                 RandomAddress Address(string group, CardPile pile) =>
                     RandomAddress.For("insertion", group, pile.Type.ToString()).With(scope.Address.Key);
 
-                async Task Check(string group, CardPile pile, int count, Func<Task> action)
+                async Task Check(string group, CardPile pile, int count, Func<Task> action, int drawn = 0)
                 {
-                    var expected = pile.Cards.ToList();
+                    var expected = pile.Cards.Skip(drawn).ToList();
                     var historyCount = CombatManager.Instance.History.Entries.Count();
                     await action();
                     // History records generation before insertion, independently of final pile order.
@@ -78,6 +79,14 @@ public static partial class Checks
                     "each combat starts a fresh, separately addressed insertion sequence");
                 await Check("Soul", draw, 1, () => Play<GraveWarden>());
                 await Check("Soul", draw, 3, () => Play<CaptureSpirit>());
+                await Check("The Sun", draw, 2, () => Play<TheSun>(), drawn: 2);
+                var hug = (BiiigHug)ModelDb.Relic<BiiigHug>().ToMutable();
+                player.AddRelicInternal(hug);
+                await Check("Biiig Hug", draw, 1, () => hug.AfterShuffle(new ThrowingPlayerChoiceContext(), player));
+                player.RemoveRelicInternal(hug);
+                await Check("The Sun", draw, 2, () => Play<TheSun>(true), drawn: 3);
+                Assert(scope.Random.Position(Address("The Sun", draw)) == 4 && scope.Random.Position(Address("Biiig Hug", draw)) == 1,
+                    "The Sun's two-card batches and Biiig Hug's Soot keep independent insertion progression");
                 if (battle == 0)
                 {
                     await Check("Dazed", draw, 3, () => Play<MightyShield>());

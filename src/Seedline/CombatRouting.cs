@@ -100,11 +100,11 @@ internal static class CombatRouting
             "Prepared" or "Survivor" or "TheHermit" or "ToolsOfTheTradePower" => "discard",
         "Ashwater" or "Brand" or "BurningPact" or "Cleanse" or "Purity" or "Scavenge" or
             "ToastyMittens" or "TrueGrit" or "TyrannyPower" => "exhaust",
-        "ArrowStab" or "Dredge" or "DropletOfPrecognition" or "ForegoneConclusionPower" or "Graveblast" or
+        "Dredge" or "DropletOfPrecognition" or "ForegoneConclusionPower" or "Graveblast" or
             "Hologram" or "KiChant" or "LiquidMemories" or "LockedIn" or "NeowsFury" or
             "SecretTechnique" or "SecretWeapon" or "SeekerStrike" or "StratagemPower" or "Tutor" or "Wish" => "retrieval",
         "Armaments" => "upgrade",
-        "Begone" or "Charge" or "EntropyPower" or "Guards" or "Seance" => "transformation",
+        "Begone" or "Charge" or "EntropyPower" or "Florescence" or "Guards" or "Seance" => "transformation",
         _ => "choice:" + model.Id.Entry
     };
 
@@ -213,9 +213,9 @@ internal static class CombatRouting
     {
         private static IEnumerable<MethodBase> TargetMethods()
         {
-            Type[] cards = [typeof(ArrowStab), typeof(Charge), typeof(Cleanse), typeof(CosmicIndifference), typeof(Dredge),
+            Type[] cards = [typeof(Charge), typeof(Cleanse), typeof(CosmicIndifference), typeof(Dredge),
                 typeof(Graveblast), typeof(Headbutt), typeof(Hologram), typeof(KiChant), typeof(LockedIn), typeof(NeowsFury),
-                typeof(Recall), typeof(Seance), typeof(SecretTechnique), typeof(SecretWeapon), typeof(SeekerStrike), typeof(Tutor), typeof(Wish)];
+                typeof(Seance), typeof(SecretTechnique), typeof(SecretWeapon), typeof(SeekerStrike), typeof(Tutor), typeof(WahKi), typeof(Wish)];
             foreach (var type in cards) yield return AccessTools.Method(type, "OnPlay");
             yield return AccessTools.Method(typeof(DropletOfPrecognition), "OnUse");
             yield return AccessTools.Method(typeof(LiquidMemories), "OnUse");
