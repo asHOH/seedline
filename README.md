@@ -26,7 +26,7 @@ For manual installation, download `Seedline-<version>.zip` from the [latest rele
 
 ## Saves
 
-Keep the game build, Seedline and RitsuLib setup fixed during a run. Disabling Seedline can discard its saved state. See [compatibility and save guidance](docs/compatibility.md).
+Keep the game build, Seedline and RitsuLib setup fixed during a run. A Seedline run may load with Seedline disabled but show a black screen on Save and Quit. See [compatibility and save guidance](docs/compatibility.md).
 
 ## Report a problem
 

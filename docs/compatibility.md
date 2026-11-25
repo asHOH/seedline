@@ -39,7 +39,7 @@ The following were tested on StS2 v0.113.1, not revalidated for v0.114.0. For th
 
 ## Saves
 
-Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, Seedline and RitsuLib setup fixed throughout each run. Continuing with Seedline disabled can discard its state.
+Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game build, Seedline and RitsuLib setup fixed throughout each run. A Seedline run may load with Seedline disabled but show a black screen on Save and Quit. Continuing can also discard Seedline's saved state.
 
 Seedline saves use the game's existing Steam Cloud support. Cloud save handling is covered by simulated tests. Live synchronization remains unverified.
 

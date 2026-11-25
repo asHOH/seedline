@@ -28,7 +28,7 @@ Seedline 减少无关操作对后续运气的影响。例如，原版中某场�
 
 ## 存档
 
-一局中请保持游戏版本、Seedline 和 RitsuLib 配置不变。禁用 Seedline 可能丢失其存档状态。详见[兼容性与存档说明](docs/compatibility.md)。
+一局中请保持游戏版本、Seedline 和 RitsuLib 配置不变。禁用 Seedline 后，其对局存档可能仍能载入，但在保存并退出时黑屏。详见[兼容性与存档说明](docs/compatibility.md)。
 
 ## 问题反馈
 
