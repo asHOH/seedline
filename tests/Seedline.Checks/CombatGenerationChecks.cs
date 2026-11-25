@@ -85,15 +85,14 @@ public static partial class Checks
             AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Owner)).SetValue(mythic, player.Creature);
             player.Creature.ApplyPowerInternal(mythic);
             mythic.SetAmount(2);
-            mythic.IncrementUpgraded();
             before = player.PlayerCombatState.Hand.Cards.ToArray();
             var selection = run.Rng.CombatCardSelection.ToSerializable();
             await mythic.BeforeHandDraw(player, new ThrowingPlayerChoiceContext(), combat);
             var tarot = player.PlayerCombatState.Hand.Cards.Except(before).ToArray();
-            Assert(tarot.Length == 2 && tarot[0].IsUpgraded && !tarot[1].IsUpgraded &&
+            Assert(tarot.Length == 2 && tarot.All(c => !c.IsUpgraded) &&
                 tarot.All(c => CardOccurrences.Info(c).Address.Contains("Tarot", StringComparison.Ordinal)) &&
                 selection.Equals(run.Rng.CombatCardSelection.ToSerializable()),
-                "Mythic Form uses Tarot entries while preserving ordered upgrades and selection RNG");
+                "Mythic Form uses unupgraded Tarot entries while preserving selection RNG");
             var tarotKeys = CombatShuffle.Keys(tarot.Reverse(), 0, false);
             var tarotOrder = tarot.OrderBy(c => c, CardOrder.Combat).ToArray();
             Assert(tarot.Select(c => CombatCards.Info(c).CreationBatch).Distinct().Count() == 1 &&

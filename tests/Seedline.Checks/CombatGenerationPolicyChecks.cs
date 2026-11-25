@@ -158,13 +158,12 @@ public static partial class Checks
                 var mythic = (MythicFormPower)ModelDb.Power<MythicFormPower>().ToMutable();
                 AccessTools.Property(typeof(PowerModel), nameof(PowerModel.Owner)).SetValue(mythic, player.Creature);
                 mythic.SetAmount(2);
-                mythic.IncrementUpgraded();
                 var selectionRng = run.Rng.CombatCardSelection.ToSerializable();
                 generated = await Generated("ordinary costs", "Tarot", TarotCards.All.ToArray(),
                     TarotCards.All.Where(c => c.IsAllowedInRun(player.RunState)), 2, false,
                     () => mythic.BeforeHandDraw(player, context, combat), "Mythic Form's independent Tarot sequence");
-                Assert(generated[0].IsUpgraded && !generated[1].IsUpgraded && selectionRng.Equals(run.Rng.CombatCardSelection.ToSerializable()),
-                    "Mythic Form preserves ordered upgrades without advancing vanilla selection RNG");
+                Assert(generated.All(c => !c.IsUpgraded) && selectionRng.Equals(run.Rng.CombatCardSelection.ToSerializable()),
+                    "Mythic Form generates unupgraded cards without advancing vanilla selection RNG");
 
                 // Entropy uses each original's transformation pool, not the player's character pool.
                 foreach (var card in hand.Cards.ToArray()) card.RemoveFromCurrentPile();

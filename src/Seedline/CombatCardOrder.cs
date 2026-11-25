@@ -81,7 +81,7 @@ internal static partial class CardOrder
     private static ICombatState? PendingCombat(CardModel card) =>
         card.DeckVersion != card && card.Pile == null ? card.Owner?.Creature.CombatState : null;
     private static bool AffectsRankCost(AbstractModel m, bool turn) =>
-        m is not (FreeAttackPower or FreeSkillPower or FreePowerPower or FreeCardPower or VeilpiercerPower or VoidFormPower or BrilliantScarf or EnsemblePower) &&
+        m is not (FreeAttackPower or FreeSkillPower or FreePowerPower or VeilpiercerPower or VoidFormPower or BrilliantScarf or EnsemblePower) &&
         (turn || m is not (BorrowedTimePower or TangledPower or Coda or ChoLimbs));
 
     private static int CombatEnergy(CardModel card, AbstractModel[] listeners, bool turn)
@@ -192,7 +192,6 @@ internal static partial class CardOrder
         TheScythe c => c.CurrentDamage,
         ShowOff c => c.CurrentAim,
         SovereignBlade => PrivateValue(card, "CurrentDamage"),
-        TheShot => PrivateValue(card, "CardsExhaustedByFlorescence") * card.DynamicVars.ExtraDamage.BaseValue,
         Rampage => PrivateValue(card, "ExtraDamageFromPlays"),
         Claw => PrivateValue(card, "ExtraDamageFromClawPlays"),
         Maul => PrivateValue(card, "ExtraDamageFromMaulPlays"),

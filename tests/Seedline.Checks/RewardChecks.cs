@@ -131,7 +131,7 @@ public static partial class Checks
             Assert(gold is >= 31 and <= 39 && player.Gold == beforeGold + gold &&
                 state.Random.Position(RandomAddress.For("gold reward", "normal")) == 0,
                 "chest gold preserves Poverty rounding and leaves combat-gold progression unchanged");
-            chest.OnPicked(player, null);
+            chest.OnPicked(player, null, roundIndex: 0);
             chest.OnRoomExited();
             Assert(!state.Rewards.RetiredRelics.Contains(offered.Id.Entry) &&
                 state.Rewards.Supplies.Values.SelectMany(s => s.Positions).Any(p => p.Carried?.Identity == offered.Id.Entry),

@@ -54,6 +54,11 @@ public static partial class Checks
         }
         var other = Card<Bash>();
         Assert(CardOrder.CombatEquivalent(bash, other), "fresh combat copies have equal gameplay ordering properties");
+        var shot = Card<TheShot>();
+        var otherShot = Card<TheShot>();
+        Assert(CardOrder.CombatEquivalent(shot, otherShot), "The Shot has no carried damage state");
+        CardCmd.Upgrade(otherShot);
+        Assert(!CardOrder.CombatEquivalent(shot, otherShot), "The Shot's upgrade still distinguishes combat copies");
         bash.EnergyCost.AddUntilPlayed(-1);
         Assert(CardOrder.Combat.Compare(bash, other) < 0, "lasting discounts participate in primary energy-cost ranking");
         other.EnergyCost.SetThisTurnOrUntilPlayed(0);
