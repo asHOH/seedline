@@ -1,5 +1,7 @@
 # Agent rules
 
+- English is authoritative for all documents except Workshop pages, where Chinese is authoritative.
+
 ## Design decisions
 
 - Read and fully understand the [design document](design/DESIGN.md) first. Use its goals and priorities to judge tradeoffs and ask about unresolved design choices.

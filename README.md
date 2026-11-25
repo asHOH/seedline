@@ -2,11 +2,13 @@
 
 A Slay the Spire 2 mod that gives same-seed runs similar gameplay experiences — rewards, choices and combat challenges — across different routes and decisions.
 
-Seedline reduces the influence of unrelated actions on later luck. For example, in the base game, reshuffling your deck an extra time in one fight can change your opening hand in the next. Seedline keeps each fight's shuffles separate, so that extra shuffle alone won't change your next opening hand.
+This makes shared seeds more relatable, win-streak reviews more useful, and same-seed competition fairer. Coverage spans all randomness.
+
+Seedline achieves this by reducing the influence of unrelated actions on later luck. For example, in the base game, reshuffling your deck an extra time in one fight can change your opening hand in the next. Seedline keeps each fight's shuffles separate, so that extra shuffle alone won't change your next opening hand.
 
 To keep same-seed experiences similar, Seedline changes some reward probabilities and how actions affect later random results.
 
-If you save and reload to try different actions (SL), expect more changes from the base game. Some actions that previously let you reroll an outcome no longer do, so you may find this way of playing very different. See the [gameplay changes](design/DESIGN.md#shared-vanilla-deviations) for details.
+If you save and reload to try different actions (SL), expect more changes from the base game. Some actions that previously let you reroll an outcome no longer do, so you may find this way of playing very different. See the [gameplay changes](design/DESIGN.md#shared-vanilla-deviations) for details. A separate mode for vanilla-style SL is planned.
 
 ## Supported setup
 
@@ -39,6 +41,10 @@ In Settings, choose **Seedline diagnostics → Export diagnostics** and send the
 - [Gameplay design](design/DESIGN.md) — rules and tradeoffs.
 - [Development](docs/development.md) — building, testing and releases.
 - [Research](research/README.md) — evidence and methods.
+
+Catfood pioneered same-seed consistency. Seedline builds on those ideas with broader coverage and a focus on preserving vanilla probability to make it suitable for everyday and win-streak play.
+
+Design suggestions are welcome. The maintainer offers CNY 100 for each suggestion adopted (excluding [CARD_ORDER](design/CARD_ORDER.md)).
 
 ## License
 
