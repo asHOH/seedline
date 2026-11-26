@@ -593,7 +593,7 @@ Silver Crucible's empty chest room generates neither reward and leaves the chest
 Draw the next eligible non-character-specific relic from the generic identity sequence for the rolled rarity. Replace a drawn sequence entry with a [finite-lifetime marker](#finite-lifetime-chest-markers).
 
 - **Acquire:** retire the relic; the marker disappears at expiry, compacting survivors.
-- **Skip, including unopened chests:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as a relic entry.
+- **Skip the relic:** save the drawn entry with the marker as its **carried entry**; at expiry it replaces the marker as a relic entry.
 
 Resolve the choice before expiry, including `x = 0`. Permanent ineligibility or acquisition elsewhere clears the carried entry, preserving the marker's lifetime.
 
@@ -1399,7 +1399,7 @@ The examples contain one character-specific relic, with all others non-character
 | Pool size | Sequence | Vanilla | Mod |
 |---|---|---|---|
 | 4 | Shop display → take chest relic | 37.5% | 37.5% |
-| 6 | Skip chest → shop display → take chest relic | 20.8% | 21.1% |
+| 6 | Skip chest relic → shop display → take chest relic | 20.8% | 21.1% |
 
 The second example adds **0.3 percentage points** because shop consumption changes new lifetimes while preserving existing ones. Counting already displayed shop relics in `S` instead lowers the first example's mod chance to **33.3%**.
 
@@ -1649,7 +1649,7 @@ Direct random effects and automatic enemy targeting share run-wide `CombatTarget
 
 **Draws:** rarity is 50% Common / 33% Uncommon / 17% Rare, using player `Rewards` for ordinary rewards, event RNG for event rewards, `Shops` for shops and `TreasureRoomRelics` for chests. Fixed-rarity requests skip the roll, including in Catfood. Ordinary rewards and Wongos draw from the player bag's front; shops draw two random-rarity relics and one Shop relic from its back. Chests draw from the chest bag's front.
 
-**Consumption:** ordinary reward/shop generation removes the identity from both bags, even if declined or unbought. Chest generation removes it only from the chest bag. Acquiring a non-stackable relic removes it from both bags, preserving survivors' order; skipping a chest leaves the player bag unchanged.
+**Consumption:** ordinary reward/shop generation removes the identity from both bags, even if declined or unbought. Chest generation removes it only from the chest bag. Acquiring a non-stackable relic removes it from both bags, preserving survivors' order; skipping the chest relic leaves the player bag unchanged.
 
 One-rarity example, front at left; `K` is character-specific. Acquire and skip are alternative branches after generation:
 
@@ -1684,7 +1684,7 @@ Front bias can affect several later positions, depending on bag composition.
 
 | Source | Mechanics |
 |---|---|
-| Chests | Relics are generated on room entry; base gold uses `Rewards` on opening. Pool and consumption rules: [relic bags](#relic-bags). |
+| Chests | Relics are generated on room entry; base gold uses `Rewards` on opening. The chest must be opened before leaving, but its relic can be skipped. Pool and consumption rules: [relic bags](#relic-bags). |
 | Neow — Silver Crucible | First treasure room is empty, with neither gold nor relics. |
 | Wongos | Act 2; all players have ≥100 gold. Featured Rare costs 200 gold and is removed from stock when offered, even when unaffordable or declined, weakening consistency of later relic outcomes. Hidden Common costs 100 gold and is generated on purchase. Both require `IsAllowedInShops`. Leaving downgrades a random upgraded card, if any. |
 | Wongos — Mystery Ticket | Pays three random relics after five combats. |

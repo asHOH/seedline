@@ -135,7 +135,7 @@ public static partial class Checks
             chest.OnRoomExited();
             Assert(!state.Rewards.RetiredRelics.Contains(offered.Id.Entry) &&
                 state.Rewards.Supplies.Values.SelectMany(s => s.Positions).Any(p => p.Carried?.Identity == offered.Id.Entry),
-                "skipping a chest retains its carried entry for later ordinary rewards");
+                "skipping the chest relic retains its carried entry for later ordinary rewards");
             player.AddRelicInternal(offered.ToMutable());
             Assert(state.Rewards.Supplies.Values.SelectMany(s => s.Positions).All(p => p.Carried?.Identity != offered.Id.Entry),
                 "acquiring a carried chest relic clears that entry while retaining marker advancement");
