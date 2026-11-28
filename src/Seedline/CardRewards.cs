@@ -63,7 +63,7 @@ internal static class CardRewards
         var triple = own && !typed;
         var rareSlots = new List<int>();
         var cards = new List<CardCreationResult>();
-        string offer;
+        var offer = "";
         if (randomTriple)
         {
             var elite = options.RarityOdds == CardRarityOddsType.EliteEncounter;
@@ -73,6 +73,37 @@ internal static class CardRewards
         if (options.Source == CardCreationSource.Encounter && options.RarityOdds == CardRarityOddsType.BossEncounter)
             timing.Offset = -0.05;
         if (triple)
+        {
+            GenerateTripleOffer();
+            ReplaceExtraRares();
+        }
+        else
+            GenerateIndividualCards();
+        if (rug && !candy)
+            ReplaceWithRug(player, cards, expandedPool);
+        foreach (var result in cards)
+            if (!options.Flags.HasFlag(CardCreationFlags.NoUpgradeRoll))
+                CardGeneration.Upgrade(player, result.Card);
+        if (!options.Flags.HasFlag(CardCreationFlags.NoModifyHooks) && Hook.TryModifyCardRewardOptions(player.RunState, player, cards, options, out var modifiers))
+            TaskHelper.RunSafely(Hook.AfterModifyingCardRewardOptions(player.RunState, modifiers));
+        ApplyPresentation();
+        CardOffers.NumberOffer(cards.Select(c => c.Card));
+        DecisionTrace.Record("card-reward", () => new
+        {
+            seed = state.Seed,
+            kind = kind.ToString(),
+            source = options.Source.ToString(),
+            odds = options.RarityOdds.ToString(),
+            offer,
+            pool = poolIds,
+            eligible = expandedPool.Select(c => c.Id.Entry),
+            rarityBefore,
+            rarityAfter = timing,
+            cards = cards.Select(c => new { identity = c.Card.Id.Entry, occurrence = CardOccurrences.Find(c.Card)?.Address, c.Card.CurrentUpgradeLevel })
+        });
+        return cards;
+
+        void GenerateTripleOffer()
         {
             var category = fixedRarity?.ToString() ?? (rareSlots.Count > 0 ? "rare-bearing" : "non-Rare");
             var address = RandomAddress.For("card triple", poolIds, category);
@@ -109,6 +140,10 @@ internal static class CardRewards
                 Add(CardGeneration.Create(player, eligible[rng.NextInt(eligible.Length)],
                     RandomAddress.For("supplementary card").With(offer).At(slot).Key), true);
             }
+        }
+
+        void ReplaceExtraRares()
+        {
             for (var extra = 1; extra < rareSlots.Count; extra++)
             {
                 var index = cards.FindIndex(c => c.Card.Rarity == CardRarity.Common);
@@ -121,9 +156,9 @@ internal static class CardRewards
                 cards[index] = new(card);
             }
         }
-        else
+
+        void GenerateIndividualCards()
         {
-            offer = "";
             for (var slot = 0; slot < cardCount; slot++)
             {
                 var rarity = fixedRarity;
@@ -175,44 +210,26 @@ internal static class CardRewards
                 Add(card, false);
             }
         }
-        if (rug && !candy)
-            ReplaceWithRug(player, cards, expandedPool);
-        foreach (var result in cards)
-            if (!options.Flags.HasFlag(CardCreationFlags.NoUpgradeRoll))
-                CardGeneration.Upgrade(player, result.Card);
-        if (!options.Flags.HasFlag(CardCreationFlags.NoModifyHooks) && Hook.TryModifyCardRewardOptions(player.RunState, player, cards, options, out var modifiers))
-            TaskHelper.RunSafely(Hook.AfterModifyingCardRewardOptions(player.RunState, modifiers));
-        for (var i = 0; i < rareSlots.Count; i++)
+
+        void ApplyPresentation()
         {
-            var rare = cards.Single(c => CardOffers.Info(c.Card).RareOrder == i);
-            var from = cards.IndexOf(rare);
-            var to = rareSlots[i];
-            (cards[from], cards[to]) = (cards[to], cards[from]);
-        }
-        if (cardCount > 3 && triple && rareSlots.Count == 0)
-        {
-            var rng = options.RngOverride ?? EventRng(player);
-            for (var i = cards.Count - 1; i > 0; i--)
+            for (var i = 0; i < rareSlots.Count; i++)
             {
-                var j = rng.NextInt(i + 1);
-                (cards[i], cards[j]) = (cards[j], cards[i]);
+                var rare = cards.Single(c => CardOffers.Info(c.Card).RareOrder == i);
+                var from = cards.IndexOf(rare);
+                var to = rareSlots[i];
+                (cards[from], cards[to]) = (cards[to], cards[from]);
+            }
+            if (cardCount > 3 && triple && rareSlots.Count == 0)
+            {
+                var rng = options.RngOverride ?? EventRng(player);
+                for (var i = cards.Count - 1; i > 0; i--)
+                {
+                    var j = rng.NextInt(i + 1);
+                    (cards[i], cards[j]) = (cards[j], cards[i]);
+                }
             }
         }
-        CardOffers.NumberOffer(cards.Select(c => c.Card));
-        DecisionTrace.Record("card-reward", () => new
-        {
-            seed = state.Seed,
-            kind = kind.ToString(),
-            source = options.Source.ToString(),
-            odds = options.RarityOdds.ToString(),
-            offer,
-            pool = poolIds,
-            eligible = expandedPool.Select(c => c.Id.Entry),
-            rarityBefore,
-            rarityAfter = timing,
-            cards = cards.Select(c => new { identity = c.Card.Id.Entry, occurrence = CardOccurrences.Find(c.Card)?.Address, c.Card.CurrentUpgradeLevel })
-        });
-        return cards;
 
         void Add(CardModel card, bool supplementary)
         {
