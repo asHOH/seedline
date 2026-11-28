@@ -16,7 +16,7 @@ A save made on v0.114.0 can load on v0.114.1, and vice versa, if its save-format
 
 ## RitsuLib
 
-RitsuLib is optional. Seedline 0.1.4 is validated with RitsuLib 0.6.16 on StS2 v0.114.0 in both mod load orders. See the [supported save-data scope](implementation.md#ritsulib).
+RitsuLib is optional. Seedline 0.1.5 is validated with RitsuLib 0.6.16 on StS2 v0.114.0 in both mod load orders. See the [supported save-data scope](implementation.md#ritsulib).
 
 RitsuLib 0.6.15 fails to initialize on StS2 v0.114.0 because its patches target removed game methods.
 

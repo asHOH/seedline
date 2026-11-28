@@ -6,7 +6,7 @@
 
 - Read and fully understand the [design document](design/DESIGN.md) first. Use its goals and priorities to judge tradeoffs and ask about unresolved design choices.
 - Base claims about existing mechanics on code or reference evidence.
-- When a verified mechanic gives a rule a surprising consequence, check it against the design intent and trace what else the rule governs. If several gameplay outcomes remain plausible, show the smallest example that distinguishes them and ask which is intended before proposing an edit.
+- When a verified mechanic gives a rule a surprising consequence, check it against the design intent and trace what else the rule governs. For ambiguities, show the smallest example that distinguishes them and ask which is intended before proposing an edit.
 - Assess deviations against [behavior preservation](design/DESIGN.md#goals-and-principles) and report policy conflicts.
 
 ## Implementation constraints
@@ -20,12 +20,15 @@
 - Follow [Document hierarchy](design/DESIGN.md#document-hierarchy). Define common behavior once, rely on preservation defaults, and state local exceptions explicitly; repeat only to clarify subtle implementation requirements.
 - Keep authoring instructions here; reading guides serve navigation and interpretation.
 - Put requirements in policies, explanations in notes, intent/scope first, baseline last, and rationale beside rules.
-- Keep policy tables section-local; fold short qualifications into relevant rows. Overview/reference tables may summarize.
 
 ## Design writing
 
-- Write for implementers and design reviewers. Prefer brief gameplay wording; pair necessary code references with explanations. Never refer to git-untracked files.
-- Test every sentence for reader value. Remove obvious, implied or repeated information; retain distinctions affecting interpretation or use.
+- Write for implementers and design reviewers. Prefer brief gameplay wording. Never include filler or refer to git-untracked files.
+- Test every sentence for reader value. Cut obvious, implied or repeated information; keep only what changes meaning or use.
 - Prefer established terms; define new names before use, only for distinct, reusable concepts. Review terminology and policies for necessity, propose clearer names, and retire redundancies.
 - Include edge cases affecting implementation or interpretation; name exceptional sources directly.
 - In address expressions, place purpose before sharing scope.
+
+## Player-facing writing
+
+- Never include technical details or filler.

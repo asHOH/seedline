@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Seedline</AssemblyName>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.IO.Hashing" HintPath="$(GameManagedDir)/System.IO.Hashing.dll" Private="false" />
