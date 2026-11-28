@@ -6,9 +6,6 @@ param(
 $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../..')).Path
 $game = (Resolve-Path -LiteralPath $GameDir).Path
-if ((Get-FileHash -LiteralPath (Join-Path $game 'data_sts2_windows_x86_64/sts2.dll')).Hash -ne '62ECBE91093E1FA862DE4329AAC865209DCB297804CAF0F0520D92D8C0B4A9C3') {
-    throw 'Measurements require v0.113.1 build d09d48e5.'
-}
 $env:STS2_GAME_DIR = $game
 $env:DOTNET_CLI_HOME = Join-Path $repo '.cache/dotnet-home'
 $env:NUGET_PACKAGES = Join-Path $repo '.cache/nuget'
@@ -30,10 +27,12 @@ foreach ($entry in @(@('Seedline', 'src/Seedline'), @('Seedline.Performance', 'r
     New-Item -ItemType Directory -Path $target -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $repo "$source/bin/Release/net9.0/$name.dll"), (Join-Path $repo "$source/$name.json") -Destination $target
 }
+$release = Get-Content -Raw -LiteralPath (Join-Path $hostDir 'release_info.json') | ConvertFrom-Json
 $metadata = @{
     date = [DateTimeOffset]::UtcNow.ToString('o')
     cpu = (Get-ItemPropertyValue -LiteralPath 'HKLM:/HARDWARE/DESCRIPTION/System/CentralProcessor/0' -Name 'ProcessorNameString').Trim()
-    game = 'v0.113.1/d09d48e5'
+    game = "$($release.version)/$($release.commit)"
+    game_sha256 = (Get-FileHash -LiteralPath (Join-Path $hostDir 'data_sts2_windows_x86_64/sts2.dll')).Hash
     mod_sha256 = (Get-FileHash -LiteralPath (Join-Path $hostDir 'mods/Seedline/Seedline.dll')).Hash
     probe_sha256 = (Get-FileHash -LiteralPath (Join-Path $hostDir 'mods/Seedline.Performance/Seedline.Performance.dll')).Hash
     pairs = $Pairs

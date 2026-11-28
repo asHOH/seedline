@@ -12,7 +12,7 @@ If you save and reload to try different actions (SL), expect more changes from t
 
 ## Supported setup
 
-Requires **StS2 v0.114.0 (`public-beta`)** on Windows. Supports standard and Dread single-player.
+Requires **StS2 v0.114.0+** on Windows. Supports standard and Dread single-player.
 
 Custom runs may have any combination of **Flight, Murderous, Terminal, Night Terrors, Midas, Big Game Hunter, Character Cards, Hoarder and Draft**.
 
@@ -28,7 +28,7 @@ For manual installation, download `Seedline-<version>.zip` from the [latest rele
 
 ## Saves
 
-Keep the game build, Seedline and RitsuLib setup fixed during a run. A Seedline run may load with Seedline disabled but show a black screen on Save and Quit. See [compatibility and save guidance](docs/compatibility.md).
+Keep the game version, Seedline and RitsuLib setup fixed during a run. A Seedline run may load with Seedline disabled but show a black screen on Save and Quit. See [compatibility and save guidance](docs/compatibility.md).
 
 ## Report a problem
 

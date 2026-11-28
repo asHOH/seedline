@@ -15,7 +15,7 @@ Run commands from the repository root.
 
 ### Performance
 
-The [benchmark](performance/Probe.cs) compares vanilla and Seedline in headless StS2 v0.113.1, using Release builds on a Ryzen 9 8940HX. Fresh Ironclad runs cover Acts 1 and 3 with mixed/duplicate-heavy 30-card decks or 2,000 permanent cards including **1,900 Angers**, without combat powers.
+The [measurements](performance/results.json) compare vanilla and Seedline in headless StS2 v0.113.1, using Release builds on a Ryzen 9 8940HX. Fresh Ironclad runs cover Acts 1 and 3 with mixed/duplicate-heavy 30-card decks or 2,000 permanent cards including **1,900 Angers**, without combat powers.
 
 Three paired runs produce 1,800 [samples](performance/samples.jsonl.gz), with three warmups and ten measurements per case. [Results](performance/results.json) report median timings and allocations. Added time is the difference between modded and vanilla medians.
 

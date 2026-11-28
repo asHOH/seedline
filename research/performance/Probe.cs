@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
+using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -55,6 +56,9 @@ public static class Probe
                 throw new InvalidOperationException("Performance tests require isolated user data.");
             if (SaveManager.Instance.SettingsSave.VolumeMaster != 0f)
                 throw new InvalidOperationException("Performance tests require muted master audio.");
+            var release = ReleaseInfoManager.Instance.ReleaseInfo;
+            var game = Seedline.GameCompatibility.Check(release?.Version, release?.Commit,
+                message => MegaCrit.Sts2.Core.Logging.Log.Warn(message));
             var mod = ModManager.GetLoadedMods().Any(m => m.manifest?.id == "Seedline" && m.errors is not { Count: > 0 });
             if (mod != (System.Environment.GetEnvironmentVariable("SEEDLINE_PERF_MODE") == "seedline"))
                 throw new InvalidOperationException("Unexpected mod configuration.");
@@ -68,6 +72,7 @@ public static class Probe
             Emit(new
             {
                 op = "environment",
+                game,
                 mod,
                 runtime = System.Environment.Version.ToString(),
                 os = System.Environment.OSVersion.ToString(),

@@ -142,8 +142,10 @@ internal static class RunCheckpoints
         if (version.ValueKind != JsonValueKind.Number || !version.TryGetInt32(out var number) || number != SchemaVersion)
             throw new InvalidDataException($"Seedline checkpoint schema mismatch: expected={SchemaVersion}, actual={version.GetRawText()}.");
         var build = RequiredField(state, "game_build");
-        if (build.ValueKind != JsonValueKind.String || build.GetString() != ModEntry.GameBuild)
-            throw new InvalidDataException($"Seedline checkpoint game build mismatch: expected={ModEntry.GameBuild}, actual={build.GetRawText()}.");
+        var savedBuild = build.ValueKind == JsonValueKind.String ? build.GetString()!.Split('/', 2) : [];
+        var gameVersion = ModEntry.GameBuild.Split('/', 2)[0];
+        if (savedBuild.Length != 2 || savedBuild[0] != gameVersion || string.IsNullOrWhiteSpace(savedBuild[1]))
+            throw new InvalidDataException($"Seedline checkpoint game version mismatch: expected={gameVersion}, actual={build.GetRawText()}.");
         var id = RequiredField(state, "run_id");
         if (id.ValueKind != JsonValueKind.String || !id.TryGetGuid(out var runId) || runId == Guid.Empty)
             throw new InvalidDataException($"Seedline checkpoint run_id must be a nonempty GUID; actual={id.GetRawText()}.");

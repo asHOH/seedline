@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
@@ -40,6 +41,7 @@ public static partial class Checks
             await (NGame.Instance ?? throw new InvalidOperationException("Game has not started.")).GameStartupComplete;
             Assert(SaveManager.Instance.SettingsSave.VolumeMaster == 0f,
                 "isolated test profile mutes master audio");
+            CheckGameCompatibility();
             CheckEnvironmentDiagnostics();
             await CheckExportMenu();
             if (System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_CHECKS") == "1")
@@ -65,7 +67,8 @@ public static partial class Checks
             Assert(JsonNode.Parse(original)!["seedline"]!["schema_version"]!.GetValue<int>() == RunCheckpoints.SchemaVersion,
                 "checkpoint records the current Seedline schema");
             var release = JsonNode.Parse(System.IO.File.ReadAllText(Path.Combine(Path.GetDirectoryName(OS.GetExecutablePath())!, "release_info.json")))!;
-            Assert(JsonNode.Parse(original)!["seedline"]!["game_build"]!.GetValue<string>() == $"{release["version"]}/{release["commit"]}",
+            Assert(JsonNode.Parse(original)!["seedline"]!["game_build"]!.GetValue<string>() ==
+                $"{SemanticVersion.FromString(release["version"]!.GetValue<string>())}/{release["commit"]}",
                 "checkpoint records the loaded game build");
             Assert(provenance.Seed == "CHECKPOINTCHECK" && provenance.RunId != Guid.Empty, "new run receives provenance before initialization");
 
@@ -181,6 +184,7 @@ public static partial class Checks
     {
         var path = RunSaveManager.GetRunSavePath(1, RunSaveManager.runSaveFileName);
         var json = Encoding.UTF8.GetString(original);
+        var nextMajor = SemanticVersion.FromString(ModEntry.GameBuild.Split('/', 2)[0]).Major + 1;
         Action<JsonObject>[] mutations =
         [
             root => { if (!root.Remove("_ritsulib")) root["_ritsulib"] = new JsonObject { ["version"] = 1, ["run_saved_data"] = new JsonObject() }; },
@@ -204,6 +208,9 @@ public static partial class Checks
             root => root["seedline"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = "1" },
             root => root["seedline"]!["game_build"] = "another build",
             root => root["seedline"]!["game_build"] = "v0.113.0/16ac0fe3",
+            root => root["seedline"]!["game_build"] = ModEntry.GameBuild.Split('/', 2)[0],
+            root => root["seedline"]!["game_build"] = ModEntry.GameBuild.Split('/', 2)[0] + "/ ",
+            root => root["seedline"]!["game_build"] = $"v{nextMajor}.0.0/next",
             root => root["seedline"]!["run_id"] = Guid.Empty.ToString(),
             root => root["seedline"]!["seed"] = "another seed",
             root => root["schema_version"] = schema + 1,
@@ -231,6 +238,18 @@ public static partial class Checks
             Assert(result.Status == ReadSaveStatus.ValidationFailed && store.ReadFile(path) == invalid && store.ReadFile(path + ".backup") == json,
                 $"reject incompatible/missing state without fallback or modification ({passed.Count})");
         }
+        var rebuiltGame = JsonNode.Parse(json)!.AsObject();
+        rebuiltGame["seedline"]!["game_build"] = ModEntry.GameBuild.Split('/', 2)[0] + "/another-commit";
+        var rebuiltJson = rebuiltGame.ToJsonString();
+        var rebuiltStore = new MockGodotFileIo("same-version-rebuild");
+        rebuiltStore.WriteFile(path, rebuiltJson);
+        var rebuiltSave = CheckpointStore.Read(rebuiltStore, path, schema);
+        Assert(rebuiltSave.Success && rebuiltStore.ReadFile(path) == rebuiltJson,
+            "different game commits within the same release version load without modifying the checkpoint");
+        var rebuiltRun = RunState.FromSerializable(rebuiltSave.SaveData!);
+        RunCheckpoints.Restore(rebuiltRun, rebuiltSave.SaveData!);
+        Assert(SameState(RunCheckpoints.Require(rebuiltRun), RunCheckpoints.Require(snapshot)),
+            "same-version game rebuild preserves restored Seedline state");
         var vanilla = JsonSerializationUtility.ToJson(snapshot);
         try
         {

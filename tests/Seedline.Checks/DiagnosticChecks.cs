@@ -84,7 +84,7 @@ public static partial class Checks
             (Action<JsonObject> Mutate, string Detail)[] invalidCases =
             [
                 (root => root["seedline"]!["schema_version"] = RunCheckpoints.SchemaVersion + 1, $"expected={RunCheckpoints.SchemaVersion}, actual={RunCheckpoints.SchemaVersion + 1}"),
-                (root => root["seedline"]!["game_build"] = "other", $"expected={ModEntry.GameBuild}, actual=\"other\""),
+                (root => root["seedline"]!["game_build"] = "other", $"expected={ModEntry.GameBuild.Split('/', 2)[0]}, actual=\"other\""),
                 (root => root["seedline"]!.AsObject().Remove("card_history"), "Missing checkpoint field card_history"),
                 (root => root["schema_version"] = schema + 1, $"expected={schema}, actual={schema + 1}"),
                 (root => root["current_act_index"] = -1, "current_act_index out of range"),

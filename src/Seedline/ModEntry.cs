@@ -1,5 +1,5 @@
-using System.Security.Cryptography;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Runs;
@@ -25,14 +25,8 @@ public static class ModEntry
     {
         if (!OperatingSystem.IsWindows())
             throw new PlatformNotSupportedException("Seedline requires Windows.");
-        using (var file = File.OpenRead(typeof(RunManager).Assembly.Location))
-        {
-            GameBuild = Convert.ToHexString(SHA256.HashData(file)) switch
-            {
-                "DDCEB87905B6096DEB7BE975922E24A53992453675DF26DF545B1C46B1826C5D" => "v0.114.0/a7b9a9c0",
-                _ => throw new InvalidOperationException("Seedline requires v0.114.0 build a7b9a9c0.")
-            };
-        }
+        var release = ReleaseInfoManager.Instance.ReleaseInfo;
+        GameBuild = GameCompatibility.Check(release?.Version, release?.Commit, message => Log.Warn(message));
 
         var harmony = new Harmony(Id);
         try
