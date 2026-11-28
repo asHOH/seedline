@@ -166,6 +166,12 @@ public static partial class Checks
             var amounts = (Dictionary<CardModel, int>)AccessTools.Field(data.GetType(), "amountsForPlayedCards").GetValue(data)!;
             Assert(amounts.ContainsKey(b) && !amounts.ContainsKey(a), "pending power dictionaries follow logical occurrences");
 
+            var pendingSnapshot = new CombatReferences.PendingSnapshot(combat);
+            amounts[a] = amounts[b];
+            Assert(!pendingSnapshot.Equivalent(a, b) && CombatReferences.PendingEquivalent(a, b),
+                "pending-reference snapshots freeze per-copy effects while later choices see updated values");
+            amounts.Remove(a);
+
             // Dowsing room progress sorts the selector, but has no effect on combat equivalence.
             var fresh = combat.CreateCard<Dowsing>(player);
             var progressed = combat.CreateCard<Dowsing>(player);

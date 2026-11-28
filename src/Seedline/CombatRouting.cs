@@ -31,12 +31,14 @@ internal static class CombatRouting
         card.Enchantment is Goopy || card.CombatState is CombatState combat && combat.Enemies.Any(c =>
             c.IsAlive && c.Monster is ThievingHopper hopper && !theftFinished.TryGetValue(hopper, out _));
 
-    private static bool Equivalent(CardModel a, CardModel b, Func<CardModel, FrozenCardOrder> rank) =>
+    private static bool Equivalent(CardModel a, CardModel b, Func<CardModel, FrozenCardOrder> rank,
+        Func<CardModel, CardModel, bool> pendingEquivalent) =>
         rank(a).CompareTo(rank(b)) == 0 &&
         (!Protected(a) && !Protected(b) || ReferenceEquals(a.DeckVersion, b.DeckVersion)) &&
-        CombatReferences.PendingEquivalent(a, b);
+        pendingEquivalent(a, b);
 
-    internal static bool Equivalent(CardModel a, CardModel b) => Equivalent(a, b, new CardOrder.CombatRankBatch().RoutingRank);
+    internal static bool Equivalent(CardModel a, CardModel b) => Equivalent(a, b,
+        new CardOrder.CombatRankBatch().RoutingRank, CombatReferences.PendingEquivalent);
 
     internal sealed class Choice
     {
@@ -49,17 +51,20 @@ internal static class CombatRouting
             var byIdentity = new Dictionary<ModelId, List<List<CardModel>>>();
             var ranks = new Dictionary<CardModel, FrozenCardOrder>();
             var batch = new CardOrder.CombatRankBatch();
+            CombatReferences.PendingSnapshot? pending = null;
             FrozenCardOrder Rank(CardModel card)
             {
                 if (!ranks.TryGetValue(card, out var rank))
                     ranks.Add(card, rank = batch.RoutingRank(card));
                 return rank;
             }
+            bool PendingEquivalent(CardModel a, CardModel b) =>
+                (pending ??= new(a.CombatState as CombatState)).Equivalent(a, b);
             foreach (var card in eligible)
             {
                 if (!byIdentity.TryGetValue(card.Id, out var sameIdentity))
                     byIdentity.Add(card.Id, sameIdentity = []);
-                var group = sameIdentity.FirstOrDefault(g => Equivalent(g[0], card, Rank));
+                var group = sameIdentity.FirstOrDefault(g => Equivalent(g[0], card, Rank, PendingEquivalent));
                 if (group == null)
                 {
                     group = [card];

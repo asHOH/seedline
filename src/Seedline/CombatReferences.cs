@@ -55,6 +55,7 @@ internal static class CombatReferences
         ["PaelsLegion"] = "_affectedCardPlay",
         ["SwipePower"] = "_stolenCard"
     };
+    private static readonly Dictionary<(Type Type, string Name), FieldInfo> fields = new();
     private static readonly FieldInfo internalData = Field(typeof(PowerModel), "_internalData");
     private static readonly FieldInfo allCards = Field(typeof(CombatState), "_allCards");
     private static readonly FieldInfo deck = Field(typeof(CardModel), "_deckVersion");
@@ -62,8 +63,13 @@ internal static class CombatReferences
     private static readonly FieldInfo dupe = Field(typeof(CardModel), "_isDupe");
     private static readonly FieldInfo playCard = Field(typeof(CardPlay), "<Card>k__BackingField");
 
-    private static FieldInfo Field(Type type, string name) => AccessTools.Field(type, name)
-        ?? throw new MissingFieldException(type.FullName, name);
+    private static FieldInfo Field(Type type, string name)
+    {
+        if (!fields.TryGetValue((type, name), out var field))
+            fields.Add((type, name), field = AccessTools.Field(type, name)
+                ?? throw new MissingFieldException(type.FullName, name));
+        return field;
+    }
 
     private static IEnumerable<(object Owner, FieldInfo Field)> Slots(CombatState combat)
     {
@@ -79,45 +85,62 @@ internal static class CombatReferences
                 yield return (relic, Field(relic.GetType(), name));
     }
 
-    internal static bool PendingEquivalent(CardModel a, CardModel b)
+    internal static bool PendingEquivalent(CardModel a, CardModel b) => new PendingSnapshot(a.CombatState as CombatState).Equivalent(a, b);
+
+    internal sealed class PendingSnapshot
     {
-        if (!ReferenceEquals(a, b))
-            for (var frame = pending.Value; frame != null; frame = frame.Parent)
-                if (frame.Cards.Contains(a) || frame.Cards.Contains(b)) return false;
-        if (a.CombatState is not CombatState combat) return true;
-        foreach (var (owner, field) in Slots(combat))
+        private readonly HashSet<CardModel> pendingCards = new();
+        private readonly object?[] values;
+
+        internal PendingSnapshot(CombatState? combat)
         {
-            var value = field.GetValue(owner);
-            switch (value)
+            for (var frame = pending.Value; frame != null; frame = frame.Parent)
+                pendingCards.UnionWith(frame.Cards);
+            values = combat == null ? [] : Slots(combat).Select(slot => slot.Field.GetValue(slot.Owner) switch
             {
-                case CardPlay play:
-                    if (ReferenceEquals(play.Card, a) != ReferenceEquals(play.Card, b)) return false;
-                    break;
-                case List<(CardModel Card, CardModel Clone)> pairs:
-                    foreach (var pair in pairs)
-                        if (ReferenceEquals(pair.Card, a) != ReferenceEquals(pair.Card, b) ||
-                            ReferenceEquals(pair.Clone, a) != ReferenceEquals(pair.Clone, b)) return false;
-                    break;
-                case Dictionary<CardModel, int> amounts:
-                    var hasA = amounts.TryGetValue(a, out var amountA);
-                    var hasB = amounts.TryGetValue(b, out var amountB);
-                    if (hasA != hasB || hasA && amountA != amountB) return false;
-                    break;
-                case HashSet<CardModel> set:
-                    if (set.Contains(a) != set.Contains(b)) return false;
-                    break;
-                case List<CardModel> list:
-                    // Positions are consequential when a pending effect uses an ordered list.
-                    if (!list.Select((c, i) => (c, i)).Where(x => ReferenceEquals(x.c, a)).Select(x => x.i)
-                        .SequenceEqual(list.Select((c, i) => (c, i)).Where(x => ReferenceEquals(x.c, b)).Select(x => x.i)))
-                        return false;
-                    break;
-                case CardModel card:
-                    if (ReferenceEquals(card, a) != ReferenceEquals(card, b)) return false;
-                    break;
-            }
+                CardPlay play => (object)play.Card,
+                List<(CardModel Card, CardModel Clone)> pairs => pairs.ToArray(),
+                Dictionary<CardModel, int> amounts => new Dictionary<CardModel, int>(amounts),
+                HashSet<CardModel> set => new HashSet<CardModel>(set),
+                List<CardModel> list => list.ToArray(),
+                var value => value
+            }).ToArray();
         }
-        return true;
+
+        internal bool Equivalent(CardModel a, CardModel b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            if (pendingCards.Contains(a) || pendingCards.Contains(b)) return false;
+            foreach (var value in values)
+            {
+                switch (value)
+                {
+                    case ValueTuple<CardModel, CardModel>[] pairs:
+                        foreach (var pair in pairs)
+                            if (ReferenceEquals(pair.Item1, a) != ReferenceEquals(pair.Item1, b) ||
+                                ReferenceEquals(pair.Item2, a) != ReferenceEquals(pair.Item2, b)) return false;
+                        break;
+                    case Dictionary<CardModel, int> amounts:
+                        var hasA = amounts.TryGetValue(a, out var amountA);
+                        var hasB = amounts.TryGetValue(b, out var amountB);
+                        if (hasA != hasB || hasA && amountA != amountB) return false;
+                        break;
+                    case HashSet<CardModel> set:
+                        if (set.Contains(a) != set.Contains(b)) return false;
+                        break;
+                    case CardModel[] list:
+                        // Positions are consequential when a pending effect uses an ordered list.
+                        if (!list.Select((c, i) => (c, i)).Where(x => ReferenceEquals(x.c, a)).Select(x => x.i)
+                            .SequenceEqual(list.Select((c, i) => (c, i)).Where(x => ReferenceEquals(x.c, b)).Select(x => x.i)))
+                            return false;
+                        break;
+                    case CardModel card:
+                        if (ReferenceEquals(card, a) != ReferenceEquals(card, b)) return false;
+                        break;
+                }
+            }
+            return true;
+        }
     }
 
     internal static void Rebind(CombatState combat, IReadOnlyList<CardModel> physical, IReadOnlyList<CardModel> logical)
