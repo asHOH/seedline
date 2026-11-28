@@ -42,5 +42,10 @@ public static partial class Checks
         Assert(CardOrder.Equivalence(dowsing) != CardOrder.Equivalence(freshDowsing) &&
             CardOrder.Permanent.Compare(dowsing, freshDowsing) == 0,
             "Dowsing progress splits routing equivalence without changing processing rank");
+
+        CardModel[] batch = [second, strikes[1], freshDowsing, first, strikes[0], dowsing];
+        Assert(batch.OrderBy(CardOrder.CapturePermanent).SequenceEqual(batch.OrderBy(c => c, CardOrder.Permanent)) &&
+            batch.OrderBy(CardOrder.CaptureIdentity).SequenceEqual(batch.OrderBy(c => c, CardOrder.Identity)),
+            "captured sort keys preserve permanent address ties and stable identity ties across differing card states");
     }
 }

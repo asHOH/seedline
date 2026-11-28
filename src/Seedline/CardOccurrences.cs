@@ -106,7 +106,7 @@ internal static class CardOccurrences
         {
             var index = 0;
             var ordered = CharacterCompatibility.UseVanillaCards(player) ? player.Deck.Cards.AsEnumerable() :
-                player.Deck.Cards.OrderBy(c => c, CardOrder.Permanent);
+                player.Deck.Cards.OrderBy(CardOrder.CapturePermanent);
             foreach (var card in ordered)
             {
                 var address = RandomAddress.For("card occurrence", "starting deck").At(index++).Key;
@@ -123,7 +123,7 @@ internal static class CardOccurrences
         var batch = added.ToArray();
         CardOffers.PrepareAcquisition(batch);
         var fresh = (CharacterCompatibility.IsModdedRun ? batch.Where(c => Find(c) == null) :
-            batch.Where(c => Find(c) == null).OrderBy(c => c, CardOrder.Permanent)).ToArray();
+            batch.Where(c => Find(c) == null).OrderBy(CardOrder.CapturePermanent)).ToArray();
         if (fresh.Length == 0 || fresh[0].Owner.RunState is not RunState run || RunCheckpoints.Find(run) is not { } state)
             return;
         CardHistory.AddressGrant(fresh, state, source?.Id.Entry ?? run.CurrentRoom?.ModelId?.Entry ?? "initial grants");

@@ -45,7 +45,7 @@ internal static partial class CardOrder
     internal static readonly IComparer<CardModel> Identity = Comparer<CardModel>.Create((a, b) => Compare(a, b, CaptureIdentity));
 
     internal static FrozenCardOrder CapturePermanent(CardModel card) => new(Rank(card), CardOccurrences.Find(card)?.Address);
-    private static FrozenCardOrder CaptureIdentity(CardModel card) => new(Rank(card.CanonicalInstance), null);
+    internal static FrozenCardOrder CaptureIdentity(CardModel card) => new(Rank(card.CanonicalInstance), null);
 
     internal static PermanentCardEquivalence Equivalence(CardModel card) => new(card.Id.Entry, card.CurrentUpgradeLevel,
         card.Enchantment?.Id.Entry, card.Enchantment?.Amount ?? 0, card switch
