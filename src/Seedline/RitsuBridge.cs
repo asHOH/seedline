@@ -18,7 +18,7 @@ internal static class RitsuBridge
     private static readonly Lazy<Type?> frameworkType = new(() =>
     {
         var framework = AccessTools.TypeByName("STS2RitsuLib.RitsuLibFramework");
-        if (framework != null && framework.Assembly.GetName().Version is not { Major: 0, Minor: 6, Build: 14 or 15, Revision: 0 })
+        if (framework != null && framework.Assembly.GetName().Version is not { Major: 0, Minor: 6, Build: 14 or 15 or 16, Revision: 0 })
             Log.Warn($"Seedline: untested RitsuLib version {framework.Assembly.GetName().Version}; continuing with checkpoint validation enabled.");
         return framework;
     });

@@ -8,7 +8,9 @@ Seedline uses fully unlocked content in new runs while preserving profile unlock
 
 ## RitsuLib
 
-RitsuLib is optional. RitsuLib 0.6.15 fails to initialize on StS2 v0.114.0 because its patches target removed game methods. Seedline 0.1.3 is validated without RitsuLib. See the [supported save-data scope](implementation.md#ritsulib).
+RitsuLib is optional. Seedline 0.1.4 is validated with RitsuLib 0.6.16 on StS2 v0.114.0 in both mod load orders. See the [supported save-data scope](implementation.md#ritsulib).
+
+RitsuLib 0.6.15 fails to initialize on StS2 v0.114.0 because its patches target removed game methods.
 
 ## Modded characters
 
@@ -16,10 +18,9 @@ Rewards, shops, chests, base-game rooms/events and base-game enemies remain alig
 
 ## Tested mods
 
-The following were tested on StS2 v0.113.1, not revalidated for v0.114.0. For the known RitsuLib failure, see [above](#ritsulib).
+The following were tested on StS2 v0.113.1, not revalidated for v0.114.0.
 
 - BaseLib
-- RitsuLib
 - JmcModLib
 - Loadout 2 — requires BaseLib. Tested only for card grants, adding Innate, and event jumps.
 - Auto-Anthonyology (东尼算法)

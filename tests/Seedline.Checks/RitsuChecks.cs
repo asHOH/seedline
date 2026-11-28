@@ -236,7 +236,7 @@ public static partial class Checks
         manager.CleanUp();
         Assert(observedWrites > 0, "real store hooks observe complete bytes without a RitsuLib injection context");
         Log.LogCallback -= ObserveVersionWarning;
-        Assert(versionWarnings == (expectedVersion is "0.6.14" or "0.6.15" ? 0 : 1),
+        Assert(versionWarnings == (expectedVersion is "0.6.14" or "0.6.15" or "0.6.16" ? 0 : 1),
             "tested RitsuLib versions stay quiet; untested versions warn only once across checkpoint operations");
         monitor.UnpatchAll(monitor.Id);
     }
