@@ -6,9 +6,16 @@ This makes shared seeds more relatable, win-streak reviews more useful, and same
 
 Seedline achieves this by reducing the influence of unrelated actions on later luck. For example, in the base game, reshuffling your deck an extra time in one fight can change your opening hand in the next. Seedline keeps each fight's shuffles separate, so that extra shuffle alone won't change your next opening hand.
 
-To keep same-seed experiences similar, Seedline changes some reward probabilities and how actions affect later random results.
+## Gameplay changes
 
-If you save and reload to try different actions (SL), expect more changes from the base game. Some actions that previously let you reroll an outcome no longer do, so you may find this way of playing very different. See the [gameplay changes](design/DESIGN.md#shared-vanilla-deviations) for details. A separate mode for vanilla-style SL is planned.
+**NoSL** — Designed for everyday play and win streaks, with unnoticeable probability adjustments.
+
+**SL** — Substantially less room to manipulate luck, mainly through two changes.
+
+- **Fewer within-room rerolls.** Example: choosing which identical Strike to play no longer rerolls unupgraded True Grit’s exhaust target.
+- **Less control over future luck.** Example: reloading to leave Discovery unplayed no longer saves its favorable card options for a later fight.
+
+See the [detailed gameplay changes](design/DESIGN.md#shared-vanilla-deviations). A mode preserving vanilla-style SL is planned.
 
 ## Supported setup
 
