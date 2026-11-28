@@ -19,6 +19,7 @@ New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
 $modOrder = if ($RitsuFirst) { @('STS2-RitsuLib', 'Seedline', 'Seedline.Checks') } else { @('Seedline', 'STS2-RitsuLib', 'Seedline.Checks') }
 $settings = @{
     schema_version = 8
+    volume_master = 0
     mod_settings = @{ mods_enabled = $true; mod_list = @($modOrder | ForEach-Object { @{ id = $_; source = 1; is_enabled = $true } }) }
     skip_intro_logo = $true
     seen_ea_disclaimer = $true

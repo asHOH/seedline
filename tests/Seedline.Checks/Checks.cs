@@ -38,6 +38,8 @@ public static partial class Checks
         try
         {
             await (NGame.Instance ?? throw new InvalidOperationException("Game has not started.")).GameStartupComplete;
+            Assert(SaveManager.Instance.SettingsSave.VolumeMaster == 0f,
+                "isolated test profile mutes master audio");
             CheckEnvironmentDiagnostics();
             await CheckExportMenu();
             if (System.Environment.GetEnvironmentVariable("SEEDLINE_RITSU_CHECKS") == "1")

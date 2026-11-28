@@ -48,6 +48,7 @@ for ($pair = 0; $pair -lt $Pairs; $pair++) {
         New-Item -ItemType Directory -Path $settingsDir -Force | Out-Null
         @{
             schema_version = 8
+            volume_master = 0
             mod_settings = @{ mods_enabled = $true; mod_list = @(
                 @{ id = 'Seedline'; source = 1; is_enabled = ($mode -eq 'seedline') },
                 @{ id = 'Seedline.Performance'; source = 1; is_enabled = $true }

@@ -53,6 +53,8 @@ public static class Probe
             await NGame.Instance!.GameStartupComplete;
             if (!Path.GetFullPath(OS.GetUserDataDir()).StartsWith(Path.GetFullPath(Root) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Performance tests require isolated user data.");
+            if (SaveManager.Instance.SettingsSave.VolumeMaster != 0f)
+                throw new InvalidOperationException("Performance tests require muted master audio.");
             var mod = ModManager.GetLoadedMods().Any(m => m.manifest?.id == "Seedline" && m.errors is not { Count: > 0 });
             if (mod != (System.Environment.GetEnvironmentVariable("SEEDLINE_PERF_MODE") == "seedline"))
                 throw new InvalidOperationException("Unexpected mod configuration.");
