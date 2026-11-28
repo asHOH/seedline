@@ -184,7 +184,10 @@ public static partial class Checks
     {
         var path = RunSaveManager.GetRunSavePath(1, RunSaveManager.runSaveFileName);
         var json = Encoding.UTF8.GetString(original);
-        var nextMajor = SemanticVersion.FromString(ModEntry.GameBuild.Split('/', 2)[0]).Major + 1;
+        var gameVersion = SemanticVersion.FromString(ModEntry.GameBuild.Split('/', 2)[0]);
+        var patchVersion = new SemanticVersion(gameVersion.Major, gameVersion.Minor, gameVersion.Patch + 1,
+            prerelease: gameVersion.Prerelease).ToString();
+        var patchBuild = patchVersion + "/patch-commit";
         Action<JsonObject>[] mutations =
         [
             root => { if (!root.Remove("_ritsulib")) root["_ritsulib"] = new JsonObject { ["version"] = 1, ["run_saved_data"] = new JsonObject() }; },
@@ -207,10 +210,18 @@ public static partial class Checks
             root => root["seedline"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = -1 },
             root => root["seedline"]!["random_positions"] = new JsonObject { [RandomAddress.For("counter").Key] = "1" },
             root => root["seedline"]!["game_build"] = "another build",
+            root => root["seedline"]!["game_build"] = "invalid/commit",
+            root => root["seedline"]!["game_build"] = "v0.114.2147483648/overflow",
             root => root["seedline"]!["game_build"] = "v0.113.0/16ac0fe3",
             root => root["seedline"]!["game_build"] = ModEntry.GameBuild.Split('/', 2)[0],
             root => root["seedline"]!["game_build"] = ModEntry.GameBuild.Split('/', 2)[0] + "/ ",
-            root => root["seedline"]!["game_build"] = $"v{nextMajor}.0.0/next",
+            root => root["seedline"]!["game_build"] = $"v{gameVersion.Major + 1}.0.0/next",
+            root => root["seedline"]!["game_build"] = $"v{gameVersion.Major}.{gameVersion.Minor + 1}.0/next",
+            root => root["seedline"]!["game_build"] = new SemanticVersion(gameVersion.Major, gameVersion.Minor,
+                gameVersion.Patch, prerelease: [.. gameVersion.Prerelease ?? [], "different"]) + "/preview",
+            root => { root["seedline"]!["game_build"] = patchBuild; root["schema_version"] = schema + 1; },
+            root => { root["seedline"]!["game_build"] = patchBuild; root["seedline"]!["schema_version"] = RunCheckpoints.SchemaVersion + 1; },
+            root => { root["seedline"]!["game_build"] = patchBuild; root["seedline"]!["seed"] = "another seed"; },
             root => root["seedline"]!["run_id"] = Guid.Empty.ToString(),
             root => root["seedline"]!["seed"] = "another seed",
             root => root["schema_version"] = schema + 1,
@@ -238,18 +249,23 @@ public static partial class Checks
             Assert(result.Status == ReadSaveStatus.ValidationFailed && store.ReadFile(path) == invalid && store.ReadFile(path + ".backup") == json,
                 $"reject incompatible/missing state without fallback or modification ({passed.Count})");
         }
-        var rebuiltGame = JsonNode.Parse(json)!.AsObject();
-        rebuiltGame["seedline"]!["game_build"] = ModEntry.GameBuild.Split('/', 2)[0] + "/another-commit";
-        var rebuiltJson = rebuiltGame.ToJsonString();
-        var rebuiltStore = new MockGodotFileIo("same-version-rebuild");
-        rebuiltStore.WriteFile(path, rebuiltJson);
-        var rebuiltSave = CheckpointStore.Read(rebuiltStore, path, schema);
-        Assert(rebuiltSave.Success && rebuiltStore.ReadFile(path) == rebuiltJson,
-            "different game commits within the same release version load without modifying the checkpoint");
-        var rebuiltRun = RunState.FromSerializable(rebuiltSave.SaveData!);
-        RunCheckpoints.Restore(rebuiltRun, rebuiltSave.SaveData!);
-        Assert(SameState(RunCheckpoints.Require(rebuiltRun), RunCheckpoints.Require(snapshot)),
-            "same-version game rebuild preserves restored Seedline state");
+        foreach (var compatibleBuild in new[] { gameVersion + "/another-commit", patchBuild,
+            new SemanticVersion(gameVersion.Major, gameVersion.Minor, Math.Max(0, gameVersion.Patch - 1),
+                prerelease: gameVersion.Prerelease) + "/older-patch" })
+        {
+            var rebuiltGame = JsonNode.Parse(json)!.AsObject();
+            rebuiltGame["seedline"]!["game_build"] = compatibleBuild;
+            var rebuiltJson = rebuiltGame.ToJsonString();
+            var rebuiltStore = new MockGodotFileIo("compatible-game-version");
+            rebuiltStore.WriteFile(path, rebuiltJson);
+            var rebuiltSave = CheckpointStore.Read(rebuiltStore, path, schema);
+            Assert(rebuiltSave.Success && rebuiltStore.ReadFile(path) == rebuiltJson,
+                $"compatible game build {compatibleBuild} loads without modifying the checkpoint");
+            var rebuiltRun = RunState.FromSerializable(rebuiltSave.SaveData!);
+            RunCheckpoints.Restore(rebuiltRun, rebuiltSave.SaveData!);
+            Assert(SameState(RunCheckpoints.Require(rebuiltRun), RunCheckpoints.Require(snapshot)),
+                $"compatible game build {compatibleBuild} preserves restored Seedline state");
+        }
         var vanilla = JsonSerializationUtility.ToJson(snapshot);
         try
         {

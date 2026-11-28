@@ -10,7 +10,9 @@ Seedline uses fully unlocked content in new runs while preserving profile unlock
 
 Requires StS2 v0.114.0 or newer. Build `v0.114.0/a7b9a9c0` is validated. Other builds warn and attempt initialization; incompatible APIs still prevent loading.
 
-Missing or invalid release information blocks startup. Checkpoints record the game's version. Different versions or incompatible save schemas remain blocked.
+Missing or invalid release information blocks startup.
+
+A save made on v0.114.0 can load on v0.114.1, and vice versa, if its save-format versions match those expected by the running game and mods, and its stored data passes validation. Loading across v0.114.x and v0.115.x, or between different prerelease labels such as `-beta.1` and `-beta.2`, is blocked.
 
 ## RitsuLib
 
@@ -46,7 +48,7 @@ The following were tested on StS2 v0.113.1, not revalidated for v0.114.0.
 
 ## Saves
 
-Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep the game version, Seedline and RitsuLib setup fixed throughout each run. A Seedline run may load with Seedline disabled but show a black screen on Save and Quit. Continuing can also discard Seedline's saved state.
+Saves use `modded/profileN/saves/current_run.save` within the game's account storage. Keep Seedline and RitsuLib setup fixed throughout each run. A Seedline run may load with Seedline disabled but show a black screen on Save and Quit. Continuing can also discard Seedline's saved state.
 
 Seedline saves use the game's existing Steam Cloud support. Cloud save handling is covered by simulated tests. Live synchronization remains unverified.
 

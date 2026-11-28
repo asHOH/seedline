@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
@@ -143,8 +144,20 @@ internal static class RunCheckpoints
             throw new InvalidDataException($"Seedline checkpoint schema mismatch: expected={SchemaVersion}, actual={version.GetRawText()}.");
         var build = RequiredField(state, "game_build");
         var savedBuild = build.ValueKind == JsonValueKind.String ? build.GetString()!.Split('/', 2) : [];
-        var gameVersion = ModEntry.GameBuild.Split('/', 2)[0];
-        if (savedBuild.Length != 2 || savedBuild[0] != gameVersion || string.IsNullOrWhiteSpace(savedBuild[1]))
+        var gameVersion = SemanticVersion.FromString(ModEntry.GameBuild.Split('/', 2)[0]);
+        SemanticVersion? savedVersion = null;
+        try
+        {
+            if (savedBuild.Length == 2)
+                SemanticVersion.TryFromString(savedBuild[0], out savedVersion);
+        }
+        catch (OverflowException error)
+        {
+            throw new InvalidDataException($"Seedline checkpoint game version is out of range: actual={build.GetRawText()}.", error);
+        }
+        if (savedVersion == null || string.IsNullOrWhiteSpace(savedBuild[1]) ||
+            savedVersion.Major != gameVersion.Major || savedVersion.Minor != gameVersion.Minor ||
+            !(savedVersion.Prerelease ?? []).SequenceEqual(gameVersion.Prerelease ?? []))
             throw new InvalidDataException($"Seedline checkpoint game version mismatch: expected={gameVersion}, actual={build.GetRawText()}.");
         var id = RequiredField(state, "run_id");
         if (id.ValueKind != JsonValueKind.String || !id.TryGetGuid(out var runId) || runId == Guid.Empty)
