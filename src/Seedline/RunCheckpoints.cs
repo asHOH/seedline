@@ -14,7 +14,15 @@ internal sealed record CheckpointState(Guid RunId, string Seed, RandomState Rand
     internal SelectionState Selection { get; init; } = new();
     internal EventState Events { get; init; } = new();
     internal CardHistory Cards { get; init; } = new();
-    internal CheckpointState Copy() => this with { Random = Random.Copy(), Rewards = Rewards.Copy(), Selection = Selection.Copy(), Events = Events.Copy(), Cards = Cards.Copy(), Ritsu = Ritsu?.DeepClone().AsObject() };
+    internal CheckpointState Copy(bool copyRitsu = true) => this with
+    {
+        Random = Random.Copy(),
+        Rewards = Rewards.Copy(),
+        Selection = Selection.Copy(),
+        Events = Events.Copy(),
+        Cards = Cards.Copy(),
+        Ritsu = copyRitsu ? Ritsu?.DeepClone().AsObject() : null
+    };
 }
 
 internal static class RunCheckpoints
@@ -42,7 +50,7 @@ internal static class RunCheckpoints
             try
             {
                 CheckLiveScope(run);
-                snapshots.Add(save, state.Copy() with { Ritsu = RitsuBridge.Capture(run) });
+                snapshots.Add(save, state.Copy(copyRitsu: false) with { Ritsu = RitsuBridge.Capture(run) });
                 DecisionTrace.Record("checkpoint-capture", () => new { run = state.RunId, seed = state.Seed, floor = run.TotalFloor, reloads = save.NumReloads });
             }
             catch (Exception error)
